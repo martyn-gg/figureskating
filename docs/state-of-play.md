@@ -23,7 +23,9 @@ three turns, brackets, rockers and counters "two-foot turns". They are not: BIS 
 from one foot to the other. The names are now used the way the sport uses them.
 
 **Barely started:** the syllabus half. Elements know what they are; nothing yet knows
-which test it belongs to, and no governing body's material has been read.
+which test it belongs to. Both generations of the British Ice Skating Skills documents —
+current and the October 2026 revision — are read and reviewed in `sources/bis/`, so this
+is now a writing job rather than a research one.
 
 **Not verified by anyone qualified:** all of it. Every element and test carries a
 `verified` flag defaulting to false, and unchecked pages render behind a banner saying
@@ -62,6 +64,8 @@ Screenshot tools need Playwright, which is deliberately not a dependency:
     npm install --no-save playwright && npx playwright install chromium
     node tools/shot.mjs waltz 0.4 out.png        # one frame
     node tools/contact-sheet.mjs waltz .         # every keyframe, side by side
+    node tools/page-shot.mjs out/ elements/      # built pages at phone width
+    node tools/speed.mjs                         # the speed control really slows it down
 
 ## Three rules learned the hard way
 
@@ -154,17 +158,30 @@ two. The diagram cannot tell them apart, and does not pretend to.
 
 ## What to do next
 
-1. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
+1. **Combination turns.** Reading the October documents made this the obvious next thing:
+   Skills 5 to 8 is largely built from clusters — *bracket-counter*, *counter-3-turn*,
+   *choctaw-3-turn-rocker* — and a combination is not a new element but a new *type*, an
+   ordered chain in which each turn's exit is the next one's entry. `exitState` already
+   chains; what needs building is the content shape and a diagram that draws two or three
+   turns on one run of ice.
+
+   Running every explicitly-written intermediate edge in the BIS documents through
+   `exitState` gave nine agreements and one disagreement, and the disagreement looks like
+   an error in their brand-new Skills 6 document rather than in the model. That is the
+   strongest evidence the model has had, and it is an argument for building combinations
+   before anything else: the checking comes free.
+2. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
    edge, twizzles, loops. Most of it derives; see `sources/bis/MANIFEST.md` for the list
-   the Skills tests actually ask for.
-2. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
+   the Skills tests actually ask for. Twizzles are the one that will not fall out of the
+   current model.
+3. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
    style — should be settled before it is inherited by another few dozen diagrams. The
    hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
    phone, one-handed, under bad lighting. The index tables deliberately introduce no new
    colour, so as not to prejudge it.
-3. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
+4. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
    content: one or two poses each.
-4. **The British guide.** The documents are in `sources/bis/` and reviewed. See
+5. **The British guide.** The documents are in `sources/bis/` and reviewed. See
    `sources/bis/MANIFEST.md` for what is there, what is still missing, and how the
    documents may be used.
 
