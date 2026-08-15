@@ -49,6 +49,7 @@ almost no other resource provides.
     src/components/               EdgeDiagram and BodyFrame
     src/pages/rig.astro           the body-frame explorer
     src/pages/                    element and test pages
+    tools/gen-derived.mjs         writes the derived tier — edges and two-foot turns
     tools/                        verification scripts (see below)
     docs/model.md                 coordinate conventions and constants
 
@@ -59,7 +60,21 @@ Astro 7, Node 22.
     npm install
     npm run dev        # local site
     npm run build      # static output to dist/
-    npm run check      # harness, reach and shin checks
+    npm run check      # all seven checkers, then a build, then the link check
+
+## The derived tier is generated
+
+The eight plain edges and the thirty-two two-foot turns are written by
+`tools/gen-derived.mjs`, which imports `skating.js` and never restates any of it. The
+geometry costs nothing; the prose does not, so the script carries the prose and keys it
+on direction, edge and turn — never on the foot. A left forward outside bracket and a
+right forward outside bracket are mirror images, so they get the same words with "left"
+and "right" appearing in neither. The three letters differ; the skating does not.
+
+Existing files are never overwritten, so anything corrected by hand stays corrected:
+
+    npm run gen:derived            # write only what is missing
+    node tools/gen-derived.mjs --force
 
 ## One implementation, not two
 
@@ -93,8 +108,16 @@ not optional.
     node tools/shin.mjs           flag shin lean beyond what a stiff boot allows
     node tools/blade.mjs          flag boot pitch that would put a skater on the picks
     node tools/freefoot.mjs       flag a free boot hanging near-vertical
+    node tools/tracing.mjs        every lobe curves the way the model says it does
     node tools/contact-sheet.mjs waltz .   every keyframe of a move, side by side
+    node tools/page-shot.mjs out/ elements/ elements/lfo/   built pages at phone width
     node tools/links.mjs          every internal link in dist/ resolves to a real file
+
+`tracing.mjs` earns its place now that forty elements come out of one sign rule: a
+flipped sign would be wrong forty times and look perfectly plausible every time, because
+a curve on a screen is a curve either way round. It asserts the drawn lobe against
+`lobeSense` in ice coordinates, and the cusp direction against `rotatesInto`, for all
+forty combinations.
 
 The two screenshot tools need Playwright, which is not a dependency — the browser
 download is too heavy to inflict on anyone who only wants to build pages. They print

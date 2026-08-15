@@ -5,6 +5,9 @@ import { url } from '../lib/url.js';
 const elements = await getCollection('elements');
 const tests = await getCollection('tests');
 const byKind = k => elements.filter(e => e.data.kind === k);
+const featured = elements
+  .filter(e => !['edge', 'turn'].includes(e.data.kind))
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 <Base title={null}>
   <h1>Field Guide to Figure Skating</h1>
@@ -13,22 +16,31 @@ const byKind = k => elements.filter(e => e.data.kind === k);
     Built so it works at the rink with no signal.
   </p>
 
-  <h2>Elements</h2>
+  <h2>Start here</h2>
   <ul class="plain">
-    {elements.map(e => (
+    <li>
+      <a href={url('elements/')}>Edges and turns</a>
+      <span>
+        {byKind('edge').length} edges and {byKind('turn').length} two-foot turns, on both
+        feet, as one table you can read across or down
+      </span>
+    </li>
+    <li>
+      <a href={url('tests/')}>Tests</a>
+      <span>which syllabus each element belongs to — {tests.length} recorded so far</span>
+    </li>
+    <li>
+      <a href={url('rig/')}>Body frame</a>
+      <span>one rig, three views, one clock — what the rest of the body is doing</span>
+    </li>
+  </ul>
+
+  <h2>Mechanics</h2>
+  <ul class="plain">
+    {featured.map(e => (
       <li>
         <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
         <span>{e.data.summary}</span>
-      </li>
-    ))}
-  </ul>
-
-  <h2>Tests</h2>
-  <ul class="plain">
-    {tests.map(t => (
-      <li>
-        <a href={url(`tests/${t.id}/`)}>{t.data.name}</a>
-        <span>{t.data.governingBody} · {t.data.discipline} · {t.data.elements.length} elements</span>
       </li>
     ))}
   </ul>
@@ -47,7 +59,8 @@ const byKind = k => elements.filter(e => e.data.kind === k);
   </div>
 
   <p style="margin-top:1.5rem;font-size:.9rem;color:var(--ink-soft)">
-    {byKind('turn').length} turns, {byKind('jump').length} jumps, {byKind('position').length} positions
-    recorded so far. Early days.
+    {elements.length} elements recorded — {byKind('edge').length} edges,
+    {byKind('turn').length} turns, {byKind('jump').length} jumps,
+    {byKind('position').length} positions. None of it checked by a coach yet.
   </p>
 </Base>

@@ -8,7 +8,7 @@ jump:
   assisted: false
   rotations: 0.5
 rig: waltz
-prerequisites: [forward-outside-three-turn]
+prerequisites: [lfo-three]
 verified: { checked: false }
 ---
 

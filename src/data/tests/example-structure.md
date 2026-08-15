@@ -3,7 +3,7 @@ name: Example — how a test is recorded
 governingBody: BIS
 discipline: skills
 level: 0
-elements: [forward-outside-three-turn, back-outside-rocker, spiral]
+elements: [lfo-three, rbo-rocker, spiral]
 sourceUrl: https://www.iceskating.org.uk/test-information
 verified: { checked: false }
 ---

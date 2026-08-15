@@ -1,0 +1,21 @@
+---
+name: Right forward outside three turn
+kind: turn
+summary: RFO to RBI — half a turn into the circle, changing edge and staying on the same lobe.
+entry: { foot: R, edge: O, dir: F }
+turn: three
+prerequisites: [rfo]
+verified: { checked: false }
+---
+
+You glide forwards on the outside edge, rotate half a turn towards the centre of
+the circle you are already tracing, and come out backwards on the inside edge of the same
+foot. The tracing left on the ice makes the shape the turn is named for.
+
+The thing worth understanding is that the circle does not change. You start on it and you
+finish on it — only the edge and the direction you are facing change. That is what
+separates a three turn from a rocker, which looks similar and leaves you on a new circle
+curving the other way.
+
+Rotate towards the centre and the cusp points inwards. Rotate away and you have a bracket
+instead.

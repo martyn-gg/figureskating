@@ -1,20 +1,24 @@
 # State of play
 
-Written 15/08/2026, at the end of the first build session. Read this before changing
-anything; then `README.md` for the approach and `docs/model.md` for the geometry.
+Written 15/08/2026 at the end of the first build session, revised the same day once the
+derived tier went in. Read this before changing anything; then `README.md` for the
+approach and `docs/model.md` for the geometry.
 
 ## Where it stands
 
-The machinery is built and the content is barely started. That is deliberate — the
-expensive part is done and the cheap part is now genuinely cheap.
+The machinery was built first and the derived tier is now in it. That ordering is why
+forty elements arrived in an afternoon rather than over a winter.
 
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; six checkers that pass on a clean clone.
+worker; seven checkers that pass on a clean clone.
 
-**Barely started:** six elements, one example test, no exercises, no transcribed
-syllabus. The site is a working machine with almost nothing in it.
+**Content:** 46 elements — eight plain edges, thirty-two two-foot turns, three jumps and
+a spiral — plus one example test and no exercises. 49 pages build.
+
+**Barely started:** the syllabus half. Elements know what they are; nothing yet knows
+which test it belongs to, and no governing body's material has been read.
 
 **Not verified by anyone qualified:** all of it. Every element and test carries a
 `verified` flag defaulting to false, and unchecked pages render behind a banner saying
@@ -42,7 +46,7 @@ copies of an engine will drift, and this project keeps designing against exactly
 ## How to work on it
 
     npm install
-    npm run check      # harness, reach, shin, blade, freefoot, build, links
+    npm run check      # harness, reach, shin, blade, freefoot, tracing, build, links
     npm run dev
 
 `npm run check` must pass before and after any change. It is fast and it has caught
@@ -101,24 +105,72 @@ is. Use the checkers to flag; fix by hand; re-assert the hard constraints afterw
   them a fixed row, reserve heights, throttle DOM writes, and verify by measuring bounding
   boxes across ~45 consecutive frames.
 
+## The derived tier, and what generating it taught
+
+`tools/gen-derived.mjs` writes the eight edges and thirty-two turns. It imports
+`skating.js` and restates none of it, so no exit edge, cusp or mirror appears in any
+content file. What the script does carry is the prose, keyed on direction, edge and turn
+and **never on the foot** — a left forward outside bracket and a right one are mirror
+images, so they take the same words with "left" and "right" in neither. Sixteen turn
+passages and four edge passages cover all forty pages honestly. The text differs exactly
+where the skating differs.
+
+It refuses to overwrite an existing file, so a page corrected by a coach stays corrected.
+
+Two things came out of the multiplication:
+
+- **`tools/tracing.mjs`, the seventh checker.** Forty elements from one sign rule means a
+  flipped sign is wrong forty times and looks plausible every time — a curve on a screen
+  is a curve either way round. It asserts the drawn lobe against `lobeSense` in ice
+  coordinates and the cusp against `rotatesInto`, across all forty. Flipping the sign in
+  `edge-diagram.js` makes 104 assertions fail, which is the only evidence that a checker
+  is worth having.
+- **A flat list stopped working at forty.** `/elements/` is now an 8 × 4 matrix — entry
+  edge down the side, turn across the top, exit edge in the cell — with the two defining
+  bits of each turn in the column head, so the whole taxonomy is legible in one screen.
+  Each element page also lists the rest of its family, the other things you can do from
+  the edge you are standing on, which is how anyone will actually move around the guide.
+
 ## What to do next
 
-1. **Generate the derived tier.** All four turns across both feet, both edges and both
-   directions is thirty-two real elements, plus the plain edges — each already knowing its
-   exit edge, cusp, mirror and animation without a word being written. This takes the site
-   from a six-element toy to something with realistic density, which is a precondition for
-   any serious design work.
-2. **Then a visual design pass.** The diagram vocabulary — edge colours, leg colours,
-   marker style — should be settled before hundreds of diagrams inherit it. The brief's
-   hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a phone,
-   one-handed, under bad lighting.
-3. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
+1. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
+   style — should be settled now that forty diagrams inherit it rather than six. The
+   hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
+   phone, one-handed, under bad lighting. The index tables deliberately introduce no new
+   colour, so as not to prejudge it.
+2. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
    content: one or two poses each.
-4. **A real syllabus**, transcribed from published material with `sourceUrl` set and
-   `verified` only once confirmed.
-5. **Side-by-side correct versus common error** — Lutz beside flutz, shoulders checked
+3. **A real syllabus.** See "on reading the governing bodies" below — this is blocked on
+   documents, not on effort.
+4. **Side-by-side correct versus common error** — Lutz beside flutz, shoulders checked
    beside shoulders opening early. Same rig, two state tracks, one clock. Teaches something
    video cannot, because you can stop it and the two stay aligned.
+5. **The prose is a first draft by a non-expert**, and now there is forty times more of
+   it. The sixteen turn passages are the highest-value thing for a coach to read, because
+   correcting one fixes two pages.
+
+## On reading the governing bodies
+
+Worth writing down, because it keeps coming up.
+
+British Ice Skating publishes the *shape* of the Skills 1–8 framework on the open web —
+the five assessment pillars, the progression — but the element-level requirements live in
+PDFs (the Skills Handbook, the Skills Definitions, the per-level guidance) and coach
+material appears to sit behind a login. Fetching a page returns readable text; fetching a
+PDF does not. So the practical route is a human downloading the documents into the repo
+folder, after which they can be read directly.
+
+Two live constraints:
+
+- **BIS is changing the Skills curriculum on 01/10/2026.** Anything written against the
+  current syllabus before then is scheduled for rewriting. Ordering the US and Canadian
+  guides first is the cheaper sequence.
+- The old NISA **Field Moves** manuals still floating around club websites are legacy.
+  Do not build the schema around them.
+
+The house rule does not change: descriptions are written from scratch, diagrams drawn from
+scratch, and a syllabus entry carries `sourceUrl` and stays unverified until someone has
+checked it against the current published version.
 
 ## What needs a skater, not a developer
 

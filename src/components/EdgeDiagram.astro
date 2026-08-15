@@ -18,7 +18,7 @@ const m = mirror(entry);
   <figcaption>
     {caption ?? <>
       <b data-lab-entry data-a={label(entry)} data-b={label(mirror(entry))}>{label(entry)}</b>
-      {turn ? <> to <b data-lab-exit data-a={label(exit)} data-b={label(mirror(exit))}>{label(exit)}</b></> : null}.
+      {turn ? <> to <b data-lab-exit data-a={label(exit)} data-b={label(mirror(exit))}>{label(exit)}</b></> : null}.{' '}
       <span data-lab-note>A skater who rotates the other way traces <b>{label(m)}</b> — same element, generated not redrawn.</span>
     </>}
   </figcaption>

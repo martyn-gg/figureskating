@@ -2,20 +2,152 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
-const elements = (await getCollection('elements')).sort((a,b)=>a.data.name.localeCompare(b.data.name));
-const kinds = [...new Set(elements.map(e => e.data.kind))];
+import { label, exitState, describeEdge, TURNS } from '../../lib/skating.js';
+
+const elements = await getCollection('elements');
+
+/* The eight entry edges in the order the notation reads: foot, then direction,
+   then edge. Generated rather than listed, like everything else here. */
+const STATES = ['L', 'R'].flatMap(foot =>
+  ['F', 'B'].flatMap(dir => ['O', 'I'].map(edge => ({ foot, edge, dir }))));
+
+const TURN_KEYS = Object.keys(TURNS);
+
+/* Look an element up by what it *is*, not by a constructed slug — so a file
+   renamed by hand does not silently drop out of the table. */
+const find = (s, turn) => elements.find(e =>
+  e.data.entry && label(e.data.entry) === label(s) && (e.data.turn ?? null) === turn);
+
+const EDGE_ROWS = [['F', 'O'], ['F', 'I'], ['B', 'O'], ['B', 'I']];
+const ROW_WORD = { FO: 'forward outside', FI: 'forward inside',
+                   BO: 'backward outside', BI: 'backward inside' };
+
+const rest = elements
+  .filter(e => e.data.kind !== 'edge' && e.data.kind !== 'turn')
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+const restKinds = [...new Set(rest.map(e => e.data.kind))];
+
+const nEdges = elements.filter(e => e.data.kind === 'edge').length;
+const nTurns = elements.filter(e => e.data.kind === 'turn').length;
 ---
-<Base title="Elements">
+<Base title="Elements" subtitle="Every plain edge and two-foot turn, on both feet.">
   <h1>Elements</h1>
-  <p class="lede">Each element exists once and knows nothing about tests, so it can appear in as many as it likes.</p>
-  {kinds.map(k => (
+  <p class="lede">
+    {nEdges} edges and {nTurns} turns, on both feet — the geometry of every one of them
+    derived rather than drawn. Each element exists once and knows nothing about tests, so
+    it can appear in as many as it likes.
+  </p>
+
+  <h2>Edges</h2>
+  <p class="note">
+    Three letters: foot, direction, edge. The two columns are the same edge on either
+    foot — mirror images, which is why the guide only has to describe them once.
+  </p>
+  <table class="grid">
+    <thead>
+      <tr>
+        <th scope="col"><span class="vh">Edge</span></th>
+        <th scope="col">Left</th><th scope="col">Right</th>
+      </tr>
+    </thead>
+    <tbody>
+      {EDGE_ROWS.map(([dir, edge]) => (
+        <tr>
+          <th scope="row">{ROW_WORD[dir + edge]}</th>
+          {['L', 'R'].map(foot => {
+            const e = find({ foot, edge, dir }, null);
+            return <td>{e
+              ? <a href={url(`elements/${e.id}/`)} title={describeEdge({ foot, edge, dir })}>{label({ foot, edge, dir })}</a>
+              : <span class="gap">—</span>}</td>;
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2>Turns</h2>
+  <p class="note">
+    Every two-foot turn keeps the same foot and reverses the direction of travel. What is
+    left to vary is the edge and the rotation, and that is the whole table. Each cell shows
+    the edge you come out on.
+  </p>
+  <div class="scroller">
+    <table class="grid matrix">
+      <thead>
+        <tr>
+          <th scope="col">Entry</th>
+          {TURN_KEYS.map(k => (
+            <th scope="col">
+              {TURNS[k].name}
+              <span class="sub">
+                rotates {TURNS[k].rotatesInto ? 'into' : 'against'}<br />
+                edge {TURNS[k].edgeChanges ? 'changes' : 'holds'}
+              </span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {STATES.map(s => (
+          <tr>
+            <th scope="row">
+              {find(s, null)
+                ? <a href={url(`elements/${find(s, null).id}/`)} title={describeEdge(s)}>{label(s)}</a>
+                : label(s)}
+            </th>
+            {TURN_KEYS.map(k => {
+              const e = find(s, k);
+              return <td>{e
+                ? <a href={url(`elements/${e.id}/`)} title={e.data.name}>{label(exitState(s, k))}</a>
+                : <span class="gap">—</span>}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Across a row: what one edge can turn into. Down a column: what one turn does to every
+    edge it can start from.
+  </p>
+
+  {restKinds.map(k => (
     <>
-      <h2>{k}</h2>
+      <h2>{k === 'position' ? 'Positions' : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`}</h2>
       <ul class="plain">
-        {elements.filter(e => e.data.kind === k).map(e => (
+        {rest.filter(e => e.data.kind === k).map(e => (
           <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>
         ))}
       </ul>
     </>
   ))}
 </Base>
+
+<style>
+  .note{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.84rem;
+    color:var(--ink-soft);margin:.2rem 0 .9rem}
+  .scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.grid{border-collapse:collapse;width:100%;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem}
+  table.grid th,table.grid td{border:1px solid var(--ice-line);padding:.5rem .4rem;text-align:center}
+  table.grid thead th{background:var(--ice);color:var(--ink-soft);font-weight:600;
+    font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+  table.grid tbody th{background:var(--ice);text-align:left;font-weight:600;
+    white-space:nowrap;padding-left:.6rem}
+  table.grid a{text-decoration:none;font-variant-numeric:tabular-nums;letter-spacing:.03em;
+    display:block;padding:.15rem 0}
+  table.grid td a{font-weight:600}
+  table.grid a:hover{text-decoration:underline}
+  .gap{color:var(--ink-soft);opacity:.5}
+  /* The four turns differ only in these two bits, so putting them in the column
+     head makes the whole taxonomy legible without a word of explanation. */
+  table.grid thead th .sub{display:block;margin-top:.25rem;font-weight:400;
+    text-transform:none;letter-spacing:0;font-size:.62rem;line-height:1.3;opacity:.85}
+  .matrix tbody th{text-align:center;padding-left:.4rem}
+  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  @media (max-width:26rem){
+    table.grid{font-size:.8rem}
+    table.grid th,table.grid td{padding:.45rem .25rem}
+    table.grid thead th{font-size:.62rem;letter-spacing:.02em}
+  }
+</style>

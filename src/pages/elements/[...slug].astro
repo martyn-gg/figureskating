@@ -5,7 +5,7 @@ import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
-import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, LANDING, JUMPS, confusableWith } from '../../lib/skating.js';
+import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, lobeSense, LANDING, JUMPS, TURNS, confusableWith } from '../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -29,6 +29,20 @@ const shares = d.jump ? Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) =
   && JUMPS[k].name.toLowerCase() !== d.name.toLowerCase()) : [];
 const allElements = await getCollection('elements');
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
+
+/* Which way the tracing goes. Derived from the same function the diagram uses, so
+   the sentence and the picture cannot disagree. */
+const spin = d.entry ? (lobeSense(d.entry.foot, d.entry.edge, d.entry.dir) > 0 ? 'anticlockwise' : 'clockwise') : null;
+
+/* Everything else that starts on this entry edge. At six elements this was not worth
+   having; at forty it is the main way anyone will move around the guide. The plain
+   edge lists its four turns, a turn lists its three siblings and the edge itself. */
+const family = d.entry ? allElements.filter(e =>
+  e.data.entry && label(e.data.entry) === label(d.entry) && e.id !== entry.id
+  && (e.data.kind === 'edge' || e.data.kind === 'turn')
+  && !prereqs.some(p => p.id === e.id)) : [];
+const familyOrder = [null, ...Object.keys(TURNS)];
+family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.indexOf(b.data.turn ?? null));
 ---
 <Base title={d.name} subtitle={d.summary}>
   <h1>{d.name}</h1>
@@ -62,9 +76,9 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
     )}
     {turnLine && <p>{turnLine}</p>}
     {d.entry && !d.turn && (
-      <p>The entry edge {label(d.entry)} curves
-        {' '}{(d.entry.foot === 'L') === (d.entry.edge === 'O') === (d.entry.dir === 'F') ? 'anticlockwise' : ''}
-        {' '}as traced on the ice.</p>
+      <p>{label(d.entry)} traces {spin === 'anticlockwise' ? 'an' : 'a'} {spin} lobe seen from
+        above the ice. Change any one of the three letters and it curves the other way;
+        change two and it curves the same way again.</p>
     )}
     {d.jump && (
       <p>{[
@@ -95,6 +109,22 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
       <h2>Build on</h2>
       <ul class="plain">
         {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
+      </ul>
+    </>
+  )}
+
+  {family.length > 0 && (
+    <>
+      <h2>From {label(d.entry)}</h2>
+      <ul class="plain">
+        {family.map(f => (
+          <li>
+            <a href={url(`elements/${f.id}/`)}>{f.data.name}</a>
+            <span>{f.data.turn
+              ? `exits ${label(exitState(d.entry, f.data.turn))} · the edge ${TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
+              : 'the plain edge, with no turn on it'}</span>
+          </li>
+        ))}
       </ul>
     </>
   )}
