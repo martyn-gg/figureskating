@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edge Engine — prototype</title>
+<style>
+  :root{
+    --ice:#f2f7fb;
+    --ice-line:#d5e3ee;
+    --ink:#12303f;
+    --ink-soft:#5a7386;
+    --paper:#ffffff;
+    --edge-out:#0f766e;
+    --edge-in:#b45309;
+    --accent:#1d5a7a;
+    --rule:#dfe8ef;
+    --shadow:0 1px 2px rgba(18,48,63,.06),0 6px 20px rgba(18,48,63,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ice:#101c24; --ice-line:#20353f; --ink:#e6f0f5; --ink-soft:#8ba6b5;
+      --paper:#0b141a; --rule:#1e3038;
+      --edge-out:#5eead4; --edge-in:#fbbf24; --accent:#7fc4e3;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--paper); color:var(--ink);
+    font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+  header{border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:22px}
+  h1{font-size:1.35rem;margin:0 0 4px;letter-spacing:-.01em;font-weight:650}
+  header p{margin:0;color:var(--ink-soft);font-size:.92rem;max-width:62ch}
+
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:26px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+  .stage{background:var(--ice);border:1px solid var(--ice-line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  svg{display:block;width:100%;height:auto}
+
+  .transport{display:flex;align-items:center;gap:14px;padding:12px 16px;border-top:1px solid var(--ice-line)}
+  .transport button{
+    width:38px;height:38px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:14px;line-height:1;
+    display:grid;place-items:center;
+  }
+  .transport button:hover{border-color:var(--accent)}
+  input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+  .tcount{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:.82rem;min-width:3.2em;text-align:right}
+
+  .panel{display:flex;flex-direction:column;gap:20px}
+  .group h2{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px;font-weight:600}
+  .seg{display:flex;flex-wrap:wrap;gap:6px}
+  .seg button{
+    border:1px solid var(--rule);background:transparent;color:var(--ink);
+    padding:7px 12px;border-radius:9px;cursor:pointer;font-size:.87rem;font-family:inherit;
+  }
+  .seg button:hover{border-color:var(--accent)}
+  .seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){ .seg button[aria-pressed=true]{color:#08141a} }
+
+  .readout{border:1px solid var(--rule);border-radius:12px;padding:14px 16px;background:var(--ice)}
+  .call{font-size:1.05rem;font-weight:600;letter-spacing:-.01em;margin:0 0 10px}
+  .call .arrow{color:var(--ink-soft);font-weight:400;margin:0 6px}
+  dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:.86rem}
+  dt{color:var(--ink-soft)}
+  dd{margin:0;text-align:right;font-weight:500}
+  .note{font-size:.84rem;color:var(--ink-soft);margin:14px 0 0;line-height:1.5}
+  .note code{font-size:.95em;background:var(--ice);padding:1px 5px;border-radius:5px;border:1px solid var(--rule)}
+  .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:baseline;margin-right:5px}
+  label.chk{display:flex;align-items:center;gap:8px;font-size:.87rem;color:var(--ink-soft);cursor:pointer}
+  footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);color:var(--ink-soft);font-size:.84rem;max-width:70ch}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Edge engine — prototype</h1>
+  <p>One primitive renders every turn in the guide. A move is a path plus a state sequence (foot, edge, direction); the lobe geometry is <em>derived</em>, never hand-drawn.</p>
+</header>
+
+<div class="layout">
+
+  <div>
+    <div class="stage">
+      <svg id="rink" viewBox="0 0 900 520" role="img" aria-label="Animated skating edge diagram"></svg>
+      <div class="transport">
+        <button id="play" aria-label="Play or pause">❚❚</button>
+        <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Scrub through the move">
+        <span class="tcount" id="pct">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="group">
+      <h2>Turn</h2>
+      <div class="seg" id="turnSeg"></div>
+    </div>
+
+    <div class="group">
+      <h2>Entry edge</h2>
+      <div class="seg" id="footSeg"></div>
+      <div class="seg" id="edgeSeg" style="margin-top:6px"></div>
+      <div class="seg" id="dirSeg" style="margin-top:6px"></div>
+    </div>
+
+    <div class="readout">
+      <p class="call" id="call"></p>
+      <dl>
+        <dt>Edge</dt><dd id="rEdge"></dd>
+        <dt>Lobe</dt><dd id="rLobe"></dd>
+        <dt>Rotation</dt><dd id="rRot"></dd>
+        <dt>Cusp</dt><dd id="rCusp"></dd>
+      </dl>
+      <p class="note" id="why"></p>
+    </div>
+
+    <div class="group">
+      <h2>Display</h2>
+      <label class="chk"><input type="checkbox" id="showGuides" checked> Lobe guide circles</label>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="showAxis" checked> Long axis</label>
+    </div>
+
+    <p class="note" style="margin:0">
+      <span class="swatch" style="background:var(--edge-out)"></span>outside edge &nbsp;
+      <span class="swatch" style="background:var(--edge-in)"></span>inside edge
+    </p>
+  </div>
+</div>
+
+<footer>
+  Blade edges are drawn about ten times further apart than life, so you can see which one is biting.
+  The cusp depth is stylised too. Everything else — lobe curvature, rotation sense, cusp direction —
+  falls out of the rules rather than being drawn by hand.
+</footer>
+
+</div>
+
+<script type="module">
+/* ────────────────────────────────────────────────────────────────
+   edge-engine.js — portable, no dependencies.
+   Screen coords: x right, y DOWN. Positive kappa turns clockwise
+   on screen. Skating "anticlockwise" is therefore negative kappa.
+   ──────────────────────────────────────────────────────────────── */
+
+const TAU = Math.PI * 2, D2R = Math.PI / 180;
+
+/* Which way a lobe curves, from foot + edge + direction alone.
+   +1 = anticlockwise as seen from above the ice. */
+export function lobeSense(foot, edge, dir){
+  return (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * (dir === 'F' ? 1 : -1);
+}
+
+/* The whole turn taxonomy. Only two bits of information each:
+   does the edge change, and does the skater rotate into the lobe
+   or against it. Everything else is derived. */
+export const TURNS = {
+  three:   { name:'Three turn', edgeChanges:true,  rotatesInto:true  },
+  bracket: { name:'Bracket',    edgeChanges:true,  rotatesInto:false },
+  rocker:  { name:'Rocker',     edgeChanges:false, rotatesInto:true  },
+  counter: { name:'Counter',    edgeChanges:false, rotatesInto:false },
+};
+
+export function exitState(entry, turnKey){
+  const t = TURNS[turnKey];
+  return {
+    foot: entry.foot,                                   // never changes
+    edge: t.edgeChanges ? flip(entry.edge,'O','I') : entry.edge,
+    dir:  flip(entry.dir,'F','B'),                      // always reverses
+  };
+}
+const flip = (v,a,b) => v === a ? b : a;
+
+export const label = s => s.foot + s.dir + s.edge;      // LFO, RBI, …
+
+/* ── geometry ─────────────────────────────────────────────────── */
+
+function arc(x0, y0, th0, kappa, len, n){
+  const pts = [];
+  for(let i = 0; i <= n; i++){
+    const t = len * i / n;
+    let x, y;
+    if(Math.abs(kappa) < 1e-9){
+      x = x0 + Math.cos(th0) * t;
+      y = y0 + Math.sin(th0) * t;
+    } else {
+      x = x0 + (Math.sin(th0 + kappa*t) - Math.sin(th0)) / kappa;
+      y = y0 - (Math.cos(th0 + kappa*t) - Math.cos(th0)) / kappa;
+    }
+    pts.push({ x, y, th: th0 + kappa*t });
+  }
+  return pts;
+}
+
+/* Build the full sampled trace for one turn. */
+export function buildTrace(entry, turnKey, opt = {}){
+  const R      = opt.radius ?? 118;
+  const sweep  = (opt.sweep ?? 96) * D2R;
+  const cusp   = opt.cuspDepth ?? 15;
+  const N      = 220;
+
+  const t    = TURNS[turnKey];
+  const exit = exitState(entry, turnKey);
+
+  // sense → kappa. Anticlockwise on ice (+1) is negative kappa on screen.
+  const kIn  = -lobeSense(entry.foot, entry.edge, entry.dir) / R;
+  const kOut = -lobeSense(exit.foot,  exit.edge,  exit.dir)  / R;
+
+  const inPts  = arc(0, 0, 0, kIn, sweep * R, N);
+  const P      = inPts[inPts.length - 1];
+  const outPts = arc(P.x, P.y, P.th, kOut, sweep * R, N);
+
+  // Cusp apex: toward the entry lobe's centre if the skater rotates
+  // into the circle, away from it if against.
+  const centreDir = P.th + (Math.PI/2) * Math.sign(kIn);
+  const apexDir   = t.rotatesInto ? centreDir : centreDir + Math.PI;
+  const apex      = { x: P.x + Math.cos(apexDir)*cusp, y: P.y + Math.sin(apexDir)*cusp };
+
+  // Pull the samples either side of the turn into a point.
+  const W = 16;
+  const blend = (pts, fromEnd) => pts.map((p, i) => {
+    const d = fromEnd ? pts.length - 1 - i : i;
+    if(d > W) return p;
+    const w = Math.pow(1 - d / W, 1.7);
+    return { ...p, x: p.x + (apex.x - p.x)*w, y: p.y + (apex.y - p.y)*w };
+  });
+
+  const pts = [...blend(inPts, true), ...blend(outPts, false)];
+
+  // Body rotation: 180° across the turn, in the lobe's sense if
+  // rotating into the circle, against it if not.
+  const spin = (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI;
+  const turnIdx = inPts.length - 1;
+  const SPIN_W = 26;
+
+  const frames = pts.map((p, i) => {
+    const past  = i > turnIdx;
+    const state = past ? exit : entry;
+    const d     = (i - turnIdx) / SPIN_W;                  // −1 … +1 across the turn
+    const u     = Math.min(1, Math.max(0, (d + 1) / 2));
+    const ease  = u*u*(3 - 2*u);                           // smoothstep
+    const base  = p.th + (entry.dir === 'B' ? Math.PI : 0);
+    return { x:p.x, y:p.y, angle: base + spin*ease, state, past };
+  });
+
+  return { frames, apex, entry, exit, turn:t, turnKey, kIn, kOut, R, turnIdx,
+           turnPoint:P, centreIn:centre(0,0,0,kIn), centreOut:centre(P.x,P.y,P.th,kOut) };
+}
+
+function centre(x, y, th, k){
+  const dir = th + (Math.PI/2) * Math.sign(k);
+  const r = Math.abs(1/k);
+  return { x: x + Math.cos(dir)*r, y: y + Math.sin(dir)*r, r };
+}
+
+/* ── rendering ────────────────────────────────────────────────── */
+
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a = {}) => { const e = document.createElementNS(NS, n);
+  for(const k in a) e.setAttribute(k, a[k]); return e; };
+
+/* Boot glyph, top-down, toe at +x. The skater's left is −y in local
+   coords (a person facing right has their left toward the top). */
+function boot(state){
+  const g = el('g');
+  const onLeft = (state.foot === 'L') === (state.edge === 'O');
+  const y = onLeft ? -4.2 : 4.2;
+  const col = state.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)';
+
+  g.appendChild(el('line', { x1:-17, y1:-4.2, x2:19, y2:-4.2,
+    stroke:'var(--ink-soft)', 'stroke-width':1.4, opacity:.35, 'stroke-linecap':'round' }));
+  g.appendChild(el('line', { x1:-17, y1:4.2, x2:19, y2:4.2,
+    stroke:'var(--ink-soft)', 'stroke-width':1.4, opacity:.35, 'stroke-linecap':'round' }));
+  g.appendChild(el('line', { x1:-17, y1:y, x2:19, y2:y,
+    stroke:col, 'stroke-width':3.4, 'stroke-linecap':'round' }));
+
+  g.appendChild(el('path', {
+    d:'M -18 -8 L 5 -9.5 Q 16 -8.5 18 0 Q 16 8.5 5 9.5 L -18 8 Q -21.5 0 -18 -8 Z',
+    fill:'var(--paper)', stroke:'var(--ink)', 'stroke-width':1.9, 'stroke-linejoin':'round' }));
+  g.appendChild(el('circle', { cx:13, cy:0, r:1.8, fill:'var(--ink)', opacity:.5 }));
+  return g;
+}
+
+const svg = document.getElementById('rink');
+
+function render(trace, ui){
+  svg.textContent = '';
+  const { frames, entry, exit } = trace;
+
+  // fit the view to the trace
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for(const f of frames){ x0=Math.min(x0,f.x); y0=Math.min(y0,f.y); x1=Math.max(x1,f.x); y1=Math.max(y1,f.y); }
+  const pad = 78, w = x1-x0+pad*2, h = y1-y0+pad*2;
+  const scale = Math.min(900/w, 520/h);
+  const root = el('g', { transform:
+    `translate(${(900 - w*scale)/2 - (x0-pad)*scale} ${(520 - h*scale)/2 - (y0-pad)*scale}) scale(${scale})` });
+  svg.appendChild(root);
+
+  // ice texture
+  if(ui.axis){
+    const a = frames[0], b = frames[frames.length-1];
+    root.appendChild(el('line', { x1:x0-pad, y1:(y0+y1)/2, x2:x1+pad, y2:(y0+y1)/2,
+      stroke:'var(--ice-line)', 'stroke-width':1.5/scale, 'stroke-dasharray':`${10/scale} ${8/scale}` }));
+  }
+  if(ui.guides){
+    for(const c of [trace.centreIn, trace.centreOut]){
+      root.appendChild(el('circle', { cx:c.x, cy:c.y, r:c.r, fill:'none',
+        stroke:'var(--ice-line)', 'stroke-width':1.4/scale }));
+      root.appendChild(el('circle', { cx:c.x, cy:c.y, r:2.4/scale, fill:'var(--ice-line)' }));
+    }
+  }
+
+  // trace: full path faint, travelled path solid, split at the turn
+  const d = pts => pts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+  root.appendChild(el('path', { d:d(frames), fill:'none', stroke:'var(--ink)',
+    opacity:.13, 'stroke-width':2.6/scale, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+
+  const drawn = el('path', { fill:'none', 'stroke-width':3.4/scale,
+    'stroke-linecap':'round', 'stroke-linejoin':'round' });
+  const drawn2 = el('path', { fill:'none', 'stroke-width':3.4/scale,
+    'stroke-linecap':'round', 'stroke-linejoin':'round' });
+  root.appendChild(drawn); root.appendChild(drawn2);
+
+  // edge labels
+  const tag = (f, txt, colour) => {
+    const g = el('g', { transform:`translate(${f.x} ${f.y})` });
+    const s = el('g', { transform:`scale(${1/scale})` });
+    const t = el('text', { x:0, y:0, 'text-anchor':'middle',
+      'font-size':13, 'font-weight':600, 'font-family':'inherit',
+      fill:colour, stroke:'var(--ice)', 'stroke-width':4, 'paint-order':'stroke' });
+    t.textContent = txt; s.appendChild(t); g.appendChild(s); return g;
+  };
+  const inMid = frames[Math.floor(trace.turnIdx*0.42)];
+  const outMid = frames[Math.floor(trace.turnIdx + (frames.length-trace.turnIdx)*0.62)];
+  const off = (f, dy) => ({ x:f.x, y:f.y + dy });
+  root.appendChild(tag(off(inMid,-30/scale), label(entry), entry.edge==='O'?'var(--edge-out)':'var(--edge-in)'));
+  root.appendChild(tag(off(outMid,-30/scale), label(exit), exit.edge==='O'?'var(--edge-out)':'var(--edge-in)'));
+
+  const bootG = el('g');
+  root.appendChild(bootG);
+
+  return {
+    seek(i){
+      const f = frames[Math.min(frames.length-1, Math.max(0, Math.round(i)))];
+      const cut = Math.min(Math.round(i), trace.turnIdx);
+      drawn.setAttribute('d', d(frames.slice(0, cut+1)));
+      drawn.setAttribute('stroke', entry.edge==='O'?'var(--edge-out)':'var(--edge-in)');
+      if(Math.round(i) > trace.turnIdx){
+        drawn2.setAttribute('d', d(frames.slice(trace.turnIdx, Math.round(i)+1)));
+        drawn2.setAttribute('stroke', exit.edge==='O'?'var(--edge-out)':'var(--edge-in)');
+      } else drawn2.setAttribute('d','');
+      bootG.textContent = '';
+      const g = el('g', { transform:
+        `translate(${f.x} ${f.y}) rotate(${f.angle*180/Math.PI}) scale(${Math.min(1, 1.15/scale)})` });
+      g.appendChild(boot(f.state));
+      bootG.appendChild(g);
+    },
+    length: frames.length
+  };
+}
+
+/* ── UI ───────────────────────────────────────────────────────── */
+
+const state = { turn:'three', foot:'L', edge:'O', dir:'F', playing:true, i:0 };
+const ui = { guides:true, axis:true };
+
+function seg(id, items, key){
+  const box = document.getElementById(id);
+  box.textContent = '';
+  for(const [val, txt] of items){
+    const b = document.createElement('button');
+    b.textContent = txt;
+    b.setAttribute('aria-pressed', state[key] === val);
+    b.onclick = () => { state[key] = val; state.i = 0; rebuild(); };
+    box.appendChild(b);
+  }
+}
+
+let view = null;
+
+function rebuild(){
+  seg('turnSeg', Object.entries(TURNS).map(([k,v]) => [k, v.name]), 'turn');
+  seg('footSeg', [['L','Left foot'],['R','Right foot']], 'foot');
+  seg('edgeSeg', [['O','Outside'],['I','Inside']], 'edge');
+  seg('dirSeg',  [['F','Forward'],['B','Backward']], 'dir');
+
+  const entry = { foot:state.foot, edge:state.edge, dir:state.dir };
+  const trace = buildTrace(entry, state.turn);
+  view = render(trace, ui);
+  document.getElementById('scrub').max = trace.frames.length - 1;
+
+  const t = trace.turn, ex = trace.exit;
+  const reversed = Math.sign(trace.kIn) !== Math.sign(trace.kOut);
+  document.getElementById('call').innerHTML =
+    `${label(entry)} <span class="arrow">${t.name.toLowerCase()} →</span> ${label(ex)}`;
+  document.getElementById('rEdge').textContent = t.edgeChanges ? 'changes' : 'holds';
+  document.getElementById('rLobe').textContent = reversed ? 'reverses' : 'continues';
+  document.getElementById('rRot').textContent  = t.rotatesInto ? 'into the circle' : 'against it';
+  document.getElementById('rCusp').textContent = t.rotatesInto ? 'points inward' : 'points outward';
+  document.getElementById('why').innerHTML =
+    `Nothing here is drawn by hand. The lobe is <code>foot × edge × direction</code>; ` +
+    `the ${t.name.toLowerCase()} ${t.edgeChanges ? 'changes the edge' : 'holds the edge'} and always ` +
+    `reverses the direction, so the product ${reversed ? 'flips and a new lobe begins' : 'is unchanged and the circle continues'}.`;
+  view.seek(state.i);
+}
+
+const playBtn = document.getElementById('play');
+const scrub   = document.getElementById('scrub');
+const pct     = document.getElementById('pct');
+
+playBtn.onclick = () => { state.playing = !state.playing; playBtn.textContent = state.playing ? '❚❚' : '▶'; };
+scrub.oninput = () => { state.playing = false; playBtn.textContent = '▶'; state.i = +scrub.value; view.seek(state.i); update(); };
+document.getElementById('showGuides').onchange = e => { ui.guides = e.target.checked; rebuild(); };
+document.getElementById('showAxis').onchange   = e => { ui.axis   = e.target.checked; rebuild(); };
+
+function update(){
+  scrub.value = state.i;
+  pct.textContent = Math.round(100 * state.i / (view.length - 1)) + '%';
+}
+
+let last = performance.now();
+function tick(now){
+  const dt = Math.min(64, now - last); last = now;
+  if(state.playing && view){
+    state.i += dt * 0.085;
+    if(state.i >= view.length - 1) state.i = 0;
+    view.seek(state.i); update();
+  }
+  requestAnimationFrame(tick);
+}
+rebuild(); update(); requestAnimationFrame(tick);
+</script>
+</body>
+</html>
