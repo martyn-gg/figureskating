@@ -35,7 +35,7 @@ function iceSense(frames, a, b) {
   return -Math.sign(dth);
 }
 
-const COMBINATIONS = STATES.length * (1 + Object.keys(ALL_TURNS).length);
+const COMBINATIONS = STATES.length * (1 + Object.keys(ALL_TURNS).length + 8);
 console.log(`tracing direction (the picture against the rule, all ${COMBINATIONS} combinations)\n`);
 
 for (const s of STATES) {
@@ -85,6 +85,48 @@ for (const s of STATES) for (const turnKey of Object.keys(ALL_TURNS)) {
   const inward = r < Math.abs(1 / k);
   if (inward !== t.rotatesInto)
     fail(`${name}: cusp points ${inward ? 'into' : 'out of'} the circle, should be the other way`);
+}
+
+/* Combinations chain the same rule, so the drawing must chain with it: one mark per
+   turn, in order, each with the right kind of join and the right lobe after it. A
+   cluster that quietly drew two turns where three were asked for would look entirely
+   plausible. */
+const CHAINS = [
+  ['three', 'three'], ['three', 'mohawk'], ['rocker', 'counter'], ['bracket', 'counter'],
+  ['counter', 'three'], ['counter', 'mohawk'], ['rocker', 'choctaw'],
+  ['choctaw', 'three', 'rocker'],
+];
+
+for (const s of STATES) for (const chain of CHAINS) {
+  const { frames, marks, states } = buildTrace({ entry: s, turns: chain });
+  const name = `${label(s)} ${chain.join('-')}`;
+
+  if (marks.length !== chain.length) {
+    fail(`${name}: ${marks.length} turns drawn, ${chain.length} asked for`); continue;
+  }
+  if (states.length !== chain.length + 1) { fail(`${name}: wrong number of states`); continue; }
+
+  for (let n = 0; n < chain.length; n++) {
+    const t = ALL_TURNS[chain[n]];
+    if (marks[n].stepped !== !!t.changesFoot)
+      fail(`${name}: turn ${n + 1} (${chain[n]}) drawn as a ${marks[n].stepped ? 'step' : 'pivot'}`);
+    if (label(states[n + 1]) !== label(exitState(states[n], chain[n])))
+      fail(`${name}: turn ${n + 1} lands on the wrong edge`);
+
+    const a = n === 0 ? 0 : marks[n - 1].idx + (marks[n - 1].stepped ? 1 : 0);
+    const seg = iceSense(frames, a, marks[n].idx);
+    if (seg !== lobeSense(states[n].foot, states[n].edge, states[n].dir))
+      fail(`${name}: the lobe into turn ${n + 1} curves the wrong way`);
+  }
+  const last = marks.at(-1);
+  const tail = iceSense(frames, last.idx + (last.stepped ? 1 : 0), frames.length - 1);
+  const x = states.at(-1);
+  if (tail !== lobeSense(x.foot, x.edge, x.dir)) fail(`${name}: the exit lobe curves the wrong way`);
+
+  /* Marks must run in order along the tracing, or the animation would rotate the
+     skater through a turn it has not reached yet. */
+  for (let n = 1; n < marks.length; n++)
+    if (marks[n].idx <= marks[n - 1].idx) fail(`${name}: turn ${n + 1} is drawn before turn ${n}`);
 }
 
 if (failures) { console.error(`\n${failures} tracing check(s) failed`); process.exit(1); }

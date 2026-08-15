@@ -14,8 +14,12 @@ exercises; an animated edge diagram on any element with an entry edge; the three
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
 worker; seven checkers that pass on a clean clone.
 
-**Content:** 62 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
-turns, three jumps and a spiral — plus one example test and no exercises. 65 pages build.
+**Content:** 124 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, sixty-four clusters, three jumps and a spiral — plus one example test and no
+exercises. 129 pages build, 2,820 internal links resolve.
+
+*(An earlier revision of this file said 46 and then 62. Both were wrong by two — I was
+adding up rather than counting the files. Count with `ls src/data/elements | wc -l`.)*
 
 **A terminology correction worth keeping.** The first draft of this repository called
 three turns, brackets, rockers and counters "two-foot turns". They are not: BIS defines a
@@ -156,32 +160,39 @@ must not have one. Fifty-six combinations checked.
 Open and closed are free-foot placement, not tracing, so each is one element rather than
 two. The diagram cannot tell them apart, and does not pretend to.
 
+## Clusters
+
+Sixty-four of them: eight named runs of turns across all eight entry edges. A cluster
+stores its entry edge and the order of its turns and nothing else; every edge in between
+is chained out of `exitState`, which is why a run of three costs no more to add than one.
+
+`CLUSTERS` lives in `skating.js` rather than in the generator, so the page that lists them
+and the script that writes them cannot end up calling the same thing two different things.
+
+The drawing was the work. `buildTrace` now walks a chain, joining each turn with a cusp or
+a step as that turn requires, and `mount` paints one segment per edge so the colour changes
+under the boot as the skater changes edge. `tracing.mjs` grew a chain pass: one mark per
+turn, in order, each with the right kind of join, the right lobe before it and the right
+edge after it. Pushing one wrong state into a chain fails 168 assertions.
+
+The prose is keyed on the cluster and on direction only — a weaker key than the single
+turns use, and deliberately so. What makes a rocker-counter hard is the rocker-counter;
+what changes it most is whether you can see where you are going.
+
 ## What to do next
 
-1. **Combination turns.** Reading the October documents made this the obvious next thing:
-   Skills 5 to 8 is largely built from clusters — *bracket-counter*, *counter-3-turn*,
-   *choctaw-3-turn-rocker* — and a combination is not a new element but a new *type*, an
-   ordered chain in which each turn's exit is the next one's entry. `exitState` already
-   chains; what needs building is the content shape and a diagram that draws two or three
-   turns on one run of ice.
-
-   Running every explicitly-written intermediate edge in the BIS documents through
-   `exitState` gave nine agreements and one disagreement, and the disagreement looks like
-   an error in their brand-new Skills 6 document rather than in the model. That is the
-   strongest evidence the model has had, and it is an argument for building combinations
-   before anything else: the checking comes free.
-2. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
+1. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
    edge, twizzles, loops. Most of it derives; see `sources/bis/MANIFEST.md` for the list
    the Skills tests actually ask for. Twizzles are the one that will not fall out of the
    current model.
-3. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
+2. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
    style — should be settled before it is inherited by another few dozen diagrams. The
    hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
    phone, one-handed, under bad lighting. The index tables deliberately introduce no new
    colour, so as not to prejudge it.
-4. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
+3. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
    content: one or two poses each.
-5. **The British guide.** The documents are in `sources/bis/` and reviewed. See
+4. **The British guide.** The documents are in `sources/bis/` and reviewed. See
    `sources/bis/MANIFEST.md` for what is there, what is still missing, and how the
    documents may be used.
 

@@ -5,7 +5,7 @@ import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
-import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
+import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -23,6 +23,10 @@ const tests = (await getCollection('tests')).filter(t => t.data.elements.some(r 
 /* Nothing below is stored on the element. */
 const turnLine = d.entry && d.turn ? describeTurn(d.entry, d.turn) : null;
 const turnExit = d.entry && d.turn ? exitState(d.entry, d.turn) : null;
+/* A cluster: every edge it passes through, derived by chaining. */
+const chain = d.turns ?? null;
+const chainRoute = chain ? chainStates(d.entry, chain) : null;
+const chainLine = chain ? describeChain(d.entry, chain) : null;
 const mirrored = d.entry ? mirror(d.entry) : null;
 const mirrorJump = d.jump ? { takeoff: mirror(d.jump.takeoff), landing: mirror(d.jump.landing) } : null;
 const shares = d.jump ? Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(d.jump.takeoff)
@@ -41,6 +45,11 @@ const family = d.entry ? allElements.filter(e =>
   e.data.entry && label(e.data.entry) === label(d.entry) && e.id !== entry.id
   && (e.data.kind === 'edge' || e.data.kind === 'turn')
   && !prereqs.some(p => p.id === e.id)) : [];
+/* Clusters starting here get their own list. Folded into the one above they would
+   bury the single turns, which are what most people arrive looking for. */
+const clusters = d.entry ? allElements.filter(e =>
+  e.data.kind === 'combination' && e.data.entry && label(e.data.entry) === label(d.entry)
+  && e.id !== entry.id).sort((a, b) => a.data.turns.length - b.data.turns.length) : [];
 const familyOrder = [null, ...Object.keys(ALL_TURNS)];
 family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.indexOf(b.data.turn ?? null));
 ---
@@ -52,6 +61,12 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
     <span class="chip">{d.kind}</span>
     {d.entry && <span class="chip">entry <b><Edge state={d.entry} /></b></span>}
     {turnExit && <span class="chip">exit <b><Edge state={turnExit} /></b></span>}
+    {chainRoute && <span class="chip">exit <b><Edge state={chainRoute.at(-1)} /></b></span>}
+    {chain && <span class="chip"><b>{chain.length}</b> turns</span>}
+    {chainRoute && new Set(chainRoute.map(st => st.foot)).size === 1
+      && <span class="chip">one foot throughout</span>}
+    {chainRoute && chainReturns(d.entry, chain)
+      && <span class="chip">returns to <b><Edge state={d.entry} /></b></span>}
     {d.jump && <span class="chip">takeoff <b><Edge state={d.jump.takeoff} /></b></span>}
     {d.jump && <span class="chip">landing <b><Edge state={d.jump.landing} /></b></span>}
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
@@ -60,7 +75,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
 
   <Unverified verified={d.verified} />
 
-  {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} />}
+  {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} turns={d.turns ?? null} />}
   {d.rig && <BodyFrame move={d.rig} />}
 
   <Content />
@@ -75,7 +90,13 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
       </p>
     )}
     {turnLine && <p>{turnLine}</p>}
-    {d.entry && !d.turn && (
+    {chainLine && <p>{chainLine}</p>}
+    {chainRoute && (
+      <p>Nothing above is stored on this page. The cluster records its entry edge and the
+        order of its turns; every edge in between is chained out of the same rule that
+        draws a single turn, which is why a cluster costs no more to add than a turn does.</p>
+    )}
+    {d.entry && !d.turn && !d.turns && (
       <p>{label(d.entry)} traces {spin === 'anticlockwise' ? 'an' : 'a'} {spin} lobe seen from
         above the ice. Change any one of the three letters and it curves the other way;
         change two and it curves the same way again.</p>
@@ -123,6 +144,20 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
             <span>{f.data.turn
               ? `exits ${label(exitState(d.entry, f.data.turn))} · ${ALL_TURNS[f.data.turn].changesFoot ? 'changes foot' : 'same foot'}, the edge ${ALL_TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
               : 'the plain edge, with no turn on it'}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {clusters.length > 0 && (
+    <>
+      <h2>Clusters from {label(d.entry)}</h2>
+      <ul class="plain">
+        {clusters.map(c => (
+          <li>
+            <a href={url(`elements/${c.id}/`)}>{c.data.name}</a>
+            <span>{chainStates(d.entry, c.data.turns).map(label).join(' → ')}</span>
           </li>
         ))}
       </ul>

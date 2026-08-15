@@ -35,67 +35,85 @@ const kappaOf = (s, R) => -lobeSense(s.foot, s.edge, s.dir) / R;
    leaves rather than on top of it. Drawn wider than life, like the edges. */
 const STEP_OFFSET = 11;
 
-export function buildTrace({ entry, turn, radius = 120, sweep = 96, cuspDepth = 15 }) {
+const smoothstep = u => { const c = Math.min(1, Math.max(0, u)); return c * c * (3 - 2 * c); };
+
+/* One turn or a cluster of them — the difference is only how many times round the
+   loop. Pass `turn` for a single turn or `turns` for a chain; a chain shortens each
+   segment so three turns still fit on a phone. */
+export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth = 15 }) {
   const N = 200;
-  if (!turn) {
-    const pts = arc(0, 0, 0, kappaOf(entry, radius), radius * sweep * 1.6 * D2R, N);
+  const chain = turns?.length ? turns : (turn ? [turn] : []);
+  const span = sweep ?? (chain.length > 1 ? 66 : 96);
+
+  if (!chain.length) {
+    const pts = arc(0, 0, 0, kappaOf(entry, radius), radius * 96 * 1.6 * D2R, N);
     return { frames: pts.map(p => ({ ...p, state: entry, angle: p.th + (entry.dir === 'B' ? Math.PI : 0) })),
-             entry, exit: entry, turnIdx: pts.length - 1, stepped: false };
+             entry, exit: entry, states: [entry], marks: [], turnIdx: pts.length - 1, stepped: false };
   }
 
-  const t = ALL_TURNS[turn];
-  const exit = exitState(entry, turn);
-  const kIn = kappaOf(entry, radius), kOut = kappaOf(exit, radius);
-  const inPts = arc(0, 0, 0, kIn, sweep * radius * D2R, N);
-  const P = inPts[inPts.length - 1];
-  const centreDir = P.th + (Math.PI / 2) * Math.sign(kIn);
-  const turnIdx = inPts.length - 1;
-
-  /* A two-foot turn does not pivot, so there is nothing to draw a cusp with. The
-     new blade goes down beside the skating foot, on the inside, and the old
-     tracing simply stops. Faking a cusp here would draw a turn that is not the
-     one being described. */
-  if (t.changesFoot) {
-    const ox = P.x + Math.cos(centreDir) * STEP_OFFSET;
-    const oy = P.y + Math.sin(centreDir) * STEP_OFFSET;
-    const outPts = arc(ox, oy, P.th, kOut, sweep * radius * D2R, N);
-    const pts = [...inPts, ...outPts];
-    const frames = pts.map((p, i) => {
-      const state = i > turnIdx ? exit : entry;
-      return { x: p.x, y: p.y, th: p.th, state,
-               angle: p.th + (state.dir === 'B' ? Math.PI : 0) };
-    });
-    return { frames, entry, exit, turnIdx, stepped: true };
-  }
-
-  const outPts = arc(P.x, P.y, P.th, kOut, sweep * radius * D2R, N);
-
-  /* The cusp points into the circle when the skater rotates into it, out of it
-     when they rotate against it — which is the whole difference between a three
-     turn and a bracket. */
-  const apexDir = t.rotatesInto ? centreDir : centreDir + Math.PI;
-  const apex = { x: P.x + Math.cos(apexDir) * cuspDepth, y: P.y + Math.sin(apexDir) * cuspDepth };
-
+  const L = span * radius * D2R;
   const W = 16;
-  const blend = (pts, fromEnd) => pts.map((p, i) => {
-    const d = fromEnd ? pts.length - 1 - i : i;
-    if (d > W) return p;
-    const w = Math.pow(1 - d / W, 1.7);
-    return { ...p, x: p.x + (apex.x - p.x) * w, y: p.y + (apex.y - p.y) * w };
-  });
+  let pts = arc(0, 0, 0, kappaOf(entry, radius), L, N);
+  let state = entry;
+  const states = [entry];
+  const marks = [];              // one per turn: where it happens and what kind
 
-  const pts = [...blend(inPts, true), ...blend(outPts, false)];
-  const spin = (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI;
+  for (const key of chain) {
+    const t = ALL_TURNS[key];
+    const next = exitState(state, key);
+    const kIn = kappaOf(state, radius), kOut = kappaOf(next, radius);
+    const P = pts[pts.length - 1];
+    const centreDir = P.th + (Math.PI / 2) * Math.sign(kIn);
+    const idx = pts.length - 1;
 
+    if (t.changesFoot) {
+      /* A two-foot turn does not pivot, so there is nothing to draw a cusp with.
+         The new blade goes down beside the skating foot, on the inside, and the
+         old tracing simply stops. Faking a cusp would draw a different turn. */
+      const ox = P.x + Math.cos(centreDir) * STEP_OFFSET;
+      const oy = P.y + Math.sin(centreDir) * STEP_OFFSET;
+      pts = [...pts, ...arc(ox, oy, P.th, kOut, L, N)];
+      marks.push({ idx, stepped: true, spin: Math.PI, key });
+    } else {
+      /* The cusp points into the circle when the skater rotates into it, out of it
+         when they rotate against it — the whole difference between a three turn
+         and a bracket. */
+      const apexDir = t.rotatesInto ? centreDir : centreDir + Math.PI;
+      const apex = { x: P.x + Math.cos(apexDir) * cuspDepth, y: P.y + Math.sin(apexDir) * cuspDepth };
+      const out = arc(P.x, P.y, P.th, kOut, L, N);
+      const pull = (p, d) => {
+        if (d > W) return p;
+        const w = Math.pow(1 - d / W, 1.7);
+        return { ...p, x: p.x + (apex.x - p.x) * w, y: p.y + (apex.y - p.y) * w };
+      };
+      pts = [
+        ...pts.map((p, i) => (i > idx - W ? pull(p, idx - i) : p)),
+        ...out.map((p, i) => pull(p, i)),
+      ];
+      marks.push({ idx, stepped: false, spin: (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI, key });
+    }
+    state = next;
+    states.push(next);
+  }
+
+  /* State and heading per frame. Each turn contributes half a revolution to the
+     way the skater faces — smoothed through a pivot, instant through a step. */
+  const stateAt = i => {
+    let s = 0;
+    for (const m of marks) if (i > m.idx) s++;
+    return states[s];
+  };
   const frames = pts.map((p, i) => {
-    const past = i > turnIdx;
-    const d = (i - turnIdx) / 26;
-    const u = Math.min(1, Math.max(0, (d + 1) / 2));
-    return { x: p.x, y: p.y, th: p.th, state: past ? exit : entry,
-             angle: p.th + (entry.dir === 'B' ? Math.PI : 0) + spin * (u * u * (3 - 2 * u)) };
+    let a = p.th + (entry.dir === 'B' ? Math.PI : 0);
+    for (const m of marks) {
+      a += m.spin * (m.stepped ? (i > m.idx ? 1 : 0)
+                               : smoothstep(((i - m.idx) / 26 + 1) / 2));
+    }
+    return { x: p.x, y: p.y, th: p.th, state: stateAt(i), angle: a };
   });
 
-  return { frames, entry, exit, turnIdx, stepped: false };
+  return { frames, entry, exit: states.at(-1), states, marks,
+           turnIdx: marks[0].idx, stepped: marks.some(m => m.stepped) };
 }
 
 function boot(state, foot) {
@@ -132,31 +150,39 @@ export function mount(svg, opts) {
   svg.appendChild(root);
 
   const d = pts => pts.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
-  /* On a two-foot turn the ghost path has to break, or the picture shows one
-     continuous tracing where the ice would carry two. */
-  const ghost = trace.stepped
-    ? `${d(frames.slice(0, trace.turnIdx + 1))} ${d(frames.slice(trace.turnIdx + 1))}`
-    : d(frames);
-  root.appendChild(el('path', { d: ghost, fill: 'none', stroke: 'var(--ink)', opacity: .13,
+
+  /* One drawn segment per edge the skater is on, so a cluster shows its own
+     colour changing under the boot rather than one flat line. A segment after a
+     step starts one frame later — that gap is the two blades. */
+  const segments = [];
+  let from = 0;
+  for (const m of trace.marks) {
+    segments.push({ from, to: m.idx, state: trace.states[segments.length], gapAfter: m.stepped });
+    from = m.idx + (m.stepped ? 1 : 0);
+  }
+  segments.push({ from, to: frames.length - 1, state: trace.states.at(-1), gapAfter: false });
+
+  root.appendChild(el('path', {
+    d: segments.map(g => d(frames.slice(g.from, g.to + 1))).join(' '),
+    fill: 'none', stroke: 'var(--ink)', opacity: .13,
     'stroke-width': 2.6 / s, 'stroke-linecap': 'round' }));
 
-  const drawnIn = el('path', { fill: 'none', 'stroke-width': 3.4 / s, 'stroke-linecap': 'round',
-    stroke: entry.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)' });
-  const drawnOut = el('path', { fill: 'none', 'stroke-width': 3.4 / s, 'stroke-linecap': 'round',
-    stroke: exit.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)' });
-  root.append(drawnIn, drawnOut);
+  const drawn = segments.map(g => el('path', { fill: 'none', 'stroke-width': 3.4 / s,
+    'stroke-linecap': 'round',
+    stroke: g.state.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)' }));
+  root.append(...drawn);
   const bootG = el('g');
   root.appendChild(bootG);
 
   let i = 0, playing = true, last = 0, raf = 0, speed = 1;
   const seek = n => {
     i = Math.min(frames.length - 1, Math.max(0, n));
-    const cut = Math.min(Math.round(i), trace.turnIdx);
-    const from = trace.stepped ? trace.turnIdx + 1 : trace.turnIdx;
-    drawnIn.setAttribute('d', d(frames.slice(0, cut + 1)));
-    drawnOut.setAttribute('d', Math.round(i) > trace.turnIdx
-      ? d(frames.slice(from, Math.round(i) + 1)) : '');
-    const f = frames[Math.round(i)];
+    const now = Math.round(i);
+    segments.forEach((g, k) => {
+      const to = Math.min(now, g.to);
+      drawn[k].setAttribute('d', to > g.from ? d(frames.slice(g.from, to + 1)) : '');
+    });
+    const f = frames[now];
     bootG.textContent = '';
     const g = el('g', { transform:
       `translate(${f.x} ${f.y}) rotate(${(f.angle * 180) / Math.PI}) scale(${Math.min(1, 1.15 / s)})` });

@@ -64,6 +64,54 @@ export function exitState(entry, turnKey) {
   };
 }
 
+/* Turns are done in clusters as often as singly — a rocker-counter, a bracket-
+   counter, a three turn straight into a mohawk. A cluster is not a new kind of
+   element so much as a new shape of one: an ordered chain in which each turn's
+   exit is the next one's entry. Nothing else is needed to describe it. */
+
+/* The standard named clusters. Their display names live here rather than in the
+   generator, so the page that lists them and the script that writes them cannot
+   end up calling the same thing two different things. */
+export const CLUSTERS = {
+  'double-three':         { name: 'double three',         turns: ['three', 'three'] },
+  'three-mohawk':         { name: 'three-mohawk',         turns: ['three', 'mohawk'] },
+  'rocker-counter':       { name: 'rocker-counter',       turns: ['rocker', 'counter'] },
+  'bracket-counter':      { name: 'bracket-counter',      turns: ['bracket', 'counter'] },
+  'counter-three':        { name: 'counter-three',        turns: ['counter', 'three'] },
+  'counter-mohawk':       { name: 'counter-mohawk',       turns: ['counter', 'mohawk'] },
+  'rocker-choctaw':       { name: 'rocker-choctaw',       turns: ['rocker', 'choctaw'] },
+  'choctaw-three-rocker': { name: 'choctaw-three-rocker', turns: ['choctaw', 'three', 'rocker'] },
+};
+
+/** Which named cluster a sequence of turns is, if it is one. */
+export const clusterOf = turns =>
+  Object.entries(CLUSTERS).find(([, c]) => c.turns.join() === turns.join())?.[1] ?? null;
+
+/** Every state a chain passes through, entry first, final exit last. */
+export function chainStates(entry, turnKeys) {
+  const states = [entry];
+  for (const k of turnKeys) states.push(exitState(states[states.length - 1], k));
+  return states;
+}
+
+/** Where a chain ends up. */
+export const chainExit = (entry, turnKeys) => chainStates(entry, turnKeys).at(-1);
+
+/** A sentence for a cluster, listing the edges it passes through. */
+export function describeChain(entry, turnKeys) {
+  const states = chainStates(entry, turnKeys);
+  const parts = turnKeys.map((k, i) =>
+    `${ALL_TURNS[k].name.toLowerCase()} to ${label(states[i + 1])}`);
+  const feet = new Set(states.map(s => s.foot)).size;
+  return `${label(entry)}, ${parts.join(', then ')}. ` +
+    `${turnKeys.length} turns on ${feet === 1 ? 'one foot' : 'two feet'}, ` +
+    `and the skater finishes ${chainReturns(entry, turnKeys) ? 'on the edge they started on' : `on ${label(states.at(-1))}`}.`;
+}
+
+/** Some clusters come back to where they began. Worth knowing; never stored. */
+export const chainReturns = (entry, turnKeys) =>
+  label(chainExit(entry, turnKeys)) === label(entry);
+
 /** Does the new lobe curve the same way? Derived, never stored. */
 export function lobeContinues(entry, turnKey) {
   const x = exitState(entry, turnKey);

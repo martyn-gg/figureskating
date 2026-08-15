@@ -1,0 +1,17 @@
+---
+name: Left forward inside rocker-choctaw
+kind: combination
+summary: LFI → LBI → RFO — 2 turns on two feet.
+entry: { foot: L, edge: I, dir: F }
+turns: [rocker, choctaw]
+prerequisites: [lfi-rocker, lbi-choctaw]
+verified: { checked: false }
+---
+
+A rocker, then a step onto the other foot with the edge changing as well. The rocker
+reverses the lobe by turning on the blade; the choctaw reverses it again by stepping across.
+Two changes of circle by two entirely different mechanisms, one after the other.
+
+Worth doing precisely because the mechanisms differ. The rocker's change of lobe happens at
+a cusp you can see; the choctaw's happens at a gap in the tracing where one blade stops and
+another starts.

@@ -1,15 +1,21 @@
 ---
-import { label, mirror, exitState } from '../lib/skating.js';
-const { entry, turn, caption } = Astro.props;
-const exit = turn ? exitState(entry, turn) : entry;
+import { label, mirror, exitState, chainStates } from '../lib/skating.js';
+const { entry, turn, turns, caption } = Astro.props;
+/* One turn or a cluster of them. The caption walks the whole chain, because on a
+   three-turn cluster the interesting part is the edges in the middle. */
+const chain = turns?.length ? turns : (turn ? [turn] : []);
+const states = chainStates(entry, chain);
+const exit = states.at(-1);
 const m = mirror(entry);
+const mirrored = chainStates(m, chain);
 ---
 <figure class="diagram">
   <svg
     role="img"
-    aria-label={`Tracing of ${label(entry)}${turn ? ` through a ${turn}` : ''}`}
+    aria-label={`Tracing of ${label(entry)}${chain.length ? ` through a ${chain.join(', then a ')}` : ''}`}
     data-foot={entry.foot} data-edge={entry.edge} data-dir={entry.dir}
-    data-turn={turn ?? ''}></svg>
+    data-turn={turns?.length ? '' : (turn ?? '')}
+    data-turns={turns?.length ? turns.join(',') : ''}></svg>
   <div class="dctl">
     <button type="button" data-play aria-label="Play or pause">❚❚</button>
     <button type="button" class="spd" data-speed aria-label="Playback speed, currently full speed">1×</button>
@@ -18,8 +24,9 @@ const m = mirror(entry);
   </div>
   <figcaption>
     {caption ?? <>
-      <b data-lab-entry data-a={label(entry)} data-b={label(mirror(entry))}>{label(entry)}</b>
-      {turn ? <> to <b data-lab-exit data-a={label(exit)} data-b={label(mirror(exit))}>{label(exit)}</b></> : null}.{' '}
+      {states.map((st, i) => (
+        <>{i ? ' → ' : ''}<b data-lab data-a={label(st)} data-b={label(mirrored[i])}>{label(st)}</b></>
+      ))}.{' '}
       <span data-lab-note>A skater who rotates the other way traces <b>{label(m)}</b> — same element, generated not redrawn.</span>
     </>}
   </figcaption>
@@ -54,9 +61,10 @@ const m = mirror(entry);
     const scrub = fig.querySelector('[data-scrub]');
     const mirrorBox = fig.querySelector('[data-mirror]');
     const base = { foot: svg.dataset.foot, edge: svg.dataset.edge, dir: svg.dataset.dir };
-    const labs = fig.querySelectorAll('[data-lab-entry],[data-lab-exit]');
+    const labs = fig.querySelectorAll('[data-lab]');
     const note = fig.querySelector('[data-lab-note]');
     const turn = svg.dataset.turn || null;
+    const turns = svg.dataset.turns ? svg.dataset.turns.split(',') : null;
     const spd = fig.querySelector('[data-speed]');
     /* Discrete steps rather than a slider: this gets used one-handed, on a phone,
        in gloves, and a slider needs a grip a glove does not have. */
@@ -68,7 +76,7 @@ const m = mirror(entry);
     const build = () => {
       view?.destroy();
       const entry = mirrorBox.checked ? { ...base, foot: base.foot === 'L' ? 'R' : 'L' } : base;
-      view = mount(svg, { entry, turn, onFrame: n => { scrub.value = String(Math.round(n)); } });
+      view = mount(svg, { entry, turn, turns, onFrame: n => { scrub.value = String(Math.round(n)); } });
       scrub.max = String(view.frames - 1);
       view.speed = RATES[rate][0];
       /* The caption has to follow the toggle, or the page describes one tracing
