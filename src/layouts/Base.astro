@@ -15,10 +15,13 @@ const scope = url();
   <meta name="theme-color" content="#12303f" />
   <style is:global>
     :root{--ice:#f2f7fb;--ice-line:#d5e3ee;--ink:#12303f;--ink-soft:#5a7386;
-      --paper:#fff;--rule:#dfe8ef;--accent:#1d5a7a;--edge-out:#0f766e;--edge-in:#b45309;--warn:#b45309}
+      --paper:#fff;--rule:#dfe8ef;--accent:#1d5a7a;--edge-out:#0f766e;--edge-in:#b45309;--warn:#b45309;
+      /* body-frame rig */
+      --hip:#7c3aed;--shoulder:#0369a1;--free:#94a3b8;--leg-l:#e11d48;--leg-r:#4d7c0f}
     @media (prefers-color-scheme:dark){:root{--ice:#101c24;--ice-line:#20353f;--ink:#e6f0f5;
       --ink-soft:#8ba6b5;--paper:#0b141a;--rule:#1e3038;--accent:#7fc4e3;
-      --edge-out:#5eead4;--edge-in:#fbbf24;--warn:#fbbf24}}
+      --edge-out:#5eead4;--edge-in:#fbbf24;--warn:#fbbf24;
+      --hip:#c4b5fd;--shoulder:#7dd3fc;--free:#64748b;--leg-l:#fb7185;--leg-r:#a3e635}}
     *{box-sizing:border-box} html,body{margin:0}
     body{background:var(--paper);color:var(--ink);line-height:1.6;
       font:17px/1.6 ui-serif,Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased}
@@ -56,6 +59,7 @@ const scope = url();
       <a href={url()}>Field Guide</a>
       <a href={url('elements/')}>Elements</a>
       <a href={url('tests/')}>Tests</a>
+      <a href={url('rig/')}>Body frame</a>
     </nav>
     <slot />
     <footer>

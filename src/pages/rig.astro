@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import { MOVES } from '../lib/moves.js';
+const moves = Object.entries(MOVES).map(([id, m]) => ({ id, name: m.name, note: m.note }));
+---
+<Base title="Body frame" subtitle="One rig, three orthogonal projections.">
+  <h1>Body frame</h1>
+  <p class="lede">
+    One marker rig, projected three ways from a single clock. Top-down owns rotation,
+    side owns the vertical mechanics, from behind owns lean — which is edge depth made visible.
+  </p>
+
+  <div class="rig-pick" role="group" aria-label="Move">
+    {moves.map((m, i) => (
+      <button type="button" data-move={m.id} aria-pressed={i === 0 ? 'true' : 'false'}>{m.name}</button>
+    ))}
+  </div>
+
+  <div id="rig-host" class="bf-views"></div>
+
+  <div class="bf-ctl">
+    <button type="button" id="rig-play" aria-label="Play or pause">❚❚</button>
+    <input type="range" min="0" max="1000" value="0" id="rig-scrub" aria-label="Scrub" />
+  </div>
+  <p class="bf-phase" id="rig-phase"></p>
+
+  <div class="rig-toggles">
+    {[['top','Top-down'],['side','Side'],['rear','From behind']].map(([k, l]) => (
+      <label><input type="checkbox" data-view={k} checked /> {l}</label>
+    ))}
+    <span class="sep"></span>
+    {[['hip','Hip line'],['sh','Shoulder line'],['free','Free leg'],['arm','Arms']].map(([k, l]) => (
+      <label><input type="checkbox" data-show={k} checked /> {l}</label>
+    ))}
+  </div>
+
+  <p class="rig-twist">shoulder to hip <b id="rig-twist">—</b>
+    <span class="rig-blade">on the <b id="rig-blade">—</b></span></p>
+
+  <div class="derived">
+    <p>
+      That number is the twist. Negative means the shoulders are held back against the
+      hips, which is what stores rotation before a takeoff and stops it on a landing.
+      Positive means rotation is leading the edge — on a Lutz entry, precisely how an
+      outside edge becomes an inside one.
+    </p>
+    <p>
+      The poses are a first draft and have not been checked by a coach. The machinery
+      is sound; the positions are not yet instruction.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .rig-pick{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+  .rig-pick button{border:1px solid var(--rule);background:transparent;color:var(--ink);
+    padding:.4rem .8rem;border-radius:9px;cursor:pointer;font:inherit;font-size:.86rem;
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .rig-pick button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .rig-toggles{display:flex;flex-wrap:wrap;gap:.4rem .95rem;margin:.85rem 0 0;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.83rem;color:var(--ink-soft)}
+  .rig-toggles label{display:flex;align-items:center;gap:.35rem;cursor:pointer}
+  .rig-toggles .sep{flex-basis:100%;height:0}
+  .rig-twist{margin:1.1rem 0 0;font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.85rem;
+    color:var(--ink-soft)}
+  .rig-twist b{font-size:1.4rem;color:var(--ink);font-variant-numeric:tabular-nums;margin-left:.3rem}
+  .rig-blade{margin-left:1.4rem}
+  .rig-blade b{font-size:1rem;font-variant-numeric:normal}
+</style>
+
+<script>
+  import { mount } from '../lib/body-frame.js';
+
+  const host = document.getElementById('rig-host');
+  const play = document.getElementById('rig-play');
+  const scrub = document.getElementById('rig-scrub');
+  const phase = document.getElementById('rig-phase');
+  const twist = document.getElementById('rig-twist');
+  const blade = document.getElementById('rig-blade');
+  const viewBoxes = [...document.querySelectorAll('[data-view]')];
+  const showBoxes = [...document.querySelectorAll('[data-show]')];
+
+  let move = document.querySelector('.rig-pick button').dataset.move;
+  let rig = null;
+
+  const build = () => {
+    rig?.destroy();
+    const views = viewBoxes.filter(b => b.checked).map(b => b.dataset.view);
+    const show = Object.fromEntries(showBoxes.map(b => [b.dataset.show, b.checked]));
+    rig = mount(host, {
+      move, views, show,
+      onFrame(i, pose, tw, zone) {
+        if (document.activeElement !== scrub) scrub.value = String(Math.round(i));
+        phase.textContent = pose.ph;
+        twist.textContent = `${tw > 0 ? '+' : ''}${tw}°`;
+        blade.textContent = zone;
+      },
+    });
+    scrub.max = String(rig.frames - 1);
+    play.textContent = rig.playing ? '❚❚' : '▶';
+  };
+
+  for (const b of document.querySelectorAll('.rig-pick button'))
+    b.addEventListener('click', () => {
+      move = b.dataset.move;
+      for (const o of document.querySelectorAll('.rig-pick button'))
+        o.setAttribute('aria-pressed', String(o === b));
+      build();
+    });
+  for (const b of viewBoxes) b.addEventListener('change', build);
+  for (const b of showBoxes) b.addEventListener('change', () => rig.setShow(b.dataset.show, b.checked));
+  play.addEventListener('click', () => { rig.playing = !rig.playing; play.textContent = rig.playing ? '❚❚' : '▶'; });
+  scrub.addEventListener('input', () => { rig.playing = false; play.textContent = '▶'; rig.seek(Number(scrub.value)); });
+  build();
+</script>

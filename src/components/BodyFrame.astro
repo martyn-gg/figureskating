@@ -1,0 +1,85 @@
+---
+import { MOVES } from '../lib/moves.js';
+const { move, views = 'top,side,rear', controls = true } = Astro.props;
+const m = MOVES[move];
+---
+{m && (
+<figure class="bf" data-move={move} data-views={views}>
+  <div class="bf-views"></div>
+  {controls && (
+    <div class="bf-ctl">
+      <button type="button" data-play aria-label="Play or pause">❚❚</button>
+      <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
+    </div>
+    <p class="bf-phase" data-phase></p>
+  )}
+  <figcaption>
+    <span class="bf-twist">shoulder to hip <b data-twist>—</b></span>
+    <span class="bf-twist">on the <b data-blade>—</b></span>
+    {m.note}. Negative twist means the shoulders are held back against the hips — what
+    stores rotation before a takeoff and checks it on a landing.
+  </figcaption>
+</figure>
+)}
+
+<style is:global>
+  .bf{margin:1.75rem 0}
+  .bf-views{display:grid;gap:.7rem}
+  .bf-pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  @media (max-width:34rem){.bf-pair{grid-template-columns:1fr}}
+  .bf-card{background:var(--ice);border:1px solid var(--ice-line);border-radius:12px;overflow:hidden}
+  .bf-card h3{margin:0;padding:.5rem .8rem .45rem;font-size:.66rem;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--ink-soft);font-weight:600;border-bottom:1px solid var(--ice-line);
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .bf-card h3 span{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
+  .bf-card svg{display:block;width:100%;height:auto}
+  .bf-ctl{display:flex;align-items:center;gap:.7rem;margin-top:.7rem;padding:.55rem .8rem;
+    background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
+  .bf-ctl button{width:32px;height:32px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:11px}
+  .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+  .bf-phase{margin:.45rem 0 0;font-size:.8rem;color:var(--ink-soft);
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .bf figcaption{margin-top:.6rem;font-family:ui-sans-serif,-apple-system,sans-serif;
+    font-size:.82rem;color:var(--ink-soft)}
+  .bf-twist{display:inline-block;background:var(--ice);border:1px solid var(--ice-line);
+    border-radius:999px;padding:.15rem .6rem;margin-right:.4rem}
+  .bf-twist b{color:var(--ink);font-variant-numeric:tabular-nums}
+</style>
+
+<script>
+  import { mount } from '../lib/body-frame.js';
+
+  for (const fig of document.querySelectorAll('.bf')) {
+    const host = fig.querySelector('.bf-views');
+    const play = fig.querySelector('[data-play]');
+    const scrub = fig.querySelector('[data-scrub]');
+    const phase = fig.querySelector('[data-phase]');
+    const twist = fig.querySelector('[data-twist]');
+    const blade = fig.querySelector('[data-blade]');
+
+    const rig = mount(host, {
+      move: fig.dataset.move,
+      views: fig.dataset.views.split(','),
+      onFrame(i, pose, tw, zone) {
+        if (scrub && document.activeElement !== scrub) scrub.value = String(Math.round(i));
+        if (phase) phase.textContent = pose.ph;
+        if (twist) twist.textContent = `${tw > 0 ? '+' : ''}${tw}°`;
+        if (blade) blade.textContent = zone;
+      },
+    });
+    if (scrub) scrub.max = String(rig.frames - 1);
+
+    play?.addEventListener('click', () => {
+      rig.playing = !rig.playing;
+      play.textContent = rig.playing ? '❚❚' : '▶';
+    });
+    scrub?.addEventListener('input', () => {
+      rig.playing = false; play.textContent = '▶'; rig.seek(Number(scrub.value));
+    });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      rig.playing = false; if (play) play.textContent = '▶';
+      rig.seek(Math.round(rig.frames * 0.45));
+    }
+  }
+</script>

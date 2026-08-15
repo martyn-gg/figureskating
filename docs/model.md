@@ -2,6 +2,9 @@
 
 Conventions and constants shared by both engines. Read this before changing pose data.
 
+Implementation: `src/lib/rig-math.js` (pure geometry), `src/lib/moves.js` (pose data),
+`src/lib/body-frame.js` (the three renderers). The explorer is at `/rig`.
+
 ## Coordinates
 
 The rig is rooted at the **hip**. Everything else is authored relative to it:
@@ -67,6 +70,44 @@ authoring it by hand instead will produce contradictions between the views.
   shin must end.
 - **Arm carriage** — derived from the shoulder line unless a keyframe overrides it
   with `arm: [out, forward, drop]`.
+
+## The blade is not flat
+
+A figure blade is ground to a longitudinal curve — the rocker, around a 7 ft radius —
+so only a centimetre or two touches at once, and **which part is touching is most of
+what distinguishes one edge from another**.
+
+The arithmetic is the surprising bit. Contact position is `ROCKER × sin(pitch)`, so:
+
+| Boot pitch | Where on the blade |
+|-----------|--------------------|
+| −1° | 3.7 cm behind centre |
+| 0° | the middle |
+| +1° | 3.7 cm forward |
+| +3° | 11 cm forward — the front of the blade |
+| beyond ±3.5° | off the blade entirely |
+
+One degree of ankle moves the contact nearly four centimetres. And the blade runs out
+of length at three and a half degrees, which is the whole reason a steeply pitched boot
+is wrong: **skaters are never balanced on the toe picks**. A pick is a jab, not a stance,
+and only ever forwards — you cannot be on a pick behind you.
+
+`tools/blade.mjs` enforces this. A keyframe wanting more pitch than the blade allows must
+set `pick: true` and mean it. The rocker is drawn about six times deeper than life, the
+same licence taken with the edge separation; the contact position is computed from the
+true radius.
+
+## The boot limits the ankle, not the other way round
+
+A bare ankle plantarflexes maybe 45°. A skating boot encases the foot and the lower
+shin and holds them close to square, so **a skater's free foot never looks like a
+ballet foot however hard they point it**. `ANKLE_FREE` is 10°, not the 68° I first
+guessed.
+
+Most of a free boot's angle comes from the leg, not the ankle: a leg hanging down and
+back puts the boot down and back with it. So a near-vertical boot is a sign the foot
+is authored too *low* — hanging rather than extended. `tools/freefoot.mjs` flags
+anything past 60° from level.
 
 ## Body-relative, not track-relative
 

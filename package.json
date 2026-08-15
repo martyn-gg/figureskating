@@ -10,8 +10,10 @@
     "check:harness": "node tools/harness.mjs",
     "check:reach": "node tools/reach.mjs",
     "check:shin": "node tools/shin.mjs",
+    "check:blade": "node tools/blade.mjs",
+    "check:freefoot": "node tools/freefoot.mjs",
     "check:links": "node tools/links.mjs",
-    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run build && npm run check:links"
+    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:freefoot && npm run build && npm run check:links"
   },
   "dependencies": {
     "astro": "^7.2.2"

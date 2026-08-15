@@ -2,6 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Unverified from '../../components/Unverified.astro';
+import EdgeDiagram from '../../components/EdgeDiagram.astro';
+import BodyFrame from '../../components/BodyFrame.astro';
 import { label, mirror, describeTurn, exitState, lobeContinues, LANDING, JUMPS, confusableWith } from '../../lib/skating.js';
 
 export async function getStaticPaths() {
@@ -42,6 +44,9 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
   </div>
 
   <Unverified verified={d.verified} />
+
+  {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} />}
+  {d.rig && <BodyFrame move={d.rig} />}
 
   <Content />
 

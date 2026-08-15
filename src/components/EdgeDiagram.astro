@@ -1,0 +1,84 @@
+---
+import { label, mirror, exitState } from '../lib/skating.js';
+const { entry, turn, caption } = Astro.props;
+const exit = turn ? exitState(entry, turn) : entry;
+const m = mirror(entry);
+---
+<figure class="diagram">
+  <svg
+    role="img"
+    aria-label={`Tracing of ${label(entry)}${turn ? ` through a ${turn}` : ''}`}
+    data-foot={entry.foot} data-edge={entry.edge} data-dir={entry.dir}
+    data-turn={turn ?? ''}></svg>
+  <div class="dctl">
+    <button type="button" data-play aria-label="Play or pause">❚❚</button>
+    <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
+    <label class="mir"><input type="checkbox" data-mirror /> mirror</label>
+  </div>
+  <figcaption>
+    {caption ?? <>
+      <b data-lab-entry data-a={label(entry)} data-b={label(mirror(entry))}>{label(entry)}</b>
+      {turn ? <> to <b data-lab-exit data-a={label(exit)} data-b={label(mirror(exit))}>{label(exit)}</b></> : null}.
+      <span data-lab-note>A skater who rotates the other way traces <b>{label(m)}</b> — same element, generated not redrawn.</span>
+    </>}
+  </figcaption>
+</figure>
+
+<style>
+  .diagram{margin:1.75rem 0;background:var(--ice);border:1px solid var(--ice-line);
+    border-radius:12px;overflow:hidden}
+  .diagram svg{display:block;width:100%;height:auto}
+  .dctl{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border-top:1px solid var(--ice-line)}
+  .dctl button{width:34px;height:34px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:12px;line-height:1}
+  .dctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+  .mir{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.8rem;color:var(--ink-soft);
+    display:flex;align-items:center;gap:.35rem;cursor:pointer;white-space:nowrap}
+  figcaption{padding:.7rem .9rem;font-family:ui-sans-serif,-apple-system,sans-serif;
+    font-size:.82rem;color:var(--ink-soft);border-top:1px solid var(--ice-line)}
+  figcaption b{color:var(--ink)}
+  @media (prefers-reduced-motion: reduce){ .diagram svg{--paused:1} }
+</style>
+
+<script>
+  import { mount } from '../lib/edge-diagram.js';
+
+  for (const fig of document.querySelectorAll('.diagram')) {
+    const svg = fig.querySelector('svg');
+    const play = fig.querySelector('[data-play]');
+    const scrub = fig.querySelector('[data-scrub]');
+    const mirrorBox = fig.querySelector('[data-mirror]');
+    const base = { foot: svg.dataset.foot, edge: svg.dataset.edge, dir: svg.dataset.dir };
+    const labs = fig.querySelectorAll('[data-lab-entry],[data-lab-exit]');
+    const note = fig.querySelector('[data-lab-note]');
+    const turn = svg.dataset.turn || null;
+    let view = null;
+
+    const build = () => {
+      view?.destroy();
+      const entry = mirrorBox.checked ? { ...base, foot: base.foot === 'L' ? 'R' : 'L' } : base;
+      view = mount(svg, { entry, turn, onFrame: n => { scrub.value = String(Math.round(n)); } });
+      scrub.max = String(view.frames - 1);
+      /* The caption has to follow the toggle, or the page describes one tracing
+         while showing the other. */
+      for (const b of labs) b.textContent = mirrorBox.checked ? b.dataset.b : b.dataset.a;
+      if (note) note.hidden = mirrorBox.checked;
+      /* Anyone who has asked the system not to animate things gets a still frame
+         mid-turn, which is the informative one anyway. */
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        view.playing = false; play.textContent = '▶';
+        view.seek(Math.round(view.frames * 0.5)); scrub.value = String(Math.round(view.frames * 0.5));
+      }
+    };
+
+    play.addEventListener('click', () => {
+      view.playing = !view.playing;
+      play.textContent = view.playing ? '❚❚' : '▶';
+    });
+    scrub.addEventListener('input', () => {
+      view.playing = false; play.textContent = '▶'; view.seek(Number(scrub.value));
+    });
+    mirrorBox.addEventListener('change', build);
+    build();
+  }
+</script>

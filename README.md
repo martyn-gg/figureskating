@@ -40,9 +40,13 @@ almost no other resource provides.
     src/data/elements/            one file per element; foot, edge, direction only
     src/data/tests/               a test is an ordered list of element references
     src/lib/skating.js            the derived model — pure, no DOM
+    src/lib/edge-diagram.js       renders a tracing; imports the model, never copies it
+    src/lib/rig-math.js           the body rig's geometry — pure, no DOM
+    src/lib/moves.js              keyframed pose data
+    src/lib/body-frame.js         the three renderers and mount()
+    src/components/               EdgeDiagram and BodyFrame
+    src/pages/rig.astro           the body-frame explorer
     src/pages/                    element and test pages
-    prototypes/edge-engine.html   edges, turns and cusps — the derived tier
-    prototypes/body-frame.html    one 3D marker rig, three orthogonal projections
     tools/                        verification scripts (see below)
     docs/model.md                 coordinate conventions and constants
 
@@ -54,6 +58,20 @@ Astro 7, Node 22.
     npm run dev        # local site
     npm run build      # static output to dist/
     npm run check      # harness, reach and shin checks
+
+## One implementation, not two
+
+There are no standalone prototypes. Both engines are modules under `src/lib`, the
+site imports them, and the tools drive the built site — so there is nothing that can
+drift out of step with what actually ships. The checkers import `moves.js` and
+`rig-math.js` directly rather than scraping a page.
+
+## The diagram cannot contradict the prose
+
+`edge-diagram.js` imports `lobeSense` and the turn table from `skating.js` rather than
+holding its own copy, so the animated tracing and the sentence describing it are
+derived from the same three facts. The mirror toggle on every diagram is not a second
+drawing — it flips one character and regenerates.
 
 ## Nothing renders as authoritative by accident
 
@@ -68,10 +86,12 @@ Projection bugs are invisible in the maths and obvious in the picture, so these 
 not optional.
 
     node tools/harness.mjs        evaluate headlessly, scrub every frame, every toggle
-    node tools/shot.mjs 0.2 out.png   screenshot at a scrub position
+    node tools/shot.mjs waltz 0.4 out.png   one frame of the rig
     node tools/reach.mjs          flag any foot the leg cannot physically reach
     node tools/shin.mjs           flag shin lean beyond what a stiff boot allows
-    node tools/contact-sheet.mjs  every keyframe of a move, side by side
+    node tools/blade.mjs          flag boot pitch that would put a skater on the picks
+    node tools/freefoot.mjs       flag a free boot hanging near-vertical
+    node tools/contact-sheet.mjs waltz .   every keyframe of a move, side by side
     node tools/links.mjs          every internal link in dist/ resolves to a real file
 
 The two screenshot tools need Playwright, which is not a dependency — the browser
