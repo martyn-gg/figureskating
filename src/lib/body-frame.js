@@ -229,7 +229,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
       // two passes: the boot direction needs a shin, the shin needs an ankle
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
       const bd  = bootDir(pose, which, kn0, q, skating);
-      const ank = ankleOf(q, bd);
+      const ank = ankleOf(q, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
       const kn  = twoBone({t:0,n:0,z:pose.hipZ}, ank, THIGH, SHIN, anterior(pose.hipYaw));
       const pt  = {x:ax(ank), y:H(ank.z)};                 // the leg ends at the ankle
       const kp  = {x:ax(kn), y:H(kn.z)};
@@ -244,30 +244,38 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
       /* Project the boot the same way the bars are projected. A boot is
          parallel to the facing direction where a shoulder bar is across it,
          so it takes the complementary factor. Signed, so it mirrors too. */
-      /* Project the boot direction into this view. In-plane length and
-         out-of-plane component are just the two halves of a unit vector, so
-         foreshortening, mirroring and pitch all fall out of one construction.
-         Side camera sits off the skater's left, rear camera behind. */
-      const xc  = mode==='side' ? bd[0] : bd[1];
-      const out = mode==='side' ? bd[1] : bd[0];
-      const prof = Math.hypot(xc, bd[2]);
-      const endo = Math.abs(out);
-      const bMir = Math.sign(xc) || 1;                        // toe left or right
-      const bAng = Math.atan2(-bd[2], Math.abs(xc)) * 180/Math.PI;  // −90…90, body stays up
-      const facing = (-Math.sign(out) || 1);                 // +1 = toe toward viewer
-      const lean = Math.atan2(-q.n, Math.max(4, pose.hipZ - q.z)) * 180/Math.PI;
+      /* Build the boot's frame in this view from two directions rather than an
+         angle: where the toe points, and where the leg leaves. Deriving the second
+         from world up worked only while the foot hung below the knee — raise it,
+         as a spiral does, and the shin entered through the sole. */
+      const toKnee = [kn.t - q.t, kn.n - q.n, kn.z - q.z];
+      const vx = v => mode === 'side' ? v[0] : v[1];
 
-      /* Both forms drawn opaque and each foreshortened by its own factor —
-         their union is the projected silhouette, which is both more correct
-         and far more readable than cross-fading two ghosts. Weaker one first
-         so the dominant form paints over it. */
+      let tx = vx(bd), ty = -bd[2];
+      const prof = Math.hypot(tx, ty) || 1e-6;
+      tx /= prof; ty /= prof;
+
+      let ux = vx(toKnee), uy = -toKnee[2];
+      const dp = ux * tx + uy * ty;
+      ux -= dp * tx; uy -= dp * ty;
+      const ul = Math.hypot(ux, uy) || 1;
+      ux /= ul; uy /= ul;
+
+      const out = mode === 'side' ? bd[1] : bd[0];
+      const endo = Math.abs(out);
+      const facing = (-Math.sign(out) || 1);              // +1 = toe toward viewer
+
+      const along = skating ? contactAlong(pitchOf(bd)) : 0;
       const holder = el('g',{transform:`translate(${bootPt.x} ${bootPt.y}) scale(${S})`});
       if(prof >= endo){
-        const gp = el('g',{transform:`scale(${bMir} 1) rotate(${bAng.toFixed(2)}) scale(${Math.max(prof,0.12).toFixed(3)} 1)`});
-        gp.appendChild(bootSide(pose.edge, skating, skating ? contactAlong(pitchOf(bd)) : 0, which));
+        const p2 = Math.max(prof, 0.12);
+        const gp = el('g',{transform:
+          `matrix(${(tx*p2).toFixed(4)} ${(ty*p2).toFixed(4)} ${(-ux).toFixed(4)} ${(-uy).toFixed(4)} 0 0)`});
+        gp.appendChild(bootSide(pose.edge, skating, along, which));
         holder.appendChild(gp);
       } else {
-        const ge = el('g',{transform:`rotate(${lean.toFixed(2)}) scale(${Math.max(endo,0.12).toFixed(3)} 1)`});
+        const roll = Math.atan2(ux, -uy) * 180 / Math.PI;   // same up-axis, seen end-on
+        const ge = el('g',{transform:`rotate(${roll.toFixed(2)}) scale(${Math.max(endo,0.12).toFixed(3)} 1)`});
         ge.appendChild(bootEnd(pose.edge, skating, which, facing));
         holder.appendChild(ge);
       }

@@ -71,11 +71,15 @@ const scope = url();
   .bf-twist{display:inline-block;background:var(--ice);border:1px solid var(--ice-line);
     border-radius:999px;padding:.15rem .6rem;margin-right:.4rem}
   .bf-twist b{color:var(--ink);font-variant-numeric:tabular-nums}
-    /* Readouts reserve their space. A value that reflows the line while it updates
-       is unreadable however correct it is. */
-    .bf-phase{min-height:1.35em}
-    .bf-twist{display:inline-block;min-width:9.5em;text-align:left}
-    .bf-twist b{display:inline-block;min-width:3.2em;text-align:right}
+    /* Live values sit in their own fixed row, never inline with prose. A number
+       that reflows the paragraph beside it is unreadable however correct it is. */
+    .bf-phase{min-height:2.7em;margin:.45rem 0 0}
+    .bf-readouts{display:grid;grid-template-columns:13rem 1fr;gap:.3rem 1rem;margin:.5rem 0 .1rem;
+      font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.82rem;color:var(--ink-soft)}
+    @media (max-width:26rem){.bf-readouts{grid-template-columns:1fr}}
+    .bf-readouts span{background:var(--ice);border:1px solid var(--ice-line);border-radius:999px;
+      padding:.2rem .7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bf-readouts b{color:var(--ink);font-variant-numeric:tabular-nums}
 
     .derived p.notation{padding-bottom:.6rem;margin-bottom:.7rem;border-bottom:1px solid var(--ice-line)}
     footer{margin-top:4rem;padding-top:1.25rem;border-top:1px solid var(--rule);

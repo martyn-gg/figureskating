@@ -54,8 +54,18 @@ export const pitchOf = bd => -Math.asin(Math.max(-1, Math.min(1, bd[2]))) * 180 
    appears to come out of the sole. Offsets are in the boot's own frame. */
 export const ANKLE_UP = 15, ANKLE_BACK = 5;
 
-export function ankleOf(blade, bd){
-  const up = [-bd[0]*bd[2], -bd[1]*bd[2], 1 - bd[2]*bd[2]];
+export function ankleOf(blade, bd, toKnee){
+  /* The boot's up-axis is the direction the leg leaves in, not world up. Using
+     world up works while the foot is below the knee and fails the moment it is
+     not — a raised free foot, as in a spiral, ends up with the shin entering
+     through the sole. */
+  let up;
+  if (toKnee) {
+    const d = toKnee[0]*bd[0] + toKnee[1]*bd[1] + toKnee[2]*bd[2];
+    up = [toKnee[0]-d*bd[0], toKnee[1]-d*bd[1], toKnee[2]-d*bd[2]];
+  } else {
+    up = [-bd[0]*bd[2], -bd[1]*bd[2], 1 - bd[2]*bd[2]];
+  }
   const ul = Math.hypot(...up) || 1;
   return {t: blade.t - bd[0]*ANKLE_BACK + up[0]/ul*ANKLE_UP,
           n: blade.n - bd[1]*ANKLE_BACK + up[1]/ul*ANKLE_UP,

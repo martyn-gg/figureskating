@@ -15,7 +15,8 @@ for (const [key, m] of Object.entries(MOVES))
     const up = [-bd[0] * bd[2], -bd[1] * bd[2], 1 - bd[2] * bd[2]];
     const ul = Math.hypot(...up) || 1;
     const u2 = up.map(c => c / ul);
-    const an = ankleOf(q, bd);
+    const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
+    const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
     const kn = twoBone({ t: 0, n: 0, z: k.hipZ }, an, THIGH, SHIN, anterior(k.hipYaw));
     const sv = [kn.t - an.t, kn.n - an.n, kn.z - an.z];
     const sl = Math.hypot(...sv) || 1;

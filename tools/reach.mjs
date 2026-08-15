@@ -12,7 +12,8 @@ for (const [key, m] of Object.entries(MOVES))
     for (const w of ['L', 'R']) {
       const q = k[w], skating = k.skate === w;
       const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
-      const an = ankleOf(q, bootDir(k, w, k0, q, skating));
+      const bd = bootDir(k, w, k0, q, skating);
+      const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       const d = Math.hypot(an.t, an.n, an.z - k.hipZ);
       if (d > REACH) {
         bad++;
