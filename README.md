@@ -51,6 +51,22 @@ what the governing body's definitions say, arrived at without being told. They d
 in the drawing: there is no cusp, because nothing pivots, so the tracing stops on one blade
 and starts again beside it.
 
+**And the connecting material falls out of the same three flags.** None of it reverses the
+direction of travel, which is exactly what separates it from a turn — you carry on the way
+you were already going:
+
+| Element | Changes foot | Edge changes | Lobe result |
+|---------|--------------|--------------|-------------|
+| Change of edge | no  | yes | reverses  |
+| Loop           | no  | no  | continues |
+| Crossover      | yes | yes | continues |
+| Chassé         | yes | yes | continues |
+| Cross roll     | yes | no  | reverses  |
+
+A crossover and a chassé have identical rows because they leave identical tracings — the
+difference between them is where the free foot is placed, which is a body-frame matter and
+not something a blade can draw. The guide says so rather than inventing a distinction.
+
 **And turns chain.** A cluster — *rocker-counter*, *bracket-counter*, *choctaw-three-rocker*
 — is not a new kind of element but a new shape of one: an ordered run in which each turn's
 exit is the next one's entry. It stores its entry edge and the order of its turns, and
@@ -90,7 +106,8 @@ Astro 7, Node 22.
 
 ## The derived tier is generated
 
-The eight plain edges, the forty-eight turns and the sixty-four clusters are written by
+The eight edges, forty-eight turns, twenty-eight transitions, sixty-four clusters and the
+jump pages are written by
 `tools/gen-derived.mjs`, which imports `skating.js` and never restates any of it. The
 geometry costs nothing; the prose does not, so the script carries the prose and keys it
 on direction, edge and turn — never on the foot. A left forward outside bracket and a
@@ -153,14 +170,17 @@ playback control is invisible — the button relabels itself, the picture keeps 
 nothing looks wrong. It plays each engine for a fixed interval at every setting and
 asserts the rate halves each step.
 
-`tracing.mjs` earns its place now that a hundred and twenty elements come out of one sign
-rule: a flipped sign would be wrong a hundred and twenty times and look perfectly plausible
-every time, because a curve on a screen is a curve either way round. It asserts the drawn
-lobe against `lobeSense` in ice coordinates, the cusp direction against `rotatesInto`, the
-gap and change of foot at every two-foot turn, and for clusters one mark per turn in order
-with the right join, the right lobe before it and the right edge after it. Flipping the
-sign in `edge-diagram.js` fails 104 assertions; pushing one wrong state into a chain fails
-168.
+`tracing.mjs` earns its place now that a hundred and fifty elements come out of one sign
+rule: a flipped sign would be wrong a hundred and fifty times and look perfectly plausible
+every time, because a curve on a screen is a curve either way round. Across 160
+combinations it asserts the drawn lobe against `lobeSense` in ice coordinates; the cusp's
+direction *and depth* against `rotatesInto`; that a change of edge has no cusp and no
+break; that a loop closes, turns a full circle and curves with its own lobe; that a step
+leaves a real gap with the other foot on the far side; that the direction of travel
+reverses exactly when the model says it does; and for clusters, one mark per turn in order
+with the right join, lobe and edge. Every one of those was written by breaking the renderer
+on purpose first: flipping the sign fails 104 assertions, drawing a cusp on a change of
+edge fails 8, reversing the loop fails 8, and one wrong chain state fails 168.
 
 The two screenshot tools need Playwright, which is not a dependency — the browser
 download is too heavy to inflict on anyone who only wants to build pages. They print

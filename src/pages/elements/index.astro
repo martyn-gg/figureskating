@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, ALL_TURNS } from '../../lib/skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, ALL_TURNS } from '../../lib/skating.js';
 
 const elements = await getCollection('elements');
 
@@ -23,6 +23,18 @@ const EDGE_ROWS = [['F', 'O'], ['F', 'I'], ['B', 'O'], ['B', 'I']];
 const ROW_WORD = { FO: 'forward outside', FI: 'forward inside',
                    BO: 'backward outside', BI: 'backward inside' };
 
+/* Transitions get the same treatment as clusters: grouped by what they are, with
+   a chip for each edge they can begin on. Not all of them begin on all eight. */
+const transitions = elements.filter(e => e.data.kind === 'transition');
+const transitionGroups = Object.keys(TRANSITIONS)
+  .map(k => ({
+    key: k,
+    def: TRANSITIONS[k],
+    entries: STATES.map(s => ({ s, el: transitions.find(e =>
+      label(e.data.entry) === label(s) && e.data.turn === k) })),
+  }))
+  .filter(g => g.entries.some(e => e.el));
+
 /* Clusters, grouped by which cluster they are rather than which edge they start
    from — eight rows of eight links reads on a phone, an 8 x 8 matrix does not. */
 const combos = elements.filter(e => e.data.kind === 'combination');
@@ -37,7 +49,7 @@ const comboGroups = [...new Map(combos.map(e => [e.data.turns.join('-'), e.data.
   }));
 
 const rest = elements
-  .filter(e => !['edge', 'turn', 'combination'].includes(e.data.kind))
+  .filter(e => !['edge', 'turn', 'transition', 'combination'].includes(e.data.kind))
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
 const restKinds = [...new Set(rest.map(e => e.data.kind))];
 
@@ -47,8 +59,8 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
 <Base title="Elements" subtitle="Every plain edge and two-foot turn, on both feet.">
   <h1>Elements</h1>
   <p class="lede">
-    {nEdges} edges, {nTurns} turns and {combos.length} clusters, on both feet — the geometry of every one of them
-    derived rather than drawn. Each element exists once and knows nothing about tests, so
+    {nEdges} edges, {nTurns} turns, {transitions.length} transitions and {combos.length} clusters,
+    on both feet — the geometry of every one of them derived rather than drawn. Each element exists once and knows nothing about tests, so
     it can appear in as many as it likes.
   </p>
 
@@ -172,6 +184,34 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     each of these is one element rather than two. The tracing cannot tell them apart and
     neither pretends to.
   </p>
+
+  {transitionGroups.length > 0 && (
+    <>
+      <h2>Transitions</h2>
+      <p class="note">
+        The connecting material — what happens between turns. None of it reverses the
+        direction of travel, which is exactly what makes it not a turn. The same three
+        flags still decide the lobe.
+      </p>
+      {transitionGroups.map(g => (
+        <div class="combo">
+          <h3>{g.def.name}</h3>
+          <p class="combo-chain">
+            {g.def.changesFoot ? 'changes foot' : 'same foot'} ·
+            {' '}edge {g.def.edgeChanges ? 'changes' : 'holds'} ·
+            {' '}{{ roll: 'the blade rolls across', loop: 'a small circle on the same edge',
+                    step: 'a step onto the other foot' }[g.def.join]}
+          </p>
+          <p class="combo-links">
+            {g.entries.filter(({ el }) => el).map(({ s, el }) => (
+              <a href={url(`elements/${el.id}/`)}
+                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+            ))}
+          </p>
+        </div>
+      ))}
+    </>
+  )}
 
   {comboGroups.length > 0 && (
     <>

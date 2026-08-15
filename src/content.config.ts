@@ -21,14 +21,16 @@ const elements = defineCollection({
   loader: md('./src/data/elements'),
   schema: z.object({
     name: z.string(),
-    kind: z.enum(['edge', 'turn', 'combination', 'jump', 'spin', 'position', 'step', 'dance']),
+    kind: z.enum(['edge', 'turn', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance']),
     summary: z.string(),
     entry: z.object({ foot, edge, dir }).optional(),
     /* One-foot turns first, then the two-foot ones. A mohawk and a choctaw change
        foot as well as direction, which the model derives rather than stores —
        see src/lib/skating.js. */
     turn: z.enum(['three', 'bracket', 'rocker', 'counter',
-                  'mohawk', 'choctaw', 'twizzle', 'loop']).optional(),
+                  'mohawk', 'choctaw',
+                  'coe', 'loop', 'crossover', 'chasse', 'crossroll',
+                  'twizzle']).optional(),
     /* A cluster: an ordered chain in which each turn's exit is the next one's
        entry. Only the entry edge and the sequence are stored; every edge the
        skater passes through in between is derived. */

@@ -22,7 +22,8 @@
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lobeSense, label, exitState, chainStates, CLUSTERS, ALL_TURNS } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, chainStates,
+         TURNS, STEPS, TRANSITIONS, CLUSTERS, JUMPS, LANDING, ALL_TURNS } from '../src/lib/skating.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
@@ -35,7 +36,18 @@ const FOOT_WORD = { L: 'Left', R: 'Right' };
 const DIR_WORD = { F: 'forward', B: 'backward' };
 const EDGE_WORD = { O: 'outside', I: 'inside' };
 const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', counter: 'counter',
-                    mohawk: 'mohawk', choctaw: 'choctaw' };
+                    mohawk: 'mohawk', choctaw: 'choctaw',
+                    coe: 'change of edge', loop: 'loop', crossover: 'crossover',
+                    chasse: 'chassé', crossroll: 'cross roll' };
+
+/* Which entry edges each transition is actually skated from. A crossover, a chassé
+   and a cross roll all begin on an outside edge — that is not a modelling
+   limitation, it is what the elements are. Changes of edge and loops are done on
+   all four. */
+const TRANSITION_ENTRIES = {
+  coe: ['O', 'I'], loop: ['O', 'I'],
+  crossover: ['O'], chasse: ['O'], crossroll: ['O'],
+};
 
 const slug = s => `${s.foot}${s.dir}${s.edge}`.toLowerCase();
 const key = s => `${s.dir}${s.edge}`;                       // FO, FI, BO, BI
@@ -307,6 +319,174 @@ about the strongest position a step sequence can hand you, and it is worth the m
 takes to make it quiet.`,
 };
 
+/* -------------------------------------------------------------- transitions */
+
+/* The connecting material: what a skater does between turns. None of it reverses
+   the direction of travel, which is what makes it not a turn. */
+
+const TRANSITION_TEXT = {
+  coe: {
+    FO: `The blade rolls from the outside edge to the inside edge without turning, and
+because one of the three things that decide a lobe has changed, the curve reverses under
+you. Forwards throughout — you never stop facing the way you are going.
+
+There is nothing to see at the moment it happens, which is the difficulty. A three turn
+leaves a cusp and a mohawk leaves a gap; a change of edge leaves a smooth line that either
+does or does not have a kink in it, and the kink is the fault. The roll should take a
+metre, not an instant.`,
+
+    FI: `Forwards from the inside edge to the outside, the curve reversing as the blade
+rolls across. This is the half most skaters find harder, because arriving on an outside
+edge asks for a lean the free side has to allow.
+
+Judge it by the two lobes rather than the join. If they are the same depth, the change
+happened where it should. If the second is shallower, the roll came late and you spent the
+first part of it on a flat.`,
+
+    BO: `Backwards from the outside edge to the inside, the curve reversing. Blind, and
+without the cusp or the gap that at least tells you a turn has occurred.
+
+It is worth doing this slowly and listening. A clean change of edge is silent. A late one
+scrapes, because what actually happened was a moment on the flat with the weight in the
+wrong place, and the ice will tell you before your feet do.`,
+
+    BI: `Backwards from the inside edge to the outside, the lobe reversing. The weakest
+entry edge rolling onto the strongest exit, which makes this more useful than it looks —
+it is the cheapest way of getting from a back inside edge to a checked back outside one.
+
+The whole move lives in the ankle and the hip. If the shoulders join in, you have started
+a turn instead.`,
+  },
+
+  loop: {
+    FO: `A small circle traced on one foot, on one edge, forwards, coming back to the edge
+it left and carrying on. Nothing changes — not the foot, not the edge, not the direction —
+which is what makes it its own thing rather than a turn.
+
+It is a figure, and it behaves like one: the whole thing is decided by the entry. The loop
+should sit inside the lobe, be about the size of the skater's own body, and rejoin the
+curve so cleanly that the tracing reads as a lobe with a knot in it rather than two
+separate shapes.`,
+
+    FI: `A loop on a forward inside edge — the same small circle, curving the other way.
+The free side has less room here than on an outside loop, and crowding it is what turns a
+round loop into an egg.
+
+Practise it as a shape rather than a movement. A loop is judged on the tracing it leaves,
+and there is nowhere for a wobble to hide in a closed curve.`,
+
+    BO: `A loop entered backwards on the outside edge. Blind, and the whole figure happens
+in a couple of seconds with no chance to correct it once begun.
+
+This is where the knee does the work. The loop is drawn by rising and sinking over a
+continuous edge, not by pushing; anything added with the shoulders shows up as a flat spot
+on the far side of the circle, where you cannot see it.`,
+
+    BI: `A loop on a backward inside edge — the one the British syllabus asks for, and the
+hardest of the four for the reason every back inside element is hardest: the free leg sits
+inside the circle with nowhere to go.
+
+The size is the giveaway. A tight loop means the edge was too deep going in; a large
+sprawling one means the edge was never deep enough to close it.`,
+  },
+
+  crossover: {
+    FO: `The free foot crosses in front of the skating foot and goes down on the inside
+edge of the other foot, on the same circle. It is how a skater builds speed on a curve, and
+it is the first thing after plain edges that most people learn.
+
+The push is the whole point and the part most often thrown away. Both feet push — the
+outside foot as it crosses, and then the inside foot as it comes out from under. A
+crossover done as a step over rather than two pushes looks tidy and produces nothing.`,
+
+    BO: `Backwards, the free foot crossing over and going down on the inside edge of the
+other foot, on the same circle. Every backward entry in the guide starts with these, so
+they deserve more attention than their difficulty suggests.
+
+The common fault is turning the shoulders into the circle to help. It does help, briefly,
+and then there is no rotation left to check with when the crossovers stop and the element
+starts. Keep the shoulders square to the circle and let the feet do it.`,
+  },
+
+  chasse: {
+    FO: `Forwards, the free foot placed on the ice *beside* the skating foot rather than
+crossed over it, and the old skating foot lifted with the blade parallel to the ice. The
+tracing is a crossover's — same circle, same change of foot and edge — and the feet are
+doing something quite different.
+
+Worth stating plainly: this guide draws what the blades draw, and here the blades draw the
+same thing. The difference is placement, and placement is what the body-frame view is for.
+Open, slip and slide chassés differ from one another the same way.`,
+
+    BO: `Backwards, the free foot set down beside the skating foot rather than across it.
+Quieter than a crossover and less powerful, which is the trade — a chassé keeps a curve
+going without disturbing it.
+
+Because there is no crossing action to hide behind, a chassé shows up a weak edge at once.
+If the lobe opens out as the feet change, the edge was never deep.`,
+  },
+
+  crossroll: {
+    FO: `The free foot swings in from the side, passes the skating foot and goes down on
+its own outside edge — and because the new edge is outside on the other foot, the curve
+reverses. One lobe ends and the next begins as the feet cross.
+
+It is the most expressive way of getting from one lobe to the next and the least forgiving,
+because the whole transfer happens over an outside edge with the body already leaning the
+new way. Lean late and it becomes a step; lean early and you fall into the new lobe rather
+than rolling into it.`,
+
+    BO: `Backwards, the free foot passing the skating foot and taking its own outside edge,
+the lobe reversing at the change. Blind, and the new lean has to be committed to before
+there is any evidence it will be caught.
+
+Watch the shoulders. The reversal wants to be led from the hips with the shoulders
+following; led from the shoulders it becomes a lurch, and the tracing shows two lobes with
+a straight line between them instead of one continuous roll.`,
+  },
+};
+
+/* ------------------------------------------------------------------- jumps */
+
+/* Takeoff, landing, pick and rotations all come from JUMPS, so no page can
+   disagree with the model about what a Salchow is. Only the words are written. */
+
+const JUMP_SLUG = { toeLoop: 'toe-loop', salchow: 'salchow', loop: 'loop', axel: 'axel' };
+
+const JUMP_TEXT = {
+  toeLoop: `Backwards on a right outside edge, the left toe pick placed behind, and the
+vault carries you through one rotation to land on the edge you left. Usually the first toe
+jump a skater lands, and often the first double as well.
+
+The trap is the pick. It is a jab, not a stance — it sets the height and comes straight out
+again. Reach back and *press* on it and the rotation stalls, and the jump gets spent on the
+ice rather than above it.`,
+
+  salchow: `From a back inside edge, no pick, the free leg swinging through to carry you
+round. The edge does the work, which is why a Salchow rewards patience on the entry far
+more than effort in the air.
+
+It is usually entered from a forward outside three turn, so a poor three turn is the most
+common reason a Salchow fails — the jump was fine and the thing before it was not.
+Practise the entry as its own element before blaming the takeoff.`,
+
+  loop: `A back outside edge, no pick, and the rotation comes entirely from the edge and
+the check. Nothing helps you: there is no swing through and nothing to vault off, which is
+what makes the loop the honest test of a skater's edge.
+
+It shares its takeoff with the toe loop, and the two are told apart by whether a pick goes
+in. Seen from above they are the same entry; seen from the side, one has a jab in it.`,
+
+  axel: `The only jump here with a forward takeoff, which is why it carries an extra half
+rotation — you leave facing forwards and land facing backwards, so one and a half turns is
+the least a single can be.
+
+It is a waltz jump with a full rotation added, and that is the useful way to hold it in
+mind. The entry edge, the swing, the check on the landing and the run-out are all things a
+waltz jump already teaches. Getting the waltz jump right rather than merely getting past it
+is most of the work.`,
+};
+
 /* ------------------------------------------------------------ combinations */
 
 /* Turns are done in clusters as often as singly, and from Skills 5 upwards the
@@ -480,7 +660,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
     body: EDGE_TEXT[key(s)],
   });
 
-  for (const turnKey of Object.keys(ALL_TURNS)) {
+  for (const turnKey of [...Object.keys(TURNS), ...Object.keys(STEPS)]) {
     const t = ALL_TURNS[turnKey];
     const x = exitState(s, turnKey);
     const continues = lobeSense(s.foot, s.edge, s.dir) === lobeSense(x.foot, x.edge, x.dir);
@@ -520,6 +700,30 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
     });
   }
 
+  for (const [key_, tr] of Object.entries(TRANSITIONS)) {
+    if (!TRANSITION_ENTRIES[key_].includes(edge)) continue;
+    const x = exitState(s, key_);
+    const continues = lobeSense(s.foot, s.edge, s.dir) === lobeSense(x.foot, x.edge, x.dir);
+    const how = { roll: 'the blade rolls across without turning',
+                  loop: 'a small circle traced on the same edge',
+                  step: 'a step onto the other foot' }[tr.join];
+
+    files.push({
+      id: `${slug(s)}-${key_}`,
+      front: [
+        `name: ${FOOT_WORD[foot]} ${DIR_WORD[dir]} ${EDGE_WORD[edge]} ${TURN_NOUN[key_]}`,
+        `kind: transition`,
+        `summary: ${label(s)} to ${label(x)} — ${how}, still travelling ` +
+          `${dir === 'F' ? 'forwards' : 'backwards'}, and the lobe ` +
+          `${continues ? 'continues' : 'reverses'}.`,
+        `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
+        `turn: ${key_}`,
+        `prerequisites: [${slug(s)}]`,
+      ],
+      body: TRANSITION_TEXT[key_][key(s)],
+    });
+  }
+
   for (const [comboKey, combo] of Object.entries(CLUSTERS)) {
     const states = chainStates(s, combo.turns);
     const x = states.at(-1);
@@ -541,6 +745,28 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
       body: COMBO_TEXT[comboKey][dir],
     });
   }
+}
+
+/* The four jumps the model knows about that have no page yet. Takeoff, landing,
+   pick and rotations are read from JUMPS rather than typed out again. */
+for (const [key_, j] of Object.entries(JUMPS)) {
+  if (!JUMP_SLUG[key_]) continue;
+  const t = j.takeoff, x = LANDING;
+  files.push({
+    id: JUMP_SLUG[key_],
+    front: [
+      `name: ${j.name}`,
+      `kind: jump`,
+      `summary: ${label(t)} takeoff, ${j.assisted ? 'off the pick' : 'off the edge'}, ` +
+        `${j.rotations} rotation${j.rotations === 1 ? '' : 's'} to ${label(x)}.`,
+      `jump:`,
+      `  takeoff: { foot: ${t.foot}, edge: ${t.edge}, dir: ${t.dir} }`,
+      `  landing: { foot: ${x.foot}, edge: ${x.edge}, dir: ${x.dir} }`,
+      `  assisted: ${j.assisted}`,
+      `  rotations: ${j.rotations}`,
+    ],
+    body: JUMP_TEXT[key_],
+  });
 }
 
 mkdirSync(OUT, { recursive: true });

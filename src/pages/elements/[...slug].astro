@@ -43,7 +43,7 @@ const spin = d.entry ? (lobeSense(d.entry.foot, d.entry.edge, d.entry.dir) > 0 ?
    edge lists its four turns, a turn lists its three siblings and the edge itself. */
 const family = d.entry ? allElements.filter(e =>
   e.data.entry && label(e.data.entry) === label(d.entry) && e.id !== entry.id
-  && (e.data.kind === 'edge' || e.data.kind === 'turn')
+  && ['edge', 'turn', 'transition'].includes(e.data.kind)
   && !prereqs.some(p => p.id === e.id)) : [];
 /* Clusters starting here get their own list. Folded into the one above they would
    bury the single turns, which are what most people arrive looking for. */
@@ -142,7 +142,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
           <li>
             <a href={url(`elements/${f.id}/`)}>{f.data.name}</a>
             <span>{f.data.turn
-              ? `exits ${label(exitState(d.entry, f.data.turn))} · ${ALL_TURNS[f.data.turn].changesFoot ? 'changes foot' : 'same foot'}, the edge ${ALL_TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
+              ? `exits ${label(exitState(d.entry, f.data.turn))} · ${ALL_TURNS[f.data.turn].changesFoot ? 'changes foot' : 'same foot'}, the edge ${ALL_TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, ${ALL_TURNS[f.data.turn].reversesDir === false ? 'the direction holds' : 'the direction reverses'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
               : 'the plain edge, with no turn on it'}</span>
           </li>
         ))}

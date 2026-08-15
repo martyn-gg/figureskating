@@ -29,10 +29,10 @@ export const mirror = s => ({ ...s, foot: flip(s.foot, 'L', 'R') });
    edge, whether the lobe continues or reverses, which way the cusp points, which
    way the body rotates — falls out of these. */
 export const TURNS = {
-  three:   { name: 'Three turn', edgeChanges: true,  rotatesInto: true,  changesFoot: false },
-  bracket: { name: 'Bracket',    edgeChanges: true,  rotatesInto: false, changesFoot: false },
-  rocker:  { name: 'Rocker',     edgeChanges: false, rotatesInto: true,  changesFoot: false },
-  counter: { name: 'Counter',    edgeChanges: false, rotatesInto: false, changesFoot: false },
+  three:   { name: 'Three turn', edgeChanges: true,  rotatesInto: true,  changesFoot: false, join: 'cusp' },
+  bracket: { name: 'Bracket',    edgeChanges: true,  rotatesInto: false, changesFoot: false, join: 'cusp' },
+  rocker:  { name: 'Rocker',     edgeChanges: false, rotatesInto: true,  changesFoot: false, join: 'cusp' },
+  counter: { name: 'Counter',    edgeChanges: false, rotatesInto: false, changesFoot: false, join: 'cusp' },
 };
 
 /* The two-foot turns, and the reason the model did not need extending to hold
@@ -46,21 +46,39 @@ export const TURNS = {
    step rather than a pivot. `rotatesInto` is null and the renderer draws a break
    instead of a point. */
 export const STEPS = {
-  mohawk:  { name: 'Mohawk',  edgeChanges: false, rotatesInto: null, changesFoot: true },
-  choctaw: { name: 'Choctaw', edgeChanges: true,  rotatesInto: null, changesFoot: true },
+  mohawk:  { name: 'Mohawk',  edgeChanges: false, rotatesInto: null, changesFoot: true, join: 'step' },
+  choctaw: { name: 'Choctaw', edgeChanges: true,  rotatesInto: null, changesFoot: true, join: 'step' },
 };
 
-/** Every turn in the guide, one-foot and two-foot alike. */
-export const ALL_TURNS = { ...TURNS, ...STEPS };
+/* The connecting material. None of these reverses the direction of travel, which
+   is exactly what separates them from a turn: you go on the way you were going.
+   Everything else is the same three flags, so lobeSense keeps working — a change
+   of edge reverses the lobe because one flag flipped, a crossover keeps it
+   because two did.
 
-/** Direction always reverses. The foot and the edge depend on the turn. */
+   `join` is how the tracing is drawn where the element happens, and it is stored
+   rather than inferred because four different things happen there: a cusp where
+   the blade pivots, a roll where it changes edge without pivoting, a small circle
+   for a loop, and a break where the skater steps onto the other foot. */
+export const TRANSITIONS = {
+  coe:       { name: 'Change of edge', edgeChanges: true,  changesFoot: false, reversesDir: false, rotatesInto: null, join: 'roll' },
+  loop:      { name: 'Loop',           edgeChanges: false, changesFoot: false, reversesDir: false, rotatesInto: null, join: 'loop' },
+  crossover: { name: 'Crossover',      edgeChanges: true,  changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
+  chasse:    { name: 'Chassé',         edgeChanges: true,  changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
+  crossroll: { name: 'Cross roll',     edgeChanges: false, changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
+};
+
+/** Everything one element can turn into another with. */
+export const ALL_TURNS = { ...TURNS, ...STEPS, ...TRANSITIONS };
+
+/** Three flags decide the exit. Nothing else is stored anywhere. */
 export function exitState(entry, turnKey) {
   const t = ALL_TURNS[turnKey];
   if (!t) throw new Error(`unknown turn: ${turnKey}`);
   return {
     foot: t.changesFoot ? flip(entry.foot, 'L', 'R') : entry.foot,
     edge: t.edgeChanges ? flip(entry.edge, 'O', 'I') : entry.edge,
-    dir: flip(entry.dir, 'F', 'B'),
+    dir: t.reversesDir === false ? entry.dir : flip(entry.dir, 'F', 'B'),
   };
 }
 
@@ -122,6 +140,13 @@ export function lobeContinues(entry, turnKey) {
 export function describeTurn(entry, turnKey) {
   const t = ALL_TURNS[turnKey], x = exitState(entry, turnKey);
   const lobe = lobeContinues(entry, turnKey) ? 'continues' : 'reverses';
+  if (t.reversesDir === false) {
+    const how = { roll: 'the blade rolls from one edge to the other without pivoting',
+                  loop: 'the blade traces a small circle and comes back to the edge it left',
+                  step: 'the skater steps onto the other foot' }[t.join];
+    return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)} — ${how}, the direction ` +
+      `of travel does not change, and the lobe ${lobe}.`;
+  }
   if (t.changesFoot) {
     return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)} — the skater steps ` +
       `onto the other foot, the edge ${t.edgeChanges ? 'changes' : 'holds'}, and the ` +

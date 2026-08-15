@@ -66,14 +66,37 @@ export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth 
     const centreDir = P.th + (Math.PI / 2) * Math.sign(kIn);
     const idx = pts.length - 1;
 
-    if (t.changesFoot) {
-      /* A two-foot turn does not pivot, so there is nothing to draw a cusp with.
-         The new blade goes down beside the skating foot, on the inside, and the
-         old tracing simply stops. Faking a cusp would draw a different turn. */
+    /* Half a revolution of the body, unless the direction of travel does not
+       change — a crossover or a change of edge leaves you facing the way you
+       were already facing. */
+    const reverses = t.reversesDir !== false;
+
+    if (t.join === 'step') {
+      /* Nothing pivots, so there is nothing to draw a cusp with. The new blade
+         goes down beside the skating foot and the old tracing simply stops.
+         Faking a cusp would draw a different element. */
       const ox = P.x + Math.cos(centreDir) * STEP_OFFSET;
       const oy = P.y + Math.sin(centreDir) * STEP_OFFSET;
       pts = [...pts, ...arc(ox, oy, P.th, kOut, L, N)];
-      marks.push({ idx, stepped: true, spin: Math.PI, key });
+      marks.push({ idx, after: idx + 1, stepped: true, spin: reverses ? Math.PI : 0, key });
+    } else if (t.join === 'roll') {
+      /* A change of edge is the one join with nothing at all to see: the blade
+         rolls from one edge to the other and the heading never breaks. Drawing a
+         cusp here would invent a turn that is not being done. */
+      pts = [...pts, ...arc(P.x, P.y, P.th, kOut, L, N)];
+      marks.push({ idx, after: idx + 1, stepped: false, spin: 0, key });
+    } else if (t.join === 'loop') {
+      /* A small circle traced on the same edge, returning to the edge it left —
+         so it curves the way the lobe curves and sits inside it. Drawn larger
+         than life, like everything else here. */
+      const kLoop = Math.sign(kIn) / (radius / 4);
+      pts = [...pts,
+             ...arc(P.x, P.y, P.th, kLoop, (2 * Math.PI) / Math.abs(kLoop), N),
+             ...arc(P.x, P.y, P.th, kOut, L, N)];
+      /* The little circle sits between the two halves of the lobe, so the exit
+         does not begin until it has closed. */
+      marks.push({ idx, after: idx + N + 2, loopFrom: idx + 1, loopTo: idx + N + 1,
+                   stepped: false, spin: 0, key });
     } else {
       /* The cusp points into the circle when the skater rotates into it, out of it
          when they rotate against it — the whole difference between a three turn
@@ -90,7 +113,7 @@ export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth 
         ...pts.map((p, i) => (i > idx - W ? pull(p, idx - i) : p)),
         ...out.map((p, i) => pull(p, i)),
       ];
-      marks.push({ idx, stepped: false, spin: (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI, key });
+      marks.push({ idx, after: idx + 1, stepped: false, spin: reverses ? (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI : 0, key });
     }
     state = next;
     states.push(next);

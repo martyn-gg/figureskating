@@ -14,9 +14,9 @@ exercises; an animated edge diagram on any element with an entry edge; the three
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
 worker; seven checkers that pass on a clean clone.
 
-**Content:** 124 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
-turns, sixty-four clusters, three jumps and a spiral — plus one example test and no
-exercises. 129 pages build, 2,820 internal links resolve.
+**Content:** 156 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, twenty-eight transitions, sixty-four clusters, seven jumps and a spiral — plus one
+example test and no exercises. 161 pages build, 4,009 internal links resolve.
 
 *(An earlier revision of this file said 46 and then 62. Both were wrong by two — I was
 adding up rather than counting the files. Count with `ls src/data/elements | wc -l`.)*
@@ -179,12 +179,36 @@ The prose is keyed on the cluster and on direction only — a weaker key than th
 turns use, and deliberately so. What makes a rocker-counter hard is the rocker-counter;
 what changes it most is whether you can see where you are going.
 
+## Transitions — the connecting material
+
+Changes of edge, loops, crossovers, chassés and cross rolls. What they have in common is
+that **none of them reverses the direction of travel**, which is precisely what makes them
+not turns; `exitState` grew a `reversesDir` flag and nothing else changed.
+
+The renderer needed a real addition: `join`, stored on each element rather than inferred,
+because four different things happen where an element occurs. A **cusp** where the blade
+pivots. A **roll** where it changes edge without pivoting — nothing to see, which is the
+whole difficulty of a change of edge and now the whole difficulty of drawing one honestly.
+A **loop**, a small circle traced on the same edge and closing back onto it. A **step**
+where the skater changes foot.
+
+Two things the model made us say out loud:
+
+- A crossover and a chassé produce **identical tracings**. They differ in where the free
+  foot goes, which a blade cannot draw. The guide says so instead of inventing a
+  difference — the same call already made for open versus closed mohawks.
+- Crossovers, chassés and cross rolls are generated from **outside entries only**. That is
+  not a limitation of the model; it is what the elements are.
+
+The four missing jump pages went in at the same time, generated from `JUMPS` so no page can
+disagree with the model about what a Salchow is. Seven jumps now, three of them still
+hand-written from the first session.
+
 ## What to do next
 
-1. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
-   edge, twizzles, loops. Most of it derives; see `sources/bis/MANIFEST.md` for the list
-   the Skills tests actually ask for. Twizzles are the one that will not fall out of the
-   current model.
+1. **Twizzles.** Deliberately skipped: a travelling multi-rotation turn is not a chain of
+   half turns and pretending otherwise would be the kind of shortcut this repository keeps
+   designing against. Needed at Skills 3, 7 and 8. Coming back to it after the design pass.
 2. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
    style — should be settled before it is inherited by another few dozen diagrams. The
    hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
