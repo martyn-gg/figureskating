@@ -1,5 +1,6 @@
 import fs from 'fs';
-const html = fs.readFileSync('/home/claude/body-frame.html','utf8');
+import { rigPath } from './_rig.mjs';
+const html = fs.readFileSync(rigPath(),'utf8');
 const start = html.indexOf('const MOVES = {');
 const end   = html.indexOf('\n};', start) + 3;
 const P = (t,n,z,pitch=0)=>({t,n,z,pitch});

@@ -1,5 +1,6 @@
 import fs from 'fs';
-const src = fs.readFileSync('/home/claude/body-frame.html','utf8')
+import { rigPath } from './_rig.mjs';
+const src = fs.readFileSync(rigPath(),'utf8')
   .match(/<script type="module">([\s\S]*?)<\/script>/)[1];
 
 let created = 0;

@@ -1,11 +1,11 @@
-import pw from '/home/claude/.npm-global/lib/node_modules/playwright/index.js';
-const { chromium } = pw;
-const file = process.argv[2] || './prototypes/body-frame.html';
+import { ROOT, browser } from './_rig.mjs';
+import { resolve } from 'node:path';
+const file = resolve(ROOT, process.argv[2] || 'prototypes/body-frame.html');
 const move = process.argv[3] || 'Waltz jump';
 const out  = process.argv[4] || '/tmp/sheet';
 const times = (process.argv[5] || '0,0.14,0.25,0.30,0.32,0.36,0.39,0.42,0.44,0.48,0.55,0.70,0.86,1.0').split(',').map(Number);
 
-const b = await chromium.launch({ executablePath:'/opt/pw-browsers/chromium' });
+const b = await browser();
 const p = await b.newPage({ viewport:{width:1000,height:1500}, deviceScaleFactor:2 });
 await p.emulateMedia({ colorScheme:'light' });
 await p.goto('file://'+file);

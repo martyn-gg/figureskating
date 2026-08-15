@@ -68,11 +68,17 @@ Projection bugs are invisible in the maths and obvious in the picture, so these 
 not optional.
 
     node tools/harness.mjs        evaluate headlessly, scrub every frame, every toggle
-    node tools/shot.mjs 0.2 out.png   screenshot at a scrub position (needs Chromium)
+    node tools/shot.mjs 0.2 out.png   screenshot at a scrub position
     node tools/reach.mjs          flag any foot the leg cannot physically reach
     node tools/shin.mjs           flag shin lean beyond what a stiff boot allows
     node tools/contact-sheet.mjs  every keyframe of a move, side by side
     node tools/links.mjs          every internal link in dist/ resolves to a real file
+
+The two screenshot tools need Playwright, which is not a dependency — the browser
+download is too heavy to inflict on anyone who only wants to build pages. They print
+the one-line install command if it is missing:
+
+    npm install --no-save playwright && npx playwright install chromium
 
 The contact sheet is the one that catches sequence errors. Individual frames all look
 plausible; only the whole element side by side shows a leg on the wrong side of the body.
