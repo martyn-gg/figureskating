@@ -10,6 +10,8 @@ Built as a static site with offline support, so it works at the rink.
 > correct technique — see *Accuracy* below. Nothing here should be used to learn
 > from yet.
 
+**Picking this up?** Read [docs/state-of-play.md](docs/state-of-play.md) first.
+
 ## Why it is built this way
 
 Almost nothing is drawn by hand. The geometry is derived from rules, which is what
