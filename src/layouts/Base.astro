@@ -1,0 +1,72 @@
+---
+const { title, subtitle } = Astro.props;
+import { url } from '../lib/url.js';
+const swPath = url('sw.js');
+const scope = url();
+---
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title ? `${title} · Field Guide to Figure Skating` : 'Field Guide to Figure Skating'}</title>
+  <meta name="description" content={subtitle ?? 'A reference to figure skating elements and the national tests they appear in.'} />
+  <link rel="manifest" href={url('manifest.webmanifest')} />
+  <meta name="theme-color" content="#12303f" />
+  <style is:global>
+    :root{--ice:#f2f7fb;--ice-line:#d5e3ee;--ink:#12303f;--ink-soft:#5a7386;
+      --paper:#fff;--rule:#dfe8ef;--accent:#1d5a7a;--edge-out:#0f766e;--edge-in:#b45309;--warn:#b45309}
+    @media (prefers-color-scheme:dark){:root{--ice:#101c24;--ice-line:#20353f;--ink:#e6f0f5;
+      --ink-soft:#8ba6b5;--paper:#0b141a;--rule:#1e3038;--accent:#7fc4e3;
+      --edge-out:#5eead4;--edge-in:#fbbf24;--warn:#fbbf24}}
+    *{box-sizing:border-box} html,body{margin:0}
+    body{background:var(--paper);color:var(--ink);line-height:1.6;
+      font:17px/1.6 ui-serif,Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:44rem;margin:0 auto;padding:2rem 1.25rem 5rem}
+    h1,h2,h3,nav,.meta,.chip,footer{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif}
+    h1{font-size:1.9rem;letter-spacing:-.02em;margin:0 0 .3rem;line-height:1.2}
+    h2{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
+      margin:2.5rem 0 .75rem;font-weight:600}
+    a{color:var(--accent)}
+    nav{font-size:.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--rule)}
+    nav a{margin-right:1.1rem;text-decoration:none}
+    .lede{color:var(--ink-soft);margin:0 0 1.5rem;font-size:1.05rem}
+    .meta{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.5rem;font-size:.8rem}
+    .chip{background:var(--ice);border:1px solid var(--ice-line);border-radius:999px;
+      padding:.25rem .7rem;color:var(--ink-soft)}
+    .chip b{color:var(--ink);font-weight:600}
+    .unverified{border:1px solid var(--warn);border-left-width:4px;border-radius:8px;
+      padding:.8rem 1rem;margin:0 0 1.75rem;font-size:.88rem;
+      font-family:ui-sans-serif,-apple-system,sans-serif;color:var(--ink-soft)}
+    .unverified b{color:var(--warn)}
+    ul.plain{list-style:none;padding:0}
+    ul.plain li{padding:.55rem 0;border-bottom:1px solid var(--rule)}
+    ul.plain a{text-decoration:none;font-weight:600}
+    ul.plain span{color:var(--ink-soft);font-size:.9rem;display:block;font-family:ui-sans-serif,sans-serif}
+    .derived{background:var(--ice);border:1px solid var(--ice-line);border-radius:10px;
+      padding:1rem 1.15rem;font-size:.92rem}
+    .derived p{margin:0 0 .5rem} .derived p:last-child{margin:0}
+    footer{margin-top:4rem;padding-top:1.25rem;border-top:1px solid var(--rule);
+      color:var(--ink-soft);font-size:.82rem}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a href={url()}>Field Guide</a>
+      <a href={url('elements/')}>Elements</a>
+      <a href={url('tests/')}>Tests</a>
+    </nav>
+    <slot />
+    <footer>
+      Written and drawn from scratch — no governing body's material is reproduced.
+      Mechanics are unverified unless a page says otherwise.
+    </footer>
+  </div>
+  <script is:inline define:vars={{ swPath, scope }}>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register(swPath, { scope }).catch(() => {}));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+---
+const { verified, what = 'mechanics' } = Astro.props;
+---
+{!verified?.checked && (
+  <p class="unverified">
+    <b>Unverified.</b> The {what} on this page are a first draft by a non-expert and have not
+    been checked by a coach. Read them as a starting point, not as instruction. Corrections
+    are very welcome — the repository is public.
+  </p>
+)}
+{verified?.checked && (
+  <p class="meta"><span class="chip">Checked{verified.by ? <> by <b>{verified.by}</b></> : null}</span></p>
+)}

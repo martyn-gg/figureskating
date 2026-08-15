@@ -36,10 +36,31 @@ almost no other resource provides.
 
 ## Layout
 
+    src/content.config.ts         collection schemas — elements, tests, exercises
+    src/data/elements/            one file per element; foot, edge, direction only
+    src/data/tests/               a test is an ordered list of element references
+    src/lib/skating.js            the derived model — pure, no DOM
+    src/pages/                    element and test pages
     prototypes/edge-engine.html   edges, turns and cusps — the derived tier
     prototypes/body-frame.html    one 3D marker rig, three orthogonal projections
     tools/                        verification scripts (see below)
     docs/model.md                 coordinate conventions and constants
+
+## Running it
+
+Astro 7, Node 22.
+
+    npm install
+    npm run dev        # local site
+    npm run build      # static output to dist/
+    npm run check      # harness, reach and shin checks
+
+## Nothing renders as authoritative by accident
+
+Elements and tests both carry a `verified` flag, defaulting to false. Any page whose
+mechanics have not been checked by someone qualified says so, in a banner, above the
+content. Syllabus entries carry a `sourceUrl` and stay unverified until confirmed
+against the governing body's current material.
 
 ## Verification
 
@@ -51,6 +72,7 @@ not optional.
     node tools/reach.mjs          flag any foot the leg cannot physically reach
     node tools/shin.mjs           flag shin lean beyond what a stiff boot allows
     node tools/contact-sheet.mjs  every keyframe of a move, side by side
+    node tools/links.mjs          every internal link in dist/ resolves to a real file
 
 The contact sheet is the one that catches sequence errors. Individual frames all look
 plausible; only the whole element side by side shows a leg on the wrong side of the body.

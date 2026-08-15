@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+const elements = await getCollection('elements');
+const tests = await getCollection('tests');
+const byKind = k => elements.filter(e => e.data.kind === k);
+---
+<Base title={null}>
+  <h1>Field Guide to Figure Skating</h1>
+  <p class="lede">
+    Edges, turns, jumps, spins and positions — with the national tests each one appears in.
+    Built so it works at the rink with no signal.
+  </p>
+
+  <h2>Elements</h2>
+  <ul class="plain">
+    {elements.map(e => (
+      <li>
+        <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
+        <span>{e.data.summary}</span>
+      </li>
+    ))}
+  </ul>
+
+  <h2>Tests</h2>
+  <ul class="plain">
+    {tests.map(t => (
+      <li>
+        <a href={url(`tests/${t.id}/`)}>{t.data.name}</a>
+        <span>{t.data.governingBody} · {t.data.discipline} · {t.data.elements.length} elements</span>
+      </li>
+    ))}
+  </ul>
+
+  <h2>How it is built</h2>
+  <div class="derived">
+    <p>
+      Almost nothing here is drawn or written per element. Which way a lobe curves is a
+      product of three facts about the foot — which foot, which edge, forwards or backwards —
+      so the guide stores those three and derives the rest.
+    </p>
+    <p>
+      That is why every element mirrors for free: flip the foot and you have the version for
+      a skater who rotates the other way, which almost no other resource provides.
+    </p>
+  </div>
+
+  <p style="margin-top:1.5rem;font-size:.9rem;color:var(--ink-soft)">
+    {byKind('turn').length} turns, {byKind('jump').length} jumps, {byKind('position').length} positions
+    recorded so far. Early days.
+  </p>
+</Base>

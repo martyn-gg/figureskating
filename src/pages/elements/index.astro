@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+const elements = (await getCollection('elements')).sort((a,b)=>a.data.name.localeCompare(b.data.name));
+const kinds = [...new Set(elements.map(e => e.data.kind))];
+---
+<Base title="Elements">
+  <h1>Elements</h1>
+  <p class="lede">Each element exists once and knows nothing about tests, so it can appear in as many as it likes.</p>
+  {kinds.map(k => (
+    <>
+      <h2>{k}</h2>
+      <ul class="plain">
+        {elements.filter(e => e.data.kind === k).map(e => (
+          <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>
+        ))}
+      </ul>
+    </>
+  ))}
+</Base>

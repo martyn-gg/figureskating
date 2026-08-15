@@ -1,0 +1,9 @@
+{
+  "name": "Field Guide to Figure Skating",
+  "short_name": "Skating Guide",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f2f7fb",
+  "theme_color": "#12303f",
+  "description": "Edges, turns, jumps and the national tests they appear in."
+}

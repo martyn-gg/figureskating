@@ -1,0 +1,95 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import { label, mirror, describeTurn, exitState, lobeContinues, LANDING, JUMPS, confusableWith } from '../../lib/skating.js';
+
+export async function getStaticPaths() {
+  const elements = await getCollection('elements');
+  return elements.map(e => ({ params: { slug: e.id }, props: { entry: e } }));
+}
+import { url } from '../../lib/url.js';
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+/* Every test that references this element, in any country. Free, because tests
+   point at elements and never the other way round. */
+const tests = (await getCollection('tests')).filter(t => t.data.elements.some(r => r.id === entry.id));
+
+/* Nothing below is stored on the element. */
+const turnLine = d.entry && d.turn ? describeTurn(d.entry, d.turn) : null;
+const turnExit = d.entry && d.turn ? exitState(d.entry, d.turn) : null;
+const mirrored = d.entry ? mirror(d.entry) : null;
+const mirrorJump = d.jump ? { takeoff: mirror(d.jump.takeoff), landing: mirror(d.jump.landing) } : null;
+const shares = d.jump ? Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(d.jump.takeoff)
+  && JUMPS[k].name.toLowerCase() !== d.name.toLowerCase()) : [];
+const allElements = await getCollection('elements');
+const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
+---
+<Base title={d.name} subtitle={d.summary}>
+  <h1>{d.name}</h1>
+  <p class="lede">{d.summary}</p>
+
+  <div class="meta">
+    <span class="chip">{d.kind}</span>
+    {d.entry && <span class="chip">entry <b>{label(d.entry)}</b></span>}
+    {turnExit && <span class="chip">exit <b>{label(turnExit)}</b></span>}
+    {d.jump && <span class="chip">takeoff <b>{label(d.jump.takeoff)}</b></span>}
+    {d.jump && <span class="chip">landing <b>{label(d.jump.landing)}</b></span>}
+    {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
+    {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
+  </div>
+
+  <Unverified verified={d.verified} />
+
+  <Content />
+
+  <h2>Derived</h2>
+  <div class="derived">
+    {turnLine && <p>{turnLine}</p>}
+    {d.entry && !d.turn && (
+      <p>The entry edge {label(d.entry)} curves
+        {' '}{(d.entry.foot === 'L') === (d.entry.edge === 'O') === (d.entry.dir === 'F') ? 'anticlockwise' : ''}
+        {' '}as traced on the ice.</p>
+    )}
+    {d.jump && (
+      <p>{[
+        `Takes off ${label(d.jump.takeoff)} and lands ${label(d.jump.landing)}`,
+        label(d.jump.landing) === label(LANDING)
+          ? ', the same edge every jump in this guide lands on — which is why the takeoff is the whole story.'
+          : '.',
+        d.jump.assisted ? ' The toe pick provides the vault.' : ' The spring comes from the edge, with no pick.',
+      ].join('')}</p>
+    )}
+    {d.jump && shares.length > 0 && (
+      <p>Shares its takeoff edge with the {shares.map(k => JUMPS[k].name.toLowerCase()).join(' and the ')} —
+        the pair that get mistaken for each other.</p>
+    )}
+    {d.jump && shares.length === 0 && (
+      <p>No other jump takes off from {label(d.jump.takeoff)}. That is exactly why it drifts:
+        roll onto the other edge and it becomes a different jump entirely.</p>
+    )}
+    {mirrored && <p>A skater who rotates the other way does the same thing from <b>{label(mirrored)}</b>. Same element, mirrored.</p>}
+    {mirrorJump && (
+      <p>A skater who rotates clockwise takes off <b>{label(mirrorJump.takeoff)}</b> and lands
+        {' '}<b>{label(mirrorJump.landing)}</b> — the same jump, mirrored, generated rather than written twice.</p>
+    )}
+  </div>
+
+  {prereqs.length > 0 && (
+    <>
+      <h2>Build on</h2>
+      <ul class="plain">
+        {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
+      </ul>
+    </>
+  )}
+
+  <h2>Appears in</h2>
+  {tests.length === 0
+    ? <p style="color:var(--ink-soft);font-size:.9rem">No test syllabus recorded yet.</p>
+    : <ul class="plain">{tests.map(t => (
+        <li><a href={url(`tests/${t.id}/`)}>{t.data.name}</a><span>{t.data.governingBody} · level {t.data.level}</span></li>
+      ))}</ul>}
+</Base>

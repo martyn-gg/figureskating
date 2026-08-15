@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+const tests = await getCollection('tests');
+---
+<Base title="Tests">
+  <h1>Tests</h1>
+  <p class="lede">
+    A test is an ordered list of references to elements. Adding Skate Canada or US Figure
+    Skating is a data exercise, not a rewrite.
+  </p>
+  <ul class="plain">
+    {tests.map(t => (
+      <li>
+        <a href={url(`tests/${t.id}/`)}>{t.data.name}</a>
+        <span>{t.data.governingBody} · level {t.data.level} · {t.data.elements.length} elements</span>
+      </li>
+    ))}
+  </ul>
+</Base>

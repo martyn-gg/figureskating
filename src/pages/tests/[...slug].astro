@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+
+export async function getStaticPaths() {
+  const tests = await getCollection('tests');
+  return tests.map(t => ({ params: { slug: t.id }, props: { entry: t } }));
+}
+import { url } from '../../lib/url.js';
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const all = await getCollection('elements');
+const items = d.elements.map(r => all.find(e => e.id === r.id)).filter(Boolean);
+---
+<Base title={d.name}>
+  <h1>{d.name}</h1>
+  <div class="meta">
+    <span class="chip">{d.governingBody}</span>
+    <span class="chip">{d.discipline}</span>
+    <span class="chip">level <b>{d.level}</b></span>
+  </div>
+  <Unverified verified={d.verified} what="requirements" />
+  <Content />
+  <h2>Elements</h2>
+  <ul class="plain">
+    {items.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}
+  </ul>
+  {d.sourceUrl && <p style="font-size:.85rem;margin-top:1.5rem"><a href={d.sourceUrl}>Governing body source</a></p>}
+</Base>
