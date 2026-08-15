@@ -22,30 +22,6 @@ const m = MOVES[move];
 </figure>
 )}
 
-<style is:global>
-  .bf{margin:1.75rem 0}
-  .bf-views{display:grid;gap:.7rem}
-  .bf-pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
-  @media (max-width:34rem){.bf-pair{grid-template-columns:1fr}}
-  .bf-card{background:var(--ice);border:1px solid var(--ice-line);border-radius:12px;overflow:hidden}
-  .bf-card h3{margin:0;padding:.5rem .8rem .45rem;font-size:.66rem;letter-spacing:.09em;
-    text-transform:uppercase;color:var(--ink-soft);font-weight:600;border-bottom:1px solid var(--ice-line);
-    font-family:ui-sans-serif,-apple-system,sans-serif}
-  .bf-card h3 span{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
-  .bf-card svg{display:block;width:100%;height:auto}
-  .bf-ctl{display:flex;align-items:center;gap:.7rem;margin-top:.7rem;padding:.55rem .8rem;
-    background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
-  .bf-ctl button{width:32px;height:32px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
-    background:var(--paper);color:var(--ink);cursor:pointer;font-size:11px}
-  .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
-  .bf-phase{margin:.45rem 0 0;font-size:.8rem;color:var(--ink-soft);
-    font-family:ui-sans-serif,-apple-system,sans-serif}
-  .bf figcaption{margin-top:.6rem;font-family:ui-sans-serif,-apple-system,sans-serif;
-    font-size:.82rem;color:var(--ink-soft)}
-  .bf-twist{display:inline-block;background:var(--ice);border:1px solid var(--ice-line);
-    border-radius:999px;padding:.15rem .6rem;margin-right:.4rem}
-  .bf-twist b{color:var(--ink);font-variant-numeric:tabular-nums}
-</style>
 
 <script>
   import { mount } from '../lib/body-frame.js';
@@ -57,15 +33,21 @@ const m = MOVES[move];
     const phase = fig.querySelector('[data-phase]');
     const twist = fig.querySelector('[data-twist]');
     const blade = fig.querySelector('[data-blade]');
+    let lastWrite = 0;
 
     const rig = mount(host, {
       move: fig.dataset.move,
       views: fig.dataset.views.split(','),
       onFrame(i, pose, tw, zone) {
+        /* Ten updates a second is unreadable. Write at most eight, and only when
+           the string has actually changed. */
+        const now = performance.now();
+        if (now - lastWrite < 130) { if (scrub && document.activeElement !== scrub) scrub.value = String(Math.round(i)); return; }
+        lastWrite = now;
         if (scrub && document.activeElement !== scrub) scrub.value = String(Math.round(i));
-        if (phase) phase.textContent = pose.ph;
+        if (phase && phase.textContent !== pose.ph) phase.textContent = pose.ph;
         if (twist) twist.textContent = `${tw > 0 ? '+' : ''}${tw}°`;
-        if (blade) blade.textContent = zone;
+        if (blade && blade.textContent !== zone) blade.textContent = zone;
       },
     });
     if (scrub) scrub.max = String(rig.frames - 1);

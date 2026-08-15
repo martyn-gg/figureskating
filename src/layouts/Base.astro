@@ -49,6 +49,35 @@ const scope = url();
     .derived{background:var(--ice);border:1px solid var(--ice-line);border-radius:10px;
       padding:1rem 1.15rem;font-size:.92rem}
     .derived p{margin:0 0 .5rem} .derived p:last-child{margin:0}
+.bf{margin:1.75rem 0}
+  .bf-views{display:grid;gap:.7rem}
+  .bf-pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  @media (max-width:34rem){.bf-pair{grid-template-columns:1fr}}
+  .bf-card{background:var(--ice);border:1px solid var(--ice-line);border-radius:12px;overflow:hidden}
+  .bf-card h3{margin:0;padding:.5rem .8rem .45rem;font-size:.66rem;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--ink-soft);font-weight:600;border-bottom:1px solid var(--ice-line);
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .bf-card h3 span{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
+  .bf-card svg{display:block;width:100%;height:auto}
+  .bf-ctl{display:flex;align-items:center;gap:.7rem;margin-top:.7rem;padding:.55rem .8rem;
+    background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
+  .bf-ctl button{width:32px;height:32px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:11px}
+  .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+  .bf-phase{margin:.45rem 0 0;font-size:.8rem;color:var(--ink-soft);
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .bf figcaption{margin-top:.6rem;font-family:ui-sans-serif,-apple-system,sans-serif;
+    font-size:.82rem;color:var(--ink-soft)}
+  .bf-twist{display:inline-block;background:var(--ice);border:1px solid var(--ice-line);
+    border-radius:999px;padding:.15rem .6rem;margin-right:.4rem}
+  .bf-twist b{color:var(--ink);font-variant-numeric:tabular-nums}
+    /* Readouts reserve their space. A value that reflows the line while it updates
+       is unreadable however correct it is. */
+    .bf-phase{min-height:1.35em}
+    .bf-twist{display:inline-block;min-width:9.5em;text-align:left}
+    .bf-twist b{display:inline-block;min-width:3.2em;text-align:right}
+
+    .derived p.notation{padding-bottom:.6rem;margin-bottom:.7rem;border-bottom:1px solid var(--ice-line)}
     footer{margin-top:4rem;padding-top:1.25rem;border-top:1px solid var(--rule);
       color:var(--ink-soft);font-size:.82rem}
   </style>
@@ -63,6 +92,10 @@ const scope = url();
     </nav>
     <slot />
     <footer>
+      Edges are written as three letters — foot, direction, edge. <b>LFO</b> is a left
+      foot travelling forwards on an outside edge; <b>RBI</b> is a right foot backwards
+      on an inside edge.
+      <br /><br />
       Written and drawn from scratch — no governing body's material is reproduced.
       Mechanics are unverified unless a page says otherwise.
     </footer>

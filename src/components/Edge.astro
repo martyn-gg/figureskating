@@ -1,0 +1,10 @@
+---
+import { label, describeEdge } from '../lib/skating.js';
+const { state } = Astro.props;
+---
+<abbr class="edge" title={describeEdge(state)}>{label(state)}</abbr>
+
+<style is:global>
+  abbr.edge{text-decoration:underline dotted var(--ink-soft);text-underline-offset:.2em;
+    cursor:help;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+</style>

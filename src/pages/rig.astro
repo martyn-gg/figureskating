@@ -81,7 +81,7 @@ const moves = Object.entries(MOVES).map(([id, m]) => ({ id, name: m.name, note: 
   const showBoxes = [...document.querySelectorAll('[data-show]')];
 
   let move = document.querySelector('.rig-pick button').dataset.move;
-  let rig = null;
+  let rig = null, lastWrite = 0;
 
   const build = () => {
     rig?.destroy();
@@ -90,10 +90,15 @@ const moves = Object.entries(MOVES).map(([id, m]) => ({ id, name: m.name, note: 
     rig = mount(host, {
       move, views, show,
       onFrame(i, pose, tw, zone) {
+        /* Ten updates a second is unreadable. Write at most eight, and only when
+           the string has actually changed. */
+        const now = performance.now();
+        if (now - lastWrite < 130) { if (scrub && document.activeElement !== scrub) scrub.value = String(Math.round(i)); return; }
+        lastWrite = now;
         if (document.activeElement !== scrub) scrub.value = String(Math.round(i));
-        phase.textContent = pose.ph;
+        if (phase.textContent !== pose.ph) phase.textContent = pose.ph;
         twist.textContent = `${tw > 0 ? '+' : ''}${tw}°`;
-        blade.textContent = zone;
+        if (blade.textContent !== zone) blade.textContent = zone;
       },
     });
     scrub.max = String(rig.frames - 1);

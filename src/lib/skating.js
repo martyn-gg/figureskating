@@ -11,8 +11,14 @@ export function lobeSense(foot, edge, dir) {
   return (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * (dir === 'F' ? 1 : -1);
 }
 
-/** LFO, RBI, and so on. */
+/** LFO, RBI, and so on: foot, then direction, then edge. */
 export const label = s => `${s.foot}${s.dir}${s.edge}`;
+
+const WORDS = { L: 'left foot', R: 'right foot', F: 'forwards', B: 'backwards',
+                O: 'outside edge', I: 'inside edge' };
+
+/** The same three letters in words — "left foot, forwards, outside edge". */
+export const describeEdge = s => `${WORDS[s.foot]}, ${WORDS[s.dir]}, ${WORDS[s.edge]}`;
 
 const flip = (v, a, b) => (v === a ? b : a);
 

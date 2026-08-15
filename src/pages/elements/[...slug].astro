@@ -4,7 +4,8 @@ import Base from '../../layouts/Base.astro';
 import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
-import { label, mirror, describeTurn, exitState, lobeContinues, LANDING, JUMPS, confusableWith } from '../../lib/skating.js';
+import Edge from '../../components/Edge.astro';
+import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, LANDING, JUMPS, confusableWith } from '../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -35,10 +36,10 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
 
   <div class="meta">
     <span class="chip">{d.kind}</span>
-    {d.entry && <span class="chip">entry <b>{label(d.entry)}</b></span>}
-    {turnExit && <span class="chip">exit <b>{label(turnExit)}</b></span>}
-    {d.jump && <span class="chip">takeoff <b>{label(d.jump.takeoff)}</b></span>}
-    {d.jump && <span class="chip">landing <b>{label(d.jump.landing)}</b></span>}
+    {d.entry && <span class="chip">entry <b><Edge state={d.entry} /></b></span>}
+    {turnExit && <span class="chip">exit <b><Edge state={turnExit} /></b></span>}
+    {d.jump && <span class="chip">takeoff <b><Edge state={d.jump.takeoff} /></b></span>}
+    {d.jump && <span class="chip">landing <b><Edge state={d.jump.landing} /></b></span>}
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
     {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
   </div>
@@ -52,6 +53,13 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
 
   <h2>Derived</h2>
   <div class="derived">
+    {(d.entry || d.jump) && (
+      <p class="notation">
+        <b>{label(d.entry ?? d.jump.takeoff)}</b> is three letters: foot, direction, edge —
+        {' '}{describeEdge(d.entry ?? d.jump.takeoff)}. Every edge in the guide is written
+        that way, so <b>RBI</b> is a right foot travelling backwards on an inside edge.
+      </p>
+    )}
     {turnLine && <p>{turnLine}</p>}
     {d.entry && !d.turn && (
       <p>The entry edge {label(d.entry)} curves
