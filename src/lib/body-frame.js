@@ -363,7 +363,10 @@ export function mount(host, {
     }
   }
 
-  let i = 0, playing = autoplay, last = 0, raf = 0;
+  /* Real time is the wrong speed for learning a jump. A skater watching this
+     wants it slowed down, not scrubbed — scrubbing gives you frames, slowing
+     gives you the movement. */
+  let i = 0, playing = autoplay, last = 0, raf = 0, speed = 1;
   const seek = n => {
     i = Math.min(frames.length - 1, Math.max(0, n));
     const f = frames[Math.round(i)];
@@ -376,7 +379,7 @@ export function mount(host, {
     const dt = Math.min(64, now - (last || now));
     last = now;
     if (playing) {
-      i += (dt / 1000) * (frames.length - 1) / m.duration;
+      i += (dt / 1000) * (frames.length - 1) / m.duration * speed;
       if (i >= frames.length - 1) i = 0;
       seek(i);
     }
@@ -390,6 +393,8 @@ export function mount(host, {
     seek,
     set playing(v) { playing = v; },
     get playing() { return playing; },
+    set speed(v) { speed = v; },
+    get speed() { return speed; },
     setShow(k, v) { SHOWN[k] = v; seek(i); },
     destroy() { cancelAnimationFrame(raf); },
     note: m.note,

@@ -9,6 +9,7 @@ const m = MOVES[move];
   {controls && (
     <div class="bf-ctl">
       <button type="button" data-play aria-label="Play or pause">❚❚</button>
+      <button type="button" class="spd" data-speed aria-label="Playback speed, currently full speed">1×</button>
       <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
     </div>
     <p class="bf-phase" data-phase></p>
@@ -61,6 +62,23 @@ const m = MOVES[move];
     scrub?.addEventListener('input', () => {
       rig.playing = false; play.textContent = '▶'; rig.seek(Number(scrub.value));
     });
+
+    /* The whole reason this rig exists is to be watched slowly. Discrete steps,
+       not a slider — it gets used one-handed in gloves. */
+    const spd = fig.querySelector('[data-speed]');
+    const RATES = [[1, '1×', 'full speed'], [.5, '½×', 'half speed'],
+                   [.25, '¼×', 'quarter speed'], [.125, '⅛×', 'an eighth of full speed']];
+    let rate = 0;
+    spd?.addEventListener('click', () => {
+      rate = (rate + 1) % RATES.length;
+      const [v, text, words] = RATES[rate];
+      spd.textContent = text;
+      spd.setAttribute('aria-label', `Playback speed, currently ${words}`);
+      if (rate) spd.setAttribute('data-slow', ''); else spd.removeAttribute('data-slow');
+      rig.speed = v;
+      if (!rig.playing) { rig.playing = true; if (play) play.textContent = '❚❚'; }
+    });
+
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       rig.playing = false; if (play) play.textContent = '▶';
       rig.seek(Math.round(rig.frames * 0.45));

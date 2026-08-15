@@ -2,7 +2,7 @@
    and is imported, not duplicated — the diagram and the prose on the page are
    incapable of disagreeing about which way a lobe curves. */
 
-import { lobeSense, TURNS, exitState, label } from './skating.js';
+import { lobeSense, ALL_TURNS, exitState, label } from './skating.js';
 
 const D2R = Math.PI / 180;
 const NS = 'http://www.w3.org/2000/svg';
@@ -31,25 +31,48 @@ function arc(x0, y0, th0, kappa, len, n) {
    turning rate on screen. That sign flip lives here and nowhere else. */
 const kappaOf = (s, R) => -lobeSense(s.foot, s.edge, s.dir) / R;
 
+/* Two blades are a boot's width apart, so a step lands beside the tracing it
+   leaves rather than on top of it. Drawn wider than life, like the edges. */
+const STEP_OFFSET = 11;
+
 export function buildTrace({ entry, turn, radius = 120, sweep = 96, cuspDepth = 15 }) {
   const N = 200;
   if (!turn) {
     const pts = arc(0, 0, 0, kappaOf(entry, radius), radius * sweep * 1.6 * D2R, N);
     return { frames: pts.map(p => ({ ...p, state: entry, angle: p.th + (entry.dir === 'B' ? Math.PI : 0) })),
-             entry, exit: entry, turnIdx: pts.length - 1 };
+             entry, exit: entry, turnIdx: pts.length - 1, stepped: false };
   }
 
-  const t = TURNS[turn];
+  const t = ALL_TURNS[turn];
   const exit = exitState(entry, turn);
   const kIn = kappaOf(entry, radius), kOut = kappaOf(exit, radius);
   const inPts = arc(0, 0, 0, kIn, sweep * radius * D2R, N);
   const P = inPts[inPts.length - 1];
+  const centreDir = P.th + (Math.PI / 2) * Math.sign(kIn);
+  const turnIdx = inPts.length - 1;
+
+  /* A two-foot turn does not pivot, so there is nothing to draw a cusp with. The
+     new blade goes down beside the skating foot, on the inside, and the old
+     tracing simply stops. Faking a cusp here would draw a turn that is not the
+     one being described. */
+  if (t.changesFoot) {
+    const ox = P.x + Math.cos(centreDir) * STEP_OFFSET;
+    const oy = P.y + Math.sin(centreDir) * STEP_OFFSET;
+    const outPts = arc(ox, oy, P.th, kOut, sweep * radius * D2R, N);
+    const pts = [...inPts, ...outPts];
+    const frames = pts.map((p, i) => {
+      const state = i > turnIdx ? exit : entry;
+      return { x: p.x, y: p.y, th: p.th, state,
+               angle: p.th + (state.dir === 'B' ? Math.PI : 0) };
+    });
+    return { frames, entry, exit, turnIdx, stepped: true };
+  }
+
   const outPts = arc(P.x, P.y, P.th, kOut, sweep * radius * D2R, N);
 
   /* The cusp points into the circle when the skater rotates into it, out of it
      when they rotate against it — which is the whole difference between a three
      turn and a bracket. */
-  const centreDir = P.th + (Math.PI / 2) * Math.sign(kIn);
   const apexDir = t.rotatesInto ? centreDir : centreDir + Math.PI;
   const apex = { x: P.x + Math.cos(apexDir) * cuspDepth, y: P.y + Math.sin(apexDir) * cuspDepth };
 
@@ -63,7 +86,6 @@ export function buildTrace({ entry, turn, radius = 120, sweep = 96, cuspDepth = 
 
   const pts = [...blend(inPts, true), ...blend(outPts, false)];
   const spin = (t.rotatesInto ? 1 : -1) * Math.sign(kIn) * Math.PI;
-  const turnIdx = inPts.length - 1;
 
   const frames = pts.map((p, i) => {
     const past = i > turnIdx;
@@ -73,7 +95,7 @@ export function buildTrace({ entry, turn, radius = 120, sweep = 96, cuspDepth = 
              angle: p.th + (entry.dir === 'B' ? Math.PI : 0) + spin * (u * u * (3 - 2 * u)) };
   });
 
-  return { frames, entry, exit, turnIdx };
+  return { frames, entry, exit, turnIdx, stepped: false };
 }
 
 function boot(state, foot) {
@@ -110,7 +132,12 @@ export function mount(svg, opts) {
   svg.appendChild(root);
 
   const d = pts => pts.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
-  root.appendChild(el('path', { d: d(frames), fill: 'none', stroke: 'var(--ink)', opacity: .13,
+  /* On a two-foot turn the ghost path has to break, or the picture shows one
+     continuous tracing where the ice would carry two. */
+  const ghost = trace.stepped
+    ? `${d(frames.slice(0, trace.turnIdx + 1))} ${d(frames.slice(trace.turnIdx + 1))}`
+    : d(frames);
+  root.appendChild(el('path', { d: ghost, fill: 'none', stroke: 'var(--ink)', opacity: .13,
     'stroke-width': 2.6 / s, 'stroke-linecap': 'round' }));
 
   const drawnIn = el('path', { fill: 'none', 'stroke-width': 3.4 / s, 'stroke-linecap': 'round',
@@ -121,25 +148,28 @@ export function mount(svg, opts) {
   const bootG = el('g');
   root.appendChild(bootG);
 
-  let i = 0, playing = true, last = 0, raf = 0;
+  let i = 0, playing = true, last = 0, raf = 0, speed = 1;
   const seek = n => {
     i = Math.min(frames.length - 1, Math.max(0, n));
     const cut = Math.min(Math.round(i), trace.turnIdx);
+    const from = trace.stepped ? trace.turnIdx + 1 : trace.turnIdx;
     drawnIn.setAttribute('d', d(frames.slice(0, cut + 1)));
     drawnOut.setAttribute('d', Math.round(i) > trace.turnIdx
-      ? d(frames.slice(trace.turnIdx, Math.round(i) + 1)) : '');
+      ? d(frames.slice(from, Math.round(i) + 1)) : '');
     const f = frames[Math.round(i)];
     bootG.textContent = '';
     const g = el('g', { transform:
       `translate(${f.x} ${f.y}) rotate(${(f.angle * 180) / Math.PI}) scale(${Math.min(1, 1.15 / s)})` });
-    g.appendChild(boot(f.state, entry.foot));
+    /* The boot takes its foot from the frame, not from the entry — on a mohawk
+       the second half of the tracing is the other blade. */
+    g.appendChild(boot(f.state, f.state.foot));
     bootG.appendChild(g);
   };
 
   const tick = now => {
     const dt = Math.min(64, now - (last || now));
     last = now;
-    if (playing) { i += dt * 0.085; if (i >= frames.length - 1) i = 0; seek(i); opts.onFrame?.(i); }
+    if (playing) { i += dt * 0.085 * speed; if (i >= frames.length - 1) i = 0; seek(i); opts.onFrame?.(i); }
     raf = requestAnimationFrame(tick);
   };
   seek(0);
@@ -150,6 +180,10 @@ export function mount(svg, opts) {
     seek,
     set playing(v) { playing = v; },
     get playing() { return playing; },
+    /* A turn at full speed is a smear. The useful view of a counter is a quarter
+       of real time, which is not something scrubbing gives you. */
+    set speed(v) { speed = v; },
+    get speed() { return speed; },
     destroy() { cancelAnimationFrame(raf); },
     label: { entry: label(entry), exit: label(exit) },
   };

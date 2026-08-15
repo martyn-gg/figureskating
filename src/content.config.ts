@@ -24,7 +24,11 @@ const elements = defineCollection({
     kind: z.enum(['edge', 'turn', 'jump', 'spin', 'position', 'step', 'dance']),
     summary: z.string(),
     entry: z.object({ foot, edge, dir }).optional(),
-    turn: z.enum(['three', 'bracket', 'rocker', 'counter', 'twizzle', 'loop']).optional(),
+    /* One-foot turns first, then the two-foot ones. A mohawk and a choctaw change
+       foot as well as direction, which the model derives rather than stores —
+       see src/lib/skating.js. */
+    turn: z.enum(['three', 'bracket', 'rocker', 'counter',
+                  'mohawk', 'choctaw', 'twizzle', 'loop']).optional(),
     jump: z.object({
       takeoff: z.object({ foot, edge, dir }),
       landing: z.object({ foot, edge, dir }),

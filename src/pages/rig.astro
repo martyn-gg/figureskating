@@ -20,6 +20,7 @@ const moves = Object.entries(MOVES).map(([id, m]) => ({ id, name: m.name, note: 
 
   <div class="bf-ctl">
     <button type="button" id="rig-play" aria-label="Play or pause">❚❚</button>
+    <button type="button" class="spd" id="rig-speed" aria-label="Playback speed, currently full speed">1×</button>
     <input type="range" min="0" max="1000" value="0" id="rig-scrub" aria-label="Scrub" />
   </div>
   <p class="bf-phase" id="rig-phase"></p>
@@ -105,7 +106,24 @@ const moves = Object.entries(MOVES).map(([id, m]) => ({ id, name: m.name, note: 
     });
     scrub.max = String(rig.frames - 1);
     play.textContent = rig.playing ? '❚❚' : '▶';
+    /* The chosen speed survives changing move or toggling a view — losing it on
+       every rebuild would make the control useless for comparing two moves. */
+    rig.speed = RATES[rate][0];
   };
+
+  const speedBtn = document.getElementById('rig-speed');
+  const RATES = [[1, '1×', 'full speed'], [.5, '½×', 'half speed'],
+                 [.25, '¼×', 'quarter speed'], [.125, '⅛×', 'an eighth of full speed']];
+  let rate = 0;
+  speedBtn.addEventListener('click', () => {
+    rate = (rate + 1) % RATES.length;
+    const [v, text, words] = RATES[rate];
+    speedBtn.textContent = text;
+    speedBtn.setAttribute('aria-label', `Playback speed, currently ${words}`);
+    if (rate) speedBtn.setAttribute('data-slow', ''); else speedBtn.removeAttribute('data-slow');
+    rig.speed = v;
+    if (!rig.playing) { rig.playing = true; play.textContent = '❚❚'; }
+  });
 
   for (const b of document.querySelectorAll('.rig-pick button'))
     b.addEventListener('click', () => {

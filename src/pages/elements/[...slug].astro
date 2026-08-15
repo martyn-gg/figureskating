@@ -5,7 +5,7 @@ import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
-import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, lobeSense, LANDING, JUMPS, TURNS, confusableWith } from '../../lib/skating.js';
+import { label, mirror, describeTurn, describeEdge, exitState, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -41,7 +41,7 @@ const family = d.entry ? allElements.filter(e =>
   e.data.entry && label(e.data.entry) === label(d.entry) && e.id !== entry.id
   && (e.data.kind === 'edge' || e.data.kind === 'turn')
   && !prereqs.some(p => p.id === e.id)) : [];
-const familyOrder = [null, ...Object.keys(TURNS)];
+const familyOrder = [null, ...Object.keys(ALL_TURNS)];
 family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.indexOf(b.data.turn ?? null));
 ---
 <Base title={d.name} subtitle={d.summary}>
@@ -121,7 +121,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
           <li>
             <a href={url(`elements/${f.id}/`)}>{f.data.name}</a>
             <span>{f.data.turn
-              ? `exits ${label(exitState(d.entry, f.data.turn))} · the edge ${TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
+              ? `exits ${label(exitState(d.entry, f.data.turn))} · ${ALL_TURNS[f.data.turn].changesFoot ? 'changes foot' : 'same foot'}, the edge ${ALL_TURNS[f.data.turn].edgeChanges ? 'changes' : 'holds'}, the lobe ${lobeContinues(d.entry, f.data.turn) ? 'continues' : 'reverses'}`
               : 'the plain edge, with no turn on it'}</span>
           </li>
         ))}

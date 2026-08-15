@@ -12,6 +12,7 @@ const m = mirror(entry);
     data-turn={turn ?? ''}></svg>
   <div class="dctl">
     <button type="button" data-play aria-label="Play or pause">❚❚</button>
+    <button type="button" class="spd" data-speed aria-label="Playback speed, currently full speed">1×</button>
     <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
     <label class="mir"><input type="checkbox" data-mirror /> mirror</label>
   </div>
@@ -31,6 +32,10 @@ const m = mirror(entry);
   .dctl{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border-top:1px solid var(--ice-line)}
   .dctl button{width:34px;height:34px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
     background:var(--paper);color:var(--ink);cursor:pointer;font-size:12px;line-height:1}
+  /* Wider than the play button, because it carries a label rather than a glyph. */
+  .dctl button.spd{width:auto;min-width:38px;padding:0 .5rem;font-size:.78rem;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+  .dctl button.spd[data-slow]{border-color:var(--accent);color:var(--accent)}
   .dctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
   .mir{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.8rem;color:var(--ink-soft);
     display:flex;align-items:center;gap:.35rem;cursor:pointer;white-space:nowrap}
@@ -52,6 +57,12 @@ const m = mirror(entry);
     const labs = fig.querySelectorAll('[data-lab-entry],[data-lab-exit]');
     const note = fig.querySelector('[data-lab-note]');
     const turn = svg.dataset.turn || null;
+    const spd = fig.querySelector('[data-speed]');
+    /* Discrete steps rather than a slider: this gets used one-handed, on a phone,
+       in gloves, and a slider needs a grip a glove does not have. */
+    const RATES = [[1, '1×', 'full speed'], [.5, '½×', 'half speed'],
+                   [.25, '¼×', 'quarter speed'], [.125, '⅛×', 'an eighth of full speed']];
+    let rate = 0;
     let view = null;
 
     const build = () => {
@@ -59,6 +70,7 @@ const m = mirror(entry);
       const entry = mirrorBox.checked ? { ...base, foot: base.foot === 'L' ? 'R' : 'L' } : base;
       view = mount(svg, { entry, turn, onFrame: n => { scrub.value = String(Math.round(n)); } });
       scrub.max = String(view.frames - 1);
+      view.speed = RATES[rate][0];
       /* The caption has to follow the toggle, or the page describes one tracing
          while showing the other. */
       for (const b of labs) b.textContent = mirrorBox.checked ? b.dataset.b : b.dataset.a;
@@ -77,6 +89,16 @@ const m = mirror(entry);
     });
     scrub.addEventListener('input', () => {
       view.playing = false; play.textContent = '▶'; view.seek(Number(scrub.value));
+    });
+    spd.addEventListener('click', () => {
+      rate = (rate + 1) % RATES.length;
+      const [v, text, words] = RATES[rate];
+      spd.textContent = text;
+      spd.setAttribute('aria-label', `Playback speed, currently ${words}`);
+      if (rate) spd.setAttribute('data-slow', ''); else spd.removeAttribute('data-slow');
+      view.speed = v;
+      /* Choosing a speed and seeing nothing move is a dead control. */
+      if (!view.playing) { view.playing = true; play.textContent = '❚❚'; }
     });
     mirrorBox.addEventListener('change', build);
     build();

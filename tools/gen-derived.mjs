@@ -21,7 +21,7 @@
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lobeSense, label, exitState, TURNS } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, ALL_TURNS } from '../src/lib/skating.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
@@ -33,7 +33,8 @@ const EDGES = ['O', 'I'];
 const FOOT_WORD = { L: 'Left', R: 'Right' };
 const DIR_WORD = { F: 'forward', B: 'backward' };
 const EDGE_WORD = { O: 'outside', I: 'inside' };
-const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', counter: 'counter' };
+const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', counter: 'counter',
+                    mohawk: 'mohawk', choctaw: 'choctaw' };
 
 const slug = s => `${s.foot}${s.dir}${s.edge}`.toLowerCase();
 const key = s => `${s.dir}${s.edge}`;                       // FO, FI, BO, BI
@@ -230,6 +231,81 @@ back inside rocker. The combination is the only thing that makes it its own turn
   },
 };
 
+/* ------------------------------------------------------- two-foot turns */
+
+/* Eight more passages. Same rule: keyed on direction and edge, never on the
+   foot, because the left and right versions are mirror images of one another. */
+TURN_TEXT.mohawk = {
+  FO: `Forwards on the outside edge, and instead of turning on the blade you step onto
+the other foot and travel backwards on its outside edge. The circle does not change and
+neither does the character of the edge — only the foot and the direction you face.
+
+The forward outside mohawk is the less common of the two, and it is the harder to make
+look calm, because the free foot has to arrive turned out and close in without the hips
+opening first. There is no cusp to hide behind: whatever the edge was doing at the moment
+of the step is what appears on the ice.`,
+
+  FI: `Forwards on the inside edge, stepping onto the other foot to travel backwards on its
+inside edge, staying on the same circle throughout. This is the mohawk most skaters mean
+when they say the word, and it is usually the first change of foot they learn.
+
+Where it goes wrong is in the placement. The free foot wants to arrive too far in front or
+too far away, and either produces a jolt as the weight transfers. Open and closed describe
+where it goes — heel to the inner side of the skating foot for open, instep to the heel
+for closed — and they feel like different moves even though the tracing is identical.`,
+
+  BO: `Backwards on the outside edge, stepping onto the other foot and coming out forwards
+on its outside edge, on the same circle. Blind entry, and the step arrives at the point
+where you can see least.
+
+Everything depends on the free foot being ready early. It cannot be found during the step,
+because the step is instantaneous — there is no pivot to buy time with. This is where the
+difference between a two-foot turn and a one-foot turn stops being academic.`,
+
+  BI: `Backwards on the inside edge, stepping onto the other foot to run forwards on its
+inside edge, still on the same circle. Less used than the forward inside mohawk and more
+awkward for the same reason every back inside entry is awkward: the free leg is on the
+inside of the circle with nowhere to sit.
+
+It is worth practising anyway, because it is the exit half of what the forward inside
+mohawk teaches, and a skater who can only go one way through the change of foot has learnt
+half a move.`,
+};
+
+TURN_TEXT.choctaw = {
+  FO: `Forwards on the outside edge, stepping onto the other foot — and this time the edge
+changes with the foot, so you leave backwards on an inside edge and the curve reverses
+under you. One circle ends and another begins at the moment the blade goes down.
+
+That reversal is the whole difficulty. A mohawk lets you keep leaning the way you were
+already leaning; a choctaw asks you to change lean and foot at the same instant, and any
+hesitation shows as a flat between the two lobes.`,
+
+  FI: `Forwards on the inside edge, stepping onto the other foot to travel backwards on its
+outside edge, with the curve reversing at the step. The exit is a checked back outside
+edge, which makes this one of the most useful changes of foot there is — it is how a
+sequence gets from a forward lobe onto a backward one without losing speed.
+
+Watch the moment of transfer rather than either edge. If the new lobe does not start
+immediately, the weight went across before the lean did.`,
+
+  BO: `Backwards on the outside edge, stepping onto the other foot to run forwards on its
+inside edge, on a new lobe curving the other way. Entering blind and reversing the curve at
+the same time, which puts this among the harder things in the guide.
+
+The step has to be made from a genuine edge. A shallow back outside entry gives the new
+lobe nothing to reverse from, and what comes out is two flats with a change of foot in the
+middle.`,
+
+  BI: `Backwards on the inside edge, stepping onto the other foot to travel forwards on its
+outside edge, with the lobe reversing at the step. The weakest entry edge and a change of
+both foot and curve — which is why it turns up late rather than early.
+
+The reward is the exit. A forward outside edge, checked, coming out of a reversal, is
+about the strongest position a step sequence can hand you, and it is worth the months it
+takes to make it quiet.`,
+};
+
 /* --------------------------------------------------------------- assembly */
 
 const files = [];
@@ -248,28 +324,38 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
     body: EDGE_TEXT[key(s)],
   });
 
-  for (const turnKey of Object.keys(TURNS)) {
-    const t = TURNS[turnKey];
+  for (const turnKey of Object.keys(ALL_TURNS)) {
+    const t = ALL_TURNS[turnKey];
     const x = exitState(s, turnKey);
     const continues = lobeSense(s.foot, s.edge, s.dir) === lobeSense(x.foot, x.edge, x.dir);
 
     /* The teaching order the prerequisites encode: the plain edge, then the three,
-       then the bracket and the rocker off it, then the counter off both. Unverified
-       like everything else — it is a plausible ladder, not a syllabus. */
+       then the bracket and the rocker off it, then the counter off both. The
+       two-foot turns hang off the plain edge and off each other. Unverified like
+       everything else — a plausible ladder, not a syllabus. */
     const prereq = {
       three: [slug(s)],
       bracket: [`${slug(s)}-three`],
       rocker: [`${slug(s)}-three`],
       counter: [`${slug(s)}-bracket`, `${slug(s)}-rocker`],
+      mohawk: [slug(s)],
+      choctaw: [`${slug(s)}-mohawk`],
     }[turnKey];
+
+    const summary = t.changesFoot
+      ? `${label(s)} to ${label(x)} — a step onto the other foot, ` +
+        `${t.edgeChanges ? 'changing edge' : 'holding the edge'} and ` +
+        `${continues ? 'staying on the same lobe' : 'reversing onto a new one'}. No cusp.`
+      : `${label(s)} to ${label(x)} — half a turn ${t.rotatesInto ? 'into' : 'against'} the circle, ` +
+        `${t.edgeChanges ? 'changing edge' : 'holding the edge'} and ` +
+        `${continues ? 'staying on the same lobe' : 'leaving on a new one'}.`;
 
     files.push({
       id: `${slug(s)}-${turnKey}`,
       front: [
         `name: ${FOOT_WORD[foot]} ${DIR_WORD[dir]} ${EDGE_WORD[edge]} ${TURN_NOUN[turnKey]}`,
         `kind: turn`,
-        `summary: ${label(s)} to ${label(x)} — half a turn ${t.rotatesInto ? 'into' : 'against'} the circle, ` +
-          `${t.edgeChanges ? 'changing edge' : 'holding the edge'} and ${continues ? 'staying on the same lobe' : 'leaving on a new one'}.`,
+        `summary: ${summary}`,
         `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
         `turn: ${turnKey}`,
         `prerequisites: [${prereq.join(', ')}]`,

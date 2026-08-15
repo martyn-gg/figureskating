@@ -22,7 +22,7 @@ makes covering hundreds of elements tractable.
     lobeSense = (foot == L ? +1 : −1) × (edge == O ? +1 : −1) × (dir == F ? +1 : −1)
     (+1 = anticlockwise seen from above the ice)
 
-Every two-foot turn is then just two bits of information:
+Every **one-foot turn** is then just two bits of information:
 
 | Turn    | Edge changes | Rotates into circle | Lobe result |
 |---------|--------------|---------------------|-------------|
@@ -31,10 +31,27 @@ Every two-foot turn is then just two bits of information:
 | Rocker  | no           | yes                 | reverses    |
 | Counter | no           | no                  | reverses    |
 
-All four reverse the direction of travel and keep the same foot. Verified against
-all 32 foot/edge/direction/turn combinations. Because it is derived, every element
-mirrors for free — flip the foot and you get the clockwise-rotator version, which
-almost no other resource provides.
+All four reverse the direction of travel and keep the same foot. Verified against all 32
+foot/edge/direction/turn combinations — and, since the table was derived here from first
+principles, worth saying that it matches British Ice Skating's own published definitions
+of the four turns exactly, clause for clause.
+
+**The same line covers the two-foot turns**, where the skater steps from one foot to the
+other instead of turning on the blade:
+
+| Turn    | Changes foot | Edge changes | Lobe result |
+|---------|--------------|--------------|-------------|
+| Mohawk  | yes          | no           | continues   |
+| Choctaw | yes          | yes          | reverses    |
+
+Nothing had to be added to make those work. The foot flips and the direction flips, so
+`lobeSense` comes out unchanged for a mohawk and inverted for a choctaw — which is exactly
+what the governing body's definitions say, arrived at without being told. They differ only
+in the drawing: there is no cusp, because nothing pivots, so the tracing stops on one blade
+and starts again beside it.
+
+Because all of it is derived, every element mirrors for free — flip the foot and you get
+the clockwise-rotator version, which almost no other resource provides.
 
 ## Layout
 
@@ -113,7 +130,13 @@ not optional.
     node tools/tracing.mjs        every lobe curves the way the model says it does
     node tools/contact-sheet.mjs waltz .   every keyframe of a move, side by side
     node tools/page-shot.mjs out/ elements/ elements/lfo/   built pages at phone width
+    node tools/speed.mjs          the playback speed control really does slow it down
     node tools/links.mjs          every internal link in dist/ resolves to a real file
+
+`speed.mjs` needs Playwright and so is not in `npm run check`. It exists because a dead
+playback control is invisible — the button relabels itself, the picture keeps moving, and
+nothing looks wrong. It plays each engine for a fixed interval at every setting and
+asserts the rate halves each step.
 
 `tracing.mjs` earns its place now that forty elements come out of one sign rule: a
 flipped sign would be wrong forty times and look perfectly plausible every time, because

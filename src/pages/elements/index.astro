@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
-import { label, exitState, describeEdge, TURNS } from '../../lib/skating.js';
+import { label, exitState, describeEdge, TURNS, STEPS } from '../../lib/skating.js';
 
 const elements = await getCollection('elements');
 
@@ -12,6 +12,7 @@ const STATES = ['L', 'R'].flatMap(foot =>
   ['F', 'B'].flatMap(dir => ['O', 'I'].map(edge => ({ foot, edge, dir }))));
 
 const TURN_KEYS = Object.keys(TURNS);
+const STEP_KEYS = Object.keys(STEPS);
 
 /* Look an element up by what it *is*, not by a constructed slug — so a file
    renamed by hand does not silently drop out of the table. */
@@ -65,11 +66,11 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     </tbody>
   </table>
 
-  <h2>Turns</h2>
+  <h2>One-foot turns</h2>
   <p class="note">
-    Every two-foot turn keeps the same foot and reverses the direction of travel. What is
-    left to vary is the edge and the rotation, and that is the whole table. Each cell shows
-    the edge you come out on.
+    These keep the same foot and reverse the direction of travel. What is left to vary is
+    the edge and the rotation, and that is the whole table. Each cell shows the edge you
+    come out on.
   </p>
   <div class="scroller">
     <table class="grid matrix">
@@ -109,6 +110,54 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
   <p class="note">
     Across a row: what one edge can turn into. Down a column: what one turn does to every
     edge it can start from.
+  </p>
+
+  <h2>Two-foot turns</h2>
+  <p class="note">
+    A mohawk and a choctaw step onto the other foot instead of turning on the blade, so
+    there is no cusp — the tracing stops and starts again beside itself. The same rule
+    governs them: the foot flips and the direction flips, so a mohawk stays on its lobe and
+    a choctaw reverses.
+  </p>
+  <div class="scroller">
+    <table class="grid matrix">
+      <thead>
+        <tr>
+          <th scope="col">Entry</th>
+          {STEP_KEYS.map(k => (
+            <th scope="col">
+              {STEPS[k].name}
+              <span class="sub">
+                changes foot<br />
+                edge {STEPS[k].edgeChanges ? 'changes' : 'holds'}
+              </span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {STATES.map(s => (
+          <tr>
+            <th scope="row">
+              {find(s, null)
+                ? <a href={url(`elements/${find(s, null).id}/`)} title={describeEdge(s)}>{label(s)}</a>
+                : label(s)}
+            </th>
+            {STEP_KEYS.map(k => {
+              const e = find(s, k);
+              return <td>{e
+                ? <a href={url(`elements/${e.id}/`)} title={e.data.name}>{label(exitState(s, k))}</a>
+                : <span class="gap">—</span>}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Open and closed describe where the free foot is placed, not what the blade draws, so
+    each of these is one element rather than two. The tracing cannot tell them apart and
+    neither pretends to.
   </p>
 
   {restKinds.map(k => (

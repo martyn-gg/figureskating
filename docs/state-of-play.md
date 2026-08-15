@@ -14,8 +14,13 @@ exercises; an animated edge diagram on any element with an entry edge; the three
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
 worker; seven checkers that pass on a clean clone.
 
-**Content:** 46 elements — eight plain edges, thirty-two two-foot turns, three jumps and
-a spiral — plus one example test and no exercises. 49 pages build.
+**Content:** 62 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, three jumps and a spiral — plus one example test and no exercises. 65 pages build.
+
+**A terminology correction worth keeping.** The first draft of this repository called
+three turns, brackets, rockers and counters "two-foot turns". They are not: BIS defines a
+*one foot turn* as a rotational movement on one foot, and a mohawk or choctaw as a turn
+from one foot to the other. The names are now used the way the sport uses them.
 
 **Barely started:** the syllabus half. Elements know what they are; nothing yet knows
 which test it belongs to, and no governing body's material has been read.
@@ -131,17 +136,48 @@ Two things came out of the multiplication:
   Each element page also lists the rest of its family, the other things you can do from
   the edge you are standing on, which is how anyone will actually move around the guide.
 
+## The two-foot turns, and what they cost
+
+Sixteen more elements: mohawks and choctaws on every entry edge. The model needed one new
+table and a generalised `exitState`; `lobeSense` already predicted both, because the foot
+flips and the direction flips, so a mohawk's lobe continues and a choctaw's reverses.
+
+The renderer needed more thought than the model. A two-foot turn has **no cusp** — nothing
+pivots — so the tracing stops on one blade and starts again beside it, offset by roughly a
+boot's width, and the boot glyph changes foot mid-animation. Drawing a cusp there would
+have drawn a turn that is not the one being described, so `tracing.mjs` now asserts the
+absence: a step must have a real gap, the foot must differ across it, and a one-foot turn
+must not have one. Fifty-six combinations checked.
+
+Open and closed are free-foot placement, not tracing, so each is one element rather than
+two. The diagram cannot tell them apart, and does not pretend to.
+
 ## What to do next
 
-1. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
-   style — should be settled now that forty diagrams inherit it rather than six. The
+1. **The rest of what a syllabus needs.** Chassés, cross rolls, crossovers, changes of
+   edge, twizzles, loops. Most of it derives; see `sources/bis/MANIFEST.md` for the list
+   the Skills tests actually ask for.
+2. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
+   style — should be settled before it is inherited by another few dozen diagrams. The
    hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
    phone, one-handed, under bad lighting. The index tables deliberately introduce no new
    colour, so as not to prejudge it.
-2. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
+3. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
    content: one or two poses each.
-3. **A real syllabus.** See "on reading the governing bodies" below — this is blocked on
-   documents, not on effort.
+4. **The British guide.** The documents are in `sources/bis/` and reviewed. See
+   `sources/bis/MANIFEST.md` for what is there, what is still missing, and how the
+   documents may be used.
+
+## Playback speed
+
+Both engines take a `speed` multiplier and both control bars carry a cycling **1× ½× ¼× ⅛×**
+button. Discrete steps rather than a slider, because this is used one-handed, on a phone,
+in gloves — and a slider needs a grip a glove does not have. Choosing a speed starts the
+animation, so the control is never dead on a paused figure.
+
+Scrubbing gives you frames; slowing gives you the movement, and they are not substitutes.
+A counter at full speed is a smear. `tools/speed.mjs` asserts the rate really does halve
+at each step on both engines — it needs Playwright, so it is not in `npm run check`.
 4. **Side-by-side correct versus common error** — Lutz beside flutz, shoulders checked
    beside shoulders opening early. Same rig, two state tracks, one clock. Teaches something
    video cannot, because you can stop it and the two stay aligned.

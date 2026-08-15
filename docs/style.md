@@ -56,6 +56,12 @@ the banner with confident prose above it.
 are reproduced. Where their term *is* the term, name it and attribute it — that is
 citation, not reproduction. See `sources/README.md`.
 
+**Public material only.** Nothing is built from a document that needs a member login or is
+issued to coaches rather than published. The gaps that leaves are written as gaps. This is
+not caution for its own sake: the intention is to finish the guide from public sources and
+then go and ask the governing bodies what they think of it, and that conversation is a
+great deal easier if the answer to *where did you get this?* is *your website*.
+
 ## Element pages
 
 Two or three paragraphs. Ninety to a hundred and sixty words. Longer than that and it stops
@@ -110,6 +116,22 @@ true comparison rather than an invented one.
 **Say what you do not know.** "The requirements above Skills 8 sit behind a member login
 and are not covered here" is a better sentence than a plausible guess, and it tells a
 reader exactly what to go and check.
+
+### How much of a test to carry
+
+Settled 15/08/2026, after reading the BIS guidance documents. Their exercises are written
+as numbered step sequences — *SIDE 1 (1)LFO open chassé (2)RFI (3)LFO sustained edge…* —
+and that sequence effectively **is** the syllabus. It is their work.
+
+So a level page carries **which elements appear**, linked through to our element pages, and
+**a paragraph in our own voice on what each exercise is working on** — the shape, the
+purpose, what it is testing. It does not carry the numbered sequence, and it does not
+reproduce their patterns or their drawings. It links out to the governing body's own
+document for the exact steps, which is where a skater should be reading them anyway.
+
+The test of whether a sentence is on the right side of that line: could you have written it
+having watched the exercise skated, without the document open? If yes, it is ours. If it
+only exists because you were copying, it is theirs.
 
 ## Words
 

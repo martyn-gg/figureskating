@@ -2,63 +2,96 @@
 
 Hub pages: <https://www.iceskating.org.uk/skills> · <https://www.iceskating.org.uk/test-information>
 
-Download into this folder. Tick and date as they land.
+**Downloads sometimes arrive without a `.pdf` extension.** Add it, or nothing will open
+them.
 
-## Core — needed before anything can be written
+## Downloaded 15/08/2026 — the current (pre-October) documents
 
-| ✓ | Document | URL | Why |
-|---|---|---|---|
-| ☐ | Skills Handbook | https://www.iceskating.org.uk/_files/ugd/edc78b_113ff03c1a3f4928891277059c33cdab.pdf | The structure of the whole Skills 1–8 pathway |
-| ☐ | Skills Definitions | https://www.iceskating.org.uk/_files/ugd/edc78b_0a8f4cd81d21498d99b0849e5a32fa75.pdf | **The most important one.** How BIS names elements, so our vocabulary matches theirs |
+| ✓ | File | Pages |
+|---|---|---|
+| ✔ | Skills Handbook.pdf | 8 |
+| ✔ | Skills - Definition of Steps, Turns & Movements.pdf | 4 |
+| ✔ | Skills 1–8.pdf | 5, 6, 6, 6, 6, 6, 6, 4 |
+| ✔ | National Skills Tests Update Coming October 2026.pdf | 3 |
 
-## Per-level guidance — the element lists
+None of these carries an internal version marking. Confirmed pre-October by inspection:
+Skills 1 has four exercises and the slalom has no one-foot option.
+
+## Not yet available — the October 2026 documents
+
+The per-level PDFs linked from `/skills` are the **current** versions. The announcement
+post carries "Download the new Skills N Guidance Document" links, but **as at 15/08/2026
+they do not yield the new documents** — the URLs below are recorded so they can be tried
+again nearer the date, not because they work now.
+
+What we do have for October is the **exercise names and their levels**, from the
+announcement itself and the preview video list. That is enough to know what is coming and
+not enough to write it up. Nothing about the October exercises goes into the guide until
+the documents are published.
 
 | ✓ | Level | URL |
 |---|---|---|
-| ☐ | Skills 1 | https://www.iceskating.org.uk/_files/ugd/edc78b_48a0dd9b5c0e46c381f021c332215a22.pdf |
-| ☐ | Skills 2 | https://www.iceskating.org.uk/_files/ugd/edc78b_3376a3f9e52a4c64b275bcd896c61fa6.pdf |
-| ☐ | Skills 3 | https://www.iceskating.org.uk/_files/ugd/edc78b_b83027812e1e48c29e84a0025985026f.pdf |
-| ☐ | Skills 4 | https://www.iceskating.org.uk/_files/ugd/edc78b_2f2f337807e54fe59bb58a2fa57748b4.pdf |
-| ☐ | Skills 5 | https://www.iceskating.org.uk/_files/ugd/edc78b_b0a72830e7334d6d91c96cfaedd690a3.pdf |
-| ☐ | Skills 6 | https://www.iceskating.org.uk/_files/ugd/edc78b_49994ef9f7c14414b6f144c3da89dc4a.pdf |
-| ☐ | Skills 7 | https://www.iceskating.org.uk/_files/ugd/edc78b_cf118a190f8341c98aafa38ada7d9e8b.pdf |
-| ☐ | Skills 8 | https://www.iceskating.org.uk/_files/ugd/edc78b_807690b57ef94d25a710fecc087aeec9.pdf |
+| ☐ | Skills 1 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_841a22138f7549bca0abb1556eec9a51.pdf |
+| ☐ | Skills 2 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_ccc16c9e9859498b8c5f0d8e6139b205.pdf |
+| ☐ | Skills 3 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_4c0d0c995a044d5aafc4189b4c395069.pdf |
+| ☐ | Skills 4 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_a1116b46cb764a73b052ce5fd49247dd.pdf |
+| ☐ | Skills 5 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_92fcb9b460ad469f95dac8ec967f77ec.pdf |
+| ☐ | Skills 6 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_2f3e4872fe3f4d29acbb8633c27c3d7a.pdf |
+| ☐ | Skills 7 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_0a257301d64b48cebd61f078c0a724af.pdf |
+| ☐ | Skills 8 (Oct) | https://edc78b5e-a47b-4560-bd1b-721419351a14.usrfiles.com/ugd/edc78b_52a3cc74d49d43139a72c00f25602769.pdf |
 
-## October 2026 update — additive, so this is a second pass rather than a rewrite
+Save these with a `-2026-10` suffix so the two generations never get confused.
 
-- Announcement: <https://www.iceskating.org.uk/post/national-skills-tests-update-oct-2026>
-  Skills 1–7 gain one or two exercises each; Skills 1 and 3 gain completion options on
-  existing exercises; Skills 8 changes sections 2A and 2B. Nothing is removed.
-- Preview playlist:
-  <https://www.youtube.com/playlist?list=PLASZTijgWVdsvKp4MNBqOXGDU8Up3FKU9>
-- If the per-level PDFs above are reissued for October, save both and suffix the new ones
-  `-2026-10`.
+## Out of scope — not publicly available
 
-**Save the announcement page as a PDF too.** Web pages about a change get taken down once
-the change has happened, and `sourceUrl` should still point somewhere real.
+Every per-level document points at a *Criteria for Scoring Skills 1–8*, "included in the
+Manual". That is very likely coach material rather than a public download, so **it is not
+wanted**. The Handbook's own judging criteria table is public and covers the same ground
+for our purposes.
 
-## Wanted if you can reach it (login may be required)
+The same goes for anything on the Technical Guidance pages that sits behind a member
+login. See `sources/README.md`: the guide is built from public material only, and where
+that leaves a gap the page says so.
 
-| ✓ | Document | Where | Why |
-|---|---|---|---|
-| ☐ | Anything on the Technical Guidance page | linked from /test-information | Beyond Skills: singles, dance, pairs, synchro |
-| ☐ | National Technical / National Components test requirements | ditto | The layer above Skills |
-| ☐ | General Rules (current season) | linked from /test-information | Definitions and eligibility |
+Publicly downloadable material beyond Skills — National Technical and National Components
+requirements, current-season General Rules — is welcome if it turns out to be open.
 
-Coach material appears to sit behind a member login. If it does, say so and we will write
-the BIS guide from the open documents and mark the gaps honestly rather than guess.
+## Video — for your eyes, not mine
+
+New-exercise demonstrations (October 2026). I cannot watch these; they are for checking
+mechanics before anything is written down as fact.
+
+Playlist: <https://www.youtube.com/playlist?list=PLASZTijgWVdsvKp4MNBqOXGDU8Up3FKU9>
+
+| Level | Exercise | Video |
+|---|---|---|
+| 1 | Ex 5 — forward outside & inside 3-turns | https://youtu.be/OdJSRKehssY |
+| 2 | Ex 6 — backward outside 3-turns | https://youtu.be/RfRTIgB1BGI |
+| 3 | Ex 6 — forward inside 1½ twizzle | https://youtu.be/WlfiuWi813E |
+| 4 | Ex 6 — mohawk & 3-turn | https://youtu.be/o-fhcL83SGQ |
+| 4 | Ex 7 — skating exercise | https://youtu.be/KzFfjJNV2bk |
+| 5 | Ex 6 — bracket | https://youtu.be/cBgP7UUzbCM |
+| 5 | Ex 7 — backward counter | https://youtu.be/QgTrcnowTI4 |
+| 6 | Ex 6 — bracket-counter | https://youtu.be/184_k0yXFaM |
+| 6 | Ex 7 — skating exercise 2 | https://youtu.be/wheB3lmGyXo |
+| 7 | Ex 6 — bracket-counter-twizzle | https://youtu.be/Jvyq1rvfcRg |
+| 7 | Ex 7 — choctaw-3-turn-rocker | https://youtu.be/C4aXaC81ybY |
+| 8 | Section 2A | https://youtu.be/puMqPzq6R74 |
+| 8 | Section 2B | https://youtu.be/hxL_AO31kk0 |
+| 8 | Full programme | https://youtu.be/yAgn7RJvqwU |
+
+The per-level playlists for the *current* exercises are linked from
+<https://www.iceskating.org.uk/skills>.
 
 ## Not wanted
 
-The old NISA **Field Moves** manuals still circulating on club websites. They are legacy
-and would put the wrong shape into the schema.
+The old NISA **Field Moves** manuals still circulating on club websites. They are legacy.
+The Handbook's own transition table is the only place old Field Moves levels should appear.
 
-## Video
+## How these documents get used
 
-The per-level playlists (Skills 1–8) are linked from
-<https://www.iceskating.org.uk/skills>. They are for *your* eyes when checking mechanics —
-they are not a source I can read, and nothing from them gets reproduced.
-
-## Downloaded
-
-_Add filename, date (dd/mm/yyyy) and the document's own version marking as things land._
+Decided 15/08/2026: the BIS pages carry **which elements appear at each level**, linked to
+our element pages, plus a paragraph in our own voice on what each exercise is working on.
+**No numbered step sequences and no reproduction of their patterns or drawings** — the
+guidance documents are BIS's work and the page links out to them for the exact sequence.
+See `docs/style.md`.

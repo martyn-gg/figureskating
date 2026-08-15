@@ -63,6 +63,11 @@ const scope = url();
     background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
   .bf-ctl button{width:32px;height:32px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
     background:var(--paper);color:var(--ink);cursor:pointer;font-size:11px}
+  /* The speed control carries a label rather than a glyph, so it sets its own width,
+     and marks itself once the rig is no longer running at full speed. */
+  .bf-ctl button.spd{width:auto;min-width:38px;padding:0 .5rem;font-size:.78rem;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+  .bf-ctl button.spd[data-slow]{border-color:var(--accent);color:var(--accent)}
   .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
   .bf-phase{margin:.45rem 0 0;font-size:.8rem;color:var(--ink-soft);
     font-family:ui-sans-serif,-apple-system,sans-serif}
