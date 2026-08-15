@@ -52,6 +52,8 @@ almost no other resource provides.
     tools/gen-derived.mjs         writes the derived tier — edges and two-foot turns
     tools/                        verification scripts (see below)
     docs/model.md                 coordinate conventions and constants
+    docs/style.md                 how everything here is written
+    sources/                      governing-body documents, read locally, never committed
 
 ## Running it
 
@@ -134,4 +136,6 @@ The mechanics are a first draft by a non-expert and want checking against video 
 a coach before anyone relies on them. Corrections very welcome — open an issue.
 
 Descriptions and diagrams here are written and drawn from scratch. No governing-body
-document is reproduced.
+document is reproduced. Source material is read locally out of `sources/`, which git
+ignores; `sources/README.md` explains the arrangement and `docs/style.md` sets out how
+element pages and qualification guides are written so that they read as one guide.

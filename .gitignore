@@ -5,3 +5,10 @@ dist/
 *.log
 /tmp-shots/
 package-lock.json
+
+# Governing-body source documents. Read locally, never redistributed — the guide is
+# written *from* them, not *out of* them. The manifests stay tracked, so the shopping
+# list lives in the repo; the documents themselves never do.
+sources/**
+!sources/**/
+!sources/**/*.md

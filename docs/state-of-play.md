@@ -160,17 +160,24 @@ material appears to sit behind a login. Fetching a page returns readable text; f
 PDF does not. So the practical route is a human downloading the documents into the repo
 folder, after which they can be read directly.
 
-Two live constraints:
+`sources/` exists for exactly this, is gitignored apart from its manifests, and each
+subfolder's `MANIFEST.md` lists what to fetch and why.
 
-- **BIS is changing the Skills curriculum on 01/10/2026.** Anything written against the
-  current syllabus before then is scheduled for rewriting. Ordering the US and Canadian
-  guides first is the cheaper sequence.
+Two live points:
+
+- **BIS updates the National Skills Tests on 01/10/2026, additively.** No exercise is
+  replaced or removed and the elements themselves are unchanged: Skills 1–7 gain one or
+  two exercises each, Skills 1 and 3 gain completion options, Skills 8 changes sections 2A
+  and 2B. So writing against the current guidance now is safe and October is a second
+  pass, not a rewrite. There is a preview playlist, so both versions can be ready in
+  advance.
 - The old NISA **Field Moves** manuals still floating around club websites are legacy.
   Do not build the schema around them.
 
 The house rule does not change: descriptions are written from scratch, diagrams drawn from
 scratch, and a syllabus entry carries `sourceUrl` and stays unverified until someone has
-checked it against the current published version.
+checked it against the current published version. `docs/style.md` is the standing
+reference for how all of it is written.
 
 ## What needs a skater, not a developer
 
