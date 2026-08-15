@@ -50,6 +50,10 @@ not optional.
     node tools/shot.mjs 0.2 out.png   screenshot at a scrub position (needs Chromium)
     node tools/reach.mjs          flag any foot the leg cannot physically reach
     node tools/shin.mjs           flag shin lean beyond what a stiff boot allows
+    node tools/contact-sheet.mjs  every keyframe of a move, side by side
+
+The contact sheet is the one that catches sequence errors. Individual frames all look
+plausible; only the whole element side by side shows a leg on the wrong side of the body.
 
 ## Accuracy
 

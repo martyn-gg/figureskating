@@ -149,34 +149,39 @@ const MOVES = {
            {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.36} ],
     radius:130, duration:5.6,
     keys:[
+      /* Free-leg side is body-relative, not track-relative. Before the rotation the
+         skater faces the way they are going, so the trailing leg is at negative t;
+         after it they face backwards, so a leg extended behind them points along the
+         direction of travel, at positive t. Getting that backwards is invisible frame
+         by frame and obvious on a contact sheet. */
       {arm:[64,10,18], t:0.00, ph:'Set-up on the forward outside edge', hipZ:96, hipYaw:-8, shYaw:-24,
-       sh:P(-4,0,148), L:P(2,14,0), R:P(-43,-6,27), skate:'L', edge:'O', dir:'F'},
-      {arm:[60,-2,24], t:0.14, ph:'Knee bends, edge deepens', hipZ:80, hipYaw:-6, shYaw:-20,
-       sh:P(2,0,132), L:P(19,18,0), R:P(-44,-6,10), skate:'L', edge:'O', dir:'F'},
-      {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:86, hipYaw:-2, shYaw:-10,
-       sh:P(0,0,138), L:P(15,16,0), R:P(-4,-4,24), skate:'L', edge:'O', dir:'F'},
-      {arm:[50,26,6], t:0.30, ph:'Takeoff — leg and knee drive up', hipZ:98, hipYaw:8, shYaw:2,
-       sh:P(-4,0,150), L:P(-7,7,3,14), R:P(48,0,56), skate:'L', edge:'O', dir:'F'},
-      {arm:[36,22,6], t:0.32, ph:'Blade leaves the ice', hipZ:120, hipYaw:26, shYaw:18,
-       sh:P(-4,0,172), L:P(-15,5,33), R:P(42,-2,64), skate:null},
-      {arm:[26,16,10], t:0.36, ph:'Rising, rotation begins', hipZ:130, hipYaw:70, shYaw:56,
-       sh:P(-2,0,182), L:P(-27,4,53), R:P(26,-4,70), skate:null},
-      {arm:[22,14,12], t:0.39, ph:'Peak — legs pass', hipZ:136, hipYaw:110, shYaw:98,
-       sh:P(0,0,188), L:P(-6,8,54), R:P(6,-8,58), skate:null},
-      {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:116, hipYaw:158, shYaw:142,
-       sh:P(-2,0,168), L:P(-36,10,46), R:P(-2,0,28), skate:null},
-      {arm:[34,14,14], t:0.44, ph:'Toe pick touches first', hipZ:96, hipYaw:180, shYaw:162,
-       sh:P(-4,0,148), L:P(-52,12,34), R:P(-6,-11,1,20), skate:'R', edge:'O', dir:'B'},
-      {arm:[46,12,16], t:0.48, ph:'Rolls back onto the blade', hipZ:90, hipYaw:178, shYaw:158,
-       sh:P(-6,0,142), L:P(-58,13,30), R:P(-4,-15,0,4), skate:'R', edge:'O', dir:'B'},
+       sh:P(-4,0,148), L:P(14,14,0), R:P(-43,-6,27), skate:'L', edge:'O', dir:'F'},
+      {arm:[60,-2,24], t:0.14, ph:'Knee bends, edge deepens', hipZ:86, hipYaw:-6, shYaw:-20,
+       sh:P(2,0,132), L:P(19,18,0), R:P(-38,-5,20), skate:'L', edge:'O', dir:'F'},
+      {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:92, hipYaw:-2, shYaw:-10,
+       sh:P(0,0,138), L:P(15,16,0), R:P(0,-4,26), skate:'L', edge:'O', dir:'F'},
+      {arm:[50,26,6], t:0.30, ph:'Takeoff — leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
+       sh:P(-4,0,154), L:P(2,8,2,16), R:P(46,0,62), skate:'L', edge:'O', dir:'F'},
+      {arm:[36,22,6], t:0.32, ph:'Blade leaves the ice', hipZ:118, hipYaw:26, shYaw:18,
+       sh:P(-4,0,170), L:P(-12,6,30), R:P(40,-2,70), skate:null},
+      {arm:[26,16,10], t:0.36, ph:'Rising, rotation begins', hipZ:126, hipYaw:70, shYaw:56,
+       sh:P(-2,0,178), L:P(-26,4,46), R:P(22,-4,74), skate:null},
+      {arm:[22,14,12], t:0.39, ph:'Peak — legs pass', hipZ:132, hipYaw:110, shYaw:98,
+       sh:P(0,0,184), L:P(-4,8,60), R:P(4,-8,64), skate:null},
+      {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:114, hipYaw:158, shYaw:142,
+       sh:P(-2,0,166), L:P(26,10,52), R:P(-2,0,26), skate:null},
+      {arm:[34,14,14], t:0.44, ph:'Toe pick touches first', hipZ:98, hipYaw:180, shYaw:162,
+       sh:P(-4,0,148), L:P(38,12,40), R:P(-4,-11,1,22), skate:'R', edge:'O', dir:'B'},
+      {arm:[46,12,16], t:0.48, ph:'Rolls back onto the blade', hipZ:96, hipYaw:178, shYaw:158,
+       sh:P(-6,0,146), L:P(46,13,34), R:P(-4,-15,0,4), skate:'R', edge:'O', dir:'B'},
       {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
-       sh:P(-8,0,136), L:P(-62,15,26), R:P(-20,-17,0), skate:'R', edge:'O', dir:'B'},
-      {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:88, hipYaw:174, shYaw:150,
-       sh:P(-8,0,140), L:P(-62,14,30), R:P(-14,-18,0), skate:'R', edge:'O', dir:'B'},
-      {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:94, hipYaw:174, shYaw:154,
-       sh:P(-6,0,146), L:P(-64,13,35), R:P(-2,-17,0), skate:'R', edge:'O', dir:'B'},
-      {arm:[64,10,18], t:1.00, ph:'Run-out — still on the back outside edge', hipZ:94, hipYaw:172, shYaw:158,
-       sh:P(-5,0,146), L:P(-62,12,37), R:P(-2,-14,0), skate:'R', edge:'O', dir:'B'},
+       sh:P(-8,0,136), L:P(52,15,28), R:P(-16,-17,0), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:174, shYaw:150,
+       sh:P(-8,0,142), L:P(50,15,31), R:P(-12,-18,0), skate:'R', edge:'O', dir:'B'},
+      {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:174, shYaw:154,
+       sh:P(-6,0,148), L:P(48,14,35), R:P(-6,-17,0), skate:'R', edge:'O', dir:'B'},
+      {arm:[64,10,18], t:1.00, ph:'Run-out — still on the back outside edge', hipZ:98, hipYaw:172, shYaw:158,
+       sh:P(-5,0,150), L:P(47,13,37), R:P(-4,-15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
   spiral: {
@@ -443,7 +448,10 @@ function viewTop(svg, move, path, frames){
 
   const live=el('g'); root.appendChild(live);
   const body=el('g'); root.appendChild(body);
-  const BS = 0.55;  // body scale, cm → path units (exaggerated ~1.8× for legibility)
+  // Body scale, cm → path units. Deliberately ~4× life: at true scale a skater is a
+  // speck against a four-metre lobe, and rotation — the whole point of this view —
+  // becomes unreadable. The tracing stays true; only the body is enlarged.
+  const BS = 1.2;
 
   return frame => {
     const {p, pose, idx} = frame;

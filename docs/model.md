@@ -68,6 +68,16 @@ authoring it by hand instead will produce contradictions between the views.
 - **Arm carriage** — derived from the shoulder line unless a keyframe overrides it
   with `arm: [out, forward, drop]`.
 
+## Body-relative, not track-relative
+
+`t` is the direction of *travel*. The skater's own forward is `hipYaw` away from it,
+and on a landing those are opposite. So a free leg "extended behind the skater" is at
+**negative t before a half rotation and positive t after it**.
+
+Getting this backwards is invisible frame by frame — each pose looks plausible — and
+glaringly obvious on a contact sheet of the whole element. Render the sheet before
+believing any sequence that turns.
+
 ## Constraints the checkers enforce
 
 - A foot must be within `THIGH + SHIN` of the hip, measured **to the ankle**.
