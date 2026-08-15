@@ -4,7 +4,8 @@ A public reference to figure skating elements — edges, turns, jumps, spins, da
 patterns — cross-referenced to the national test structures of the UK, and later
 Canada and the US. Plus targeted off-ice preparation.
 
-Built as a static site with offline support, so it works at the rink.
+Built as a static site with offline support, so it works at the rink — stale-while-
+revalidate, so it also updates.
 
 > **Status: prototype.** The engines work. The pose data does not yet represent
 > correct technique — see *Accuracy* below. Nothing here should be used to learn
@@ -137,9 +138,17 @@ not optional.
     node tools/contact-sheet.mjs waltz .   every keyframe of a move, side by side
     node tools/page-shot.mjs out/ elements/ elements/lfo/   built pages at phone width
     node tools/speed.mjs          the playback speed control really does slow it down
+    node tools/offline.mjs        works with no network, and does not pin stale content
     node tools/links.mjs          every internal link in dist/ resolves to a real file
 
-`speed.mjs` needs Playwright and so is not in `npm run check`. It exists because a dead
+`offline.mjs` exists because the first service worker here was cache-first with a fixed
+cache name and no revalidation. It worked — and it meant the first copy of a page anyone
+loaded was the copy they kept for ever, so a coach's correction would never have reached a
+returning reader. The checker asserts both halves of the promise: the page still opens with
+the network gone, *and* a changed page arrives. Restoring the old worker passes the first
+and fails the second.
+
+`speed.mjs` and `offline.mjs` need Playwright and so are not in `npm run check`. It exists because a dead
 playback control is invisible — the button relabels itself, the picture keeps moving, and
 nothing looks wrong. It plays each engine for a fixed interval at every setting and
 asserts the rate halves each step.

@@ -15,6 +15,7 @@
     "check:tracing": "node tools/tracing.mjs",
     "check:links": "node tools/links.mjs",
     "check:speed": "node tools/speed.mjs",
+    "check:offline": "node tools/offline.mjs",
     "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:freefoot && npm run check:tracing && npm run build && npm run check:links",
     "gen:derived": "node tools/gen-derived.mjs"
   },

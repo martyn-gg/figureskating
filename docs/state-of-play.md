@@ -196,6 +196,30 @@ what changes it most is whether you can see where you are going.
    `sources/bis/MANIFEST.md` for what is there, what is still missing, and how the
    documents may be used.
 
+## Offline, and the bug that hid the whole build
+
+Symptom: the dev server showed six elements when a hundred and twenty-four were on disk.
+Cause: `public/sw.js` was cache-first with a fixed cache name and no revalidation, and it
+registered in development as well as production. Once a page was in the cache it was served
+from the cache for ever, and the cache name never changed so the `activate` cleanup never
+fired.
+
+That is not a local annoyance. It was going to ship. Every reader would have been pinned to
+whatever version of a page they happened to load first, which for a guide whose entire
+premise is *coaches will correct this* is about the worst failure available.
+
+Now: **stale-while-revalidate**, the cache named after the build (`src/lib/build-id.js`, one
+module evaluated once so every page agrees on the version), the worker registered only in a
+production build, and any worker left over from a local build unregistered on sight.
+
+`tools/offline.mjs` asserts both halves of the promise — the page still opens with the
+network gone, *and* a changed page reaches a returning reader. Restoring the old worker
+verbatim passes the first and fails the second, which is what makes the checker worth
+having. Needs Playwright, so `npm run check:offline` rather than part of `npm run check`.
+
+The cost of naming the cache after the build is that a deploy makes every reader
+re-download on their next visit. That is the right trade for a guide expecting corrections.
+
 ## Playback speed
 
 Both engines take a `speed` multiplier and both control bars carry a cycling **1× ½× ¼× ⅛×**

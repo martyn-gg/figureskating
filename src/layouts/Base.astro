@@ -1,8 +1,15 @@
 ---
 const { title, subtitle } = Astro.props;
 import { url } from '../lib/url.js';
-const swPath = url('sw.js');
+import { BUILD_ID } from '../lib/build-id.js';
+/* The version travels in the query string so the browser sees a byte-different
+   worker on every deploy and reinstalls it, and so the worker can name its cache
+   after the build it belongs to. */
+const swPath = `${url('sw.js')}?v=${BUILD_ID}`;
 const scope = url();
+/* Never in development. A cache-first worker on localhost will happily serve a
+   page you wrote three hours ago and give no sign that it is doing so. */
+const useSW = import.meta.env.PROD;
 ---
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -109,9 +116,18 @@ const scope = url();
       Mechanics are unverified unless a page says otherwise.
     </footer>
   </div>
-  <script is:inline define:vars={{ swPath, scope }}>
+  <script is:inline define:vars={{ swPath, scope, useSW }}>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register(swPath, { scope }).catch(() => {}));
+      if (useSW) {
+        window.addEventListener('load', () => navigator.serviceWorker.register(swPath, { scope }).catch(() => {}));
+      } else {
+        /* Clean up after anyone who ran an older build locally — otherwise the
+           worker registered then keeps serving that build for ever. */
+        navigator.serviceWorker.getRegistrations()
+          .then(rs => rs.forEach(r => r.unregister()))
+          .then(() => caches?.keys().then(ks => ks.forEach(k => caches.delete(k))))
+          .catch(() => {});
+      }
     }
   </script>
 </body>
