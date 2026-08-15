@@ -209,11 +209,11 @@ hand-written from the first session.
 1. **Twizzles.** Deliberately skipped: a travelling multi-rotation turn is not a chain of
    half turns and pretending otherwise would be the kind of shortcut this repository keeps
    designing against. Needed at Skills 3, 7 and 8. Coming back to it after the design pass.
-2. **A visual design pass.** The diagram vocabulary — edge colours, leg colours, marker
-   style — should be settled before it is inherited by another few dozen diagrams. The
-   hardest constraint is not aesthetic: this is read in a cold rink, in gloves, on a
-   phone, one-handed, under bad lighting. The index tables deliberately introduce no new
-   colour, so as not to prejudge it.
+2. **A visual design pass — this is the next session.** See `docs/design-brief.md`, which
+   carries the constraints, the measured contrast table and the verification method. The
+   headline finding: the two edge colours differ by 1.09:1 in luminance, so outside versus
+   inside edge is carried by hue alone, and that is the single most important fact a
+   tracing conveys.
 3. **Held positions** (lunge, Ina Bauer, spin positions) are the cheapest useful body-frame
    content: one or two poses each.
 4. **The British guide.** The documents are in `sources/bis/` and reviewed. See
@@ -243,6 +243,18 @@ having. Needs Playwright, so `npm run check:offline` rather than part of `npm ru
 
 The cost of naming the cache after the build is that a deploy makes every reader
 re-download on their next visit. That is the right trade for a guide expecting corrections.
+
+## Known and deferred
+
+- **Element ordering is alphabetical where it should be pedagogical.** The home page's
+  single "Mechanics" list puts Spiral between Salchow and Toe loop — a position amongst the
+  jumps — and the Axel first. Jumps should run in learning order: waltz jump, Salchow, toe
+  loop, loop, flip, Lutz, Axel, and that order belongs in `JUMPS` so pages inherit it
+  rather than each sorting for themselves. Positions want their own group on the home page,
+  as they already have on `/elements/`. Martyn spotted it; deferred past the design pass by
+  his call, and written here so it is not lost.
+- Positions has exactly one entry. Held positions are queued.
+- Twizzles, skipped deliberately.
 
 ## Playback speed
 
