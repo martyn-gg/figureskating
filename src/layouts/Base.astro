@@ -2,6 +2,7 @@
 const { title, subtitle } = Astro.props;
 import { url } from '../lib/url.js';
 import { BUILD_ID } from '../lib/build-id.js';
+import { tokenCSS } from '../lib/tokens.js';
 /* The version travels in the query string so the browser sees a byte-different
    worker on every deploy and reinstalls it, and so the worker can name its cache
    after the build it belongs to. */
@@ -20,15 +21,19 @@ const useSW = import.meta.env.PROD;
   <meta name="description" content={subtitle ?? 'A reference to figure skating elements and the national tests they appear in.'} />
   <link rel="manifest" href={url('manifest.webmanifest')} />
   <meta name="theme-color" content="#12303f" />
+  {/* The palette comes out of src/lib/tokens.js, which tools/contrast.mjs also
+      imports and measures. Colours are not written here any more — a hex code in
+      this file would be a second source of truth and the checker would not see it. */}
+  <style is:inline set:html={tokenCSS()}></style>
+  {/* Applied before first paint, so a reader who chose a scheme does not get a
+      flash of the other one. Inline and synchronous for that reason. */}
+  <script is:inline>
+    try {
+      var s = localStorage.getItem('scheme');
+      if (s === 'light' || s === 'dark') document.documentElement.dataset.scheme = s;
+    } catch (e) {}
+  </script>
   <style is:global>
-    :root{--ice:#f2f7fb;--ice-line:#d5e3ee;--ink:#12303f;--ink-soft:#5a7386;
-      --paper:#fff;--rule:#dfe8ef;--accent:#1d5a7a;--edge-out:#0f766e;--edge-in:#b45309;--warn:#b45309;
-      /* body-frame rig */
-      --hip:#7c3aed;--shoulder:#0369a1;--free:#94a3b8;--leg-l:#e11d48;--leg-r:#4d7c0f}
-    @media (prefers-color-scheme:dark){:root{--ice:#101c24;--ice-line:#20353f;--ink:#e6f0f5;
-      --ink-soft:#8ba6b5;--paper:#0b141a;--rule:#1e3038;--accent:#7fc4e3;
-      --edge-out:#5eead4;--edge-in:#fbbf24;--warn:#fbbf24;
-      --hip:#c4b5fd;--shoulder:#7dd3fc;--free:#64748b;--leg-l:#fb7185;--leg-r:#a3e635}}
     *{box-sizing:border-box} html,body{margin:0}
     body{background:var(--paper);color:var(--ink);line-height:1.6;
       font:17px/1.6 ui-serif,Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased}
@@ -38,12 +43,23 @@ const useSW = import.meta.env.PROD;
     h2{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
       margin:2.5rem 0 .75rem;font-weight:600}
     a{color:var(--accent)}
-    nav{font-size:.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--rule)}
-    nav a{margin-right:1.1rem;text-decoration:none}
+    a:hover{color:var(--accent);text-decoration-thickness:2px}
+    /* Nav is a row of links used one-handed in gloves, so the row is laid out with
+       a gap and each link is given a 44 px height rather than a text baseline. */
+    nav{font-size:.85rem;margin-bottom:2rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule);
+      display:flex;flex-wrap:wrap;gap:0 1.1rem}
+    nav a{text-decoration:none;padding:.6rem 0;min-height:44px;display:flex;align-items:center}
+    /* The scheme switch is the one control in the nav rather than a link, so it is
+       pushed to the end of the row and given the same 44 px as everything else
+       that gets operated in gloves. It states the scheme it will switch TO. */
+    nav .scheme{margin-left:auto;min-height:44px;padding:.6rem .8rem;border:1px solid var(--rule);
+      border-radius:999px;background:none;color:var(--accent);cursor:pointer;font:inherit;
+      display:flex;align-items:center;gap:.4rem}
+    nav .scheme:hover{border-color:var(--accent)}
     .lede{color:var(--ink-soft);margin:0 0 1.5rem;font-size:1.05rem}
-    .meta{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.5rem;font-size:.8rem}
+    .meta{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.5rem;font-size:.82rem}
     .chip{background:var(--ice);border:1px solid var(--ice-line);border-radius:999px;
-      padding:.25rem .7rem;color:var(--ink-soft)}
+      padding:.28rem .72rem;color:var(--ink-soft)}
     .chip b{color:var(--ink);font-weight:600}
     .unverified{border:1px solid var(--warn);border-left-width:4px;border-radius:8px;
       padding:.8rem 1rem;margin:0 0 1.75rem;font-size:.88rem;
@@ -66,17 +82,18 @@ const useSW = import.meta.env.PROD;
     font-family:ui-sans-serif,-apple-system,sans-serif}
   .bf-card h3 span{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
   .bf-card svg{display:block;width:100%;height:auto}
-  .bf-ctl{display:flex;align-items:center;gap:.7rem;margin-top:.7rem;padding:.55rem .8rem;
+  .bf-ctl{display:flex;align-items:center;gap:.6rem;margin-top:.7rem;padding:.5rem .7rem;
     background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
-  .bf-ctl button{width:32px;height:32px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
-    background:var(--paper);color:var(--ink);cursor:pointer;font-size:11px}
+  /* 44 px, because this is operated in gloves. It was 32. */
+  .bf-ctl button{width:44px;height:44px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:13px}
   /* The speed control carries a label rather than a glyph, so it sets its own width,
      and marks itself once the rig is no longer running at full speed. */
-  .bf-ctl button.spd{width:auto;min-width:38px;padding:0 .5rem;font-size:.78rem;
+  .bf-ctl button.spd{width:auto;min-width:44px;padding:0 .6rem;font-size:.86rem;
     font-family:ui-sans-serif,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
   .bf-ctl button.spd[data-slow]{border-color:var(--accent);color:var(--accent)}
-  .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
-  .bf-phase{margin:.45rem 0 0;font-size:.8rem;color:var(--ink-soft);
+  .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0;height:44px}
+  .bf-phase{margin:.45rem 0 0;font-size:.82rem;color:var(--ink-soft);
     font-family:ui-sans-serif,-apple-system,sans-serif}
   .bf figcaption{margin-top:.6rem;font-family:ui-sans-serif,-apple-system,sans-serif;
     font-size:.82rem;color:var(--ink-soft)}
@@ -105,6 +122,7 @@ const useSW = import.meta.env.PROD;
       <a href={url('elements/')}>Elements</a>
       <a href={url('tests/')}>Tests</a>
       <a href={url('rig/')}>Body frame</a>
+      <button class="scheme" type="button" aria-live="polite">Dark</button>
     </nav>
     <slot />
     <footer>
@@ -116,6 +134,33 @@ const useSW = import.meta.env.PROD;
       Mechanics are unverified unless a page says otherwise.
     </footer>
   </div>
+  <script is:inline>
+    /* The label names the destination, not the current state, and is corrected on
+       load because the starting scheme may have come from the OS rather than from
+       a stored choice. */
+    (() => {
+      const root = document.documentElement, btn = document.querySelector('nav .scheme');
+      if (!btn) return;
+      const dark = () => root.dataset.scheme
+        ? root.dataset.scheme === 'dark'
+        : matchMedia('(prefers-color-scheme:dark)').matches;
+      const label = () => {
+        btn.textContent = dark() ? 'Light' : 'Dark';
+        btn.setAttribute('aria-label', `Switch to the ${dark() ? 'light' : 'dark'} scheme`);
+      };
+      btn.addEventListener('click', () => {
+        const next = dark() ? 'light' : 'dark';
+        root.dataset.scheme = next;
+        try { localStorage.setItem('scheme', next); } catch (e) {}
+        label();
+      });
+      /* Only tracks the OS while the reader has not chosen for themselves. */
+      matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => {
+        if (!root.dataset.scheme) label();
+      });
+      label();
+    })();
+  </script>
   <script is:inline define:vars={{ swPath, scope, useSW }}>
     if ('serviceWorker' in navigator) {
       if (useSW) {

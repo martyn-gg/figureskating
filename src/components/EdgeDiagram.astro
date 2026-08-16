@@ -8,6 +8,10 @@ const states = chainStates(entry, chain);
 const exit = states.at(-1);
 const m = mirror(entry);
 const mirrored = chainStates(m, chain);
+/* Which edges this tracing actually visits, so the key names those and no others.
+   A legend for an inside edge on a diagram with no inside edge in it would be
+   asserting a distinction this element does not make. */
+const visits = { O: states.some(s => s.edge === 'O'), I: states.some(s => s.edge === 'I') };
 ---
 <figure class="diagram">
   <svg
@@ -21,6 +25,12 @@ const mirrored = chainStates(m, chain);
     <button type="button" class="spd" data-speed aria-label="Playback speed, currently full speed">1×</button>
     <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
     <label class="mir"><input type="checkbox" data-mirror /> mirror</label>
+  </div>
+  {/* The two edges differ in lightness as well as hue, so the key can name the
+      difference in words a greyscale print still supports. */}
+  <div class="key">
+    {visits.O && <span><i class="sw out"></i>outside edge — the paler line</span>}
+    {visits.I && <span><i class="sw in"></i>inside edge — the darker line</span>}
   </div>
   <figcaption>
     {caption ?? <>
@@ -36,16 +46,25 @@ const mirrored = chainStates(m, chain);
   .diagram{margin:1.75rem 0;background:var(--ice);border:1px solid var(--ice-line);
     border-radius:12px;overflow:hidden}
   .diagram svg{display:block;width:100%;height:auto}
-  .dctl{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border-top:1px solid var(--ice-line)}
-  .dctl button{width:34px;height:34px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
-    background:var(--paper);color:var(--ink);cursor:pointer;font-size:12px;line-height:1}
+  .dctl{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;border-top:1px solid var(--ice-line)}
+  /* 44 px. This is used one-handed, on a phone, in gloves; it was 34. */
+  .dctl button{width:44px;height:44px;flex:none;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font-size:13px;line-height:1}
   /* Wider than the play button, because it carries a label rather than a glyph. */
-  .dctl button.spd{width:auto;min-width:38px;padding:0 .5rem;font-size:.78rem;
+  .dctl button.spd{width:auto;min-width:44px;padding:0 .6rem;font-size:.86rem;
     font-family:ui-sans-serif,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
   .dctl button.spd[data-slow]{border-color:var(--accent);color:var(--accent)}
-  .dctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
-  .mir{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.8rem;color:var(--ink-soft);
-    display:flex;align-items:center;gap:.35rem;cursor:pointer;white-space:nowrap}
+  .dctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0;height:44px}
+  .mir{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.82rem;color:var(--ink-soft);
+    display:flex;align-items:center;gap:.4rem;cursor:pointer;white-space:nowrap;min-height:44px}
+  .mir input{width:20px;height:20px;accent-color:var(--accent)}
+  .key{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;padding:.6rem .9rem;
+    border-top:1px solid var(--ice-line);font-family:ui-sans-serif,-apple-system,sans-serif;
+    font-size:.78rem;color:var(--ink-soft)}
+  .key span{display:flex;align-items:center;gap:.4rem}
+  .key .sw{display:block;width:26px;height:5px;border-radius:3px;flex:none}
+  .key .sw.out{background:var(--edge-out)}
+  .key .sw.in{background:var(--edge-in)}
   figcaption{padding:.7rem .9rem;font-family:ui-sans-serif,-apple-system,sans-serif;
     font-size:.82rem;color:var(--ink-soft);border-top:1px solid var(--ice-line)}
   figcaption b{color:var(--ink)}

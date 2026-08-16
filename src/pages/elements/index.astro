@@ -255,6 +255,13 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
   table.grid{border-collapse:collapse;width:100%;
     font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem}
   table.grid th,table.grid td{border:1px solid var(--ice-line);padding:.5rem .4rem;text-align:center}
+  /* Every cell that can be tapped is 44 px tall, and the link fills it rather than
+     sitting in the middle of it — a link with its own padding leaves dead border
+     that looks tappable and is not. Padding moves off the cell and onto nothing:
+     the flex centring does that job. */
+  table.grid td,table.grid tbody th{height:44px;padding:0}
+  table.grid td a,table.grid tbody th a{min-height:44px;display:flex;align-items:center;
+    justify-content:center;padding:0 .25rem}
   table.grid thead th{background:var(--ice);color:var(--ink-soft);font-weight:600;
     font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
   table.grid tbody th{background:var(--ice);text-align:left;font-weight:600;
@@ -268,7 +275,11 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
      head makes the whole taxonomy legible without a word of explanation. */
   table.grid thead th .sub{display:block;margin-top:.25rem;font-weight:400;
     text-transform:none;letter-spacing:0;font-size:.62rem;line-height:1.3;opacity:.85}
-  .matrix tbody th{text-align:center;padding-left:.4rem}
+  /* The matrix rules are structural — they carry the 8 x 4 reading, across a row and
+     down a column, so they take `--grid-line` rather than the lighter `--ice-line`
+     the edge table uses for a border that is only tidiness. */
+  .matrix th,.matrix td{border-color:var(--grid-line)}
+  .matrix tbody th{text-align:center;padding-left:0}
   .combo{border-top:1px solid var(--rule);padding:.7rem 0}
   .combo h3{margin:0;font-size:.9rem;font-weight:600;letter-spacing:0;text-transform:none;
     color:var(--ink);font-family:ui-sans-serif,-apple-system,sans-serif}
@@ -282,7 +293,11 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
   .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   @media (max-width:26rem){
     table.grid{font-size:.8rem}
+    /* The narrow-screen squeeze takes width, never height: 44 px is a thumb, and a
+       thumb is the same size on a small phone. */
     table.grid th,table.grid td{padding:.45rem .25rem}
+    table.grid td,table.grid tbody th{padding:0}
+    table.grid td a,table.grid tbody th a{padding:0 .1rem}
     table.grid thead th{font-size:.62rem;letter-spacing:.02em}
   }
 </style>

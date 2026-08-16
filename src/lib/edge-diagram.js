@@ -33,7 +33,7 @@ const kappaOf = (s, R) => -lobeSense(s.foot, s.edge, s.dir) / R;
 
 /* Two blades are a boot's width apart, so a step lands beside the tracing it
    leaves rather than on top of it. Drawn wider than life, like the edges. */
-const STEP_OFFSET = 11;
+const STEP_OFFSET = 16;
 
 const smoothstep = u => { const c = Math.min(1, Math.max(0, u)); return c * c * (3 - 2 * c); };
 
@@ -149,9 +149,9 @@ function boot(state, foot) {
     g.appendChild(el('line', { x1: -17, y1: y, x2: 19, y2: y, stroke: 'var(--ink-soft)',
       'stroke-width': 1.4, opacity: .35, 'stroke-linecap': 'round' }));
   g.appendChild(el('line', { x1: -17, y1: onLeft ? -4.2 : 4.2, x2: 19, y2: onLeft ? -4.2 : 4.2,
-    stroke: col, 'stroke-width': 3.4, 'stroke-linecap': 'round' }));
+    stroke: col, 'stroke-width': 4.6, 'stroke-linecap': 'round' }));
   g.appendChild(el('path', { d: 'M -18 -8 L 5 -9.5 Q 16 -8.5 18 0 Q 16 8.5 5 9.5 L -18 8 Q -21.5 0 -18 -8 Z',
-    fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': 1.9, 'stroke-linejoin': 'round' }));
+    fill: 'var(--paper)', stroke: 'var(--ink-soft)', 'stroke-width': 1.6, 'stroke-linejoin': 'round' }));
   g.appendChild(el('circle', { cx: 13, cy: 0, r: 1.8, fill: 'var(--ink)', opacity: .5 }));
   return g;
 }
@@ -187,13 +187,35 @@ export function mount(svg, opts) {
 
   root.appendChild(el('path', {
     d: segments.map(g => d(frames.slice(g.from, g.to + 1))).join(' '),
-    fill: 'none', stroke: 'var(--ink)', opacity: .13,
-    'stroke-width': 2.6 / s, 'stroke-linecap': 'round' }));
+    fill: 'none', stroke: 'var(--ink)', opacity: .18,
+    'stroke-width': 3 / s, 'stroke-linecap': 'round' }));
 
-  const drawn = segments.map(g => el('path', { fill: 'none', 'stroke-width': 3.4 / s,
+  const drawn = segments.map(g => el('path', { fill: 'none', 'stroke-width': 4.4 / s,
     'stroke-linecap': 'round',
     stroke: g.state.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)' }));
   root.append(...drawn);
+
+  /* Which foot is on the ice is a distinction the model makes and a tracing
+     cannot show — two blades leave the same mark. Where an element changes foot,
+     each segment is therefore tagged in letters, outside its own lobe. Letters
+     rather than a second colour on purpose: no amount of bad rink lighting, no
+     greyscale printer and no colour blindness degrades an L or an R. Elements
+     that stay on one foot get no tag, because there is nothing to distinguish. */
+  if (new Set(trace.states.map(st => st.foot)).size > 1) {
+    for (const g of segments) {
+      const f = frames[Math.round((g.from + g.to) / 2)];
+      const away = Math.sign(kappaOf(g.state, opts.radius ?? 120)) || 1;
+      const cx = f.x + away * Math.sin(f.th) * 26;
+      const cy = f.y - away * Math.cos(f.th) * 26;
+      root.appendChild(el('circle', { cx, cy, r: 14 / s, fill: 'var(--ink)' }));
+      const lab = el('text', { x: cx, y: cy, fill: 'var(--paper)', 'text-anchor': 'middle',
+        'dominant-baseline': 'central', 'font-size': 17 / s, 'font-weight': '700',
+        'font-family': 'ui-sans-serif, system-ui, sans-serif' });
+      lab.textContent = g.state.foot;
+      root.appendChild(lab);
+    }
+  }
+
   const bootG = el('g');
   root.appendChild(bootG);
 
