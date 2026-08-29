@@ -14,8 +14,8 @@
        node tools/contrast.mjs
        node tools/contrast.mjs --break    # put the old edge pair back
 
-   `--break` restores the two pairs this pass replaced — the edge colours and the
-   rig's limbs. It must fail, and *what* it fails on is the only evidence that the
+   `--break` restores the edge colours this pass replaced, and puts the limb back
+   at the pale end of its old pair. It must fail, and *what* it fails on is the only evidence that the
    checker is worth having: everything else about the page still measures fine,
    and the guide quietly stops working.
 */
@@ -41,8 +41,9 @@ const contrast = (a, b) => {
 /* Each pair carries its target and the reason for it. The reason is in the file
    because a bare number invites the next person to lower it.
 
-   4.5 is the text threshold, and it is also what the two pairs that carry a
-   distinction are held to — the edges and the limbs. A line would normally be
+   4.5 is the text threshold, and it is also what the pair that carries a
+   distinction is held to — the edges. The limb is a single colour now and is held
+   to 4.5 against its grounds rather than to a sibling. A line would normally be
    held to 3:1, but this is read in a cold rink under bad light, at arm's length,
    often through gallery glass or on a tilted tablet, and glare eats the low end
    of the range. 3:1 remains the floor for a line merely being visible against
@@ -66,9 +67,14 @@ const PAIRS = [
   ['ice-line', 'ice', 1.9, 'panel edging'],
   ['ice', 'paper', 1.03, 'an ice panel against the page'],
 
-  ['leg-l', 'leg-r', 4.5, 'THE LEFT LIMB AGAINST THE RIGHT'],
-  ['leg-l', 'ice', 3, 'the left limb on ice'],
-  ['leg-r', 'ice', 3, 'the right limb on ice'],
+  /* There is no longer a limb pair. The 4.5:1-between-limbs rule was retired on
+     29/08/2026 with `--leg-l`/`--leg-r`: it existed so colour could carry foot
+     identity, identity moved to the L and R letters, and the rule outlived its
+     job. Its cost was pinning one limb to the panel's extreme, which let lightness
+     outvote stroke weight and showed role backwards in dark. One limb colour, at
+     the ink end of the range in both schemes; weight says which leg. */
+  ['limb', 'ice', 4.5, 'the limb on ice'],
+  ['limb', 'paper', 4.5, 'the limb on the page'],
   ['hip', 'ice', 3, 'the hip axis'],
   ['shoulder', 'ice', 3, 'the shoulder axis'],
   ['free', 'ice', 3, 'the free foot'],
@@ -80,14 +86,14 @@ const PAIRS = [
    carries those. This is a probe, not a historical record.
    the deliberate break. */
 const BROKEN = { light: { 'edge-out': '#0f766e', 'edge-in': '#b45309',
-                          'leg-l': '#e11d48', 'leg-r': '#4d7c0f' },
+                          'limb': '#9a6bf8' },
                  dark:  { 'edge-out': '#5eead4', 'edge-in': '#fbbf24',
-                          'leg-l': '#fb7185', 'leg-r': '#a3e635' } };
+                          'limb': '#7c3aed' } };
 
 const broken = process.argv.includes('--break');
 let failures = 0;
 
-console.log(`token contrast (${PAIRS.length} pairs x 2 schemes)${broken ? ' — with the old edge and limb pairs put back' : ''}\n`);
+console.log(`token contrast (${PAIRS.length} pairs x 2 schemes)${broken ? ' — with the old edge pair and a pale limb put back' : ''}\n`);
 
 for (const [name, base] of Object.entries(SCHEMES)) {
   const t = broken ? { ...base, ...BROKEN[name] } : base;

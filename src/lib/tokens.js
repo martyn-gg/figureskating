@@ -38,17 +38,20 @@ export const LIGHT = {
   accent: '#1d5a7a', warn: '#a8480a',
   /* Teal is the paler edge, burnt amber the darker one. */
   'edge-out': '#1d9689', 'edge-in': '#2c1403',
-  /* The rig: one hue at two luminances, where it was rose against lime. Hip and
-     shoulder are told apart by where they sit on the body rather than by colour,
-     so they take the two inks and hand their hues back to the edges.
+  /* The rig: ONE limb colour. There is no longer a pair.
 
-     The pair was checked on a rotating pose and it reads: one limb violet, the
-     other near-white, and they stay separate through the turn. That check was
-     done in the dark scheme, where the pale limb can go almost to white. In
-     light it cannot — #9a6bf8 already sits at 3.34:1 on `--ice`, a third of a
-     point above its floor, so the pale limb here is a mid violet and the dark
-     limb carries the step. Same relationship, less room. */
-  'leg-l': '#26094f', 'leg-r': '#9a6bf8', hip: '#12303f', shoulder: '#5a7386',
+     The two-luminance pair existed so colour could say which foot. Identity
+     moved to the L and R letters, and the pair kept the 4.5:1 step it no longer
+     needed — a step that costs a thirteenfold luminance range, which pins one
+     limb to the panel's extreme. Measured on rendered pixels, that made lightness
+     outvote stroke weight: before takeoff in dark the skating limb carried 0.29
+     of the free limb's ink, so the panel showed the role backwards. It was passed
+     by eye twice before anyone measured it.
+
+     So the limb takes the ink end of the range in both schemes, weight says which
+     leg bears the skater, and a casing says which is in front. One fact per
+     channel, and no per-scheme reasoning left in the limbs. */
+  limb: '#26094f', hip: '#12303f', shoulder: '#5a7386',
   free: '#6f8da2',
 };
 
@@ -62,7 +65,7 @@ export const DARK = {
   rule: '#1e3038', 'ice-line': '#33525f', 'grid-line': '#476d7e',
   accent: '#7fc4e3', warn: '#fbbf24',
   'edge-out': '#9df3e6', 'edge-in': '#a04c08',
-  'leg-l': '#7c3aed', 'leg-r': '#e9e5ff', hip: '#e6f0f5', shoulder: '#8ba6b5',
+  limb: '#e9e5ff', hip: '#e6f0f5', shoulder: '#8ba6b5',
   free: '#64748b',
 };
 

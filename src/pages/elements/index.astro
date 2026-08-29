@@ -286,7 +286,11 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
   .combo-chain{margin:.1rem 0 .45rem;font-size:.8rem;color:var(--ink-soft);
     font-family:ui-sans-serif,-apple-system,sans-serif}
   .combo-links{margin:0;display:flex;flex-wrap:wrap;gap:.35rem}
-  .combo-links a,.combo-links span{display:inline-block;padding:.25rem .55rem;border-radius:999px;
+  /* Same thumb as the matrix. These are the most-tapped links on the page — every
+     transition and every cluster is reached through one — and they were the ones
+     left at 29 px. */
+  .combo-links a,.combo-links span{display:flex;align-items:center;justify-content:center;
+    min-height:44px;padding:0 .7rem;border-radius:999px;
     border:1px solid var(--ice-line);background:var(--ice);text-decoration:none;
     font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.78rem;font-weight:600;
     letter-spacing:.03em;font-variant-numeric:tabular-nums}
