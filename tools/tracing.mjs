@@ -105,6 +105,68 @@ for (const s of STATES) for (const turnKey of Object.keys(ALL_TURNS)) {
     continue;
   }
 
+  if (t.join === 'twizzle') {
+    /* Four claims, and every one of them is the difference between a twizzle and
+       something else it would otherwise be drawn as. */
+    const whole = Math.floor(t.rotations);
+
+    /* Continuous, which is BIS's word: no cusp anywhere, not just at the join.
+       A chain of checked three turns fails here and should. */
+    let worst = 0;
+    for (let i = 1; i < frames.length; i++) {
+      let d = frames[i].th - frames[i - 1].th;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      worst = Math.max(worst, Math.abs(d));
+    }
+    if (worst > 0.25)
+      fail(`${name}: the heading jumps ${(worst * 180 / Math.PI).toFixed(0)}° somewhere — that is a cusp`);
+
+    /* One whole turn of the tangent per rotation, in the lobe's own direction.
+       Half rotations are not here: they are the body going round against the
+       blade, and a tangent cannot wind half a turn. */
+    let dth = 0;
+    for (let i = m.curlFrom + 1; i <= m.curlTo; i++) {
+      let d = frames[i].th - frames[i - 1].th;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      dth += d;
+    }
+    if (Math.abs(Math.abs(dth) - 2 * Math.PI * whole) > 0.05)
+      fail(`${name}: the curls wind ${(dth * 180 / Math.PI).toFixed(0)}°, not ${360 * whole}°`);
+    if (-Math.sign(dth) !== lobeSense(s.foot, s.edge, s.dir))
+      fail(`${name}: the curls wind against their own lobe`);
+
+    /* It travels. A loop comes back to where it started; a twizzle must not, and
+       must go the way it was already going. Stop the travel and it is a spin —
+       which is BIS's own line about it. */
+    const a = frames[m.curlFrom - 1], b = frames[m.curlTo];
+    const along = (b.x - a.x) * Math.cos(a.th) + (b.y - a.y) * Math.sin(a.th);
+    if (along < 20)
+      fail(`${name}: travels ${along.toFixed(1)} along its entry heading — that is a pirouette, not a twizzle`);
+
+    /* Curls, not scallops. The tangent has to pass through pointing back the way
+       it came, which happens only when the advance is smaller than the curl —
+       and that inequality is the whole difference between a twizzle and a wobble.
+       Asserted off the drawn frames rather than off the constant that set it. */
+    let backmost = 1;
+    for (let i = m.curlFrom; i <= m.curlTo; i++)
+      backmost = Math.min(backmost, Math.cos(frames[i].th - a.th));
+    if (backmost > -0.2)
+      fail(`${name}: the tracing never turns back on itself, so there is no curl in it`);
+
+    /* And it comes out going the way it went in — down the line, not doubled
+       back. This is what lets a 1.5 change the direction of travel without the
+       tracing turning round: the blade carries on, the skater faces the other way. */
+    let out = frames[frames.length - 1].th - a.th;
+    while (out > Math.PI) out -= 2 * Math.PI;
+    while (out < -Math.PI) out += 2 * Math.PI;
+    const exitArc = Math.abs(lobeSense(x.foot, x.edge, x.dir)) * 0;
+    if (Math.abs(out) > 1.9)
+      fail(`${name}: comes out ${(out * 180 / Math.PI).toFixed(0)}° from the line it came in on`);
+    continue;
+  }
+
   if (t.join === 'loop') {
     /* The loop must actually close: a full turn in the lobe's own direction,
        ending where it began. */

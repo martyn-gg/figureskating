@@ -68,8 +68,60 @@ export const TRANSITIONS = {
   crossroll: { name: 'Cross roll',     edgeChanges: false, changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
 };
 
+/* Twizzles. The one element that does not fall out of the three flags, and the
+   reason is worth stating, because it is the model's own axiom failing.
+
+   A twizzle is a travelling turn on one foot, rotated continuously. BIS's own
+   definition adds that a series of checked three turns will not do, "as this does
+   not constitute a continuous action", and that if the travelling stops it has
+   become a spin. Both halves of that are geometry:
+
+   - **No cusps.** A three turn reverses the blade by pivoting: the tracing comes
+     to a point, and the direction of travel flips there. A twizzle's tracing never
+     does that. Its tangent winds all the way round instead, which on a curve that
+     is also advancing means a small loop — a curl — per rotation. Cusps against
+     curls is exactly "checked" against "continuous".
+   - **It travels.** Shrink the advance to nothing and the curls collapse onto one
+     circle traced over and over, which is a pirouette. The travel is not
+     decoration; it is what keeps it a turn.
+
+   What does NOT fall out is the half rotation. A tangent can only wind in whole
+   turns, so the extra half of a 1.5 belongs to the body turning against the blade
+   — the skid. Everywhere else in this model a blade points along its own tracing;
+   through a twizzle it does not, and that single exception is why twizzles needed
+   their own treatment rather than four more rows in TURNS.
+
+   Two flags, both computed from the rotation count rather than typed in:
+
+   - The curls never change the way they curve — a tangent that winds one way
+     cannot also wind the other — so the lobe CONTINUES, always.
+   - A half rotation leaves the skater facing the other way, so the direction of
+     travel reverses. The lobe continuing then forces the edge letter to flip with
+     it, because foot, edge and direction have to keep the same lobeSense.
+
+   So edgeChanges and reversesDir are one flag here, on exactly when the rotation
+   count ends in a half. LFI, one and a half, comes out LBO — and the edge letter
+   changed without the blade ever changing which way it curved. */
+const twizzle = (rotations, name) => ({
+  name, rotations,
+  changesFoot: false,
+  reversesDir: rotations % 1 !== 0,
+  edgeChanges: rotations % 1 !== 0,
+  rotatesInto: null,
+  join: 'twizzle',
+});
+
+/** 1.5 is not how anyone writes it on a syllabus. */
+export const halves = n => (n % 1 ? `${Math.floor(n)}\u00bd` : String(n));
+
+export const TWIZZLES = {
+  twizzle:   twizzle(1,   'Twizzle'),
+  twizzle15: twizzle(1.5, '1½ twizzle'),
+  twizzle2:  twizzle(2,   'Double twizzle'),
+};
+
 /** Everything one element can turn into another with. */
-export const ALL_TURNS = { ...TURNS, ...STEPS, ...TRANSITIONS };
+export const ALL_TURNS = { ...TURNS, ...STEPS, ...TRANSITIONS, ...TWIZZLES };
 
 /** Three flags decide the exit. Nothing else is stored anywhere. */
 export function exitState(entry, turnKey) {
@@ -140,6 +192,18 @@ export function lobeContinues(entry, turnKey) {
 export function describeTurn(entry, turnKey) {
   const t = ALL_TURNS[turnKey], x = exitState(entry, turnKey);
   const lobe = lobeContinues(entry, turnKey) ? 'continues' : 'reverses';
+  if (t.join === 'twizzle') {
+    const curls = Math.floor(t.rotations);
+    const rot = t.rotations === 1 ? 'one rotation' : halves(t.rotations) + ' rotations';
+    const curled = curls === 1 ? 'one curl' : curls + ' curls';
+    const tail = t.reversesDir
+      ? ', and the half rotation turns the skater to face the other way, which is why the '
+        + 'edge letter changes without the blade ever changing which way it curves'
+      : ', because a curl cannot curve against itself';
+    return label(entry) + ' ' + t.name.toLowerCase() + ' to ' + label(x) + ' \u2014 ' + rot
+      + ' on one foot, travelling, leaving ' + curled + ' in the tracing and no cusp anywhere. '
+      + 'The lobe continues' + tail + '.';
+  }
   if (t.reversesDir === false) {
     const how = { roll: 'the blade rolls from one edge to the other without pivoting',
                   loop: 'the blade traces a small circle and comes back to the edge it left',

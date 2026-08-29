@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, ALL_TURNS } from '../../lib/skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../lib/skating.js';
 
 const elements = await getCollection('elements');
 
@@ -35,6 +35,19 @@ const transitionGroups = Object.keys(TRANSITIONS)
   }))
   .filter(g => g.entries.some(e => e.el));
 
+/* Twizzles get chip rows too, grouped by rotation count. Every one of the eight
+   edges can be twizzled from, so unlike the transitions none of these rows is
+   short. */
+const twizzles = elements.filter(e => e.data.kind === 'twizzle');
+const twizzleGroups = Object.keys(TWIZZLES)
+  .map(k => ({
+    key: k,
+    def: TWIZZLES[k],
+    entries: STATES.map(s => ({ s, el: twizzles.find(e =>
+      label(e.data.entry) === label(s) && e.data.turn === k) })),
+  }))
+  .filter(g => g.entries.some(e => e.el));
+
 /* Clusters, grouped by which cluster they are rather than which edge they start
    from — eight rows of eight links reads on a phone, an 8 x 8 matrix does not. */
 const combos = elements.filter(e => e.data.kind === 'combination');
@@ -49,7 +62,7 @@ const comboGroups = [...new Map(combos.map(e => [e.data.turns.join('-'), e.data.
   }));
 
 const rest = elements
-  .filter(e => !['edge', 'turn', 'transition', 'combination'].includes(e.data.kind))
+  .filter(e => !['edge', 'turn', 'twizzle', 'transition', 'combination'].includes(e.data.kind))
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
 const restKinds = [...new Set(rest.map(e => e.data.kind))];
 
@@ -184,6 +197,36 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     each of these is one element rather than two. The tracing cannot tell them apart and
     neither pretends to.
   </p>
+
+  {twizzleGroups.length > 0 && (
+    <>
+      <h2>Twizzles</h2>
+      <p class="note">
+        The one element here that the three flags do not decide on their own. A twizzle
+        rotates continuously while it travels, so its tracing curls rather than coming to
+        a cusp — and the curls cannot curve against themselves, which is why the lobe
+        always continues. A half rotation turns the skater to face the other way, and the
+        edge letter changes with them even though the blade never changes which way it is
+        curving.
+      </p>
+      {twizzleGroups.map(g => (
+        <div class="combo">
+          <h3>{g.def.name}</h3>
+          <p class="combo-chain">
+            {g.def.rotations} rotation{g.def.rotations === 1 ? '' : 's'} ·
+            {' '}{Math.floor(g.def.rotations) === 1 ? 'one curl' : `${Math.floor(g.def.rotations)} curls`} ·
+            {' '}{g.def.reversesDir ? 'comes out the other way round' : 'comes out on the edge it began on'}
+          </p>
+          <p class="combo-links">
+            {g.entries.filter(({ el }) => el).map(({ s, el }) => (
+              <a href={url(`elements/${el.id}/`)}
+                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+            ))}
+          </p>
+        </div>
+      ))}
+    </>
+  )}
 
   {transitionGroups.length > 0 && (
     <>

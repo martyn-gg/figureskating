@@ -14,9 +14,9 @@ exercises; an animated edge diagram on any element with an entry edge; the three
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
 worker; eight checkers that pass on a clean clone.
 
-**Content:** 156 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
-turns, twenty-eight transitions, sixty-four clusters, seven jumps and a spiral — plus one
-example test and no exercises. 161 pages build, 4,009 internal links resolve.
+**Content:** 180 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, twenty-four twizzles, twenty-eight transitions, sixty-four clusters, seven jumps and
+a spiral — plus one example test and no exercises.
 
 *(An earlier revision of this file said 46 and then 62. Both were wrong by two — I was
 adding up rather than counting the files. Count with `ls src/data/elements | wc -l`.)*
@@ -166,6 +166,43 @@ checkers had nothing to say about it.
   browser, by giving the renderers a DOM stub. "Render, don't reason" needed Playwright
   until now, which is not always available where the work is.
 
+## Twizzles, and the axiom they break — 29/08/2026
+
+Deferred since Session 01 on the grounds that a travelling multi-rotation turn is not a
+chain of half turns. That was right, and the reason is sharper than it looked: **a twizzle
+breaks this model's founding axiom.** Everywhere else a blade points along its own tracing.
+A tangent can only wind in whole turns, so the extra half of a 1½ cannot be in the tracing
+at all — it is the body turning against the blade, and that skid is the exception the rest
+of the repository is built on not having.
+
+Everything else did fall out, and BIS's own definition turned out to be geometry twice:
+
+- *"A series of checked three turns is not acceptable, as this does not constitute a
+  continuous action"* is **cusps against curls**. A three turn reverses the blade by
+  pivoting, and the tracing comes to a point. A twizzle's tangent winds all the way round
+  instead, which on a curve that is also advancing is a small loop — a curl — per rotation.
+- *"If the travelling stops, it becomes a solo spin"* is **the advance going to zero**, at
+  which point the curls collapse onto one circle traced over and over.
+
+The two flags are computed from the rotation count rather than typed in. Curls cannot curve
+against themselves, so the lobe always continues; a half rotation turns the skater round, so
+the direction reverses; and the lobe continuing then forces the edge letter to flip with it.
+**LFI, one and a half, comes out LBO — and the blade never changed which way it curved.**
+That last part is the claim most worth putting to a coach.
+
+- `TWIZZLES` in `skating.js`: one key per rotation count, not one key plus a number. The
+  count decides the exit, so putting it on the element would hide a fact `exitState` has to
+  see. Single, 1½ and double; twenty-four elements across the eight entry edges.
+- The tracing is a trochoid, in `edge-diagram.js`. The advance must stay under the curl
+  radius or the tangent never completes its turn and the curve scallops instead — that
+  inequality is the whole difference between a twizzle and a wobble. Ratio 0.55, Martyn's
+  call from four rendered candidates.
+- `tracing.mjs` gained five twizzle assertions and now covers 184 combinations: no cusp
+  anywhere, whole turns of the tangent in the lobe's direction, it travels, it curls rather
+  than scallops, and it comes out along the line it went in on. Broken on purpose — advance
+  1.4 gives 72 failures, advance 0 gives 24, advance 0.98 gives 24 caught as a cusp, which
+  is right, because at exactly 1.0 a trochoid genuinely has cusps.
+
 ## The derived tier, and what generating it taught
 
 `tools/gen-derived.mjs` writes the eight edges and thirty-two turns. It imports
@@ -254,10 +291,8 @@ hand-written from the first session.
 
 ## What to do next
 
-1. **Twizzles.** Deliberately skipped: a travelling multi-rotation turn is not a chain of
-   half turns and pretending otherwise would be the kind of shortcut this repository keeps
-   designing against. Needed at Skills 3, 7 and 8. Coming back to it after the design pass.
-2. **A visual design pass — this is the next session.** See `docs/design-brief.md`, which
+1. ~~**Twizzles.**~~ Done 29/08/2026 — see the section above.
+2. **A visual design pass — done 29/08/2026.** See `docs/design-brief.md`, which
    carries the constraints, the measured contrast table and the verification method. The
    headline finding: the two edge colours differ by 1.09:1 in luminance, so outside versus
    inside edge is carried by hue alone, and that is the single most important fact a
@@ -302,7 +337,10 @@ re-download on their next visit. That is the right trade for a guide expecting c
   as they already have on `/elements/`. Martyn spotted it; deferred past the design pass by
   his call, and written here so it is not lost.
 - Positions has exactly one entry. Held positions are queued.
-- Twizzles, skipped deliberately.
+- Twizzle prose is written to the entry edge and the rotation count, like everything else
+  here, but nobody has skated any of it. The claim most worth a coach's eye is that the
+  blade stays on one physical edge throughout and the letter changes only because the
+  skater turns round.
 
 ## Playback speed
 

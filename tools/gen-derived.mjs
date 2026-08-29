@@ -23,7 +23,8 @@ import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { lobeSense, label, exitState, chainStates,
-         TURNS, STEPS, TRANSITIONS, CLUSTERS, JUMPS, LANDING, ALL_TURNS } from '../src/lib/skating.js';
+         TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, LANDING, ALL_TURNS,
+         halves } from '../src/lib/skating.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
@@ -38,7 +39,13 @@ const EDGE_WORD = { O: 'outside', I: 'inside' };
 const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', counter: 'counter',
                     mohawk: 'mohawk', choctaw: 'choctaw',
                     coe: 'change of edge', loop: 'loop', crossover: 'crossover',
-                    chasse: 'chassé', crossroll: 'cross roll' };
+                    chasse: 'chassé', crossroll: 'cross roll',
+                    twizzle: 'twizzle', twizzle15: '1½ twizzle', twizzle2: 'double twizzle' };
+
+/* Slugs spell the rotation count out. A URL cannot hold a ½, and `twizzle-15`
+   reads as fifteen of them. */
+const TWIZZLE_SLUG = { twizzle: 'twizzle', twizzle15: 'one-and-a-half-twizzle',
+                       twizzle2: 'double-twizzle' };
 
 /* Which entry edges each transition is actually skated from. A crossover, a chassé
    and a cross roll all begin on an outside edge — that is not a modelling
@@ -323,6 +330,119 @@ takes to make it quiet.`,
 
 /* The connecting material: what a skater does between turns. None of it reverses
    the direction of travel, which is what makes it not a turn. */
+
+/* Twizzles. Keyed on direction and edge like everything else here, and on the
+   rotation count, because one and a half is a different element from one rather
+   than the same element done longer — it comes out on the other edge letter and
+   travelling the other way. */
+const TWIZZLE_TEXT = {
+  twizzle: {
+    FO: `One rotation on a forward outside edge, finishing on the edge it began on and
+still going the same way. That makes it the honest place to learn one: nothing about the
+exit has to be relearned, and the only new thing is the rotation itself.
+
+The edge is where it goes wrong. A forward outside edge is already leaning into its circle
+and the rotation wants to take that lean with it, so the usual failure is the free side
+opening halfway round and the blade settling onto a flat. The tracing will tell you which
+happened. A curl means you rotated over the blade; a scallop means you skidded across it.`,
+
+    FI: `Forwards on an inside edge, one rotation, out on the same edge. Most skaters
+twizzle from here first, because an inside edge is already turning the way the body wants
+to go and there is less rotation to find.
+
+Which is also the trap. Rotation that arrives free is rotation you have not learned to
+meter, and it shows as a twizzle that does most of its turning in the first half and coasts
+through the second. Even rotation looks slower than it is and is much harder.`,
+
+    BO: `Backwards on an outside edge, one rotation, out where it started. This is the
+twizzle of ice dance — done in sequence, in pairs, at speed — and the one most likely to be
+asked for with something else immediately after it.
+
+Blind, so it runs off the edge and the shoulders rather than off anything you can watch.
+The exit is the whole element: the rotation has to stop on the edge it started on, checked,
+rather than two-thirds of the way round with a step put in to tidy up what is left.`,
+
+    BI: `Backwards on an inside edge, one rotation, exiting on the edge it began on. The
+weakest of the four entries — a back inside edge has the least lean to sit on and the least
+to check against — which is a reason to practise it rather than avoid it.
+
+It exposes the free hip more than the other three. Let it trail and the rotation runs out
+before the turn is finished, and the last quarter arrives as a scrape rather than a curl.`,
+  },
+
+  twizzle15: {
+    FO: `One and a half rotations from a forward outside edge, leaving backwards on an
+inside one. Same foot, and the blade never changes which way it is curving — the edge
+letter changes because you turned round, not because the curve did.
+
+The half rotation is what makes it impossible to fake. A whole one can be assembled out of
+a three turn and a step and still look roughly right from the side; a half cannot, because
+you finish facing the way you did not start. Either the rotation was continuous or you are
+standing on the wrong edge, and there is no third outcome.`,
+
+    FI: `The one British Ice Skating asks for at Skills 3: forwards on an inside edge, one
+and a half rotations, out backwards on an outside one. It is the first twizzle in the
+syllabus and the first element where continuous rotation is the thing actually being
+tested.
+
+Judge it at the exit. A back outside edge, held and checked, means the rotation finished
+where it was meant to; a back inside edge or a flat means it did not, and nothing done
+afterwards recovers that. Better still, judge it from the ice — a curl and then a clean
+edge is a twizzle, and a cusp anywhere in it is a three turn wearing the name.`,
+
+    BO: `Backwards on an outside edge, one and a half rotations, out forwards on an inside
+one. Rarer than the forward entries and more useful than it looks: it turns backward travel
+into forward travel without a step, on one foot, while still going the same way down the
+ice.
+
+The difficulty is that it starts blind and finishes sighted, so the half of it you can see
+is the half already decided. Everything that matters has happened by the time the rink
+comes back into view.`,
+
+    BI: `Backwards on an inside edge, one and a half rotations, out forwards on an outside
+one — the weakest entry edge turning into the strongest exit, which is what makes it worth
+having.
+
+It is the least forgiving of the four. A back inside edge gives the rotation almost nothing
+to push against, so it has to be brought in with the shoulders and the free side and then
+held there, and the common result is a twizzle that turns one rotation cleanly and drags
+the last half round flat.`,
+  },
+
+  twizzle2: {
+    FO: `Two rotations on a forward outside edge, out on the edge it began on. Two curls in
+the tracing, evenly spaced, and no cusp between them — that spacing is the element. Uneven
+curls mean the rotation was found once and then found again, which is two twizzles rather
+than one.
+
+Doubling the rotation does not double the difficulty; holding the edge for twice as long
+does. Everything a single twizzle lets you get away with, this one charges for.`,
+
+    FI: `Two rotations forwards on an inside edge, exiting where it entered. The rotation is
+easier to start here than from an outside edge and much harder to keep even, because the
+edge helps with the first turn and not with the second.
+
+Watch the travel rather than the skater. A double that stops moving has become a spin — the
+governing bodies say so in as many words — and the tracing shows it immediately: two curls
+sitting on top of each other instead of one after the other.`,
+
+    BO: `Two rotations backwards on an outside edge, out on the same edge. This is the one
+asked for at the top of the Skills syllabus, and in ice dance it is done alongside a partner
+where the two sets of curls are compared with each other.
+
+Nothing about it is new after a single; all of it is harder. The rotation has to be metered
+so that the second turn is as strong as the first, and the check at the end has to arrive on
+an edge that has been running for twice as long.`,
+
+    BI: `Two rotations backwards on an inside edge, exiting where it began. The hardest of
+the twelve, for the same reason the single is the hardest of its four: there is least to
+lean on and least to check against, and now it has to last twice as long.
+
+If it fails it usually fails between the curls, where the edge flattens and the second
+rotation is skidded rather than turned. The tracing is unambiguous about it — a flat is a
+straight line, and a straight line in the middle of a twizzle is the whole fault.`,
+  },
+};
 
 const TRANSITION_TEXT = {
   coe: {
@@ -721,6 +841,30 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
         `prerequisites: [${slug(s)}]`,
       ],
       body: TRANSITION_TEXT[key_][key(s)],
+    });
+  }
+
+  /* Twizzles are skated from all four entries, unlike the crossovers and chassés
+     above — there is no edge you cannot twizzle from. */
+  for (const [key_, tw] of Object.entries(TWIZZLES)) {
+    const x = exitState(s, key_);
+    const whole = Math.floor(tw.rotations);
+    files.push({
+      id: `${slug(s)}-${TWIZZLE_SLUG[key_]}`,
+      front: [
+        `name: ${FOOT_WORD[foot]} ${DIR_WORD[dir]} ${EDGE_WORD[edge]} ${TURN_NOUN[key_]}`,
+        `kind: twizzle`,
+        `summary: ${label(s)} to ${label(x)} — ${halves(tw.rotations)} rotation` +
+          `${tw.rotations === 1 ? '' : 's'} on one foot, travelling, ` +
+          `${whole === 1 ? 'one curl' : `${whole} curls`} and no cusp.`,
+        `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
+        `turn: ${key_}`,
+        /* A twizzle is built on the edge it is done on, and the longer ones on the
+           single. Nothing here is a cluster: it is one continuous turn. */
+        `prerequisites: [${key_ === 'twizzle' ? slug(s)
+                          : `${slug(s)}, ${slug(s)}-twizzle`}]`,
+      ],
+      body: TWIZZLE_TEXT[key_][key(s)],
     });
   }
 

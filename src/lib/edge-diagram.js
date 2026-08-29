@@ -27,6 +27,37 @@ function arc(x0, y0, th0, kappa, len, n) {
   return pts;
 }
 
+/* A curl: the tracing a twizzle leaves. A point on a rolling circle, which is the
+   curve you get when a tangent has to wind all the way round while the thing it
+   belongs to is also going somewhere. `advance` is how far the circle's centre
+   moves per radian, as a fraction of its radius — and it has to be under 1, or
+   the tangent never completes its turn and the curve scallops instead of curling.
+   That threshold is the whole difference between a twizzle and a wobble.
+
+   At advance 0 this degenerates to a circle traced over and over, which is a
+   pirouette. BIS says the same thing in words: if the travelling stops during the
+   execution, it is no longer a twizzle. */
+function curl(x0, y0, th0, sense, r, advance, turns, n) {
+  const a = r * advance, c = Math.cos(th0), s0 = Math.sin(th0);
+  const pts = [];
+  let prev = 0, acc = 0;
+  for (let i = 0; i <= n; i++) {
+    const psi = (2 * Math.PI * turns * i) / n;
+    const lx = a * psi + r * Math.sin(psi);
+    const ly = sense * r * (1 - Math.cos(psi));
+    /* The heading is accumulated rather than read off an arctangent, because it
+       passes through half a turn twice per curl and a wrapped angle would spin
+       the boot backwards there. */
+    const ang = Math.atan2(sense * r * Math.sin(psi), a + r * Math.cos(psi));
+    let d = ang - prev;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    acc += d; prev = ang;
+    pts.push({ x: x0 + lx * c - ly * s0, y: y0 + lx * s0 + ly * c, th: th0 + acc });
+  }
+  return pts;
+}
+
 /* Screen coordinates put y downwards, so anticlockwise on the ice is a negative
    turning rate on screen. That sign flip lives here and nowhere else. */
 const kappaOf = (s, R) => -lobeSense(s.foot, s.edge, s.dir) / R;
@@ -40,7 +71,8 @@ const smoothstep = u => { const c = Math.min(1, Math.max(0, u)); return c * c * 
 /* One turn or a cluster of them — the difference is only how many times round the
    loop. Pass `turn` for a single turn or `turns` for a chain; a chain shortens each
    segment so three turns still fit on a phone. */
-export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth = 15 }) {
+export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth = 15,
+                             twizzleAdvance = 0.55, twizzleRadius = 0.2 }) {
   const N = 200;
   const chain = turns?.length ? turns : (turn ? [turn] : []);
   const span = sweep ?? (chain.length > 1 ? 66 : 96);
@@ -85,6 +117,27 @@ export function buildTrace({ entry, turn, turns, radius = 120, sweep, cuspDepth 
          cusp here would invent a turn that is not being done. */
       pts = [...pts, ...arc(P.x, P.y, P.th, kOut, L, N)];
       marks.push({ idx, after: idx + 1, stepped: false, spin: 0, key });
+    } else if (t.join === 'twizzle') {
+      /* Whole turns of the tangent are curls in the tracing; a trailing half turn
+         is not, because a tangent cannot wind half a turn and come back pointing
+         the same way down the line. That half is the body going round against the
+         blade, so it goes in as `spin` — the only place in this file where the
+         boot is deliberately not aligned with the tracing it is leaving.
+
+         The consequence is the right one: after whole curls the heading is back
+         along the line it set out on, so the exit lobe carries on down the ice
+         rather than doubling back. A twizzle travels; that is the definition. */
+      const whole = Math.floor(t.rotations);
+      const cs = curl(P.x, P.y, P.th, Math.sign(kIn), radius * twizzleRadius,
+                      twizzleAdvance, whole, N);
+      const E = cs[cs.length - 1];
+      const end = idx + cs.length;
+      pts = [...pts, ...cs, ...arc(E.x, E.y, E.th, kOut, L, N)];
+      /* The state changes when the twizzle is finished, not when it starts, so
+         the curls are drawn in the edge the skater went into them on. */
+      marks.push({ idx: end, after: end + 1, curlFrom: idx + 1, curlTo: end,
+                   stepped: false, spin: Math.sign(kIn) * 2 * Math.PI * (t.rotations % 1),
+                   key });
     } else if (t.join === 'loop') {
       /* A small circle traced on the same edge, returning to the edge it left —
          so it curves the way the lobe curves and sits inside it. Drawn larger
