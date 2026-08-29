@@ -12,7 +12,7 @@ The rig is rooted at the **hip**. Everything else is authored relative to it:
 | Axis | Meaning |
 |------|---------|
 | `t`  | along the track, **+ = forward** (direction of travel) |
-| `n`  | across the track, **+ = the skater's right** |
+| `n`  | across the track, + = the skater's right *while they face the way they are going* |
 | `z`  | height above the ice — this one is absolute, not hip-relative |
 
 All distances are centimetres. Yaw is degrees from the direction of travel,
@@ -21,6 +21,13 @@ All distances are centimetres. Yaw is degrees from the direction of travel,
 Note that `t` is the direction of *travel*, not the direction the skater faces. On a
 back outside edge those are opposite, which is exactly why the rig tracks `hipYaw`
 and `shYaw` separately.
+
+Both axes belong to the track, and `n` is no exception. "The skater's right" is a
+mnemonic for reading a forward pose, not a definition: it stops being true the moment
+the skater turns, and on a landing at `hipYaw` 180 the skater's right is at **−n**.
+The body-relative direction is `lateral(hipYaw)` and always was. One session read the
+mnemonic as the definition and spent its time deciding whether the pose data had been
+authored the wrong way round; it had not.
 
 ## The three views
 
@@ -70,6 +77,39 @@ authoring it by hand instead will produce contradictions between the views.
   shin must end.
 - **Arm carriage** — derived from the shoulder line unless a keyframe overrides it
   with `arm: [out, forward, drop]`.
+
+## A lateral offset is mostly lean
+
+The rig is rooted at the hip, so a foot's `n` is measured from a point about a metre in
+the air — and on an edge that point is not above the blade. A skater on an edge leans
+into the circle, and the blade is therefore **outside** the lobe, out from under the
+body rather than under it. The number that produces is larger than intuition suggests:
+
+| Lean from vertical | `n` at a 90 cm hip |
+|---|---|
+| 5° | 8 cm |
+| 10° | 16 cm |
+| 15° | 24 cm |
+| 25° | 42 cm |
+
+So a skating left foot at n = +17 on a forward outside edge is not a foot placed to the
+right of the body. It is a 11° edge, which is a fairly ordinary one, and the same pose
+seen from behind is what the guide calls edge depth. **Read `n` as lean first and as
+placement second** — and never infer that two feet are crossed from their `n` values
+alone, which is a comparison that ignores how far apart they are along the track.
+
+Two consequences, both asserted by `tools/lean.mjs`:
+
+- **The blade sits on the outside of its own lobe.** `lobeSense` says which side the
+  centre is on; the blade must be on the other one. `sign(n) === lobeSense(foot, edge, dir)`.
+- **The body leans over the biting edge.** The outside of the left foot is its left side,
+  so an LFO leans left; the outside of the right foot is its right side, so an RBO leans
+  right. Measured against `hipYaw`, so it holds through a rotation.
+
+They use different inputs and must agree. A pose that satisfies one and not the other is
+a pose where the body and the tracing disagree about which way it is falling — which is
+what six waltz-jump landing keyframes did until 29/08/2026, leaning out of the landing
+circle by up to 11°.
 
 ## The blade is not flat
 
@@ -126,6 +166,8 @@ believing any sequence that turns.
   pose needs more, the foot is in the wrong place under the hip, not the ankle.
 - A skating foot's blade sits at `z = 0`. This is inviolable — an automated fix that
   lifts it to satisfy some other constraint has broken the pose, not solved it.
+- The skating blade is outside its lobe and the body leans over the biting edge, both
+  checked per frame rather than per keyframe, since interpolation can cross zero.
 
 ## Deliberate exaggerations
 

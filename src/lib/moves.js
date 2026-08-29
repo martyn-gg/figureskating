@@ -32,7 +32,14 @@ export const MOVES = {
            {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.36} ],
     radius:130, duration:5.6,
     keys:[
-      /* Free-leg side is body-relative, not track-relative. Before the rotation the
+      /* The landing keys leaned OUT of the landing circle until 29/08/2026: the
+         skating foot sat on the inside of the lobe, so the body fell away from the
+         edge it was supposedly on. Invisible frame by frame — a lateral offset on
+         a leaning skater looks like a lateral offset whichever way it points — and
+         it survived a session being read as evidence that the feet were crossed.
+         tools/lean.mjs asserts it now, from the lobe and from the edge letter.
+
+         Free-leg side is body-relative, not track-relative. Before the rotation the
          skater faces the way they are going, so the trailing leg is at negative t;
          after it they face backwards, so a leg extended behind them points along the
          direction of travel, at positive t. Getting that backwards is invisible frame
@@ -54,17 +61,17 @@ export const MOVES = {
       {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:114, hipYaw:158, shYaw:142,
        sh:P(-2,0,166), L:P(59,10,52), R:P(-2,0,26), skate:null},
       {arm:[34,14,14], t:0.44, ph:'Front of the blade touches down', hipZ:98, hipYaw:180, shYaw:162,
-       sh:P(-4,0,148), L:P(38,12,73), R:P(-4,-11,1,3), skate:'R', edge:'O', dir:'B'},
+       sh:P(-4,0,148), L:P(38,12,73), R:P(-4,11,1,3), skate:'R', edge:'O', dir:'B'},
       {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:178, shYaw:158,
-       sh:P(-6,0,146), L:P(58,13,34), R:P(-4,-15,0,1), skate:'R', edge:'O', dir:'B'},
+       sh:P(-6,0,146), L:P(58,13,34), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
       {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
-       sh:P(-8,0,136), L:P(52,15,61), R:P(-20,-17,0,-1), skate:'R', edge:'O', dir:'B'},
+       sh:P(-8,0,136), L:P(52,15,61), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
       {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:174, shYaw:150,
-       sh:P(-8,0,142), L:P(50,15,66), R:P(-12,-18,0,-0.5), skate:'R', edge:'O', dir:'B'},
+       sh:P(-8,0,142), L:P(50,15,66), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:174, shYaw:154,
-       sh:P(-6,0,148), L:P(59,14,35), R:P(-6,-17,0), skate:'R', edge:'O', dir:'B'},
+       sh:P(-6,0,148), L:P(59,14,35), R:P(-6,17,0), skate:'R', edge:'O', dir:'B'},
       {arm:[64,10,18], t:1.00, ph:'Run-out — still on the back outside edge', hipZ:98, hipYaw:172, shYaw:158,
-       sh:P(-5,0,150), L:P(60,13,37), R:P(-4,-15,0), skate:'R', edge:'O', dir:'B'},
+       sh:P(-5,0,150), L:P(60,13,37), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
   spiral: {

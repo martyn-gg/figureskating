@@ -12,15 +12,22 @@
     "check:shin": "node tools/shin.mjs",
     "check:blade": "node tools/blade.mjs",
     "check:freefoot": "node tools/freefoot.mjs",
+    "check:lean": "node tools/lean.mjs",
     "check:tracing": "node tools/tracing.mjs",
     "check:contrast": "node tools/contrast.mjs",
     "check:links": "node tools/links.mjs",
     "check:speed": "node tools/speed.mjs",
     "check:offline": "node tools/offline.mjs",
-    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:freefoot && npm run check:tracing && npm run check:contrast && npm run build && npm run check:links",
+    "check:framing": "node tools/framing.mjs",
+    "check:ink": "node tools/ink.mjs",
+    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:freefoot && npm run check:lean && npm run check:tracing && npm run check:contrast && npm run build && npm run check:links",
     "gen:derived": "node tools/gen-derived.mjs"
   },
   "dependencies": {
     "astro": "^7.2.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
   }
 }

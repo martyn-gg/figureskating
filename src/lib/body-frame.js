@@ -18,14 +18,59 @@ const edgeCol = e => e==='O' ? 'var(--edge-out)' : 'var(--edge-in)';
 
 /* Left and right keep their own colour in every view, so you can read which
    way round the skater is without waiting for the boot to turn. */
-const legCol = f => f==='L' ? 'var(--leg-l)' : 'var(--leg-r)';
+/* One limb colour. Which foot is carried by the letter on the boot, which is
+   where the brief already put identity; colour is free to stop competing for it. */
+const LIMB = 'var(--limb)';
+
+/* WHERE THE CAMERA STANDS, per view — the one fact that both the depth ordering
+   and the boot's toe/heel test are read off, so they cannot drift apart.
+
+   Side: the along-track axis is plotted with +t to the right, so a skater going
+   forwards travels left to right, which is the way a diagram is read. That puts
+   the camera on the skater's RIGHT, at +n; standing on their left gives the same
+   picture mirrored. Depth is across-track, larger n nearer.
+
+   Rear: plotted with +n to the right, which is what standing behind someone
+   looks like — their right hand on your right. The camera is at -t, depth is
+   along-track, smaller t nearer.
+
+   Both return "how near the camera", so the sign is the whole content. The side
+   one was backwards until 29/08/2026, where it contradicted the toe/heel test
+   twenty lines below: depth ordered from the skater's left, boots drawn from
+   their right. */
+const NEARER = { side: q => q.n, rear: q => -q.t };
+
+/* The casing: an outer stroke in the panel's own colour, so it costs no contrast
+   and reads as depth rather than as another thing to learn. It belongs to the
+   limb in front, which is enforced by draw order rather than by choosing — the
+   nearer limb is drawn last and cases over what it crosses. Casing the further
+   limb is unrepresentable, not merely discouraged. */
+const CASE = 5;
+
+/* Depth is carried by STROKE WEIGHT, not by opacity or by hue.
+   Colour is identity — which foot — and must stay at full strength in both
+   schemes, so the pale limb of the pair cannot also be the dim one. Opacity was
+   doing the opposite: it dimmed the free limb, and in dark that limb is already
+   the lower-contrast half, so the two channels multiplied and it vanished.
+   Weight is a channel that costs no contrast.
+   Role, not depth-per-frame: the skating leg is the heavy one for as long as it
+   is the skating leg. It swaps at a landing, where the skater's weight really
+   does swap, and nowhere else — a per-frame depth test would trade the weights
+   as the free leg passes through, which reads as a flicker, not as space. */
+const LIMB_W = { skating: 5.4, free: 3.0 };
+/* Arms take the same treatment for the same reason. They are not the subject of
+   the leg finding, but FROM BEHIND is read for lean and alignment and that is
+   partly the shoulder line — an arm dimmed to .8 in the paler hue fails there
+   exactly as a leg did. One weight, no role split: both arms are equally the
+   subject. Sits just above the free leg so it never outranks the skating one. */
+const ARM_W = 3.2;
 
 /* boot seen from above: toe at +x */
 function bootTop(edge, skating, foot){
   const g = el('g');
   g.appendChild(el('path',{d:'M -15 -6.5 L 4 -8 Q 13.5 -7 15.5 0 Q 13.5 7 4 8 L -15 6.5 Q -18 0 -15 -6.5 Z',
-    fill:'var(--paper)',stroke:legCol(foot),'stroke-width':skating?2:1.5,
-    'stroke-linejoin':'round',opacity:skating?1:.6}));
+    fill:'var(--paper)',stroke:LIMB,'stroke-width':skating?2.6:1.7,
+    'stroke-linejoin':'round'}));
   g.appendChild(el('line',{x1:-14,y1:0,x2:16,y2:0,stroke:skating?edgeCol(edge):'var(--free)',
     'stroke-width':2.8,'stroke-linecap':'round'}));
   return g;
@@ -47,17 +92,17 @@ function bootSide(edge, skating, along, foot){
   for (let x = -12; x <= 18.001; x += 1.5) under.push(`${x.toFixed(1)} ${bladeY(x).toFixed(2)}`);
 
   g.appendChild(el('path',{d:'M -11 -21 L -9 -3 L 15 -3 L 17 -8 L 6 -13 L 3 -21 L -1 -16 L -7 -16 Z',
-    fill:'var(--paper)',stroke:legCol(foot),'stroke-width':skating?2:1.5,
-    'stroke-linejoin':'round',opacity:skating?1:.65}));
+    fill:'var(--paper)',stroke:LIMB,'stroke-width':skating?2.6:1.7,
+    'stroke-linejoin':'round'}));
 
   g.appendChild(el('path',{
     d:`M -12 -3 L 18 -3 L ${under.slice().reverse().join(' L ')} Z`,
-    fill:skating?edgeCol(edge):legCol(foot),stroke:'none',opacity:skating?1:.32}));
+    fill:skating?edgeCol(edge):LIMB,stroke:'none',opacity:skating?1:.32}));
 
   /* Toe pick: teeth at the front, reaching to about the blade's lowest plane.
      That is why engaging them takes a real pitch — they are barely proud of the ice. */
   g.appendChild(el('path',{d:'M 15.5 -2.4 L 16.4 2.6 L 17.1 0.6 L 17.8 3.2 L 18.4 0.9 L 18.6 -2.6 Z',
-    fill:skating?'var(--ink)':legCol(foot),opacity:skating?.75:.3}));
+    fill:skating?'var(--ink)':LIMB,opacity:skating?.75:.3}));
 
   if(skating){
     g.appendChild(el('circle',{cx:along.toFixed(2),cy:bladeY(along).toFixed(2),r:2.6,
@@ -75,7 +120,7 @@ function bootEnd(edge, skating, foot, facing){
   const g = el('g',{transform:'translate(0 -2.2)'});   // edge marker sits on the ice
   const col = skating ? edgeCol(edge) : 'var(--free)';
   const stroke = skating ? 'var(--ink)' : 'var(--free)';
-  const sw = skating ? 2 : 1.6;
+  const sw = skating ? 2.6 : 1.7;
 
   /* At this size the silhouette does the work, not the detail — so the toe
      is drawn narrow and domed with the pick jutting below, and the heel wide,
@@ -101,23 +146,61 @@ function bootEnd(edge, skating, foot, facing){
 
 /* ═══ view: top-down ═════════════════════════════════════════ */
 function viewTop(svg, move, path, frames, SHOW){
-  const VW=880, VH=380;
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
   for(const p of path){x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y);}
-  const pad=95, w=x1-x0+pad*2, h=y1-y0+pad*2, s=Math.min(VW/w,VH/h);
+  /* The panel takes the shape of what it holds. A fixed landscape box was
+     letterboxing a lobe, which is portrait — hence a top-down card that was half
+     empty on a phone, with the tracing shrunk to a hairline to fit the one axis
+     that did not need shrinking. Clamped at both ends so a long run does not
+     become a strip and a compact one does not become a tower.
+
+     VBASE is near the panel's real CSS width at phone size on purpose: every
+     stroke here is written in viewBox units, so a box twice the rendered width
+     halves every line. It renders bolder on a wide screen, which is the right
+     direction to be wrong in. */
+  /* The bbox above is the TRACING only, and the body is drawn around it — so a
+     free leg extended at the start or the end of a move reached outside the box
+     and was cut off. It always did; a fixed 880-unit landscape box had so much
+     dead space that the overhang landed in it. Tightening the box to the content
+     removed the accident that was hiding it.
+
+     So measure the body too. Every limb point is stored as (t,n) offsets from
+     the hip in centimetres and drawn at BS, which makes the maximum overhang
+     exactly computable from the poses — no rig solving, no guessed padding, and
+     it holds for a spiral's reach as well as a waltz jump's. Intermediate joints
+     (knee, elbow) can bow outside the line between their ends, hence the 1.15;
+     JOINT covers the stroke and joint-circle radii, which are drawn in screen
+     units and so are not scaled by BS. */
+  const BS = 1.2;
+  let reach = 0;
+  for(const fr of frames){
+    const ps = fr.pose;
+    for(const k of ['L','R','LH','RH','sh']){
+      const q = ps[k]; if(!q) continue;
+      reach = Math.max(reach, Math.abs(q.t||0), Math.abs(q.n||0));
+    }
+  }
+  const JOINT = 14;
+  const VBASE=440, pad = Math.max(55, reach * BS * 1.15 + JOINT);
+  const wRaw=x1-x0+pad*2, hRaw=y1-y0+pad*2;
+  const ar=Math.min(2.2,Math.max(0.85,wRaw/hRaw));
+  const VW=VBASE, VH=Math.round(VBASE/ar);
+  const w=wRaw, h=hRaw, s=Math.min(VW/w,VH/h);
   svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`); svg.textContent='';
   const root=el('g',{transform:`translate(${(VW-w*s)/2-(x0-pad)*s} ${(VH-h*s)/2-(y0-pad)*s}) scale(${s})`});
   svg.appendChild(root);
 
   const d = pts => pts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
-  root.appendChild(el('path',{d:d(path),fill:'none',stroke:'var(--ink)',opacity:.12,'stroke-width':2.4/s}));
+  /* The whole tracing, faint, so the part not yet skated is still legible as the
+     shape the move makes. It was thin enough to disappear at phone size. */
+  root.appendChild(el('path',{d:d(path),fill:'none',stroke:'var(--ink)',opacity:.16,'stroke-width':3/s}));
 
   const live=el('g'); root.appendChild(live);
   const body=el('g'); root.appendChild(body);
-  // Body scale, cm → path units. Deliberately ~4× life: at true scale a skater is a
-  // speck against a four-metre lobe, and rotation — the whole point of this view —
-  // becomes unreadable. The tracing stays true; only the body is enlarged.
-  const BS = 1.2;
+  // BS is hoisted above the fit, which needs it to measure the body's overhang.
+  // Deliberately ~4× life: at true scale a skater is a speck against a four-metre
+  // lobe, and rotation — the whole point of this view — becomes unreadable. The
+  // tracing stays true; only the body is enlarged.
 
   return frame => {
     const {p, pose, idx} = frame;
@@ -126,9 +209,9 @@ function viewTop(svg, move, path, frames, SHOW){
     // trace so far: solid where a blade is down, dashed while airborne
     let run=[], runAir=null;
     const flush=()=>{ if(run.length>1){
-      const seg=el('path',{d:d(run),fill:'none','stroke-width':3.2/s,'stroke-linecap':'round',
+      const seg=el('path',{d:d(run),fill:'none','stroke-width':4.2/s,'stroke-linecap':'round',
         stroke: runAir?'var(--ink-soft)':edgeCol(run.edge)});
-      if(runAir) seg.setAttribute('stroke-dasharray',`${5/s} ${6/s}`);
+      if(runAir) seg.setAttribute('stroke-dasharray',`${6/s} ${7/s}`);
       live.appendChild(seg);} };
     for(let i=0;i<=idx;i++){
       const f=frames[i], air=!f.pose.skate;
@@ -152,7 +235,8 @@ function viewTop(svg, move, path, frames, SHOW){
       body.appendChild(el('circle',{cx:pos.x,cy:pos.y,r:2.6/s,fill:colour}));
     };
 
-    for(const which of ['L','R']){
+    // Overhead, depth is height: the raised foot is the nearer one, so it draws last.
+    for(const which of ['L','R'].slice().sort((a,b)=>(pose[a].z||0)-(pose[b].z||0))){
       if(!SHOW.free && which!==pose.skate) continue;
       const q=pose[which], pos=rel(q);
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
@@ -169,11 +253,11 @@ function viewTop(svg, move, path, frames, SHOW){
         const eb = twoBone(j, hand, UPPER, FORE, elbowFace(pose, side));
         const a = rel(j), b = rel(eb), c = rel(hand);
         body.appendChild(el('path',{d:`M ${a.x} ${a.y} L ${b.x} ${b.y} L ${c.x} ${c.y}`,
-          fill:'none',stroke:legCol(which),'stroke-width':2.8/s,
-          'stroke-linecap':'round','stroke-linejoin':'round',opacity:.85}));
+          fill:'none',stroke:LIMB,'stroke-width':ARM_W/s,
+          'stroke-linecap':'round','stroke-linejoin':'round'}));
         body.appendChild(el('circle',{cx:b.x,cy:b.y,r:2/s,fill:'var(--ice)',
-          stroke:legCol(which),'stroke-width':1.4/s}));
-        body.appendChild(el('circle',{cx:c.x,cy:c.y,r:2.8/s,fill:legCol(which),opacity:.9}));
+          stroke:LIMB,'stroke-width':1.4/s}));
+        body.appendChild(el('circle',{cx:c.x,cy:c.y,r:2.8/s,fill:LIMB}));
       }
     }
     if(SHOW.hip) bar(hip, pose.hipYaw, 17, 'var(--hip)');
@@ -222,9 +306,14 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
     const line=(a,b,col,wid,op=1)=>g.appendChild(el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,
       stroke:col,'stroke-width':wid,'stroke-linecap':'round',opacity:op}));
 
-    for(const which of ['L','R']){
+    /* Draw order IS the depth claim, so it is decided before anything is drawn:
+       the further limb first, the nearer limb last and cased over it. */
+    const near = NEARER[mode];
+    const byDepth = ['L','R'].slice().sort((a,b)=>near(pose[a])-near(pose[b]));
+    for(const which of byDepth){
       const skating = which===pose.skate;
       if(!SHOW.free && !skating) continue;
+      const nearer = which===byDepth[byDepth.length-1];
       const q=pose[which];
       // two passes: the boot direction needs a shin, the shin needs an ankle
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
@@ -234,12 +323,17 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
       const pt  = {x:ax(ank), y:H(ank.z)};                 // the leg ends at the ankle
       const kp  = {x:ax(kn), y:H(kn.z)};
       const bootPt = {x:ax(q), y:H(q.z)};                  // the boot sits on the blade
-      const col = legCol(which), wid = skating ? 4.6 : 3.4;
-      g.appendChild(el('path',{d:`M ${hipPt.x} ${hipPt.y} L ${kp.x} ${kp.y} L ${pt.x} ${pt.y}`,
-        fill:'none',stroke:col,'stroke-width':wid,'stroke-linecap':'round','stroke-linejoin':'round',
-        opacity:skating?.95:.7}));
+      const col = LIMB, wid = skating ? LIMB_W.skating : LIMB_W.free;
+      const legD = `M ${hipPt.x} ${hipPt.y} L ${kp.x} ${kp.y} L ${pt.x} ${pt.y}`;
+      /* data-limb is for ink.mjs, and for anyone annotating a frame by hand: role
+         is a fact the renderer knows and the DOM otherwise throws away. Two of us
+         read this backwards off a screenshot before it was labelled. */
+      if(nearer && SHOW.free) g.appendChild(el('path',{d:legD,fill:'none',stroke:'var(--ice)',
+        'stroke-width':wid+CASE,'stroke-linecap':'round','stroke-linejoin':'round','data-casing':''}));
+      g.appendChild(el('path',{d:legD,'data-limb':skating?'skating':'free',
+        fill:'none',stroke:col,'stroke-width':wid,'stroke-linecap':'round','stroke-linejoin':'round'}));
       g.appendChild(el('circle',{cx:kp.x,cy:kp.y,r:wid*0.62,fill:'var(--ice)',
-        stroke:col,'stroke-width':2,opacity:skating?1:.7}));
+        stroke:col,'stroke-width':skating?2.2:1.7}));
 
       /* Project the boot the same way the bars are projected. A boot is
          parallel to the facing direction where a shoulder bar is across it,
@@ -261,9 +355,12 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
       const ul = Math.hypot(ux, uy) || 1;
       ux /= ul; uy /= ul;
 
-      const out = mode === 'side' ? bd[1] : bd[0];
-      const endo = Math.abs(out);
-      const facing = (-Math.sign(out) || 1);              // +1 = toe toward viewer
+      /* How much of the boot points at the camera — same axis and same sign as
+         NEARER above, so a toe drawn coming at you and a limb drawn in front are
+         the same claim, made once. */
+      const toward = mode === 'side' ? bd[1] : -bd[0];
+      const endo = Math.abs(toward);
+      const facing = (Math.sign(toward) || 1);            // +1 = toe toward viewer
 
       const along = skating ? contactAlong(pitchOf(bd)) : 0;
       const holder = el('g',{transform:`translate(${bootPt.x} ${bootPt.y}) scale(${S})`});
@@ -291,11 +388,11 @@ function viewProfile(svg, mode, SHOW, maxZ = 190){          // mode 'side' | 're
         const j = shoulderJoint(pose, side), hand = pose[which+'H'];
         const eb = twoBone(j, hand, UPPER, FORE, elbowFace(pose, side));
         const jp={x:ax(j),y:H(j.z)}, ep={x:ax(eb),y:H(eb.z)}, hp={x:ax(hand),y:H(hand.z)};
-        const col = legCol(which);
+        const col = LIMB;
         g.appendChild(el('path',{d:`M ${jp.x} ${jp.y} L ${ep.x} ${ep.y} L ${hp.x} ${hp.y}`,
-          fill:'none',stroke:col,'stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.8}));
+          fill:'none',stroke:col,'stroke-width':ARM_W,'stroke-linecap':'round','stroke-linejoin':'round'}));
         g.appendChild(el('circle',{cx:ep.x,cy:ep.y,r:2.4,fill:'var(--ice)',stroke:col,'stroke-width':1.6}));
-        g.appendChild(el('circle',{cx:hp.x,cy:hp.y,r:3,fill:col,opacity:.9}));
+        g.appendChild(el('circle',{cx:hp.x,cy:hp.y,r:3,fill:col}));
       }
     }
 

@@ -12,7 +12,7 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; seven checkers that pass on a clean clone.
+worker; eight checkers that pass on a clean clone.
 
 **Content:** 156 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, twenty-eight transitions, sixty-four clusters, seven jumps and a spiral — plus one
@@ -117,6 +117,54 @@ is. Use the checkers to flag; fix by hand; re-assert the hard constraints afterw
 - Live values must not sit inline with prose — each change reflows the paragraph. Give
   them a fixed row, reserve heights, throttle DOM writes, and verify by measuring bounding
   boxes across ~45 consecutive frames.
+- **A lateral offset on a leaning skater looks the same whichever way it points.** The
+  waltz landing leaned out of its own circle for two weeks, through a design pass that
+  shot that very element in two schemes, and was then read as evidence of crossed feet in
+  a different frame. Neither the picture nor the arithmetic volunteers the sign; only
+  comparing it to the tracing does.
+- **Reviewing the element that happens to be open is not sampling.** The whole design pass
+  was reviewed on the waltz jump because it was the page that was open. The spiral has
+  since been the element that would have caught the problem twice: `framing.mjs` found it
+  clipping 18 px and 20 px at both ends, and its rear view has the limbs overlapping in 73
+  frames of 81 where the waltz jump has 1 in 70 — so a wrong depth sign would have been
+  all but invisible on the move under review and obvious on the one that was not. **Rig
+  changes get shot on the spiral first and the jump second**, and anything that can be
+  asserted across all elements should be a checker rather than a screenshot.
+
+## Pose handedness, and what it actually was — 29/08/2026
+
+Session 02 left three candidate explanations for the waltz jump's frame 60, where the
+skating left foot sits at n = +17.2 and the free right foot at n = −4.6: opposite
+authoring handedness, `n` measured against the curve, or genuinely crossed feet. It is
+none of them, and the question was the wrong shape.
+
+`n` is measured from the **hip**, and on an edge the hip is not above the blade. At
+hipZ 86, n = +17.2 is an 11.8° lean — a deepening forward outside edge and nothing more.
+The free foot 70 cm behind it at n = −4.6 is not near enough to cross anything. The two
+numbers were being compared as if they were foot placements when they are mostly lean,
+which `docs/model.md` never said and now does.
+
+What the question turned up on the way past is a real defect it was not looking for. The
+skating blade must sit on the **outside** of its lobe; across all three moves every
+keyframe did, except the six waltz **landing** keys, which had the skater leaning out of
+the landing circle by 6–11°. Three independent routes agree: `lobeSense` and the sign of
+`n`; the biting edge from the edge letter, measured against `hipYaw`; and the drawn
+top-down hip, which sat 22 cm outside the landing circle where the entry's sits 19 cm
+inside. The six keys were flipped by hand and `reach`, `shin`, `blade`, `freefoot` and
+`tracing` still pass — a sign flip does not change a distance, which is exactly why five
+checkers had nothing to say about it.
+
+- **`tools/lean.mjs`, the eighth checker.** Both routes, per frame rather than per
+  keyframe, on 922 frames. `--break` puts the old landing back.
+- **The side view's camera is settled.** The along-track axis plots +t to the right, so a
+  skater going forwards reads left to right; that puts the camera on the skater's right,
+  at +n, and `NEARER.side` is `q => q.n`. The old value ordered depth from the skater's
+  left while the boot's toe/heel test twenty lines below drew from their right — the two
+  disagreed and neither knew. They are now one expression, so that particular pair cannot
+  drift apart again.
+- **`tools/frame-svg.mjs`** dumps any frame of any view as a standalone SVG without a
+  browser, by giving the renderers a DOM stub. "Render, don't reason" needed Playwright
+  until now, which is not always available where the work is.
 
 ## The derived tier, and what generating it taught
 
@@ -308,6 +356,9 @@ reference for how all of it is written.
 - Validating the poses against video and, eventually, a coach.
 - How much pitch a real toe pick takes — needed before any toe jump is keyframed.
 - Whether a waltz jump lands at the front of the blade, as currently drawn.
+- Whether the corrected waltz landing looks like a waltz landing. The lean is now on the
+  right side of the circle and about 11° at its deepest, which is shallow for a landing;
+  whether it should be deeper is a judgement the geometry cannot make.
 
 ## A note on git
 
