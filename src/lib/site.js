@@ -19,18 +19,22 @@ export const COACHES = 'coaches@figureskating.guide';
    leaving it pointing at a page that has gone. */
 export const DONATE = 'https://ko-fi.com/figureskatingguide';
 
-/* Renewed annually. Registration and privacy are billed separately by the
-   registrar, ex VAT, which is how 20i quotes them; the site never shows that
-   number. `total` sums the rounded parts rather than rounding the sum, so the
-   arithmetic a reader can do on the page agrees with the total printed on it. */
+/* Renewed annually. The registrar bills registration and privacy separately, ex
+   VAT, which is how 20i quotes them — and both of those are facts about the invoice
+   rather than about the reader. A skater's parent wants one number: what it costs to
+   keep the site up for a year. So the two line items stay here, unexported, and only
+   the total leaves this file — a page cannot print a breakdown it cannot reach.
+
+   Rounded per component and then summed, rather than summing and rounding once. The
+   difference is a penny and nobody would see it, but the components are what the
+   registrar actually charges and the total should be their sum. */
 const VAT = 0.2;
 const inc = n => Math.round(n * (1 + VAT) * 100) / 100;
+const LINES = [31.99, 3.49];   // registration, WHOIS privacy
 
 export const COSTS = {
   registrar: '20i',
-  get domain() { return inc(31.99); },
-  get privacy() { return inc(3.49); },
-  get total() { return Math.round((this.domain + this.privacy) * 100) / 100; },
+  total: LINES.map(inc).reduce((a, b) => a + b),
 };
 
 export const money = n => `£${n.toFixed(2)}`;
