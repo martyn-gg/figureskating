@@ -108,7 +108,7 @@ form — something modelled as free is limited by kit:
 | blade contact | the rocker, ~7 ft radius | contact = `ROCKER × sin(pitch)`; 1° moves it 3.7 cm |
 | boot pitch | the blade running out of length | ±3.5° max; past that you are on the picks |
 | shin lean | the boot cuff | about 28° |
-| free-foot point | the boot holding the ankle square | `ANKLE_FREE` is 10°, not 68° |
+| free-foot point | the boot holding the ankle square | `ANKLE_MAX` is 30°, measured; `ANKLE_POINT` 10° by default |
 
 Each became a checker. Before keyframing a new element, ask what limits it.
 

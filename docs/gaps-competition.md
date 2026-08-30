@@ -37,7 +37,17 @@ PDFs. The route is unchanged — a human downloads them into `sources/`.
 
 ## The entry ladder, and the second test scheme
 
-British Ice Skating's championship requirements for 2026/27 set minimum tests per category:
+British Ice Skating's championship requirements for 2026/27 set minimum tests per category.
+
+> **DO NOT USE THIS TABLE — flagged 30/08/2026.** `sources/bis/Singles Event Structure 2526`
+> now exists and disagrees with three of its four rows: Basic Novice needs **Skills 4** not 6,
+> Advanced Novice **Skills 6** not 7, Junior **Skills 7** not 8. The document's pattern is
+> Skills N with National N, which also matches the per-level entry requirements in
+> `Singles Generic Criteria 2026-2027` (Skills N plus the National level below). It also
+> splits National into **Technical and Components as two separate minima**, which this table
+> does not. That looks like a transcription error here rather than a season change — but the
+> table was fetched as 2026/27 and the document is 2025-26, and the 2026-27 event structure is
+> not in `sources/`, so it cannot be settled from what we hold. See `sources/bis/MANIFEST.md`.
 
 | Category | Skills | The other test |
 |---|---|---|

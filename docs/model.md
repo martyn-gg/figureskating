@@ -54,7 +54,8 @@ shouts across a rink is this angle.
 | `UPPER` / `FORE` | 31 / 29 | shoulder joint to hand |
 | `SHOULDER_HALF` | 19 | half the shoulder width |
 | `ANKLE_UP` / `ANKLE_BACK` | 15 / 5 | ankle position **in the boot's own frame** |
-| `ANKLE_FREE` | 68° | how pointed a free foot is; 90° would be in line with the shin |
+| `ANKLE_MAX` | 30° | what the boot allows a free foot to point; 90° would be in line with the shin |
+| `ANKLE_POINT` | 10° | how far an unauthored free foot points. A keyframe may say `point` |
 
 ## Things that are derived, not authored
 
@@ -141,8 +142,36 @@ true radius.
 
 A bare ankle plantarflexes maybe 45°. A skating boot encases the foot and the lower
 shin and holds them close to square, so **a skater's free foot never looks like a
-ballet foot however hard they point it**. `ANKLE_FREE` is 10°, not the 68° I first
-guessed.
+ballet foot however hard they point it**.
+
+**A LIMIT AND A DEFAULT, NOT ONE CONSTANT — 30/08/2026.** This was a single `ANKLE_FREE`
+of 10°, applied by `bootDir` to every free foot in every frame, which made it an identity
+and not a limit: not *the boot allows no more than this* but *every free foot is pointed
+exactly this hard, always*. Session 05 wrote that down and did not act on it, and Session
+05's finding that no value of the constant helps every pose at once follows straight from
+it — plantarflexion drives the blade wherever the shin already points, so one number
+lifts the toe on a spiral and drives it at the ice on a landing. The number was never the
+lever. `npm run ankle` prints that table.
+
+`ANKLE_MAX` is 30°, and it is the first number here that is measured rather than guessed.
+Manufacturers publish stiffness ratings and not angles — Edea 40–95, Jackson 2–95, scales
+that are not comparable to each other. The injury literature has it: Fortin et al.,
+reported in *Lower Extremity Review*'s "Over the Edge", measured a rigid boot taking 15°
+of plantarflexion and 10° of dorsiflexion off normal ankle motion, which leaves about 30
+of the bare ankle's 45. A study of injury is not a study of what a position looks like, so
+this is still not a coach's number.
+
+`ANKLE_POINT` is 10° — the old constant, so **every pose written before 30/08/2026 draws
+exactly as it always did**. A foot that needs a line says so, with `point` on the
+keyframe, in degrees, clamped to `ANKLE_MAX`. That is the same shape as `pitch` on a
+skating foot and for the same reason: it is a quantity a skater chooses, not a property of
+the leg.
+
+What it bought: **the camel spin, which was undrawable at 10° and is drawable from 15°
+up.** And a note for whoever picks up the spiral — its free leg is held at **69% of
+reach**, visibly bent on a position whose whole line is the extension, and straightening
+it to 93% put the free boot at 61° against a 60° limit. That is why it is bent. At a
+`point` of 25 the same straight leg reads 47°.
 
 Most of a free boot's angle comes from the leg, not the ankle: a leg hanging down and
 back puts the boot down and back with it. So a near-vertical boot is a sign the foot
@@ -213,7 +242,9 @@ believing any sequence that turns.
 Sequence accordingly: derived, then held positions, then jumps. But see **What the rig
 cannot hold** below: an earlier revision of this list named the lunge, the Ina Bauer and
 the spin positions as the cheap ones, and all three turned out to be outside the model
-rather than merely unbuilt.
+rather than merely unbuilt. Two of the three have since come back inside it — the Ina
+Bauer when a pose learned to hold two blades, and **the spin on 30/08/2026, which was
+never outside it at all**. The lunge is still out.
 
 ## What the rig cannot hold — 29/08/2026
 
@@ -231,31 +262,58 @@ cannot be drawn, because it needs a **flat**, which is a different missing thing
 **A boot can pitch but it cannot roll.** A **lunge** has one blade on its edge and the
 trailing boot lying on its side, and rolled onto its side is an axis the rig does not
 have. That was the fatal one, and not for the reason expected. `bootDir` builds a free
-boot square to the shin — `ANKLE_FREE` is 10°, which is the boot-holds-the-ankle fact
-already recorded above — so a trailing leg that reaches back and down to the ice ends with
+boot square to the shin, so a trailing leg that reaches back and down to the ice ends with
 a near-horizontal shin and therefore a boot pointing straight at the ice. `freefoot.mjs`
-calls that a ballet pointe and is right to. Measured across the whole plausible range of
-trailing-foot positions at a lunge's hip height, **there is no legal pose**: the boot only
-comes back inside 60° once the foot is lifted about 30 cm, at which point it is an
-arabesque and not a lunge.
+calls that a ballet pointe and is right to.
+
+~~Measured across the whole plausible range of trailing-foot positions at a lunge's hip
+height, **there is no legal pose**: the boot only comes back inside 60° once the foot is
+lifted about 30 cm, at which point it is an arabesque and not a lunge.~~ **The conclusion
+held and the reason was backwards — re-measured 30/08/2026 when the ankle became
+authorable.** The old sweep could not vary the ankle, because nothing could: every free
+foot was pointed at exactly 10°. Re-run with `point` free over the boot's allowance, on a
+trailing leg held past 85% of reach:
+
+- **At 10°, still nothing** — at any hip height, at any trailing-foot height. Stronger than
+  the original claim, which said the boot came back inside 60° once the foot was lifted.
+  With the leg required to be extended rather than tucked, it never does.
+- **With the ankle free, legal poses appear with the trailing foot ON THE ICE**, and
+  disappear as it lifts — the opposite direction. Best at each hip height, with the skating
+  leg's own reach and shin lean checked: hip 42 → 60°, hip 46 → 57°, hip 50 → 54°, hip 54 →
+  51°, all with the trailing foot at z = 0 about 70 cm behind and the skating blade a third
+  of a metre forward.
+- **Every one of the 8,064 legal poses uses a point of 8° or less, and 4,002 of them use
+  zero.** The lunge was blocked by a constant that was too *high*. Nothing in the file could
+  ask for a flatter ankle than 10° until 30/08/2026.
+
+So the pose is no longer the blocker.
 
 **Coaches call the lunge a drag** — Martyn, 30/08/2026. There is no page to hang that on yet,
 so it is recorded here: when the pose can be drawn, the element carries `drag` in its
 `aliases` and appears on `/elements/other-names/`.
 
-The lunge is still out, and `onIce` did not buy it. Its second contact is a **boot lying on
-its side**, not a blade, and what that needs is a rolled-boot glyph and a roll axis the
-renderer does not have — the same missing glyph as *a boot seen from above its own opening*.
-Marking the foot as touching would exempt it from the free-boot limit and then draw it
-wrong, which is worse than not drawing it.
+**The lunge is still out, and now for exactly one reason.** `onIce` did not buy it and
+neither did the ankle. Its second contact is a **boot lying on its side**, not a blade, and
+what that needs is a rolled-boot glyph and a roll axis the renderer does not have — the same
+missing glyph as *a boot seen from above its own opening*. Marking the foot as touching would
+exempt it from the free-boot limit and then draw it wrong, which is worse than not drawing
+it. Three barriers stood here on 29/08/2026; two have gone and this is the third.
 
-**A spin is the far side of a boundary this model already states.** `hipYaw` is measured
-*from the direction of travel*, and a spin has no direction of travel. That is not a new
-discovery: it is BIS's own twizzle disqualifier — "if the travelling stops, it becomes a
-Solo Spin" — which `tools/tracing.mjs` already asserts as the advance going to zero, and
-at zero advance the curls collapse onto one circle. So spin positions are not a gap in the
-keyframe data. They are a second rig, rooted in the skater rather than the track, and the
-model is entitled to say where it stops.
+**One thing the re-measurement will not tell you, and it is worth knowing before trusting
+it.** A free foot's shin-to-boot angle is `point` by construction, so no checker can falsify
+it — `shin.mjs` deliberately iterates blades on the ice only, and extending it to free feet
+would assert an identity. The trailing shin in these lunge poses runs to about 39° against a
+boot cuff that allows 28, and nothing in the repository says so. That is a real limit of the
+measurement above, not a defect in it.
+
+~~**A spin is the far side of a boundary this model already states.**~~ **WRONG, and
+corrected 30/08/2026 — see *A spin is an arc* below.** The claim was that `hipYaw` is
+measured from the direction of travel and a spin has no direction of travel. A spin's
+blade has a direction of travel at every instant, and it rotates at the rate the body
+does, so `hipYaw` through a spin is *constant* rather than undefined. What a spin has not
+got is net displacement, which is a different thing. The paragraph stood for a session and
+cost nothing but the session; it is left here struck through because a model that quietly
+deletes its wrong turns teaches nobody anything.
 
 ## Two blades, and the one fact that made them cheap — 30/08/2026
 
@@ -311,6 +369,59 @@ body scale, so a line under it would be four times too far from the first; drawn
 the two tracings are a boot's width apart on a four-metre lobe and resolve to one line, which
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
+
+## A spin is an arc — 30/08/2026
+
+A spin was written up in this file as a second rig, rooted in the skater rather than the
+track, on the grounds that `hipYaw` is measured from a direction of travel and a spin has
+not got one. That is wrong twice over.
+
+**A spin's blade has a direction of travel at every instant.** It is going round a small
+circle, and the tangent to that circle rotates at the same rate the body does. So the
+angle between the two — which is all `hipYaw` is — does not become undefined during a
+spin. It becomes *constant*. What a spin has not got is net displacement, and the model
+already had the machinery for that: British Ice Skating's twizzle disqualifier, "if the
+travelling stops, it becomes a Solo Spin", is the advance going to zero, which
+`tools/tracing.mjs` asserts from the twizzle side. A spin is the same statement read from
+the other side.
+
+**So a spin is a single arc of very small radius**, and it needs no new fields, no new
+machinery and no second rig. Three of them — upright, sit and camel — hold every
+assertion in `npm run check`, at radius 12 cm over three revolutions.
+
+Two things fall out of it that are worth having before authoring one.
+
+**The camel is not the spiral, and the sit is nearly the teapot.** The sit spin is the
+teapot's fold on a rotating path, and its numbers are the teapot's give or take a sign.
+The camel is *not* the spiral, which is what I assumed and the ISU's own definition
+refuted: a camel needs the free knee above the hip, and the spiral holds its free leg at
+69% of reach with the knee 24 cm below it. The two positions differ by exactly the thing
+the handbook names.
+
+**The path's centre of curvature is the spin axis, and it is not free.** The centre of a
+circle is square to its tangent, so the axis sits at the blade's own `t`, offset laterally
+by exactly `radius`. Placing the body relative to the blade therefore places it relative
+to the axis, and the distance from any marker to that axis is the circle that marker
+sweeps every revolution. `npm run check:spin` prints them:
+
+| | hip | shoulders | free foot |
+|---|---|---|---|
+| upright | 0 | 0 | 17 cm |
+| sit | 34 cm | 18 cm | 46 cm |
+| camel | 0 | 48 cm | 96 cm |
+
+Everywhere else in the rig the radius is the lobe and the blade's lateral offset is lean,
+two free numbers. In a spin they jointly decide where the skater turns about. The camel's
+free foot sweeping most of a metre is the whole look of the element; the sit's hip a third
+of a metre behind the axis is not a choice — `shin.mjs` will not allow a deep sit with the
+blade under the hip (84° of shin lean against the boot's 28), so the foot has to travel
+forward as the hip drops, and the hips end up behind. In a real one the free leg reaching
+the other way is what balances that.
+
+**And this is where the model stops.** It can say where the axis is. It cannot say whether
+that is where the skater balances, because balance is about mass and this rig has markers
+and no mass. `tools/spin.mjs` prints the orbits and deliberately asserts nothing about
+them.
 
 ## Three axes, three glyphs — 30/08/2026
 

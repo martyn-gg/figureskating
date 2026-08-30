@@ -5,14 +5,15 @@ description: Add a checker to this repository the house way — an independent e
 
 # Writing a checker
 
-Thirteen of these exist and every one was written by breaking the thing on purpose first.
+Seventeen of these exist and every one was written by breaking the thing on purpose first.
 
 ## The rule that makes one worth having
 
 **A checker nobody has seen fail is a decoration.** Break the code, record the failure count in
 the file's header, then fix it. Counts on record: sign flip 104, boot roll 1102 of 1828, edge
 dot 583 of 583, torso drawn as a layer 7,005, casing not retracted 26,659, the free-leg pose 5
-discontinuities, a change of edge drawn as a step 8.
+discontinuities, a change of edge drawn as a step 8, a camel's free foot 10 cm lower 102 of
+321, a spin's position claim removed 1 move, an ankle authored past the boot 1 foot.
 
 Ship a `--break` flag where the old behaviour can be restored in a line. Where it would need a
 second copy of a renderer, put the pre-fix counts in the header instead — `boot.mjs` does that.
@@ -27,6 +28,12 @@ route:
   — which must agree on every frame.
 - `twofoot.mjs` puts the model's derivation back against **British Ice Skating's own pairs**,
   read out of their PDF with `pdftotext`.
+- `spin.mjs` takes all three of its position definitions from the **ISU Technical Panel
+  Handbook**, whose wording is quoted in the header so the encoding can be checked against the
+  source. Their definitions are geometry — "the upper part of the skating leg at least parallel
+  to the ice" is a comparison between two markers — which is the cheapest outside expectation
+  this repository has ever had. **Go and read the governing body's definition before inventing
+  one**: it refuted a claim this session had already written down (that a camel is a spiral).
 
 ## Ask what KIND of fault it is
 
@@ -44,6 +51,28 @@ route:
 
 The rig interpolates. `freefoot.mjs` read keyframes only, and the waltz jump passed every one
 at 55.8° while reaching 88.6° between two of them. Iterate `buildPath`, not `move.keys`.
+
+**But some assertions belong on the keyframes and only there.** `freefoot.mjs`'s second
+assertion — that an authored ankle angle is inside what the boot allows — reads keys, because
+an out-of-range number is an authoring mistake and interpolating between two legal keys can
+never produce one. Ask which the fault lives in before choosing.
+
+## The WINDOW you assert over is a claim too
+
+`spin.mjs`'s first bug. It tested each spin's position "over the held part", and took that
+from the keyframes: the last keyframe is at t = 1.00, so the window collapsed and it sampled a
+single instant 321 times — a checker that cannot watch a position being lost, passing happily.
+The window came from the source in the end, like the assertion: the ISU asks for two
+revolutions in a position, so on a three-revolution spin it is the last two thirds of the
+clock. Fixing it immediately failed two moves that were reaching their position at the very
+end. **If the assertion comes from the document, the interval should too.**
+
+## A clamp is a silent correction of somebody's number
+
+`bootDir` clamps an authored ankle angle to `ANKLE_MAX`. Defensive and right — and on its own
+it is the repository's oldest failure shape, a description of something that quietly changed:
+the filter that named what it hid, the loop that discarded an authored hand under a comment
+promising it worked. Keep the clamp; assert that nothing relies on it.
 
 ## Do not trust the build to fail
 

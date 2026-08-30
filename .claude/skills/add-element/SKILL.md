@@ -71,11 +71,14 @@ node -e "import('./src/lib/skating.js').then(({exitState,label})=>
 
 ## Verification
 
-- `npm run check` green — thirteen checkers, `check:freefoot` last and expected green.
+- `npm run check` green — **seventeen checkers plus the build**, `check:freefoot` last.
 - `node tools/gen-derived.mjs` again: **0 written** — generator and files agree, so a fresh
   clone reproduces them.
 - `npm run drift`, then again after fixing anything it finds.
 - **Restart the dev server.** It does not survive a `content.config.ts` schema change; kill it
   with `npx astro dev stop`, `rm -rf .astro`, and start it again. The site is at
-  `http://localhost:4321/figureskating/` — there is a base path.
+  **`http://localhost:4321/`** — `base` became `/` when the guide got its own domain in
+  Session 13, and the base-path trap went with it. This line said `/figureskating/` for two
+  sessions after that stopped being true. Read `base` out of `astro.config.mjs` rather than
+  trusting any note about it, including this one.
 - The build runs on the Mac only. `node_modules` is macOS and the bridge VM is Linux.
