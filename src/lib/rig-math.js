@@ -179,8 +179,34 @@ export const elbowFace = (pose, side) => {
    a stiff skating boot encases the foot and lower shin and holds them near square
    to each other. So a skater's free foot never looks like a ballet foot however
    hard they point it — the boot will not let it. Same constraint that keeps the
-   shin inside ~28° of lean, seen from the other side. */
-export const ANKLE_FREE = 10 * D2R;
+   shin inside ~28° of lean, seen from the other side.
+
+   TWO NUMBERS, NOT ONE — 30/08/2026. This was a single constant `ANKLE_FREE` at
+   10°, and `bootDir` applied it to every free foot in every frame. That made it an
+   IDENTITY rather than a limit: not "the boot allows no more than this" but "every
+   free foot is pointed exactly this hard, always". Session 05 noticed and did not
+   act on it, and Session 05's finding that no value of the constant helps every
+   pose at once follows directly from it — plantarflexion drives the blade wherever
+   the shin already points, so raising one number lifts the toe on a spiral and
+   drives it at the ice on a landing. The number was never the lever.
+
+   ANKLE_MAX is what the boot allows. A bare ankle plantarflexes ~45°; Fortin et al.
+   (reported in Lower Extremity Review, "Over the Edge") measured a rigid boot
+   taking 15° of plantarflexion and 10° of dorsiflexion off that, which leaves about
+   30°. Manufacturers publish stiffness ratings and not angles — Edea 40–95, Jackson
+   2–95, and the two scales are not comparable to each other — so the number comes
+   from the injury literature or from nowhere.
+
+   ANKLE_POINT is what an unauthored foot does, and it is the old constant, so every
+   pose written before today draws exactly as it did. A foot that needs a line says
+   so: `point` on the keyframe, in degrees, clamped to ANKLE_MAX. That is the same
+   shape as `pitch` on a skating foot, and for the same reason — it is a quantity a
+   skater chooses, not a property of the leg.
+
+   Verified against a coach: NO. Both numbers are read off a study of injury, which
+   is not the same as a study of what a position looks like. */
+export const ANKLE_MAX = 30;                       // degrees, the boot's allowance
+export const ANKLE_POINT = 10;                     // degrees, an unauthored foot
 
 export function bootDir(pose, which, knee, foot, skating){
   if(skating){
@@ -194,7 +220,8 @@ export function bootDir(pose, which, knee, foot, skating){
   a = [a[0]-d*u[0], a[1]-d*u[1], a[2]-d*u[2]];
   const al = Math.hypot(...a) || 1;
   a = a.map(c => c/al);
-  const c = Math.cos(ANKLE_FREE), sn = Math.sin(ANKLE_FREE);
+  const af = Math.min(ANKLE_MAX, Math.max(0, foot.point ?? ANKLE_POINT)) * D2R;
+  const c = Math.cos(af), sn = Math.sin(af);
   return [a[0]*c + u[0]*sn, a[1]*c + u[1]*sn, a[2]*c + u[2]*sn];
 }
 
@@ -237,6 +264,11 @@ const lp = (a,b,u)=>a+(b-a)*u;
    disappear everywhere except in the authoring. tools/twofoot.mjs asserts the
    round trip per frame for exactly that reason. */
 const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(a.pitch,b.pitch,u),
+                       /* `point` is a quantity like pitch, so it interpolates rather
+                          than carrying. Leaving it out here would make an authored
+                          point visible in the keyframe and nowhere else — the failure
+                          this function's own comment warns about, one field along. */
+                       point:lp(a.point ?? ANKLE_POINT, b.point ?? ANKLE_POINT, u),
                        ...(a.onIce ? {onIce:a.onIce} : {}), ...(a.dir ? {dir:a.dir} : {})});
 
 export function poseAt(move, t){

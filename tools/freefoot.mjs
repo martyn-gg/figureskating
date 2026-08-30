@@ -8,19 +8,30 @@
    frames it was authored at. The waltz jump's free boot passes every keyframe at
    55.8° and reaches 88.4° between two of them.
 
-   What this measures is a property of the LEG, not of the foot, and its own name
-   has been wrong about that. bootDir fixes the boot at exactly ANKLE_FREE to the
-   shin by construction, so "the boot holds the ankle square" is not a claim this
-   file could ever falsify. Boot angle from level is what it reports, and where a
-   pose exceeds the limit the fix is the leg — raise or extend the foot. Do not
-   move the constant to quiet it: ANKLE_FREE and the 60° limit are a coach's call,
-   and Session 05 measured that no value of ANKLE_FREE helps all four held
-   positions at once.
+   Boot angle from level is mostly a property of the LEG, not of the foot, and this
+   file's name has always been a little wrong about that. Where a pose exceeds the
+   limit the first thing to try is still the leg — raise or extend the foot.
+
+   IT NOW ALSO CHECKS THE FOOT — 30/08/2026. Until then bootDir fixed the boot at
+   exactly ANKLE_FREE to the shin by construction, so "the boot holds the ankle
+   square" was a claim this file could not falsify, which Session 05 said out loud.
+   The ankle is authored per foot now: `point` on a keyframe, in degrees, and
+   bootDir clamps it to ANKLE_MAX. A clamp is a silent correction of somebody's
+   number — the same shape as the featured filter that absorbed the twizzles, and
+   as the loop that discarded an authored hand under a comment promising it worked.
+   So the clamp stays, defensively, and assertion 2 below says nobody is relying on
+   it. Broken on purpose: one keyframe authored at point 45 → 1 foot reported.
+
+   The 60° limit is still a coach's call and so is ANKLE_MAX. What changed is that
+   there is now something to author instead of a constant to move: `npm run ankle`
+   shows every existing pose has slack it is not using, because nobody could
+   choose. Session 05's "no value helps all four positions at once" was never a
+   fact about the value.
 
        node tools/freefoot.mjs
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, buildPath, poseAt, onIceOf } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, ANKLE_MAX, anterior, twoBone, bootDir, buildPath, poseAt, onIceOf } from '../src/lib/rig-math.js';
 
 const LIMIT = 60;
 let bad = 0, glyphs = 0;
@@ -63,8 +74,25 @@ for (const [key, m] of Object.entries(MOVES)) {
   }
 }
 
-console.log(`\n${glyphs} free-boot frames measured`);
+/* 2. Every authored point is inside what the boot allows. Read off the KEYFRAMES,
+      not the interpolated poses: an out-of-range number is an authoring mistake and
+      interpolation between two legal keys can never make one. */
+let outOfRange = 0, authored = 0;
+for (const [key, m] of Object.entries(MOVES))
+  for (const k of m.keys)
+    for (const w of ['L', 'R']) {
+      const q = k[w];
+      if (!q || q.point === undefined) continue;
+      authored++;
+      if (q.point < 0 || q.point > ANKLE_MAX) {
+        outOfRange++;
+        console.log(`  BEYOND ${key.padEnd(13)} ${w} t=${k.t.toFixed(2)}  point ${q.point}° — the boot allows ${ANKLE_MAX}°, and bootDir would clamp it silently`);
+      }
+    }
+
+console.log(`\n${glyphs} free-boot frames measured, ${authored} authored ankle angles`);
 console.log(bad
   ? `${bad} stretch${bad === 1 ? '' : 'es'} of frames too steep — raise or extend the foot, not the constant`
   : 'every free boot sits at a plausible angle, in every frame');
-process.exit(bad ? 1 : 0);
+if (outOfRange) console.log(`${outOfRange} ankle angle${outOfRange === 1 ? '' : 's'} past what the boot allows`);
+process.exit(bad || outOfRange ? 1 : 0);
