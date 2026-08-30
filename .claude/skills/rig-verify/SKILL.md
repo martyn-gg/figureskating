@@ -103,6 +103,34 @@ Two things follow when you are looking at a frame:
   satisfy a checker" — it is authoring a quantity that used to be forced. Moving the leg to
   change the boot, when the ankle is what is wrong, is the mistake now.
 
+## A structure check cannot see a stylesheet — 30/08/2026
+
+The jump tracings shipped with `class="jumptrace"` and **no rule anywhere defining it**.
+`EdgeThumb`'s own `width:100%` was then the only thing deciding their size, so each tracing
+came out as wide as the column. Every compensating check passed and would pass again: the
+frontmatter parsed, the brackets balanced, the ids matched, the derivations were right against
+real content. None of them is a check on appearance, and neither is `astro build` — **only
+looking at it catches a missing rule.**
+
+So when a change adds a class, add looking at it to the plan. From the bridge VM, with no
+build and no browser, the route that works is to **reproduce the fragment and rasterise it**:
+
+1. A node script that emits one standalone HTML file — the real geometry from `buildTrace` or
+   `frame-svg`, the CSS rules **read out of the files that define them** rather than retyped,
+   the tokens from `tokens.js`. `_to_delete/jumpfig.mjs` is the worked example. Reading the
+   rules back has a second benefit: it fails loudly if a selector name has drifted, because
+   the rule count comes out wrong.
+2. Stage that one file to the container.
+3. Screenshot it there with Playwright, which **is** installable in the container even though
+   it is not in the bridge VM. `pip install playwright --break-system-packages`, then
+   `chromium.launch()` — the bundled browser resolves there without an `executablePath`.
+4. Read the PNG.
+
+It is worth doing even when the CSS looks obviously right, because what it shows is not only
+whether the rule works. The jump figure's rasterisation is what revealed that a toe loop's two
+curves are **identical** — it leaves and returns to RBO — which is true, and which reads as a
+bug unless the caption says so. No structure check would ever have asked.
+
 ## Still open
 
 **From directly behind, two feet at the same lateral offset coincide**, so the rear view has

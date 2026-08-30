@@ -133,6 +133,13 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
       <figcaption>
         The two edges, drawn. What happens between them is not: a tracing is the record
         of a blade on the ice, and for most of a jump the blade is not on it.
+        {/* Two jumps leave and return to the same edge, and drawn side by side that
+            reads as a mistake unless the page says otherwise. Derived from the two
+            labels rather than listed, so a jump added tomorrow gets it too. */}
+        {label(d.jump.takeoff) === label(d.jump.landing) && (
+          <> These two are the same curve because they are the same edge: it leaves and
+          returns to <b>{label(d.jump.takeoff)}</b>.</>
+        )}
         {sharesDetail.length > 0 && (
           <> Each of these curves is drawn by more than one jump — what separates this
           one from the {sharesDetail.map(x => x.name).join(' and the ')} is{' '}

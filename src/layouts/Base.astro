@@ -94,6 +94,29 @@ const useSW = import.meta.env.PROD;
     ul.plain li{padding:.55rem 0;border-bottom:1px solid var(--rule)}
     ul.plain a{text-decoration:none;font-weight:600}
     ul.plain span{color:var(--ink-soft);font-size:.9rem;display:block;font-family:ui-sans-serif,sans-serif}
+    /* A JUMP'S TWO EDGES. The tracings are square and small on purpose: they are a
+       reference to the two edges the jump lives between, not the instrument — the
+       full EdgeDiagram is what a reader scrubs, and these sit at a size that says
+       "look at the shape" rather than filling the column.
+
+       They shipped once with no rule at all, which is how EdgeThumb's own
+       `width:100%` got to be the only thing deciding their size and each one came
+       out as wide as the page. Structure checks passed and would again; nothing
+       short of looking at it catches a missing stylesheet rule. */
+    .jumptrace{margin:1.75rem 0;padding:1rem .9rem .2rem;background:var(--ice);
+      border:1px solid var(--ice-line);border-radius:12px}
+    .jt-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.9rem 1.4rem;max-width:21rem;margin:0 auto}
+    .jt-pair>div{text-align:center;min-width:0}
+    .jt-pair b{display:block;margin-top:.35rem;font-size:.95rem;letter-spacing:.01em}
+    .jt-pair span{display:block;font-family:ui-sans-serif,-apple-system,sans-serif;
+      font-size:.8rem;color:var(--ink-soft)}
+    .jumptrace figcaption{margin:.9rem 0 0;padding:.7rem .1rem .8rem;
+      border-top:1px solid var(--ice-line);
+      font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem;
+      color:var(--ink-soft);line-height:1.5}
+    @media (max-width:420px){ .jt-pair{max-width:17rem;gap:.7rem 1rem} }
+
     .derived{background:var(--ice);border:1px solid var(--ice-line);border-radius:10px;
       padding:1rem 1.15rem;font-size:.92rem}
     .derived p{margin:0 0 .5rem} .derived p:last-child{margin:0}
