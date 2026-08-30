@@ -12,7 +12,24 @@ const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
 const all = await getCollection('elements');
-const items = d.elements.map(r => all.find(e => e.id === r.id)).filter(Boolean);
+
+/* A Skills test is a set of exercises and each one carries its own elements, so
+   the test's list is DERIVED rather than written out again — one list, in the
+   place that owns it. Tests that are a flat list of elements still have one. */
+const exercises = (await getCollection('exercises'))
+  .filter(x => x.data.test.id === entry.id)
+  .sort((a, b) => a.data.order - b.data.order);
+/* Their word for the unit, taken from the entries rather than assumed — Skills 8 is
+   sections, everything below it is exercises. */
+const unit = exercises[0]?.data.unit ?? 'exercise';
+const units = unit === 'section' ? 'Sections' : 'Exercises';
+
+const refs = exercises.length
+  ? [...new Set(exercises.flatMap(x => x.data.elements.map(r => r.id)))]
+  : d.elements.map(r => r.id);
+const items = refs.map(id => all.find(e => e.id === id)).filter(Boolean);
+
+const WHEN = { current: 'current only', october2026: 'new 01/10/2026', both: null };
 ---
 <Base title={d.name}>
   <h1>{d.name}</h1>
@@ -23,9 +40,39 @@ const items = d.elements.map(r => all.find(e => e.id === r.id)).filter(Boolean);
   </div>
   <Unverified verified={d.verified} what="requirements" />
   <Content />
+
+  {exercises.length > 0 && (
+    <>
+      <h2>{units}</h2>
+      <ol class="ex">
+        {exercises.map(x => (
+          <li>
+            <a href={url(`exercises/${x.id}/`)}>{x.data.name}</a>
+            {WHEN[x.data.syllabus] && <em>{WHEN[x.data.syllabus]}</em>}
+            {x.data.changesInOctober && <em>changes 01/10/2026</em>}
+            <span>{x.data.summary}</span>
+          </li>
+        ))}
+      </ol>
+    </>
+  )}
+
   <h2>Elements</h2>
+  {exercises.length > 0 && (
+    <p class="note">Every element its {units.toLowerCase()} call for, gathered from them
+    rather than listed again here.</p>
+  )}
   <ul class="plain">
     {items.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}
   </ul>
   {d.sourceUrl && <p style="font-size:.85rem;margin-top:1.5rem"><a href={d.sourceUrl}>Governing body source</a></p>}
 </Base>
+
+<style>
+  .note{color:var(--ink-soft);font-size:.9rem;margin:.2rem 0 1rem}
+  .ex{margin:0 0 1.6rem;padding-left:1.4rem}
+  .ex li{margin:0 0 .7rem;line-height:1.5}
+  .ex li span{display:block;color:var(--ink-soft);font-size:.9rem}
+  .ex li em{font-style:normal;font-size:.78rem;margin-left:.5rem;padding:.05rem .4rem;
+    border:1px solid var(--rule);border-radius:.6rem;color:var(--ink-soft)}
+</style>

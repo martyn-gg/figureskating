@@ -3,6 +3,16 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
 const tests = await getCollection('tests');
+const exercises = await getCollection('exercises');
+/* Counted from the exercises where there are any, so the number on this page and
+   the list on the test's own page cannot disagree. */
+const count = t => {
+  const xs = exercises.filter(x => x.data.test.id === t.id);
+  return xs.length
+    ? new Set(xs.flatMap(x => x.data.elements.map(r => r.id))).size
+    : t.data.elements.length;
+};
+const exCount = t => exercises.filter(x => x.data.test.id === t.id).length;
 ---
 <Base title="Tests">
   <h1>Tests</h1>
@@ -14,8 +24,20 @@ const tests = await getCollection('tests');
     {tests.map(t => (
       <li>
         <a href={url(`tests/${t.id}/`)}>{t.data.name}</a>
-        <span>{t.data.governingBody} · level {t.data.level} · {t.data.elements.length} elements</span>
+        <span>{t.data.governingBody} · level {t.data.level}{exCount(t) > 0 && ` · ${exCount(t)} exercises`} · {count(t)} elements</span>
       </li>
     ))}
   </ul>
+
+  <p class="addendum">
+    <a href={url('tests/older-names/')}>Older test names</a> — the field moves and medal
+    tests, and the one conversion British Ice Skating publishes.
+  </p>
 </Base>
+
+<style>
+  /* An addendum to the ladder rather than a rung of it, so it sits under the list
+     and is set as an aside. */
+  .addendum{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.88rem;
+    color:var(--ink-soft);margin-top:1.5rem}
+</style>

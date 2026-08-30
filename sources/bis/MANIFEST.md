@@ -14,8 +14,10 @@ Hub pages: <https://www.iceskating.org.uk/skills> · <https://www.iceskating.org
 | ✔ | Skills 1–8.pdf | 5, 6, 6, 6, 6, 6, 6, 4 |
 | ✔ | National Skills Tests Update Coming October 2026.pdf | 3 |
 
-None of these carries an internal version marking. Confirmed pre-October by inspection:
-Skills 1 has four exercises and the slalom has no one-foot option.
+None of these carries an internal version marking. Confirmed pre-October by exercise
+count: Skills 1 has four exercises, October's has five. (An earlier version of this line
+also said "the slalom has no one-foot option". That is backwards — see the correction
+below — and the count is the reliable test.)
 
 ## Downloaded 15/08/2026 — the October 2026 documents
 
@@ -23,10 +25,28 @@ All eight held, as `Skills N-2026-10.pdf`. Confirmed to be the new versions by e
 Skills 1 has five exercises, 2 six, 3 six, 4 seven, 5 seven, 6 seven, 7 seven, and Skills
 8's Section 2 has split into **2A and 2B**. Only Skills 1 carries an "Updated" marking.
 
-**What changed in the exercises that already existed: almost nothing.** Diffed line by
-line against the current versions, the differences are hyphenation (*3 turn* became
-*3-turn*, *multi directional* became *multi-directional*) and small grammatical tidying.
-No sequence was altered.
+**What changed in the exercises that already existed — CORRECTED 30/08/2026.** The first
+reading of this said "almost nothing… no sequence was altered". That was wrong. Re-diffed
+mechanically, exercise by exercise, normalising hyphenation and case
+(`tools/syllabus.mjs` uses the same extraction), **four existing exercises were altered
+rather than reworded**, and the update announcement mentions none of them:
+
+| Level | Exercise | What changed |
+|---|---|---|
+| 1 | 4 — Slalom | The one-foot power changes become **optional**. The current version requires them; October offers a two-foot-only route as an alternative. A relaxation. |
+| 2 | 3 — Forward 3-turns | Adds a requirement: *minimum two lobes on each foot*. |
+| 2 | 4 — Forward cross rolls | The same minimum added. |
+| 3 | 5 — Forward spirals | Reworked. The toe-pick-assisted step becomes **optional**, the rotational direction becomes optional, and an alternative entry appears that reaches the spiral without the hop. |
+| 7 | 1 — FI choctaws & BO counters | *"This completes the exercise"* becomes *"then repeat the sequence"*. |
+
+Everything else that differs is hyphenation (*3 turn* → *3-turn*, *multi directional* →
+*multi-directional*) or grammar (*demonstrate a fluid* → *demonstrate fluid*).
+
+**The correction below follows from the Skills 1 line.** An earlier note in this file said
+the current slalom "has no one-foot option", and used that to tell the two generations
+apart. It has the one-foot section as a **requirement**; October is what adds the option.
+The generations are still distinguishable by exercise count, which is what the paragraph
+above this table actually relies on.
 
 **One substantive addition the announcement did not mention.** Every exercise page in the
 October documents carries a **smaller rinks** provision: the patterns may be adjusted as
@@ -79,18 +99,40 @@ brackets at 5, the backward counters at 5, the mohawks and choctaws at 3 and 4.
 
 Missing, and needed:
 
-- **Combination turns** — *bracket-counter*, *counter-3-turn*, *3-turn-open mohawk*,
-  *choctaw-3-turn-rocker*, *rocker-counter*. This is what Skills 5 to 8 is largely made
-  of, and it is a new content *type* rather than a new element: an ordered chain where
-  each turn's exit is the next one's entry. Entirely derivable — chain `exitState`. BIS
-  writes some of the intermediate edges explicitly, which is how the Skills 6 error above
-  surfaced.
-- **Twizzles** — a 1½ at Skills 3 and a double at 7 and 8. Not derivable from the current
-  model; a twizzle is a travelling multi-rotation turn and wants its own treatment.
-- **Cross rolls**, forward and backward. Skills 1's new exercise needs them.
-- **Changes of edge**, including the *COE* written at the end of the Skills 7 clusters.
-- **Extended edge** as a held position, and the toe-assisted **hop** entry now offered on
-  the Skills 3 spirals.
+*(This list was written on 15/08/2026, before the transitions and clusters went in.
+Struck items are built. Two remain, and both are held-position work.)*
+
+- ~~**Combination turns**~~ — *bracket-counter*, *counter-3-turn*, *3-turn-open mohawk*,
+  *choctaw-3-turn-rocker*, *rocker-counter*. Built 15/08/2026 as `CLUSTERS`: an ordered
+  chain where each turn's exit is the next one's entry, derived by chaining `exitState`
+  rather than stored. BIS writes some of the intermediate edges explicitly, which is how
+  the Skills 6 error above surfaced.
+- ~~**Twizzles**~~ — a 1½ at Skills 3 and a double at 7 and 8. Built 29/08/2026 with their
+  own table and their own tracing. The definition document's two disqualifiers, checked
+  three turns and the travelling stopping, both turned out to be geometry and are asserted
+  by `tools/tracing.mjs`.
+- ~~**Cross rolls**~~, forward and backward — built 15/08/2026, from outside entries,
+  which is what the element is rather than a limit of the model.
+- ~~**Changes of edge**~~, including the *COE* written at the end of the Skills 7
+  clusters — built 15/08/2026 as the `coe` transition, on all four entry edges.
+- ~~**Extended edge** as a held position~~ — built 29/08/2026 from Skills 1 exercise 2,
+  the *backward outside extended position*, held for a third of a circle or three seconds.
+  Its own rig in `moves.js` and its own element page.
+- The toe-assisted **hop** entry on the Skills 3 spirals. **The only one left**, and
+  smaller than it looked. Re-read on 30/08/2026: in the *current* documents the toe-assisted
+  step is required and the rotation direction is specified; in October both become optional
+  and a second route to the same spiral appears without a hop at all. So it is an optional
+  variant of an optional variant, and a Skills 3 page can be honest and complete without it
+  — which it should say rather than leave a silent hole. If it is ever built it wants the
+  body-frame rig rather than the derived tier, as an alternative entry on the spiral's rig,
+  since it is a brief airborne phase into an existing position rather than an element.
+
+One thing worth recording from reading the definitions document properly on 29/08/2026:
+the **slip step** is defined there as a step "with the blades of both skates being held
+flat on the ice". That is a two-blade contact, which the body-frame rig has no field for —
+the same gap the Ina Bauer and the spread eagle run into. See `docs/model.md`, *What the
+rig cannot hold*. It is not on the gap list above because no Skills exercise reviewed here
+calls for it, but it means the gap is one the syllabus's own vocabulary contains.
 
 ## Out of scope — not publicly available
 
@@ -136,7 +178,8 @@ The per-level playlists for the *current* exercises are linked from
 ## Not wanted
 
 The old NISA **Field Moves** manuals still circulating on club websites. They are legacy.
-The Handbook's own transition table is the only place old Field Moves levels should appear.
+The Handbook's own transition table is the only place old Field Moves levels come from,
+and `/tests/older-names/` is the only page they appear on.
 
 ## How these documents get used
 

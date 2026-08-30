@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import { url } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const exercises = await getCollection('exercises');
+  return exercises.map(x => ({ params: { slug: x.id }, props: { entry: x } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const test = (await getCollection('tests')).find(t => t.id === d.test.id);
+const all = await getCollection('elements');
+const items = d.elements.map(r => all.find(e => e.id === r.id)).filter(Boolean);
+
+/* The neighbours, so a reader can walk a test without going back up a level. */
+const siblings = (await getCollection('exercises'))
+  .filter(x => x.data.test.id === d.test.id)
+  .sort((a, b) => a.data.order - b.data.order);
+const at = siblings.findIndex(x => x.id === entry.id);
+const prev = siblings[at - 1], next = siblings[at + 1];
+
+/* Skills 8's entries are named "Section 1", so the unit and the number are already in the
+   name and printing them again reads as a stutter — "section 1 — Section 1". Where the name
+   carries the word, the name is the label. */
+const named = new RegExp(`^${d.unit}\\b`, 'i').test(d.name);
+
+const WHEN = {
+  current: 'In the current syllabus',
+  october2026: 'New on 01/10/2026',
+  both: 'In both the current and the October 2026 syllabus',
+};
+---
+<Base title={`${test?.data.name ?? ''} · ${named ? d.name : `${d.unit} ${d.order} — ${d.name}`}`} subtitle={d.summary}>
+  <h1>{d.name}</h1>
+  <p class="lede">{d.summary}</p>
+
+  <div class="meta">
+    {test && <a class="chip" href={url(`tests/${test.id}/`)}>{test.data.name}</a>}
+    {!named && <span class="chip">{d.unit} <b>{d.order}</b></span>}
+    <span class="chip">{WHEN[d.syllabus]}</span>
+  </div>
+
+  <Unverified verified={d.verified} what="requirements" />
+
+  {d.changesInOctober && (
+    <p class="note"><b>Changes on 01/10/2026.</b> {d.changesInOctober}</p>
+  )}
+
+  <Content />
+
+  <h2>Elements</h2>
+  <ul class="plain">
+    {items.map(e => (
+      <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>
+    ))}
+  </ul>
+
+  {d.notCovered.length > 0 && (
+    <>
+      <h2>Not covered here</h2>
+      <ul class="plain">{d.notCovered.map(n => <li><span>{n}</span></li>)}</ul>
+    </>
+  )}
+
+  <p class="note">
+    This page lists which elements the {d.unit} calls for and what it is working on. It does
+    not reproduce British Ice Skating's sequence, pattern or wording — for the {d.unit} as
+    published, go to {d.sourceUrl
+      ? <a href={d.sourceUrl}>their own document</a>
+      : <span>their own document</span>}.
+  </p>
+
+  <nav class="pager">
+    {prev
+      ? <a href={url(`exercises/${prev.id}/`)}>← {prev.data.order}. {prev.data.name}</a>
+      : <span />}
+    {next && <a href={url(`exercises/${next.id}/`)}>{next.data.order}. {next.data.name} →</a>}
+  </nav>
+</Base>
+
+<style>
+  .note{color:var(--ink-soft);font-size:.9rem;line-height:1.55;margin:1.2rem 0}
+  .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:2.4rem;
+    padding-top:1rem;border-top:1px solid var(--rule);font-size:.9rem}
+</style>
