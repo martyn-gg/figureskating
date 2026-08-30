@@ -1,0 +1,129 @@
+---
+/* Search, for a reader who arrived with a specific question.
+
+   docs/style.md describes them: in a cold rink, on a phone, in gloves, one-handed,
+   between run-throughs, not browsing. Everything here follows from that.
+
+   - The index is a static file the service worker already caches, so this works
+     with the signal gone. See src/pages/search.json.js.
+   - The query lives in the URL, so a result list can be sent to someone.
+   - Rows are 44 px and the whole row is the target, because a link the width of a
+     word cannot be hit with a glove on.
+   - It matches EDGE CODES exactly, because "lfo three" is what gets typed, and it
+     matches OTHER NAMES, because a coach's word for something is the reason a
+     reader cannot find it in the first place.
+
+   No library. Three hundred records is a linear scan and it is imperceptible; a
+   ranking function that can be read in one screen is worth more here than a better
+   one that cannot. */
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+const indexUrl = url('search.json');
+---
+<Base title="Search" subtitle="Find an element, an exercise or a test by name, by edge code, or by what your coach calls it.">
+  <h1>Search</h1>
+  <p class="lede">
+    By name, by edge code — <b>LFO</b>, <b>rbi</b> — or by another name for the same thing.
+  </p>
+
+  <form id="sform" role="search" autocomplete="off" data-index={indexUrl}>
+    <input id="q" type="search" name="q" placeholder="counter, lfo three, three jump…"
+           aria-label="Search the guide" enterkeyhint="search" spellcheck="false" />
+  </form>
+
+  <p id="count" class="meta" aria-live="polite"></p>
+  <ul id="hits" class="hits"></ul>
+
+  <div id="empty" hidden>
+    <p>Nothing matched that.</p>
+    <p>
+      If it is a name your coach uses that the guide does not, it may be on
+      <a href={url('elements/other-names/')}>other names for the same movement</a>.
+      If it is a test you passed years ago, try
+      <a href={url('tests/older-names/')}>older test names</a>.
+    </p>
+  </div>
+</Base>
+
+<script>
+  /* A BUNDLED script, not an inline one, so it can import the ranking from
+     src/lib/search.js — which is the only reason that file exists separately.
+     tools/search.mjs imports the same function and asserts what it returns, so the
+     thing a reader depends on is the thing that is tested. An inline script cannot
+     import, and a second copy of the ranking is exactly what this repository spends
+     its time not having. */
+  import { rank } from '../lib/search.js';
+
+  const form = document.getElementById('sform');
+  const indexUrl = form.dataset.index;
+  const input = document.getElementById('q');
+  const hits = document.getElementById('hits');
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  let docs = null;
+
+  function draw(q) {
+    if (!docs || !q) { hits.textContent = ''; count.textContent = ''; empty.hidden = true; return; }
+    const out = rank(docs, q);
+    hits.textContent = '';
+    for (const { doc: d } of out.slice(0, 60)) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = new URL(d.u, new URL(indexUrl, location.href)).href;
+      const n = document.createElement('b'); n.textContent = d.t;
+      const m = document.createElement('span');
+      m.textContent = (d.a && d.a.length ? 'also called ' + d.a.join(', ') + ' · ' : '') + d.s;
+      const c = document.createElement('i'); c.textContent = d.k;
+      a.append(n, c, m); li.append(a); hits.append(li);
+    }
+    count.textContent = out.length
+      ? `${out.length} match${out.length === 1 ? '' : 'es'}${out.length > 60 ? ', showing the first 60' : ''}`
+      : '';
+    empty.hidden = out.length > 0;
+  }
+
+  /* The query goes in the URL so a result list can be sent to someone, but
+     replaceState rather than pushState — eight characters typed should not be
+     eight presses of the back button. */
+  let timer = 0;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const q = input.value.trim();
+      const u = new URL(location.href);
+      if (q) u.searchParams.set('q', q); else u.searchParams.delete('q');
+      history.replaceState(null, '', u);
+      draw(q);
+    }, 90);
+  });
+  form.addEventListener('submit', e => e.preventDefault());
+
+  const q0 = new URLSearchParams(location.search).get('q');
+  if (q0) input.value = q0;
+
+  fetch(indexUrl).then(r => r.json()).then(d => { docs = d; draw(input.value.trim()); })
+    .catch(() => { count.textContent =
+      'The index could not be loaded. It is cached for offline use once the site has been visited with a signal.'; });
+
+  /* Not focused on a touch screen: raising the keyboard over the results is the
+     wrong first move for someone who arrived from a link with a query in it. */
+  if (!q0 && !matchMedia('(hover: none)').matches) input.focus();
+</script>
+
+<style>
+  #sform{margin:0 0 1rem}
+  /* 48 px and full width: this is operated one-handed, in gloves, on a phone. */
+  #q{width:100%;min-height:48px;padding:.65rem .9rem;font:inherit;font-size:1.05rem;
+     color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:.5rem}
+  #q:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .hits{list-style:none;padding:0;margin:0}
+  .hits li{border-bottom:1px solid var(--rule)}
+  /* The whole row is the target, not the words in it. */
+  .hits a{display:grid;grid-template-columns:1fr auto;gap:.1rem .6rem;padding:.7rem 0;
+    min-height:44px;text-decoration:none;color:var(--ink);align-items:baseline}
+  .hits b{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600}
+  .hits a:hover b{color:var(--accent);text-decoration:underline}
+  .hits i{font-style:normal;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);justify-self:end}
+  .hits span{grid-column:1/-1;color:var(--ink-soft);font-size:.9rem;line-height:1.45}
+</style>
