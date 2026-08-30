@@ -188,3 +188,113 @@ our element pages, plus a paragraph in our own voice on what each exercise is wo
 **No numbered step sequences and no reproduction of their patterns or drawings** — the
 guidance documents are BIS's work and the page links out to them for the exact sequence.
 See `docs/style.md`.
+
+---
+
+## Downloaded 30/08/2026 — twenty more, and a second ladder
+
+Martyn downloaded everything available on the open site. Read and triaged the same day.
+The Skills sections above are unaffected; this is the **National** ladder and the other
+disciplines. See `sources/isu/MANIFEST.md` for the ISU documents that arrived with them.
+
+### The second ladder — in scope, and the reason this batch matters
+
+`docs/gaps-competition.md` said the guide "has no page for any of them" and did not know
+whether they were in scope. They are the National tests, Technical and Components, and
+there are **eight levels plus a Beginner**, aligned to Skills.
+
+| File | What it is | Read |
+|---|---|---|
+| `Singles Generic Criteria 2026-2027 Jun 26.pdf` | **THE CURRENT DOCUMENT.** Updated 09/06/2026. Per-level requirements, Beginner to National 8, and BIS's own definitions of the three basic spin positions | yes, 30/08 |
+| `National Test Structure 3.7.23 V3.pdf` | The founding document for the 8-level scheme, dated 03/07/2023. **SUPERSEDED — do not build from it** | yes, 30/08 |
+| `Singles Event Structure 2526 - Updated July 2025 .pdf` | Championship categories and their minimum Skills / National Technical / National Components. **2025-26 season** | yes, 30/08 |
+
+**THE TWO GENERATIONS TRAP, AGAIN.** The Skills documents taught it once and the National
+documents repeat it: two files describe the same ladder three years apart and **they
+contradict each other on the elements**. Two confirmed at National 3 and National 4:
+
+- **National 3.** 2023: "the spin with no change of position must be executed with a change
+  of foot and a minimum of six (6) revolutions". 2026-27: "one must be a spin with no change
+  of position **and no change of foot**". Straight contradiction.
+- **National 4.** 2023: "the spin combination must show all 3 basic positions" and "the spin
+  with no change of position must be either a Sit or Camel Spin". Neither requirement is in
+  the 2026-27 document.
+
+Tell them apart by their dates, and **build against `Singles Generic Criteria 2026-2027`**.
+
+### What the current document gives us that the ISU handbook does not
+
+BIS define the three basic positions themselves, and their wording is *more* specific than
+the ISU's on two of the three — both additions are geometry a rig could be measured against:
+
+- **Upright** — skating leg straight or slightly bent; arm and free leg positions optional.
+- **Sit** — upper part of the skating leg at least parallel to the ice; **the free leg must
+  be in front** and the body straight or slightly forward; no pulling of the free leg or
+  pulling the body towards it.
+- **Camel** — free leg backwards, knee of the free leg higher than the hip; **the shoulders
+  should be parallel to the ice**.
+
+They also restate the ISU's two counting rules in their own words, which is a useful
+independent confirmation: a spin needs **3 continuous revolutions on one foot** to count, and
+a position within it needs **2 continuous revolutions**.
+
+### The entry ladder, which is the argument for holding both halves
+
+Each National level's entry requirement, read off the current criteria, is **the matching
+Skills level plus the National level below it** — National 4 needs Skills 4 and National 3,
+National 5 needs Skills 5 and National 4, and so on. The two ladders interlock rather than
+running in parallel, which is a fact a reader of either would want on the page.
+
+**From National 6 upwards each level has a short programme and a free programme**, with
+separate criteria blocks. Only the free programmes have been read; **the short-programme
+blocks still need their own pass.**
+
+### A discrepancy to settle before anything is published
+
+`docs/gaps-competition.md` carries a championship entry table fetched from the BIS website
+on 30/08/2026 and labelled 2026/27. `Singles Event Structure 2526` disagrees with it at
+three rows of four:
+
+| Category | the table in `gaps-competition.md` | this document (2025-26) |
+|---|---|---|
+| Basic Novice | Skills 6, National 4 | **Skills 4**, National Technical 4, National Components 4 |
+| Advanced Novice | Skills 7, National 6 | **Skills 6**, National 6, National 6 |
+| Junior | Skills 8, National 7 | **Skills 7**, National 7, National 7 |
+| Senior | Skills 8, National 8 | Skills 8, National 8, National 8 — agrees |
+
+The document's pattern is simply **Skills N with National N**, which also matches the entry
+ladder above. That looks like a transcription error in `gaps-competition.md` rather than a
+season change, but the two sources are different seasons and **the 2026-27 Singles Event
+Structure is not in `sources/`**, so it cannot be settled from what is here. Do not publish
+either version until it is.
+
+Also worth knowing: this document's own header says "Age at 1st of July 2024" while its
+filename and content are 2025-26. BIS's inconsistency, not ours.
+
+### Ice dance — in scope eventually, `kind: dance` holds nothing
+
+None read. `Ice Dance Manual May 2026.pdf` (the test manual, 21/05/2026) is the one to start
+from. Then `BIS Solo Ice Dance National Criteria 2627.pdf` (current season),
+`Couples Generic Criteria 2525` and `Adult Solo Technical Requirements 2525` (both 2025/26),
+`Solo Ice Dance Competitive Test Scores 2025_26.pdf`, and `2201 - Test Session
+Clarification.pdf`.
+
+### Out of scope
+
+Kept because they came down with the rest; nothing here is about an element or a test that
+asks for one, so no page should ever cite them.
+
+- **Synchronised skating** — `Synchro Criteria 2026-2027v1`, `BIS Synchronized Skating
+  Selection Criteria 2025 - 2026`, `Synchro Squad Information 2025-26`, `Synchro Coaching
+  Ratio Guidance`. A discipline the guide does not cover.
+- **Squads, selection and eligibility** — `2023-24 BIS Development-Futures Squad
+  Information`, `JUNIOR PERFORMANCE SQUAD SKATERS WISHING TO COMPETE IN SENIOR BRITISH
+  EVENTS`, `Final - British Ice Skating GBE Criteria 26-27`, `ESRA June 2023`,
+  `Eligibility 2023 - Final`. About who may compete, not about what they skate.
+- **Music** — `Music Guidance 2025`, `BIS Music Licensing Instructions 2025-26[2]`.
+
+### Still wanted
+
+- **The 2026-27 Singles Event Structure**, to settle the championship table above.
+- The **short-programme** criteria blocks for National 6, 7 and 8 are in the current
+  document and have not been read.
