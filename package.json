@@ -22,11 +22,12 @@
     "check:contrast": "node tools/contrast.mjs",
     "check:links": "node tools/links.mjs",
     "check:search": "node tools/search.mjs",
+    "check:prose": "node tools/prose.mjs",
     "check:speed": "node tools/speed.mjs",
     "check:offline": "node tools/offline.mjs",
     "check:framing": "node tools/framing.mjs",
     "check:ink": "node tools/ink.mjs",
-    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:contrast && npm run check:syllabus && npm run build && npm run check:links && npm run check:search && npm run check:freefoot",
+    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:contrast && npm run check:syllabus && npm run build && npm run check:links && npm run check:search && npm run check:prose && npm run check:freefoot",
     "gen:derived": "node tools/gen-derived.mjs",
     "drift": "node tools/drift.mjs"
   },
