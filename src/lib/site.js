@@ -11,11 +11,13 @@
 export const CONTACT = 'hello@figureskating.guide';
 export const COACHES = 'coaches@figureskating.guide';
 
-/* Set this to the donation page once it exists — https://buymeacoffee.com/<handle>
-   or similar. Left null deliberately: the About page and the footer render the
-   ask without a link rather than shipping a dead one, and a broken donate button
-   is a worse first impression than no donate button. */
-export const DONATE = null;
+/* Ko-fi, on the free tier: no service fee on tips, and the money lands in a PayPal
+   account rather than sitting in a balance somewhere. It was null until the page
+   existed and had been loaded — the About page and the footer render the ask
+   without a link rather than shipping a dead one, and a broken donate button is a
+   worse first impression than no donate button. Set it back to null rather than
+   leaving it pointing at a page that has gone. */
+export const DONATE = 'https://ko-fi.com/figureskatingguide';
 
 /* Renewed annually. Registration and privacy are billed separately by the
    registrar, ex VAT, which is how 20i quotes them; the site never shows that
