@@ -1,0 +1,30 @@
+Field Guide to Figure Skating — content licence
+
+Copyright (c) 2026 Martyn Greville-Giddings
+
+The content of this work — the prose, the diagrams and figures, and the element,
+exercise and test data — is licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International Licence.
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+
+The full legal code of that licence is at:
+
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+and a plain-language summary at:
+
+    https://creativecommons.org/licenses/by-sa/4.0/
+
+In short: you may share and adapt this content, for any purpose including
+commercially, provided you credit the Field Guide to Figure Skating and link to
+the licence, say whether you changed anything, and release anything you build on
+it under the same licence.
+
+Attribution should name the guide and, where the medium allows, link to
+https://figureskating.guide.
+
+The code in this repository is under the MIT licence instead — see LICENSE.
+
+The governing-body syllabus documents in sources/ are not part of this work, are
+not included in this repository, and are not licensed here.
