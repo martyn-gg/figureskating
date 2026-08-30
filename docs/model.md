@@ -166,8 +166,32 @@ believing any sequence that turns.
   pose needs more, the foot is in the wrong place under the hip, not the ankle.
 - A skating foot's blade sits at `z = 0`. This is inviolable — an automated fix that
   lifts it to satisfy some other constraint has broken the pose, not solved it.
-- The skating blade is outside its lobe and the body leans over the biting edge, both
-  checked per frame rather than per keyframe, since interpolation can cross zero.
+- **Every blade claimed on the ice is within 3 cm of it, and every foot not claimed on the
+  ice is at least 5 cm clear.** The existing poses sit at 0–2 and 10–117, so there is a real
+  gap between the two and nothing had to be nudged to pass. This is the assertion the lunge
+  asked for: it "would have passed every checker with the trailing foot lifted 30 cm", and a
+  second blade authored at free-foot height is the same cheat the other way up.
+- **Two blades on the ice share one lobeSense, every frame, and sit 5–70 cm apart.** Measured
+  through `poseAt` rather than off the keyframes, because the renderer reads `poseAt` and a
+  per-foot field dropped from its interpolation would make a second blade vanish everywhere
+  except in the authoring — which is exactly how the `LH`/`RH` override was discarded for
+  four sessions. `tools/twofoot.mjs`, which also puts the derivation back against British
+  Ice Skating's own four pairs.
+- **Every** blade on the ice is outside its lobe and the body leans over the biting edge,
+  both checked per frame rather than per keyframe, since interpolation can cross zero. Two
+  blades bite on the same side of the body, so one lean satisfies both.
+- A boot drawn end-on rolls with its own up-axis, and a skating boot is never drawn past
+  30° of roll — the 28° the cuff allows, plus what the projection does to a boot that is
+  also pitched. `tools/boot.mjs`.
+- The edge dot is drawn on a blade that is on the ice and on nothing else. A free foot is
+  in the air; a dot on it asserts contact the model is simultaneously denying.
+- Every drawn segment carries `data-depth` and the drawn order is non-decreasing in it;
+  casings = segments − 1, each retracted from its own joint; no arm segment carries more
+  ink than a skating leg; the elbow is not drawn below the projected-bend threshold; both
+  hands appear in every frame that draws arms; an authored `LH`/`RH` survives the
+  default-carriage assignment. `tools/arms.mjs`.
+- The free boot's angle from level is checked **per frame**, not per keyframe. The waltz
+  jump passes every keyframe at 55.8° and reaches 88.6° between two of them.
 
 ## Deliberate exaggerations
 
@@ -175,14 +199,292 @@ believing any sequence that turns.
   one is biting.
 - Cusp depth on turns is stylised.
 - Body markers in the top-down view are scaled up relative to the ice, since what
-  matters there is their angle rather than their size.
+  matters there is their angle rather than their size. The tracing is **not** — which is why
+  a second blade gets a boot glyph there and no second tracing. See *Two blades* below.
 
 ## Two tiers of content, very different economics
 
 1. **Derived** — edges, turns, patterns, dances. Generated from the rules, no
    per-element cost, effectively unlimited. Build this out first; it is most of the guide.
-2. **Keyframed** — body mechanics. Within this, held positions (spiral, teapot, lunge,
-   Ina Bauer, spin positions) are cheap at one or two poses each and are among the most
-   useful things in the guide. Jumps are the expensive end.
+2. **Keyframed** — body mechanics. Within this, held positions are cheap at one or two
+   poses each and are among the most useful things in the guide. Jumps are the expensive
+   end.
 
-Sequence accordingly: derived, then held positions, then jumps.
+Sequence accordingly: derived, then held positions, then jumps. But see **What the rig
+cannot hold** below: an earlier revision of this list named the lunge, the Ina Bauer and
+the spin positions as the cheap ones, and all three turned out to be outside the model
+rather than merely unbuilt.
+
+## What the rig cannot hold — 29/08/2026
+
+Three held positions were tried and put back. Each fails against a different part of the
+model, and none of them fails for want of effort at the keyframes.
+
+**One blade, and only one — RESOLVED 30/08/2026.** See *Two blades* below. A pose held a
+single `skate` field and the tracing, the edge colour and both lean assertions all read off
+it. An **Ina Bauer** and a **spread eagle** have two blades on the ice at once, on two
+edges. So does BIS's own **slip step**, defined in *Definition of Steps, Turns & Movements*
+as a step with the blades of both skates held flat on the ice — so this was never an exotic
+gap, it was a thing the syllabus names. A pose can now hold two blades; the slip step still
+cannot be drawn, because it needs a **flat**, which is a different missing thing.
+
+**A boot can pitch but it cannot roll.** A **lunge** has one blade on its edge and the
+trailing boot lying on its side, and rolled onto its side is an axis the rig does not
+have. That was the fatal one, and not for the reason expected. `bootDir` builds a free
+boot square to the shin — `ANKLE_FREE` is 10°, which is the boot-holds-the-ankle fact
+already recorded above — so a trailing leg that reaches back and down to the ice ends with
+a near-horizontal shin and therefore a boot pointing straight at the ice. `freefoot.mjs`
+calls that a ballet pointe and is right to. Measured across the whole plausible range of
+trailing-foot positions at a lunge's hip height, **there is no legal pose**: the boot only
+comes back inside 60° once the foot is lifted about 30 cm, at which point it is an
+arabesque and not a lunge.
+
+**Coaches call the lunge a drag** — Martyn, 30/08/2026. There is no page to hang that on yet,
+so it is recorded here: when the pose can be drawn, the element carries `drag` in its
+`aliases` and appears on `/elements/other-names/`.
+
+The lunge is still out, and `onIce` did not buy it. Its second contact is a **boot lying on
+its side**, not a blade, and what that needs is a rolled-boot glyph and a roll axis the
+renderer does not have — the same missing glyph as *a boot seen from above its own opening*.
+Marking the foot as touching would exempt it from the free-boot limit and then draw it
+wrong, which is worse than not drawing it.
+
+**A spin is the far side of a boundary this model already states.** `hipYaw` is measured
+*from the direction of travel*, and a spin has no direction of travel. That is not a new
+discovery: it is BIS's own twizzle disqualifier — "if the travelling stops, it becomes a
+Solo Spin" — which `tools/tracing.mjs` already asserts as the advance going to zero, and
+at zero advance the curls collapse onto one circle. So spin positions are not a gap in the
+keyframe data. They are a second rig, rooted in the skater rather than the track, and the
+model is entitled to say where it stops.
+
+## Two blades, and the one fact that made them cheap — 30/08/2026
+
+A pose can hold two blades. `skate` did not become an array; it stayed single-valued and
+changed job. It is now the **reference blade**: the one `buildPath` builds the path from and
+the one the hip hangs off, and `null` still means airborne. A second blade is declared on the
+foot itself, `onIce: 'blade'`, with its own direction of travel where the two feet oppose.
+
+**The second blade's edge is never stored.** Both blades are on one circle, and one circle is
+one lobe, so the two share a `lobeSense`. Feed that back through the same three flags and the
+second edge letter falls out of the first blade's state and the second foot's direction —
+`secondFoot` in `skating.js`, four lines. Storing it would be the second source of truth
+`style.md` bans, and it would make an impossible pair like RFI & LFI representable.
+
+British Ice Skating's Skills 1 slalom writes its two-foot power changes as pairs — RFI & LFO,
+RFO & LFI, LBI & RBO, LBO & RBI — and **all four have equal lobeSense**. Neither the document
+nor this model was told. It is the same agreement that already held for mohawks and choctaws,
+and `tools/twofoot.mjs` asserts it against their paper rather than against the model itself.
+
+Two consequences worth having in front of you before authoring anything two-footed.
+
+**A two-blade pose is one foot outside and the other inside — or the feet oppose.** Both feet
+the same way round gives one of each letter, which is a two-foot power change or an Ina
+Bauer. One forward and one backward gives the *same* letter on both, which is a spread eagle,
+and that is what the turnout is for. There is no third shape.
+
+**`lean.mjs` did not have to be weakened, and got stronger.** The expectation was that a
+checker would have to be scoped out. It does not: the outside of the left foot and the inside
+of the right foot are both the skater's left side, so two blades bite on one side, the body
+leans over that side, and one lean satisfies both routes on both feet. The file now asserts
+that *every* blade on the ice leans the same way. The rear view shows it — the two edge dots
+come out on the same side of the body, in two different colours.
+
+### What two blades still cannot do
+
+**A change of edge, in the rig.** A power change passes through a **flat**, where the lobe has
+no centre, `lobeSense` is zero and `lean.mjs`'s TRACK route has nothing to assert against —
+`sign(n)` must pass through zero and there is no right answer at the crossing. So the rig
+holds the two-foot *position* either side of the change and the edge diagram draws the change,
+which is the division of labour this repository has always had. Giving that assertion a
+domain is real work and it is the same missing thing as the flat below.
+
+**A flat.** BIS defines a flat as the double tracing of a skate that is straight — two lines,
+not a third colour, which is worth knowing before anyone reaches for a token. `edgeCol` is a
+bare ternary in five places and would silently colour a flat as an inside edge: the same shape
+as the featured filter that absorbed the twizzles. The slip step needs this and so does the
+crossing above.
+
+**A second tracing in the top-down view.** Deliberately not drawn. That view's one invariant is
+that *the tracing is true and only the body is enlarged* — the body is drawn about four times
+life so a skater is not a speck against a four-metre lobe. A second blade is positioned by the
+body scale, so a line under it would be four times too far from the first; drawn at true scale
+the two tracings are a boot's width apart on a four-metre lobe and resolve to one line, which
+is what they honestly look like. Neither is worth having. The two blades are carried by two
+boot glyphs in two edge colours, which is where that fact is legible anyway.
+
+## Three axes, three glyphs — 30/08/2026
+
+The boot is a solid and the profile views draw it flat, so there has to be a rule for which
+flat picture to draw. It used to be `prof >= endo`: is more of the boot in the view plane, or
+pointing at the camera.
+
+**That is a two-way test over a three-way question, and it never asked the one that mattered.**
+`prof` adds the lateral and the vertical parts of the boot direction together, so a boot with
+*no lateral component at all* still scored high on it through its vertical part, and got drawn
+in profile — a picture of the boot from the one direction it was least being seen from.
+
+Martyn found it on the waltz jump's rear view, twice. The free boot there points about 45°
+down and 45° along the track. Of its three axes, the one most nearly aimed at the camera is
+its **up axis**, in every frame: 0.72 to 0.76, against 0.64 to 0.68 for its length and 0.08 to
+0.14 for its width. A boot whose up-axis faces you is a boot seen from above its own opening.
+
+**It had a glyph all along.** `bootTop` is the plan view and the top-down view has drawn it
+since the first session; the profile views simply could not reach for it. The rule is now the
+honest one — the boot's axes are orthonormal, so their three camera components square to one,
+and the picture to draw is the view down whichever axis is most aligned with the camera:
+
+| the axis at the camera | the glyph | what you are looking at |
+|---|---|---|
+| its length | `bootEnd` | a cross-section: heel or toe toward you |
+| its width | `bootSide` | a profile |
+| its up, cuff toward you | `bootTop` | a plan, into the boot |
+| its up, sole toward you | `bootSole` | the underside: the blade, whole |
+
+**The fourth glyph is not a mirrored third.** Martyn's question, and it is the right one:
+mirroring the top of a boot does not draw its underside. From beneath, a figure boot is almost
+entirely blade — a steel runner standing proud of the sole with the pick at the front — and
+that is a different picture, not a reflected one. **285 of 697 plan frames** have the sole
+toward the camera, and they fall exactly where you would guess: every plan frame of the spiral
+and its checked variant, and most of the teapot's, because a raised or reaching free foot shows
+its underside to a camera behind the skater. The extended edge has none, because its free foot
+is turned out and trailing.
+
+It is also the most model-relevant picture in the guide: the blade is what this repository is
+about and this is the only view that shows the runner whole. No edge dot on it — the dot marks
+a *biting* edge and a boot showing its sole is off the ice. A skating boot can never reach this
+glyph, because a blade on the ice has its up-axis pointing up and never at a camera beside or
+behind the skater.
+
+Each is foreshortened by how much of it is left in the view plane, which is what the old `p2`
+and `endo` scalings already did. The plan branch builds its 2×2 from two projected 3D axes that
+are orthogonal by construction, so unlike the side-on branch it cannot go singular.
+
+What it changed, measured across all six moves: **677 rear-view frames** of a free boot moved
+from a false profile to a plan view, and only 44 still take the profile — the frames where the
+lateral axis genuinely is the one facing the camera. The skating boot is unaffected and is what
+it always should have been: a pure profile from the side, a pure cross-section from behind.
+
+`continuity.mjs` still reports a **near-tie** count, and it now means something different and
+permanent: a boot at an oblique angle where no single flat glyph is wholly honest. That is a
+property of drawing a solid with three orthogonal views, not a fault.
+
+## Two knees, and they are not the same knee — 29/08/2026
+
+`bootDir` solves its knee from the **blade**. The renderer draws its knee from the
+**ankle**, which sits 15 cm nearer the hip. So a leg past full reach to the blade — the
+straight branch of `twoBone`, which is what makes a free boot behave — can still be drawn
+with a visibly folded knee.
+
+The first extended edge passed all eight checkers and drew a bent free leg on a position
+whose entire name is *extended*. Nothing was wrong; two correct calculations were being
+read as one. Author extension against the **ankle** distance that `reach.mjs` reports, not
+against the blade.
+
+There is a related sensitivity worth knowing about. At full extension `twoBone` puts the
+knee `sqrt(L1² - a²)` off the hip-to-ankle line, which has an infinite derivative at
+`a = L1`, so the knee — and with it the free boot's angle — moves fast for the last
+centimetre or two of reach. At hip height 90 a free foot at `(60, 12, 28)` gives a boot at
+−54° and the same foot at `(60, 12, 32)` gives −68°. Held positions live exactly there.
+
+## The boot's up-axis is one vector, and it comes from the ankle — 29/08/2026
+
+A boot has a direction and an up. The direction is `bootDir`: along the tracing for a
+skating foot, off the shin for a free one. The up is what says which way the cuff faces,
+and it is not free — `ankleOf` builds it by taking the boot's own direction out of the
+leg's direction, and then places the ankle along it. **The renderer must draw the boot
+about that same axis**, or the drawn shin does not enter the drawn boot's opening.
+
+There is exactly one honest way to get it: take the boot's direction back off
+`ank − blade`. That returns `ankleOf`'s axis by construction, so the two cannot drift
+apart, and `tools/boot.mjs` asserts the drawn roll against it to 0.00°.
+
+Two ways of getting it that look right and are not:
+
+- **From the knee.** The renderer's knee is the second-pass one, solved from the ankle;
+  `ankleOf`'s is the first, solved from the blade. One iteration apart is up to **11.4°**
+  on the waltz jump — see *Two knees* above, which is the same fact seen from the side.
+- **In the view instead of in 3D.** Project the leg, then subtract the projected boot
+  direction. A 2D subtraction standing in for a 3D one degenerates the moment the two
+  projections line up, and **end-on that is every frame by construction**: that branch
+  runs *because* the boot points at the camera, so the vector being removed is near-zero
+  and its direction is noise. It annihilated the up-axis's vertical component, roll
+  collapsed to ±90° with the side chosen by the sign of the pitch, and the boot was drawn
+  lying on the ice. **1102 of 1828 end-on glyphs past 60° of roll**; the extended edge
+  **379 of 379**, every frame, spanning only −90.0° to −91.7°.
+
+**What hid it for four sessions is an authored zero.** A skating pitch of exactly 0 makes
+the subtracted vector exactly zero and the subtraction a no-op. The spiral and the teapot
+are authored that way, and their skating boots scored 0 of 642. So the element the standing
+rule says to shoot first is the one element that could not show this — and authoring a
+physically realistic
+half-degree of pitch is what turns it on. **Shoot the spiral first, and conclude nothing
+from it alone.**
+
+### What is still wrong there, and is a design call
+
+The side-on branch draws the boot with a 2×2 whose columns are two projected 3D axes, so
+where they project onto nearly the same screen line it goes singular and the glyph
+collapses to a stroke. That is not a rare frame: in the rear view a free boot's up-axis
+points near the camera in **263 of 263** extended-edge frames, **100 of 100** teapot
+frames, 69 of those inside 5°. The renderer squares the up-axis against the boot direction
+in the view, which keeps a legible glyph and draws a boot that is not the boot in the
+model.
+
+Neither is right. What those frames actually hold is **a boot seen from above its own
+opening**, and there is no glyph for that — `bootSide` and `bootEnd` are the only two, and
+the branch picks between them on how much the *direction* points at the camera, which is
+the wrong question in this case. A third glyph, or a rule for declining to draw one, is a
+design decision.
+
+## Draw order is a depth claim, made once — 29/08/2026
+
+The renderer used to draw the legs sorted by `NEARER`, then the torso, then both arms in
+fixed `L, R` order. Arms were therefore last unconditionally: an arm behind the chest drew
+in front of it, and the further arm drew over the nearer one whenever L happened to be the
+far side. **The arms were not undepthed. They were depthed wrongly** — about half the time,
+by construction.
+
+Now: **one list, sorted once, against one expression of where the camera is.** `NEARER[mode]`
+is that expression and it is the only source of the camera in this file.
+
+**Everything splits at its middle joint** — arms at the elbow, torso at the waist, legs at
+the knee — because a limb ordered as a single piece gets one end of it wrong the moment
+anything passes between its ends. An upper arm can be behind the chest while the forearm is
+in front of it, and no single ordering of the whole arm can say both. The legs were split on
+measurement rather than argument: over 2,010 samples — 201 of each of five moves, both legs
+— the knee and the **blade** straddle the torso's depth in **227**, in every move including
+the spiral. 227 is the load-bearing figure, because the old sort ordered a leg at its blade.
+
+**Casing is retracted from its own joint, never suppressed.** A casing is wider than the
+stroke it protects, so where two segments of one limb meet, the second-drawn one's casing
+paints a notch into the first. The first attempt suppressed a casing when its sibling
+happened to sort next to it — which, because the two halves of a limb are usually contiguous
+in depth, removed the halo from the second half of nearly every limb, and made whether a
+segment got one at all depend on what unrelated item sorted between it and its sibling. So
+the casing stops short of its own internal joint by its own half-width instead. The stroke
+still runs to the joint, so the limb is unbroken; only the halo stops short, which is what a
+technical illustrator does at an elbow. **The invariant is casings = segments − 1.**
+
+**The elbow is dropped past the end-on threshold, joint circle included.** This file already
+said stop drawing the elbow when the arm is near end-on; that rule predates the joint circle,
+which had been sitting on the shoulder-to-hand line ever since. The threshold is one stroke
+width of **projected** bend, which is the quantity the rule is about — the 3D bend can be
+large while the picture shows none, which is exactly how the zigzag shipped.
+
+### Which hand is which follows the data, not a measurement of it
+
+`moves.js` says "any key may override with `LH` / `RH`". It did not: the default-carriage
+loop assigned unconditionally for every key of every move, so an authored hand was computed,
+stored and overwritten before anything read it. Nothing failed and no checker looked — the
+same shape as the featured filter that absorbed the twizzles. The fix is one guard on an
+`authored` flag.
+
+That flag also decides whether the guide names which hand is which: a move whose keys author
+a hand gets letters, one that does not gets none. Exactly the boots' rule, where an element
+that stays on one foot gets no L/R tag because the model makes no distinction there. **No
+threshold.** An earlier proposal used 12 cm between the hands in the shoulder frame, which
+was its weakest number — every other constant here comes from the equipment, and there is no
+physical fact behind "how far apart must two hands be before we name them". It is read once
+per **move**, not per frame: a painter only ever sees one frame, so testing the interpolated
+pose there makes the letters appear mid-glide on any move reaching a check from a neutral
+carriage.

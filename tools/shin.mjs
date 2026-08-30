@@ -1,17 +1,19 @@
 /* A skating boot is stiff. If a pose needs more than about 28° of shin lean, the
    foot is in the wrong place under the hip — the ankle is not the problem. */
 import { MOVES } from '../src/lib/moves.js';
-import { D2R, THIGH, SHIN, anterior, twoBone, bootDir, ankleOf } from '../src/lib/rig-math.js';
+import { D2R, THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, bladesDown } from '../src/lib/rig-math.js';
 
 const LIMIT = 28;
 let bad = 0;
 console.log(`shin lean inside the boot (a stiff boot allows about ${LIMIT}°)\n`);
 
 for (const [key, m] of Object.entries(MOVES))
-  for (const k of m.keys) {
-    if (!k.skate) continue;
-    const q = k[k.skate];
-    const bd = bootDir(k, k.skate, twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw)), q, true);
+  for (const k of m.keys)
+    /* Every leg with a blade on the ice: the boot is just as stiff on the second
+       one, and a two-foot position is where a shin is likeliest to be over. */
+    for (const w of bladesDown(k)) {
+    const q = k[w];
+    const bd = bootDir(k, w, twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw)), q, true);
     const up = [-bd[0] * bd[2], -bd[1] * bd[2], 1 - bd[2] * bd[2]];
     const ul = Math.hypot(...up) || 1;
     const u2 = up.map(c => c / ul);
@@ -24,7 +26,7 @@ for (const [key, m] of Object.entries(MOVES))
     const lean = Math.acos(Math.max(-1, Math.min(1, dot))) * 180 / Math.PI;
     if (lean > LIMIT) {
       bad++;
-      console.log(`  OVER  ${key.padEnd(7)} t=${k.t.toFixed(2)} ${k.skate}  ${lean.toFixed(0)}°`);
+      console.log(`  OVER  ${key.padEnd(7)} t=${k.t.toFixed(2)} ${w}  ${lean.toFixed(0)}°`);
     }
   }
 

@@ -11,17 +11,24 @@
     "check:reach": "node tools/reach.mjs",
     "check:shin": "node tools/shin.mjs",
     "check:blade": "node tools/blade.mjs",
+    "check:boot": "node tools/boot.mjs",
+    "check:arms": "node tools/arms.mjs",
+    "check:syllabus": "node tools/syllabus.mjs",
     "check:freefoot": "node tools/freefoot.mjs",
     "check:lean": "node tools/lean.mjs",
+    "check:twofoot": "node tools/twofoot.mjs",
+    "check:continuity": "node tools/continuity.mjs",
     "check:tracing": "node tools/tracing.mjs",
     "check:contrast": "node tools/contrast.mjs",
     "check:links": "node tools/links.mjs",
+    "check:search": "node tools/search.mjs",
     "check:speed": "node tools/speed.mjs",
     "check:offline": "node tools/offline.mjs",
     "check:framing": "node tools/framing.mjs",
     "check:ink": "node tools/ink.mjs",
-    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:freefoot && npm run check:lean && npm run check:tracing && npm run check:contrast && npm run build && npm run check:links",
-    "gen:derived": "node tools/gen-derived.mjs"
+    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:contrast && npm run check:syllabus && npm run build && npm run check:links && npm run check:search && npm run check:freefoot",
+    "gen:derived": "node tools/gen-derived.mjs",
+    "drift": "node tools/drift.mjs"
   },
   "dependencies": {
     "astro": "^7.2.2"

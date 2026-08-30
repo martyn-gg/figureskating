@@ -25,6 +25,31 @@ const flip = (v, a, b) => (v === a ? b : a);
 /** Mirror an edge for a clockwise rotator. Free, and almost no other resource does it. */
 export const mirror = s => ({ ...s, foot: flip(s.foot, 'L', 'R') });
 
+/* TWO BLADES ON THE ICE, and the one fact that makes them cheap.
+
+   A pose with both blades down is not two independent feet. Both blades are on
+   one circle, so they share a lobe — and a shared lobe means an equal lobeSense.
+   Feed that back through the same three flags and the second blade's edge letter
+   is not a fact to store: it falls out of the first blade's state and the second
+   foot's direction of travel.
+
+   British Ice Skating's own Skills 1 slalom writes the pairs out — RFI & LFO,
+   RFO & LFI, LBI & RBO, LBO & RBI — and every one of the four has equal
+   lobeSense. Neither their document nor this model was told; it is the same
+   agreement that already held for mohawks and choctaws.
+
+   The direction argument is what separates the two shapes a two-blade position
+   comes in. Both feet the same way is a two-foot power change or an Ina Bauer.
+   Opposed — one forward, one backward — is a spread eagle, which is what the
+   turnout IS, and the derived edge letter comes out the same as the first
+   blade's rather than opposite. */
+export function secondFoot(ref, dir2 = ref.dir) {
+  const foot = ref.foot === 'L' ? 'R' : 'L';
+  const want = lobeSense(ref.foot, ref.edge, ref.dir);
+  const rest = (foot === 'L' ? 1 : -1) * (dir2 === 'F' ? 1 : -1);
+  return { foot, edge: want * rest === 1 ? 'O' : 'I', dir: dir2 };
+}
+
 /* Every one-foot turn is two bits of information. Everything else — the exit
    edge, whether the lobe continues or reverses, which way the cusp points, which
    way the body rotates — falls out of these. */
@@ -66,6 +91,25 @@ export const TRANSITIONS = {
   crossover: { name: 'Crossover',      edgeChanges: true,  changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
   chasse:    { name: 'Chassé',         edgeChanges: true,  changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
   crossroll: { name: 'Cross roll',     edgeChanges: false, changesFoot: true,  reversesDir: false, rotatesInto: null, join: 'step' },
+  /* Added 30/08/2026, both defined by British Ice Skating and both confirmed
+     against their own sequences rather than assumed.
+
+     CROSSED STEP BEHIND takes the cross roll's flags, not the crossover's. Their
+     definition constrains PLACEMENT — the free foot goes down on the outer edge
+     side with the leg crossed behind — and says nothing about the resulting edge,
+     so the flags had to come from the sequences. Every XB in the syllabus, in both
+     generations, runs outside edge to outside edge: Skills 8 section 2 writes
+     RBO -> XB-LBO twice. So the edge is held, which is a cross roll's shape and
+     not a crossover's. That it draws the same tracing as a cross roll is the same
+     honest collision as crossover against chassé — placement is the difference and
+     a blade cannot draw placement.
+
+     SLIP CHASSÉ takes the chassé's flags exactly, and their sequences agree:
+     Skills 5 exercise 3 writes RFO slip chassé into LFI, which is what exitState
+     gives. It is NOT the slip STEP, which is a separate entry in their definitions
+     with both blades flat on the ice and is still outside this model. */
+  crossbehind: { name: 'Crossed step behind', edgeChanges: false, changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
+  slipchasse:  { name: 'Slip chassé',         edgeChanges: true,  changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
 };
 
 /* Twizzles. The one element that does not fall out of the three flags, and the
@@ -118,6 +162,11 @@ export const TWIZZLES = {
   twizzle:   twizzle(1,   'Twizzle'),
   twizzle15: twizzle(1.5, '1½ twizzle'),
   twizzle2:  twizzle(2,   'Double twizzle'),
+  /* Skills 7 exercise 3 asks for one, out of a backward inside counter. It costs
+     one line because the count is the key and both flags compute from it — which
+     is the whole argument for keying twizzles this way rather than storing a
+     number on the element. */
+  twizzle25: twizzle(2.5, '2½ twizzle'),
 };
 
 /** Everything one element can turn into another with. */
@@ -151,6 +200,29 @@ export const CLUSTERS = {
   'counter-mohawk':       { name: 'counter-mohawk',       turns: ['counter', 'mohawk'] },
   'rocker-choctaw':       { name: 'rocker-choctaw',       turns: ['rocker', 'choctaw'] },
   'choctaw-three-rocker': { name: 'choctaw-three-rocker', turns: ['choctaw', 'three', 'rocker'] },
+  /* Skills 5 exercise 1, both forward outside entries. A chain costs the same
+     whatever its length — every edge in between comes out of exitState — so a
+     third repetition is one more item in a list rather than a third element. */
+  'triple-three':         { name: 'triple three',         turns: ['three', 'three', 'three'] },
+
+  /* THE PAIRINGS THE SYLLABUS WRITES AS ONE THING — 30/08/2026, Martyn's call:
+     a skater should see one turn run into the next in the animation, which is
+     what a cluster page gives them and a pair of separate pages does not.
+
+     Each is a run British Ice Skating writes with a hyphen in its own sequences,
+     and each was listed here as its parts with a notCovered line until now. Note
+     what these add that the first eight did not: a cluster may now contain a
+     CHANGE OF EDGE, a CROSS ROLL and a TWIZZLE, not only turns and steps. Nothing
+     in exitState or buildTrace needed telling — the chain loop already joined all
+     five kinds, because `join` was stored on the element rather than inferred
+     from whether it was a turn. That decision was made for the transitions and it
+     paid here. */
+  'double-three-mohawk':          { name: 'double three-mohawk',          turns: ['three', 'three', 'mohawk'] },
+  'rocker-mohawk':                { name: 'rocker-mohawk',                turns: ['rocker', 'mohawk'] },
+  'bracket-crossroll':            { name: 'bracket-cross roll',           turns: ['bracket', 'crossroll'] },
+  'counter-two-and-a-half-twizzle': { name: 'counter-2½ twizzle',         turns: ['counter', 'twizzle25'] },
+  'three-coe-double-twizzle':     { name: '3-turn-change of edge-double twizzle', turns: ['three', 'coe', 'twizzle2'] },
+  'rocker-counter-double-twizzle':{ name: 'rocker-counter-double twizzle', turns: ['rocker', 'counter', 'twizzle2'] },
 };
 
 /** Which named cluster a sequence of turns is, if it is one. */
@@ -224,15 +296,24 @@ export function describeTurn(entry, turnKey) {
 /* The second derived table. For an anticlockwise rotator all six land on the same
    edge; they differ only in takeoff edge and whether a toe pick is used. Flip vs
    Lutz is purely the takeoff edge, which is the entire flutz argument. */
+/* Listed in the order they are learned, not alphabetically and not by takeoff
+   edge. That order is a real fact about the jumps — a waltz jump is the half
+   rotation an Axel is built out of, and a Lutz is a flip fought against its own
+   edge — so it lives here, where every page that lists jumps can inherit it,
+   rather than in each page's own sort. */
 export const JUMPS = {
-  toeLoop:  { name: 'Toe loop',  takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1 },
+  waltz:    { name: 'Waltz jump', takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 0.5 },
   salchow:  { name: 'Salchow',   takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: false, rotations: 1 },
+  toeLoop:  { name: 'Toe loop',  takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1 },
   loop:     { name: 'Loop',      takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: false, rotations: 1 },
   flip:     { name: 'Flip',      takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: true,  rotations: 1 },
   lutz:     { name: 'Lutz',      takeoff: { foot: 'L', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1 },
-  waltz:    { name: 'Waltz jump', takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 0.5 },
   axel:     { name: 'Axel',      takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 1.5 },
 };
+
+/** Where a jump sits in the learning order, by name. −1 for anything not a jump. */
+export const jumpOrder = name =>
+  Object.values(JUMPS).findIndex(j => j.name.toLowerCase() === String(name).toLowerCase());
 
 /** Every jump in the list lands here, which is why the takeoff is the whole story. */
 export const LANDING = { foot: 'R', edge: 'O', dir: 'B' };

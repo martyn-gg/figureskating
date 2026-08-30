@@ -6,11 +6,48 @@
    z height above the ice, centimetres throughout. Yaw is degrees from the
    direction of travel, + anticlockwise seen from above. */
 
-import { lobeSense } from './skating.js';
+import { lobeSense, secondFoot } from './skating.js';
 
 export const D2R = Math.PI / 180;
 export const anterior = yawDeg => [Math.cos(yawDeg*D2R), -Math.sin(yawDeg*D2R), 0];
 export const lateral  = yawDeg => [Math.sin(yawDeg*D2R),  Math.cos(yawDeg*D2R), 0];  // skater's right
+
+/* ═══ which feet are on the ice ═══════════════════════════════
+
+   `skate` is the REFERENCE blade and stays single-valued: it is the blade
+   buildPath builds from and the blade the hip hangs off, and null still means
+   airborne. British Ice Skating's own slip-step definition puts the weight over
+   one leg while both blades are down, so a second blade on the ice is not a
+   second skating foot and the model should not pretend otherwise.
+
+   A second blade is declared on the foot itself — `onIce: 'blade'` — with its
+   own direction of travel where it differs. Its EDGE is never stored, because
+   both blades are on one circle and a shared circle is a shared lobeSense: see
+   secondFoot in skating.js. Storing it would be the second source of truth that
+   style.md bans, and it would make an impossible pair representable.
+
+   Read these rather than comparing against pose.skate. The comparison was
+   correct while a pose could hold one blade and it silently means "free" the
+   moment a pose can hold two — the same shape as the featured filter that
+   absorbed the twizzles. */
+export const onIceOf = (pose, which) =>
+  which === pose.skate ? (pose.skate ? 'blade' : null)
+                       : ((pose[which] && pose[which].onIce) || null);
+
+export const dirOf = (pose, which) =>
+  which === pose.skate ? pose.dir : ((pose[which] && pose[which].dir) || pose.dir);
+
+export function edgeOf(pose, which) {
+  if (!pose.skate || which === pose.skate) return pose.edge;
+  if (onIceOf(pose, which) !== 'blade') return pose.edge;
+  return secondFoot({ foot: pose.skate, edge: pose.edge, dir: pose.dir },
+                    dirOf(pose, which)).edge;
+}
+
+/** Every foot with a blade on the ice, reference blade first. */
+export const bladesDown = pose =>
+  ['L', 'R'].filter(w => onIceOf(pose, w) === 'blade')
+            .sort((a, b) => (a === pose.skate ? 0 : 1) - (b === pose.skate ? 0 : 1));
 
 export const THIGH = 44, SHIN = 42, UPPER = 31, FORE = 29, SHOULDER_HALF = 19;
 
@@ -147,7 +184,7 @@ export const ANKLE_FREE = 10 * D2R;
 
 export function bootDir(pose, which, knee, foot, skating){
   if(skating){
-    const y = (pose.dir === 'F' ? 0 : 180) * D2R, p = (foot.pitch || 0) * D2R;
+    const y = (dirOf(pose, which) === 'F' ? 0 : 180) * D2R, p = (foot.pitch || 0) * D2R;
     return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
   }
   const s = [foot.t-knee.t, foot.n-knee.n, foot.z-knee.z];
@@ -192,7 +229,15 @@ export function buildPath(move){
 /* ═══ pose interpolation ═════════════════════════════════════ */
 const lp = (a,b,u)=>a+(b-a)*u;
 
-const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(a.pitch,b.pitch,u)});
+/* The per-foot fields are CARRIED from the keyframe being left, not interpolated
+   — onIce, edge and dir are states, not quantities, exactly as pose-level skate,
+   edge and dir already are. Dropping them here is the failure this file is most
+   exposed to: the renderer and every per-frame checker read poseAt's output, not
+   the keyframe, so a field left out of this line would make a second blade
+   disappear everywhere except in the authoring. tools/twofoot.mjs asserts the
+   round trip per frame for exactly that reason. */
+const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(a.pitch,b.pitch,u),
+                       ...(a.onIce ? {onIce:a.onIce} : {}), ...(a.dir ? {dir:a.dir} : {})});
 
 export function poseAt(move, t){
   const K = move.keys;

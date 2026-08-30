@@ -13,7 +13,7 @@
 */
 
 import { buildTrace } from '../src/lib/edge-diagram.js';
-import { lobeSense, label, exitState, lobeContinues, ALL_TURNS } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, lobeContinues, ALL_TURNS, CLUSTERS } from '../src/lib/skating.js';
 
 const FEET = ['L', 'R'], DIRS = ['F', 'B'], EDGES = ['O', 'I'];
 const STATES = FEET.flatMap(foot => DIRS.flatMap(dir => EDGES.map(edge => ({ foot, edge, dir }))));
@@ -207,11 +207,11 @@ for (const s of STATES) for (const turnKey of Object.keys(ALL_TURNS)) {
    turn, in order, each with the right kind of join and the right lobe after it. A
    cluster that quietly drew two turns where three were asked for would look entirely
    plausible. */
-const CHAINS = [
-  ['three', 'three'], ['three', 'mohawk'], ['rocker', 'counter'], ['bracket', 'counter'],
-  ['counter', 'three'], ['counter', 'mohawk'], ['rocker', 'choctaw'],
-  ['choctaw', 'three', 'rocker'],
-];
+/* Taken from CLUSTERS rather than typed out again. It was a hand-kept copy of the
+   same eight lists until 30/08/2026, which is this repository's standing failure
+   mode — a second statement of a fact, drifting quietly. Six clusters were added
+   that day and a hand-kept list would have checked none of them. */
+const CHAINS = Object.values(CLUSTERS).map(c => c.turns);
 
 for (const s of STATES) for (const chain of CHAINS) {
   const { frames, marks, states } = buildTrace({ entry: s, turns: chain });

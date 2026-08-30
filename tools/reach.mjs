@@ -1,7 +1,7 @@
 /* Every foot must be within the leg's reach, measured to the ankle inside the
    boot — not to the blade. Out of reach means the leg visibly detaches. */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, onIceOf } from '../src/lib/rig-math.js';
 
 const REACH = THIGH + SHIN;
 let bad = 0;
@@ -10,7 +10,7 @@ console.log(`hip → ankle distance against a ${REACH} cm leg\n`);
 for (const [key, m] of Object.entries(MOVES))
   for (const k of m.keys)
     for (const w of ['L', 'R']) {
-      const q = k[w], skating = k.skate === w;
+      const q = k[w], skating = onIceOf(k, w) === 'blade';
       const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
       const bd = bootDir(k, w, k0, q, skating);
       const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);

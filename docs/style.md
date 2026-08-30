@@ -108,6 +108,15 @@ Three rules specific to the guides:
 *moves in the field*, Skate Canada *Skills assessments* — related, not equal. Flattening
 them into one word would be the single most misleading thing this guide could do.
 
+**One table is theirs, and it says so.** The field moves to Skills conversion on
+`/tests/older-names/` is British Ice Skating's own, carried because it is a historical
+lookup with no honest prose equivalent — a reader who passed Level 6 in 2016 wants a row,
+not a paragraph. It is attributed in the table's caption and linked back to BIS. That is
+the exception to the rule above, and it is the only one: it exists because the information
+is administrative fact of no creative value, and because the alternative was worse to use
+in gloves. Anything with substance in it — a sequence, a pattern, a drawing — still gets
+written from scratch or not at all.
+
 **Never publish a cross-body table of level equivalences.** Skills 4 is not Preliminary is
 not STAR 5, whatever the forum posts say. If a comparison is wanted, compare *elements* —
 the element pages already list every test they appear in, in every country, which is a
@@ -132,6 +141,30 @@ document for the exact steps, which is where a skater should be reading them any
 The test of whether a sentence is on the right side of that line: could you have written it
 having watched the exercise skated, without the document open? If yes, it is ours. If it
 only exists because you were copying, it is theirs.
+
+### The shape it took — 30/08/2026
+
+**The exercise is the unit, and it gets a page.** A skater says "Skills 3, exercise 4", so
+that is what has a URL. A test owns exercises; an exercise owns elements; the test's element
+list is derived from its exercises rather than written out again. `tools/syllabus.mjs`
+asserts that a test with exercises keeps no list of its own.
+
+**One entry per exercise, not one per generation.** British Ice Skating revised the Skills
+tests on 01/10/2026 and the revision is mostly additive, so an exercise carries a flag —
+`current`, `october2026` or `both` — and, where it was genuinely altered, one sentence
+saying how. Two sets of prose for the same exercise would drift, and the drift would be
+invisible.
+
+**Name the gaps.** An exercise page lists what the guide has no element for, in
+`notCovered`, rather than quietly leaving it out. A gap the reader can see is a gap a coach
+can correct; a gap they cannot see reads as a claim of completeness. Skills 1's slalom asks
+for two-foot power changes of edge, which the rig cannot hold, and the page says so.
+
+**Write the paragraph from the skating, not from the document.** In practice the useful
+question is not "what does the sequence say" but "what would go wrong here". Skills 1's
+second exercise holds an edge for three seconds; the paragraph is about why three seconds
+on a back outside edge is longer than it sounds. That sentence passes the test above — it
+could have been written watching it, and it is not in their document.
 
 ## Words
 
