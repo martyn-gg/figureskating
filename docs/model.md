@@ -370,6 +370,53 @@ the two tracings are a boot's width apart on a four-metre lobe and resolve to on
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
 
+## The pick is a third kind of contact — specified 30/08/2026, not built
+
+Four of the seven jumps are toe-assisted, the jump pages now say out loud that the pick is
+what separates a flip from a Salchow and a toe loop from a loop, and the rig cannot draw it.
+This is what it would take. Written as one decision with every touch point listed, because
+that is what this repository asks of a change that moves something other files point at.
+
+**`pick: true` already exists and is wrong.** It is a KEYFRAME flag, and `blade.mjs` reads it
+as "exempt every on-ice blade in this frame from the ±3.5° limit". The moment a pose has one
+foot on an edge and another on the pick — which is the only pose that needs it — that exempts
+the wrong foot too. It has never been set on any keyframe, so nothing is broken today; it is a
+description waiting to be believed, which is this repository's recurring failure mode. It goes.
+
+**The shape is `onIce: 'pick'`,** the same field two blades added, with a third value. A picked
+foot is not a blade and it is not free: it is on the ice, carrying weight, with no edge, no
+lean claim and a boot pitched far past what a blade allows.
+
+**Two functions already handle it and need no change**, which is the two-blades work paying
+forward: `onIceOf` returns whatever the foot declares, and `bladesDown` filters for `'blade'`
+and so excludes a picked foot correctly. What remains is every place that still asks
+`=== 'blade'` and means *on the ice*. They are enumerable:
+
+| File | What it does now | What a pick needs |
+|---|---|---|
+| `rig-math.js` `edgeOf` | returns the reference blade's edge for any non-blade foot | a pick has no edge; return null |
+| `rig-math.js` `bootDir` | branches skating / free | a third branch: planted, pitched past `MAX_BLADE_PITCH` |
+| `rig-math.js` | — | wants `contactsDown(pose)`, every foot touching by any means |
+| `moves.js` `ON()` | hardcodes `onIce:'blade'` | a `PICK()` sibling; and `pick:true` removed |
+| `body-frame.js` ×2 | `down`/`skating` = `=== 'blade'` | a picked foot would draw pale, in free weight, and vanish with the free-foot toggle off — **the exact bug the two-blades comment beside it describes**, one contact type along |
+| `blade.mjs` | keyframe-level `!k.pick` | per foot |
+| `freefoot.mjs` | skips `=== 'blade'` | a picked foot would be measured against the free-boot limit and called a pointe. It *is* pointed, deliberately |
+| `boot.mjs` | every edge dot is on a blade on the ice | a picked foot must not get a dot — the renderer decides, so check rather than assume |
+| `continuity.mjs` ×3 | `down` = `=== 'blade'`, incl. landing detection | a pick going in would read as a landing |
+| `twofoot.mjs` | every free foot is clear of the ice | a picked foot sits at z 0 and is not free |
+| `lean.mjs` | iterates `bladesDown` | correct already — a pick makes no lean claim |
+
+Four model and render files, five checkers, one of them correct already. That is the size of
+the two-blades change, and it should be a session of its own rather than the tail of one.
+
+**What it buys, in order:** the difference between a flip and a Salchow and between a toe loop
+and a loop, which is the question a skater actually asks and which four jump pages now name
+and cannot show; the toe-assisted hop into the Skills 3 spirals, the last item on the BIS gap
+list; and the Lutz, whose whole identity is an outside edge plus a pick.
+
+**What it does not buy:** the lunge. That needs a boot rolled onto its side, which is a
+missing axis rather than a missing contact type.
+
 ## A spin is an arc — 30/08/2026
 
 A spin was written up in this file as a second rig, rooted in the skater rather than the
