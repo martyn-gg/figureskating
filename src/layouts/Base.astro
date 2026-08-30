@@ -8,6 +8,17 @@ import { CONTACT, DONATE } from '../lib/site.js';
    worker on every deploy and reinstalls it, and so the worker can name its cache
    after the build it belongs to. */
 const swPath = `${url('sw.js')}?v=${BUILD_ID}`;
+
+/* THE FOOTER NOTATION, AND THE ONE PAGE THAT NO LONGER NEEDS IT.
+
+   Everywhere else this is the only place a reader who arrived mid-guide — from a
+   search result, from a coach's link, from a page about a bracket — is told how to
+   read LFO at all. The front page now teaches it directly, above the fold, with the
+   eight edges drawn beside it, so there it is the same sentence twice within a
+   screen of itself. Compared against `url()` rather than a literal '/', because the
+   root moves with the base path and this file must not carry its own copy of it. */
+const slash = p => (p.endsWith('/') ? p : p + '/');
+const isHome = slash(Astro.url.pathname) === slash(url());
 const scope = url();
 /* Never in development. A cache-first worker on localhost will happily serve a
    page you wrote three hours ago and give no sign that it is doing so. */
@@ -145,10 +156,12 @@ const useSW = import.meta.env.PROD;
     </nav>
     <slot />
     <footer>
-      Edges are written as three letters — foot, direction, edge. <b>LFO</b> is a left
-      foot travelling forwards on an outside edge; <b>RBI</b> is a right foot backwards
-      on an inside edge.
-      <br /><br />
+      {!isHome && <>
+        Edges are written as three letters — foot, direction, edge. <b>LFO</b> is a left
+        foot travelling forwards on an outside edge; <b>RBI</b> is a right foot backwards
+        on an inside edge.
+        <br /><br />
+      </>}
       Written and drawn from scratch — no governing body's material is reproduced.
       Mechanics are unverified unless a page says otherwise.
       <p class="foot-links">
