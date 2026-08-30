@@ -39,15 +39,27 @@ PDFs. The route is unchanged — a human downloads them into `sources/`.
 
 British Ice Skating's championship requirements for 2026/27 set minimum tests per category.
 
-> **DO NOT USE THIS TABLE — flagged 30/08/2026.** `sources/bis/Singles Event Structure 2526`
-> now exists and disagrees with three of its four rows: Basic Novice needs **Skills 4** not 6,
-> Advanced Novice **Skills 6** not 7, Junior **Skills 7** not 8. The document's pattern is
-> Skills N with National N, which also matches the per-level entry requirements in
-> `Singles Generic Criteria 2026-2027` (Skills N plus the National level below). It also
-> splits National into **Technical and Components as two separate minima**, which this table
-> does not. That looks like a transcription error here rather than a season change — but the
-> table was fetched as 2026/27 and the document is 2025-26, and the 2026-27 event structure is
-> not in `sources/`, so it cannot be settled from what we hold. See `sources/bis/MANIFEST.md`.
+> **CHECKED AND CORRECT — 30/08/2026, second pass.** This was flagged earlier the same day as
+> a probable transcription error, because `sources/bis/Singles Event Structure 2526` disagrees
+> with three of its four rows. **The flag was wrong and the table is right.** British Ice
+> Skating's own announcement, *Updates to Championship Requirements for the 2026/27 Season*
+> (published 09/12/2025), gives Basic Novice **Skills 6**, Advanced Novice **Skills 7**, Junior
+> and Senior **Skills 8** — all four rows as written here.
+>
+> **So it is a season change, not an error, and the Skills requirement went UP**: 2025-26 asked
+> Skills 4 / 6 / 7 / 8 and 2026-27 asks 6 / 7 / 8 / 8. Two levels more at Basic Novice, one
+> more at Advanced Novice and at Junior. Anyone reading the 2025-26 document alone would get
+> today's entry requirements wrong for three categories out of four — which is the same trap
+> the two Skills generations and the two National documents each set, three times now in one
+> family of sources.
+>
+> One thing this table is still missing: BIS split National into **Technical and Components as
+> two separate minima**, and both are listed below as one column. Added to the row labels
+> before this is published.
+>
+> The lesson worth keeping: two sources disagreed, the older one looked more self-consistent
+> (Skills N with National N), and *the tidier pattern was the stale one*. Date the source
+> before trusting its shape.
 
 | Category | Skills | The other test |
 |---|---|---|

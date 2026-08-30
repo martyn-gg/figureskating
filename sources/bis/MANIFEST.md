@@ -249,7 +249,23 @@ running in parallel, which is a fact a reader of either would want on the page.
 separate criteria blocks. Only the free programmes have been read; **the short-programme
 blocks still need their own pass.**
 
-### A discrepancy to settle before anything is published
+### The discrepancy, settled — and the flag was the thing that was wrong
+
+**Resolved 30/08/2026, later the same day.** BIS's own announcement *Updates to Championship
+Requirements for the 2026/27 Season* (09/12/2025, on the open site) confirms the table in
+`docs/gaps-competition.md` exactly: Basic Novice Skills 6, Advanced Novice 7, Junior and Senior
+8. **A season change, not a transcription error** — 2025-26 asked Skills 4 / 6 / 7 / 8 and
+2026-27 asks 6 / 7 / 8 / 8.
+
+`Singles Event Structure 2526` is therefore **stale for entry requirements** and should not be
+read as current. It stays for the season-on-season comparison, which is now a third instance of
+this family's one recurring hazard. **Still wanted: the 2026-27 Singles Event Structure itself**,
+which does not appear on the open site — the announcement carries the table but not the document.
+
+The original note is kept below, because the reasoning in it is exactly the trap: the older
+document looked *more* self-consistent, and the tidier pattern was the stale one.
+
+### The discrepancy as first written, 30/08/2026 — superseded by the above
 
 `docs/gaps-competition.md` carries a championship entry table fetched from the BIS website
 on 30/08/2026 and labelled 2026/27. `Singles Event Structure 2526` disagrees with it at
