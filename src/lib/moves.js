@@ -147,12 +147,46 @@ export const MOVES = {
     path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:150}],
     radius:150, duration:5,
     keys:[
+      /* THE FREE LEG WAS BENT, ON A POSITION WHOSE WHOLE LINE IS THE EXTENSION —
+         corrected 30/08/2026. Martyn, looking at the live page: "the free leg is
+         supposed to be extended not bent sharply at the knee." He is right, and it
+         had been like that since Session 01.
+
+         Held at 69% of reach with the drawn knee 24 cm BELOW the hip. Nothing
+         caught it: reach.mjs asserts a leg is not too LONG and nothing asserted a
+         leg claiming an extended line is not too short. It is the same fault the
+         extended edge had in Session 04, found the same way — by measuring a
+         different position and noticing this one on the way past.
+
+         It could not be fixed before today. Straightening the leg pushes the free
+         boot down: at the old fixed ankle of 10 degrees the same straight leg reads
+         61 degrees against freefoot.mjs's limit of 60, so the pose was bent because
+         the alternative was illegal. With the ankle authored per foot it reads 49.
+         That is what the ANKLE_MAX work was for.
+
+         Now 94% of reach with the knee 6 cm below the hip — a long line with a soft
+         knee rather than a locked one, which is as straight as the pose gets without
+         failing reach.mjs. The free foot stays at the height it always had, about
+         24 cm above the hip: the leg was lengthened, not lifted.
+
+         All three keys were solved together against every interpolated frame, not
+         authored one at a time. Two hand-written attempts each produced a stretch
+         over the limit — one at f=0.24 and one at f=0.00 — which is the fault
+         Session 12 recorded on the waltz jump: a free leg whose extension changes
+         between keys sweeps its shin through horizontal, and a boot square to a
+         horizontal shin points at the ice. Worst frame now 50 degrees against a
+         limit of 60.
+
+         The foot is authored near the boot's limit throughout, which is a CLAIM and
+         not a measurement: that a skater in a spiral points the free foot as hard as
+         the boot allows, from the entry onwards. It is what a coach says out loud,
+         and it is the first thing to put to one. */
       {t:0.00, ph:'Entering the position', hipZ:95, hipYaw:-4, shYaw:-12,
-       sh:P(16,0,139), L:P(0,10,0), R:P(-58,-2,73), skate:'L', edge:'O', dir:'F'},
+       sh:P(16,0,139), L:P(0,10,0), R:P(-76,-2,76,0,30), skate:'L', edge:'O', dir:'F'},
       {t:0.34, ph:'Free leg rising, chest lifts', hipZ:94, hipYaw:-6, shYaw:-14,
-       sh:P(28,0,130), L:P(0,13,0), R:P(-73,-2,99), skate:'L', edge:'O', dir:'F'},
+       sh:P(28,0,130), L:P(0,13,0), R:P(-86,-2,116,0,30), skate:'L', edge:'O', dir:'F'},
       {t:1.00, ph:'Held — hips square, leg above the hip', hipZ:94, hipYaw:-6, shYaw:-14,
-       sh:P(34,0,124), L:P(0,14,0), R:P(-70,-2,117), skate:'L', edge:'O', dir:'F'},
+       sh:P(34,0,124), L:P(0,14,0), R:P(-93,-2,118,0,25), skate:'L', edge:'O', dir:'F'},
     ]},
 
   /* BIS Skills 1, exercise 2: a backward outside "extended position", held for a

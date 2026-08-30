@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
+import EdgeThumb from '../../components/EdgeThumb.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
@@ -39,8 +40,21 @@ const chainRoute = chain ? chainStates(d.entry, chain) : null;
 const chainLine = chain ? describeChain(d.entry, chain) : null;
 const mirrored = d.entry ? mirror(d.entry) : null;
 const mirrorJump = d.jump ? { takeoff: mirror(d.jump.takeoff), landing: mirror(d.jump.landing) } : null;
-const shares = d.jump ? Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(d.jump.takeoff)
-  && JUMPS[k].name.toLowerCase() !== d.name.toLowerCase()) : [];
+/* WHICH JUMPS SHARE A TAKEOFF EDGE IS THE MODEL'S QUESTION, and skating.js already
+   answers it. This was a second copy of that rule — same result, computed from the
+   page's own frontmatter and keyed on the jump's NAME — which is the shape this
+   repository keeps getting caught by: two expressions of one fact, drifting apart
+   the first time one of them is edited. Look the key up, then ask the model. */
+const jumpKey = d.jump ? Object.keys(JUMPS).find(k => JUMPS[k].name.toLowerCase() === d.name.toLowerCase()) : null;
+const shares = jumpKey ? confusableWith(jumpKey) : [];
+/* What separates a pair that share a takeoff edge, derived rather than written:
+   either one uses the pick and the other does not, or they differ in rotations.
+   There is no third answer, because the takeoff edge is the only other thing a
+   jump is made of. */
+const sharesDetail = shares.map(k => ({
+  name: JUMPS[k].name.toLowerCase(),
+  differsBy: JUMPS[k].assisted !== d.jump.assisted ? 'the pick' : 'the number of rotations',
+}));
 const allElements = await getCollection('elements');
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
 
@@ -93,6 +107,42 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
   <Unverified verified={d.verified} />
 
   {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} turns={d.turns ?? null} />}
+
+  {/* A JUMP HAS TWO EDGES AND THE GUIDE WAS DRAWING NEITHER. Six of the seven jump
+      pages contained no picture at all — not a tracing, not a rig — on a site whose
+      own subtitle promises every jump drawn. These come from `jump:`, which every
+      page already carries, so there is no new data and nothing to keep in step.
+
+      EdgeThumb rather than EdgeDiagram, for the reason the front page uses it: it
+      draws in the frontmatter and ships a path, where the full instrument costs a
+      script and a requestAnimationFrame loop per copy. Two of those on an element
+      page that may already be running a body frame is a poor trade for a curve that
+      does not need to move. */}
+  {d.jump && (
+    <figure class="jumptrace">
+      <div class="jt-pair">
+        <div>
+          <EdgeThumb entry={d.jump.takeoff} />
+          <b>{label(d.jump.takeoff)}</b><span>takes off</span>
+        </div>
+        <div>
+          <EdgeThumb entry={d.jump.landing} />
+          <b>{label(d.jump.landing)}</b><span>lands</span>
+        </div>
+      </div>
+      <figcaption>
+        The two edges, drawn. What happens between them is not: a tracing is the record
+        of a blade on the ice, and for most of a jump the blade is not on it.
+        {sharesDetail.length > 0 && (
+          <> Each of these curves is drawn by more than one jump — what separates this
+          one from the {sharesDetail.map(x => x.name).join(' and the ')} is{' '}
+          {[...new Set(sharesDetail.map(x => x.differsBy))].join(' and ')}, and no curve
+          can show either.</>
+        )}
+      </figcaption>
+    </figure>
+  )}
+
   {d.rig && <BodyFrame move={d.rig} />}
 
   <Content />

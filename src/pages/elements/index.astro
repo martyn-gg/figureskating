@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
+import EdgeThumb from '../../components/EdgeThumb.astro';
 import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../lib/skating.js';
 
 const elements = await getCollection('elements');
@@ -68,6 +69,35 @@ const restKinds = [...new Set(rest.map(e => e.data.kind))];
 
 const nEdges = elements.filter(e => e.data.kind === 'edge').length;
 const nTurns = elements.filter(e => e.data.kind === 'turn').length;
+
+/* ONE LIST DRIVES BOTH THE CONTENTS STRIP AND THE HEADINGS BELOW — 30/08/2026,
+   Martyn: the page is very long and the jumps are at the bottom of it.
+
+   A hand-written strip would be a second statement of what this page contains, and
+   the last thing in this repository that stated its own contents by hand was the
+   featured filter that silently absorbed twenty-four twizzles. So the strip is
+   derived from the same counts the sections are, an empty section cannot appear in
+   it, and a kind added tomorrow appears in both without anyone remembering to.
+
+   Order is deliberately NOT changed here. What should decide it is whether an
+   element appears in a test the guide holds — docs/gaps-competition.md sets that
+   out, and it is a bigger change than a contents strip. Until then the strip is
+   what makes the bottom of the page one tap away instead of a scroll. */
+const oneFoot = elements.filter(e => e.data.kind === 'turn' && TURN_KEYS.includes(e.data.turn));
+const twoFoot = elements.filter(e => e.data.kind === 'turn' && STEP_KEYS.includes(e.data.turn));
+const KIND_LABEL = k => k === 'position' ? 'Positions'
+  : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`;
+
+const SECTIONS = [
+  { id: 'edges',       label: 'Edges',          n: nEdges },
+  { id: 'one-foot',    label: 'One-foot turns', n: oneFoot.length },
+  { id: 'two-foot',    label: 'Two-foot turns', n: twoFoot.length },
+  { id: 'twizzles',    label: 'Twizzles',       n: twizzles.length },
+  { id: 'transitions', label: 'Transitions',    n: transitions.length },
+  { id: 'clusters',    label: 'Clusters',       n: combos.length },
+  ...restKinds.map(k => ({ id: k, label: KIND_LABEL(k),
+                           n: rest.filter(e => e.data.kind === k).length })),
+].filter(s => s.n > 0);
 ---
 <Base title="Elements" subtitle="Every plain edge and two-foot turn, on both feet.">
   <h1>Elements</h1>
@@ -77,7 +107,15 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     it can appear in as many as it likes.
   </p>
 
-  <h2>Edges</h2>
+  {/* Decorative arrows would be noise; the count is the useful part, because it
+      tells a reader whether a section is eight links or sixty-four. */}
+  <nav class="toc" aria-label="Sections on this page">
+    {SECTIONS.map(sec => (
+      <a href={`#${sec.id}`}>{sec.label}<b>{sec.n}</b></a>
+    ))}
+  </nav>
+
+  <h2 id="edges">Edges</h2>
   <p class="note">
     Three letters: foot, direction, edge. The two columns are the same edge on either
     foot — mirror images, which is why the guide only has to describe them once.
@@ -104,7 +142,7 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     </tbody>
   </table>
 
-  <h2>One-foot turns</h2>
+  <h2 id="one-foot">One-foot turns</h2>
   <p class="note">
     These keep the same foot and reverse the direction of travel. What is left to vary is
     the edge and the rotation, and that is the whole table. Each cell shows the edge you
@@ -150,7 +188,7 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     edge it can start from.
   </p>
 
-  <h2>Two-foot turns</h2>
+  <h2 id="two-foot">Two-foot turns</h2>
   <p class="note">
     A mohawk and a choctaw step onto the other foot instead of turning on the blade, so
     there is no cusp — the tracing stops and starts again beside itself. The same rule
@@ -200,7 +238,7 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
 
   {twizzleGroups.length > 0 && (
     <>
-      <h2>Twizzles</h2>
+      <h2 id="twizzles">Twizzles</h2>
       <p class="note">
         The one element here that the three flags do not decide on their own. A twizzle
         rotates continuously while it travels, so its tracing curls rather than coming to
@@ -230,7 +268,7 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
 
   {transitionGroups.length > 0 && (
     <>
-      <h2>Transitions</h2>
+      <h2 id="transitions">Transitions</h2>
       <p class="note">
         The connecting material — what happens between turns. None of it reverses the
         direction of travel, which is exactly what makes it not a turn. The same three
@@ -258,7 +296,7 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
 
   {comboGroups.length > 0 && (
     <>
-      <h2>Clusters</h2>
+      <h2 id="clusters">Clusters</h2>
       <p class="note">
         Turns are done in runs as often as singly. A cluster stores its entry edge and the
         order of its turns; every edge in between is chained out of the same rule, so a run
@@ -279,19 +317,49 @@ const nTurns = elements.filter(e => e.data.kind === 'turn').length;
     </>
   )}
 
+  {/* These were the only sections on the page with no picture in them, which is
+      most of why they read as an appendix to it. A jump carries its takeoff edge
+      and a held position carries its entry edge, so both can draw the curve they
+      begin on for nothing — same EdgeThumb, same buildTrace, no script. */}
   {restKinds.map(k => (
     <>
-      <h2>{k === 'position' ? 'Positions' : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`}</h2>
-      <ul class="plain">
-        {rest.filter(e => e.data.kind === k).map(e => (
-          <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>
-        ))}
+      <h2 id={k}>{KIND_LABEL(k)}</h2>
+      <ul class="plain withthumb">
+        {rest.filter(e => e.data.kind === k).map(e => {
+          const begins = e.data.entry ?? e.data.jump?.takeoff ?? null;
+          return (
+            <li>
+              {begins && <a class="th" href={url(`elements/${e.id}/`)} aria-hidden="true" tabindex="-1"><EdgeThumb entry={begins} box={56} pad={16} /></a>}
+              <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
+              <span>{e.data.summary}</span>
+            </li>
+          );
+        })}
       </ul>
     </>
   ))}
 </Base>
 
 <style>
+  .toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:1.1rem 0 1.6rem}
+  .toc a{display:inline-flex;align-items:center;gap:.42rem;text-decoration:none;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.84rem;
+    padding:.34rem .62rem;border:1px solid var(--ice-line);border-radius:999px;
+    background:var(--ice);color:var(--ink)}
+  .toc a:hover,.toc a:focus-visible{border-color:var(--accent);color:var(--accent)}
+  .toc b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .toc a:hover b,.toc a:focus-visible b{color:var(--accent)}
+
+  /* The thumb is decorative — the link beside it names the element — so it is out
+     of the tab order and hidden from a screen reader rather than read twice. */
+  /* Matched to `ul.plain li`'s own strength in Base.astro so the display wins
+     without needing !important. */
+  ul.plain.withthumb li{display:grid;grid-template-columns:56px 1fr;
+    column-gap:.8rem;align-items:center}
+  ul.plain.withthumb li>a:not(.th){grid-column:2}
+  ul.plain.withthumb li>span{grid-column:2}
+  ul.plain.withthumb .th{grid-row:span 2;display:block;width:56px}
+
   .note{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.84rem;
     color:var(--ink-soft);margin:.2rem 0 .9rem}
   .scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
