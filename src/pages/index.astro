@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import EdgeThumb from '../components/EdgeThumb.astro';
+import EdgeDiagram from '../components/EdgeDiagram.astro';
 import { url } from '../lib/url.js';
 import { label } from '../lib/skating.js';
 const elements = await getCollection('elements');
@@ -15,9 +17,24 @@ const KINDS = ['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', '
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
 const unnamed = elements.filter(e => !KINDS.includes(e.data.kind)).length;
 
+/* THE OVERVIEW. Forwards before backwards, outside before inside, left before
+   right — so the grid reads as the model rather than as an alphabetical accident,
+   and the mirrored pair of any cell is the one beside it. Nothing here is a list
+   of slugs: the page asks for the edges and sorts them by what they are. */
+const ORDER = { dir: 'FB', edge: 'OI', foot: 'LR' };
+const rank = e => ORDER.dir.indexOf(e.data.entry.dir) * 4
+                + ORDER.edge.indexOf(e.data.entry.edge) * 2
+                + ORDER.foot.indexOf(e.data.entry.foot);
+const edges = byKind('edge').filter(e => e.data.entry).sort((a, b) => rank(a) - rank(b));
+
 /* The first edge a skater is taught, found by what it is rather than by a slug
    typed in here — a file renamed by hand should break the build, not the link. */
-const firstEdge = elements.find(e => e.data.kind === 'edge' && label(e.data.entry) === 'LFO');
+const firstEdge = edges.find(e => label(e.data.entry) === 'LFO');
+
+/* The one thing on this page that moves. A three turn, because it is the shortest
+   demonstration of the argument the guide is making: same foot, same circle, one
+   rotation, and the edge changes under you. Found the same way as the edges. */
+const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.entry) === 'LFO');
 ---
 <Base title={null} subtitle="Every edge, turn, jump and position — drawn from three views, on both feet, with the tests each one belongs to.">
   <h1>Field Guide to Figure Skating</h1>
@@ -33,6 +50,54 @@ const firstEdge = elements.find(e => e.data.kind === 'edge' && label(e.data.entr
     <a href={url('coaches/')}>Coaches, judges and technical officials can help verify it</a> —
     a page only loses this notice once real people have signed off the passage on it.
   </div>
+
+  <h2>Every edge there is</h2>
+  <p class="notation">
+    Three letters: foot, direction, edge. <b>LFO</b> is a left foot travelling forwards
+    on an outside edge; <b>RBI</b> is a right foot going backwards on an inside one.
+    There are {counts.edge} of them, the dot marks where the blade goes down, and almost
+    everything else in skating is one of these followed by another.
+  </p>
+
+  <div class="edge-grid">
+    {edges.map(e => (
+      <a href={url(`elements/${e.id}/`)}>
+        <EdgeThumb entry={e.data.entry} />
+        <b>{label(e.data.entry)}</b>
+        <span>{e.data.name.replace(/ edge$/, '')}</span>
+      </a>
+    ))}
+  </div>
+
+  <p>
+    Four shapes, twice over. Every cell above is the mirror of the one beside it,
+    because which way a lobe curves is a product of exactly those three facts — so the
+    guide stores the three and works the rest out. Nothing is drawn twice and nothing
+    is written twice, which is also why a skater who rotates the other way gets the
+    same detail as everyone else rather than being told to hold a diagram up to a
+    mirror.
+  </p>
+
+  {three && (
+    <>
+      <h2>And what a turn does to one</h2>
+      <p>
+        It runs on its own. The foot does not change and neither does the circle — the
+        skater rotates half a turn towards its centre and comes out backwards on the
+        other edge of the same blade. Pause it, scrub it, slow it to an eighth, or
+        mirror it and watch the same element come out the other way round.
+      </p>
+      <EdgeDiagram entry={three.data.entry} turn={three.data.turn} />
+      <p>
+        That is a {three.data.name.toLowerCase()}, and there are{' '}
+        <a href={url('elements/')}>{counts.turn - 1} more turns</a> where it came from,
+        plus {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
+        {counts.combination} clusters, {counts.jump} jumps and {counts.position}{' '}
+        positions — each with the same tracing, the same three views of the body, and
+        the tests it belongs to.
+      </p>
+    </>
+  )}
 
   <h2>Start here</h2>
   <ul class="plain">
@@ -69,26 +134,6 @@ const firstEdge = elements.find(e => e.data.kind === 'edge' && label(e.data.entr
     </p>
   )}
 
-  <h2>How to read an edge</h2>
-  <div class="derived">
-    <p class="notation">
-      Three letters: foot, direction, edge. <b>LFO</b> is a left foot travelling forwards
-      on an outside edge; <b>RBI</b> is a right foot going backwards on an inside one.
-      Eight of those exist, and almost everything in skating is one of them followed by
-      another.
-    </p>
-    <p>
-      Which way a lobe curves is a product of exactly those three facts, so the guide
-      stores the three and works the rest out. Nothing is drawn twice and nothing is
-      written twice.
-    </p>
-    <p>
-      That is also why every element mirrors for free. Flip the foot and you have the
-      version for a skater who rotates the other way — which almost nothing else
-      available to a British skater provides.
-    </p>
-  </div>
-
   <h2>What this is</h2>
   <p>
     A personal project, built in the evenings, for skaters and parents who have been
@@ -102,3 +147,18 @@ const firstEdge = elements.find(e => e.data.kind === 'edge' && label(e.data.entr
     {unnamed > 0 && <> — {unnamed} of them in a category this page has not been taught to name</>}.
   </p>
 </Base>
+
+<style>
+  /* Four across on anything with room, two on a phone — never three, because the
+     eight are four mirrored pairs and an odd column splits a pair across a row. */
+  .edge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin:1.4rem 0 1.6rem}
+  @media (max-width:640px){ .edge-grid{grid-template-columns:repeat(2,1fr)} }
+
+  .edge-grid a{display:block;text-decoration:none;color:var(--ink);text-align:center;
+    background:var(--ice);border:1px solid var(--ice-line);border-radius:12px;
+    padding:.55rem .4rem .65rem}
+  .edge-grid a:hover,.edge-grid a:focus-visible{border-color:var(--accent)}
+  .edge-grid b{display:block;margin-top:.35rem;font-size:1rem;letter-spacing:.05em}
+  .edge-grid span{display:block;margin-top:.1rem;line-height:1.25;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.7rem;color:var(--ink-soft)}
+</style>

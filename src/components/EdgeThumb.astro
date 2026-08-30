@@ -1,0 +1,52 @@
+---
+/* ONE TRACING, DRAWN AT BUILD TIME.
+
+   `EdgeDiagram` is the full instrument — it animates, scrubs, mirrors and carries a
+   boot round the curve — and it costs a script and a requestAnimationFrame loop for
+   every copy on the page. Eight of those on the landing page would be eight loops
+   running before a reader has decided to stay, on a phone, at a rink, in the cold.
+
+   So this draws the same curve from the same `buildTrace`, in Astro's frontmatter,
+   and ships an SVG path with no JavaScript behind it at all. The model is not
+   duplicated: if `lobeSense` ever changed its mind about which way a lobe curves,
+   these thumbnails and the animated diagram would both change with it.
+
+   The fitting is deliberately a copy rather than a shared helper — it is four lines,
+   and mount()'s version lives in the browser where the viewBox is fixed at 640x340.
+   Both put the same padding round the same bounding box. */
+import { buildTrace } from '../lib/edge-diagram.js';
+
+const { entry, box = 132, pad = 24 } = Astro.props;
+const { frames } = buildTrace({ entry, radius: 120 });
+
+let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+for (const f of frames) {
+  x0 = Math.min(x0, f.x); y0 = Math.min(y0, f.y);
+  x1 = Math.max(x1, f.x); y1 = Math.max(y1, f.y);
+}
+const w = x1 - x0 + pad * 2, h = y1 - y0 + pad * 2;
+const s = Math.min(box / w, box / h);
+const tx = (box - w * s) / 2 - (x0 - pad) * s;
+const ty = (box - h * s) / 2 - (y0 - pad) * s;
+
+const d = frames.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+const start = frames[0];
+/* The same two colours the full diagram uses, and for the same reason: the edge is
+   the fact being shown, so it is what carries the hue. */
+const stroke = entry.edge === 'O' ? 'var(--edge-out)' : 'var(--edge-in)';
+---
+{/* Decorative here: the link around it already names the edge, in letters and in
+    words, and a screen reader does not need the fact three times. */}
+<svg viewBox={`0 0 ${box} ${box}`} aria-hidden="true" focusable="false" class="ethumb">
+  <g transform={`translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${s.toFixed(4)})`}>
+    <path d={d} fill="none" stroke={stroke} stroke-width={(5.5 / s).toFixed(2)}
+          stroke-linecap="round" stroke-linejoin="round" />
+    {/* Where the blade goes down. Without it the eight curves are eight arcs and
+        nothing says which end is the beginning. */}
+    <circle cx={start.x.toFixed(1)} cy={start.y.toFixed(1)} r={(6.5 / s).toFixed(2)} fill={stroke} />
+  </g>
+</svg>
+
+<style>
+  .ethumb{display:block;width:100%;height:auto}
+</style>
