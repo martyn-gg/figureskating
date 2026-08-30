@@ -7,6 +7,15 @@ import { readFile } from 'node:fs/promises';
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+/* The base path lived as the literal '/figureskating' in two tools, which was
+   fine right up until the site got its own domain and the base became '/'. Read
+   it from the one file that decides it instead — a checker that has the base
+   wrong reports on paths the site does not serve. Normalised without a trailing
+   slash, so `BASE + '/x'` is right for both '' and '/figureskating'. */
+export const BASE = (await import('../astro.config.mjs')).default.base
+  ?.replace(/\/+$/, '') ?? '';
+export const stripBase = p => (BASE && p.startsWith(BASE)) ? p.slice(BASE.length) || '/' : p;
+
 /* Playwright is not a dependency of the site — the browser download is far too
    heavy to inflict on anyone who only wants to build pages. Screenshot tools ask
    for it politely instead of exploding. */
@@ -34,7 +43,7 @@ export async function serveDist() {
     process.exit(2);
   });
   const server = createServer(async (req, res) => {
-    let p = join(DIST, decodeURIComponent(req.url.split('?')[0]).replace(/^\/figureskating/, ''));
+    let p = join(DIST, stripBase(decodeURIComponent(req.url.split('?')[0])));
     try {
       let body;
       try { body = await readFile(p); }
@@ -44,7 +53,7 @@ export async function serveDist() {
     } catch { res.writeHead(404); res.end('not found'); }
   });
   await new Promise(r => server.listen(0, r));
-  return { origin: `http://localhost:${server.address().port}/figureskating`, close: () => server.close() };
+  return { origin: `http://localhost:${server.address().port}${BASE}`, close: () => server.close() };
 }
 
 /* Load the rig explorer, select a move, pause, and choose which views to show. */

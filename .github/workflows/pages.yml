@@ -1,0 +1,56 @@
+# Build and publish to GitHub Pages.
+#
+# The checks run before the build, and nothing publishes if they fail — the whole
+# point of sixteen checkers is that nothing reaches the rink that one of them
+# would have caught. `npm run check` includes its own `astro build`, so dist/ is
+# already the checked artefact by the time it is uploaded.
+#
+# The four Playwright checks are deliberately not here. They need a browser
+# download on every run, they are slow, and they are the ones that look at
+# rendered pixels — which is work for a human to review, not for a gate.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time, and a queued one waits rather than cancelling: a
+# half-published site is worse than a slightly stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+      # `npm ci` rather than `npm install`, so CI builds the dependency tree the
+      # lockfile records rather than whatever resolves that morning. This is why
+      # package-lock.json is committed.
+      - run: npm ci
+      - run: npm run check
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

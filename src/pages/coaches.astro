@@ -1,0 +1,134 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+import { CONTACT, COACHES } from '../lib/site.js';
+
+/* An application is an email, not a form post. The site is static files with no
+   database and no session, and it should stay that way: there is nothing here for
+   a bot to sign up to, no password to lose, and no applicant record sitting on a
+   server waiting to be breached. The details below go into a mailbox, get read by
+   a human, and are deleted once the decision is made.
+
+   Prefilled so an applicant does not have to guess what we need, and so a reply
+   that is missing half of it is obviously missing half of it. */
+const FIELDS = [
+  'Name:',
+  'Governing body (BIS, SkateUK, ISU, other):',
+  'Coaching licence or membership number, if you hold one:',
+  'Qualification, and roughly when you took it:',
+  'Rink or club, now or previously:',
+  'Role: coach / judge / technical official / other:',
+  'Anyone already on the guide who can vouch for you (optional):',
+  'Anything else that helps us place you:',
+];
+const body = [
+  "I'd like to help check the guide.",
+  '',
+  ...FIELDS,
+  '',
+  '— sent from figureskating.guide/coaches/',
+].join('\n');
+const mailto = `mailto:${COACHES}` +
+  `?subject=${encodeURIComponent('Coach verification — application')}` +
+  `&body=${encodeURIComponent(body)}`;
+---
+<Base title="For coaches" subtitle="How coaches, judges and officials can verify the guide, and how to ask to be added.">
+  <h1>For coaches and officials</h1>
+  <p class="lede">
+    Everything on this site is unverified until somebody who teaches or judges this
+    for a living says otherwise. If that is you, this page is the way in.
+  </p>
+
+  <h2>What we are asking of you</h2>
+  <p>
+    Read a description and say whether it is right. That is the whole job. There is
+    no minimum, no rota and no commitment: sign off one passage on the bus home and
+    that is one passage better than it was.
+  </p>
+  <p>
+    Sign-off attaches to a <b>passage</b>, not to a page. The same description of a
+    forward outside three turn serves every page that needs it, so checking it once
+    fixes it everywhere rather than putting the same paragraph in front of you eight
+    times with the feet swapped. A passage carries a tick once three people have
+    approved it, and each tick records who approved it and in what capacity — a
+    count on its own tells a reader nothing.
+  </p>
+  <p>
+    An objection is not a vote against two approvals. If one person says a passage is
+    wrong, the tick comes off immediately and it goes back into the queue with the
+    objection attached. Getting it wrong in public is the thing this project is most
+    worried about; a majority is no comfort at all if the minority is right.
+  </p>
+
+  <h2>Who can take part</h2>
+  <p>
+    Coaches, judges and technical officials, whether you are working now or not. A
+    licence is permission to teach, not evidence of knowledge, and a coach who
+    stopped taking lessons five years ago has forgotten none of it — often they have
+    more time to give than the people still on the ice at six in the morning. So any
+    of the following is enough:
+  </p>
+  <ul class="plain">
+    <li>
+      <b>A current coaching licence</b>
+      <span>British Ice Skating or another recognised body — send the number and we will check it</span>
+    </li>
+    <li>
+      <b>A lapsed licence, or a qualification you still hold</b>
+      <span>retired, on a break, or simply not renewing — the knowledge did not lapse with it</span>
+    </li>
+    <li>
+      <b>A judging or technical official appointment</b>
+      <span>serving or retired; you have read more of these elements than almost anyone</span>
+    </li>
+    <li>
+      <b>A vouch from someone already verified here</b>
+      <span>for anyone whose paperwork does not fit the rows above — name them and we will ask</span>
+    </li>
+  </ul>
+
+  <h2>How to apply</h2>
+  <p>
+    There is no sign-up form and no account to create, deliberately. You send an
+    email, a human reads it, and if it checks out you are added to the list. That
+    keeps the site as a set of static files with nothing to break into, and it means
+    a bot cannot get in by filling something in faster than you can.
+  </p>
+  <p>
+    <a href={mailto}>Open a pre-filled email to {COACHES}</a>, or write to that
+    address yourself and include:
+  </p>
+  <div class="derived">
+    <p>{FIELDS.join(' · ')}</p>
+  </div>
+  <p>
+    We check licence numbers against the governing body's own public register. If
+    yours is lapsed or you are applying on a qualification or a vouch, say so plainly
+    rather than leaving the field blank — an honest gap is easy to deal with and an
+    unexplained one is not.
+  </p>
+
+  <h2>What happens to your details</h2>
+  <p>
+    They go to a mailbox and no further. Nothing you send is stored in the site, in a
+    database or in a third party's form service, and once a decision is made the
+    application email is deleted. What survives is a line saying that a named person,
+    in a named capacity, approved a particular passage — which is the part a reader
+    needs to see. If you would rather be shown by role than by name, say so and that
+    is how it will appear.
+  </p>
+
+  <h2>Comments</h2>
+  <p>
+    Comment threads under a passage are for verified coaches and officials only. It
+    is a small enough field that a comment carries weight because of who wrote it,
+    and opening it to everyone would turn that into a comment section. Everyone else
+    is very welcome to send a correction — <a href={`mailto:${CONTACT}`}>{CONTACT}</a>{' '}
+    — and plenty of the fixes so far have come in exactly that way.
+  </p>
+
+  <p style="margin-top:1.5rem">
+    <a href={url('about/')}>More about the guide</a>, including what it costs and what
+    it deliberately is not.
+  </p>
+</Base>

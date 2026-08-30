@@ -2,27 +2,49 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { url } from '../lib/url.js';
+import { label } from '../lib/skating.js';
 const elements = await getCollection('elements');
 const tests = await getCollection('tests');
 const byKind = k => elements.filter(e => e.data.kind === k);
-const featured = elements
-  .filter(e => !['edge', 'turn', 'transition', 'combination'].includes(e.data.kind))
-  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+/* Name the kinds this page counts rather than the kinds it hides. The old line
+   listed the exclusions, so the twenty-four twizzles added on 29/08/2026 fell
+   through it and landed alphabetically in amongst the jumps — a new kind should
+   not be able to appear here by not having been thought of. */
+const KINDS = ['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position'];
+const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
+const unnamed = elements.filter(e => !KINDS.includes(e.data.kind)).length;
+
+/* The first edge a skater is taught, found by what it is rather than by a slug
+   typed in here — a file renamed by hand should break the build, not the link. */
+const firstEdge = elements.find(e => e.data.kind === 'edge' && label(e.data.entry) === 'LFO');
 ---
-<Base title={null}>
+<Base title={null} subtitle="Every edge, turn, jump and position — drawn from three views, on both feet, with the tests each one belongs to.">
   <h1>Field Guide to Figure Skating</h1>
   <p class="lede">
-    Edges, turns, jumps, spins and positions — with the national tests each one appears in.
-    Built so it works at the rink with no signal.
+    What each element actually is, drawn from three views and on both feet, with the
+    British Ice Skating tests it belongs to. Free to read, no account, and it keeps
+    working at the rink when the signal does not.
   </p>
+
+  <div class="unverified">
+    <b>Not checked by a coach yet.</b> Every page here is written from public material
+    and derived from first principles, which is not the same thing as being right.{' '}
+    <a href={url('coaches/')}>Coaches, judges and technical officials can help verify it</a> —
+    a page only loses this notice once real people have signed off the passage on it.
+  </div>
 
   <h2>Start here</h2>
   <ul class="plain">
     <li>
-      <a href={url('elements/')}>Edges and turns</a>
+      <a href={url('elements/')}>Elements</a>
       <span>
-        {byKind('edge').length} edges, {byKind('turn').length} turns,
-        {byKind('transition').length} transitions and {byKind('combination').length} clusters
+        {/* A line that ends in an expression eats the newline after it, so the
+            spaces are explicit. Two counts ran together as "32 twizzles,36
+            transitions" before they were. */}
+        {counts.edge} edges, {counts.turn} turns, {counts.twizzle} twizzles,{' '}
+        {counts.transition} transitions, {counts.combination} clusters,{' '}
+        {counts.jump} jumps and {counts.position} positions
       </span>
     </li>
     <li>
@@ -33,36 +55,50 @@ const featured = elements
       <a href={url('rig/')}>Body frame</a>
       <span>one rig, three views, one clock — what the rest of the body is doing</span>
     </li>
+    <li>
+      <a href={url('search/')}>Search</a>
+      <span>type an edge code, a name, or the name your coach uses for it</span>
+    </li>
   </ul>
 
-  <h2>Mechanics</h2>
-  <ul class="plain">
-    {featured.map(e => (
-      <li>
-        <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
-        <span>{e.data.summary}</span>
-      </li>
-    ))}
-  </ul>
-
-  <h2>How it is built</h2>
-  <div class="derived">
+  {firstEdge && (
     <p>
-      Almost nothing here is drawn or written per element. Which way a lobe curves is a
-      product of three facts about the foot — which foot, which edge, forwards or backwards —
-      so the guide stores those three and derives the rest.
+      If you have never read a page here before, start with the{' '}
+      <a href={url(`elements/${firstEdge.id}/`)}>left forward outside edge</a>. Everything
+      else in the guide is that page with one or two things changed.
+    </p>
+  )}
+
+  <h2>How to read an edge</h2>
+  <div class="derived">
+    <p class="notation">
+      Three letters: foot, direction, edge. <b>LFO</b> is a left foot travelling forwards
+      on an outside edge; <b>RBI</b> is a right foot going backwards on an inside one.
+      Eight of those exist, and almost everything in skating is one of them followed by
+      another.
     </p>
     <p>
-      That is why every element mirrors for free: flip the foot and you have the version for
-      a skater who rotates the other way, which almost no other resource provides.
+      Which way a lobe curves is a product of exactly those three facts, so the guide
+      stores the three and works the rest out. Nothing is drawn twice and nothing is
+      written twice.
+    </p>
+    <p>
+      That is also why every element mirrors for free. Flip the foot and you have the
+      version for a skater who rotates the other way — which almost nothing else
+      available to a British skater provides.
     </p>
   </div>
 
+  <h2>What this is</h2>
+  <p>
+    A personal project, built in the evenings, for skaters and parents who have been
+    handed a syllabus and told to go and learn a bracket. It is not affiliated with
+    British Ice Skating or with any club, it reproduces no governing body's material,
+    and it will not ever charge for access. <a href={url('about/')}>More about it here</a>.
+  </p>
+
   <p style="margin-top:1.5rem;font-size:.9rem;color:var(--ink-soft)">
-    {elements.length} elements recorded — {byKind('edge').length} edges,
-    {byKind('turn').length} turns, {byKind('transition').length} transitions,
-    {byKind('combination').length} clusters, {byKind('jump').length} jumps,
-    {byKind('position').length} positions.
-    None of it checked by a coach yet.
+    {elements.length} elements recorded across {tests.length} tests
+    {unnamed > 0 && <> — {unnamed} of them in a category this page has not been taught to name</>}.
   </p>
 </Base>

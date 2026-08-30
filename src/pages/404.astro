@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+const elements = await getCollection('elements');
+---
+<Base title="Not here" subtitle="That page does not exist. Search, or start from the element index.">
+  <h1>That page isn't here</h1>
+  <p class="lede">
+    Either the address is wrong, or something moved and this page did not get told
+    about it. The second one is a bug — <a href={url('about/')}>please say so</a>.
+  </p>
+
+  <h2>Try one of these</h2>
+  <ul class="plain">
+    <li>
+      <a href={url('search/')}>Search</a>
+      <span>{elements.length} elements, findable by edge code, by name, or by the name your coach uses</span>
+    </li>
+    <li>
+      <a href={url('elements/')}>Elements</a>
+      <span>the full index, grouped by what each thing is</span>
+    </li>
+    <li>
+      <a href={url('tests/')}>Tests</a>
+      <span>if you are looking for a syllabus rather than a movement</span>
+    </li>
+    <li>
+      <a href={url()}>Front page</a>
+      <span>back to the beginning</span>
+    </li>
+  </ul>
+
+  <p>
+    Offline copies are kept per page, so a page you have read before will still open
+    at the rink even with no signal — but one you have never opened cannot be
+    conjured out of nothing, and this is what that looks like.
+  </p>
+</Base>

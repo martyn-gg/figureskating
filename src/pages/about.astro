@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+import { CONTACT, DONATE, COSTS, money } from '../lib/site.js';
+const elements = await getCollection('elements');
+const tests = await getCollection('tests');
+---
+<Base title="About" subtitle="Who made this, how it is built, what it costs and what it is not.">
+  <h1>About the guide</h1>
+  <p class="lede">
+    A field guide to figure skating, written for skaters, parents and anyone who has
+    been handed a syllabus and told to go and learn a bracket.
+  </p>
+
+  <h2>Why it exists</h2>
+  <p>
+    Most of what a skater needs is either locked inside a coach's head or scattered
+    across videos filmed at the far end of a rink. Neither is much use at seven in
+    the morning when you are trying to remember which way the free hip is supposed
+    to face. So this is the other thing: a page per element, the same three views
+    every time, and a plain statement of which test it belongs to.
+  </p>
+  <p>
+    It covers {elements.length} elements across {tests.length} tests so far, and it
+    will keep growing — edges and turns first, then spins, then dance and the
+    competition-level material, kept on their own tabs so that a skater on their
+    first test is not confronted with a triple.
+  </p>
+
+  <h2>How it is built</h2>
+  <p>
+    Almost nothing here is drawn or written one element at a time. Which way a lobe
+    curves follows from three facts about the foot — which foot, which edge, forwards
+    or backwards — so the guide records those three and derives the rest. The figures
+    are geometry rendered from a body-frame rig, not clip art, which is why the same
+    move can be shown from above, from the side and from behind without anyone
+    redrawing it, and why every element exists for both feet.
+  </p>
+  <p>
+    The consequence a reader notices is that the guide mirrors for free. A skater who
+    rotates the other way gets the same detail as everyone else, rather than being
+    told to hold a diagram up to a mirror.
+  </p>
+
+  <h2>What it is not</h2>
+  <p>
+    It is not affiliated with British Ice Skating, with the ISU, or with any club or
+    rink. Where it uses their names for things it does so because those are the names
+    a British skater will be examined on. No governing body's material is reproduced:
+    every word and every figure here is written and drawn from scratch, from public
+    sources, and the syllabus documents themselves are read locally and never
+    redistributed.
+  </p>
+  <p>
+    It is also not a substitute for a coach. Nobody has ever learned a rocker off a
+    web page. What this can do is tell you what you are trying to do before you get
+    on the ice, and give you something to look at afterwards.
+  </p>
+
+  <h2>Is it correct?</h2>
+  <p>
+    Not yet verified, and the guide says so on every page rather than hoping you do
+    not ask. The mechanics are derived from first principles and cross-checked
+    against the published syllabuses, which catches a great deal and cannot catch
+    everything. The plan is to have the descriptions checked by people who teach
+    this for a living: a passage carries a tick once several of them have signed it
+    off, and a single objection pulls that tick straight back down.
+  </p>
+  <p>
+    If you coach, judge or officiate — currently, or you used to —{' '}
+    <a href={url('coaches/')}>please get in touch</a>. If you do not, and you have
+    spotted something wrong, that is just as welcome: write to{' '}
+    <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+  </p>
+
+  <h2>What it costs</h2>
+  <div class="derived">
+    <p>
+      Hosting is free — the site is static files on GitHub Pages. The only real bill
+      is the domain: {money(COSTS.domain)} a year to register, plus{' '}
+      {money(COSTS.privacy)} for privacy — {money(COSTS.exVat)} ex VAT, or about{' '}
+      {money(COSTS.incVat)} with VAT. That is the whole of it.
+    </p>
+    <p>
+      There will never be a subscription, an account wall or an advert, because the
+      point is that a skater who cannot afford another lesson can still read it.{' '}
+      {DONATE
+        ? <>If you can afford to, <a href={DONATE}>buying a coffee</a> covers the domain
+          and the evenings. If you cannot, read it anyway — that is what it is for.</>
+        : <>A donation link will appear here shortly, for anyone who would like to
+          chip in towards the domain. Until then there is nothing to pay and nothing
+          to click.</>}
+    </p>
+  </div>
+
+  <h2>Who made it</h2>
+  <p>
+    One person, in Surrey, in the evenings, with a great deal of help from a skater
+    who kept pointing out that the free foot was in the wrong place. Corrections,
+    arguments and better wording all to{' '}
+    <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+  </p>
+</Base>

@@ -3,8 +3,16 @@ dist/
 .astro/
 .DS_Store
 *.log
+
+# Review screenshots. They are how a rendering change gets looked at, not part of
+# the site: a few megabytes each, stale the moment a pose moves, and regenerable
+# from tools/. Kept locally, never committed.
 /tmp-shots/
-package-lock.json
+shots/
+
+# Scratch. device_bash cannot delete, so anything on its way out is moved here and
+# named in the handoff for the human to remove. Never committed.
+_to_delete/
 
 # Governing-body source documents. Read locally, never redistributed — the guide is
 # written *from* them, not *out of* them. The manifests stay tracked, so the shopping
