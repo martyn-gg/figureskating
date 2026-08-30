@@ -19,6 +19,7 @@
     "check:twofoot": "node tools/twofoot.mjs",
     "check:continuity": "node tools/continuity.mjs",
     "check:tracing": "node tools/tracing.mjs",
+    "check:spin": "node tools/spin.mjs",
     "check:contrast": "node tools/contrast.mjs",
     "check:links": "node tools/links.mjs",
     "check:search": "node tools/search.mjs",
@@ -27,8 +28,9 @@
     "check:offline": "node tools/offline.mjs",
     "check:framing": "node tools/framing.mjs",
     "check:ink": "node tools/ink.mjs",
-    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:contrast && npm run check:syllabus && npm run build && npm run check:links && npm run check:search && npm run check:prose && npm run check:freefoot",
+    "check": "npm run check:harness && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:spin && npm run check:contrast && npm run check:syllabus && npm run build && npm run check:links && npm run check:search && npm run check:prose && npm run check:freefoot",
     "gen:derived": "node tools/gen-derived.mjs",
+    "ankle": "node tools/ankle.mjs",
     "drift": "node tools/drift.mjs"
   },
   "dependencies": {

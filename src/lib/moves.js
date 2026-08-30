@@ -15,15 +15,20 @@
    touching, which is most of what distinguishes one edge from another. Mark a
    genuine pick with pick:true on the keyframe. */
 
-import { anterior, lateral } from './rig-math.js';
+import { anterior, lateral, ANKLE_POINT } from './rig-math.js';
 
-const P = (t,n,z,pitch=0) => ({t,n,z,pitch});
+/* `point` is how hard the free foot is pointed, in degrees from the right angle
+   you stand at, and it is clamped to the boot's allowance in bootDir. It is
+   ignored on a skating foot, whose direction comes from the tracing. Leave it out
+   and the foot takes ANKLE_POINT, which is what every pose written before
+   30/08/2026 does — so those poses draw exactly as they always have. */
+const P = (t,n,z,pitch=0,point=ANKLE_POINT) => ({t,n,z,pitch,point});
 
 /* An AUTHORED hand. The flag is the whole of the LH/RH fix below: it is what the
    default-carriage loop refuses to overwrite, and it is what the renderer reads
    to decide whether the guide names which hand is which. One field, in place of
    both a silent overwrite and a measured threshold standing in for intent. */
-const PH = (t,n,z,pitch=0) => ({t,n,z,pitch,authored:true});
+const PH = (t,n,z,pitch=0,point=ANKLE_POINT) => ({t,n,z,pitch,point,authored:true});
 
 /* A SECOND BLADE ON THE ICE. `skate` names the reference blade — the one the path
    is built from and the one the hip hangs off — and stays single-valued; this
@@ -32,7 +37,7 @@ const PH = (t,n,z,pitch=0) => ({t,n,z,pitch,authored:true});
    blade and this foot's direction of travel. Pass a direction only where the two
    feet oppose, which is what a spread eagle's turnout is; leave it out and the
    foot travels the way the skater does. */
-const ON = (t,n,z,pitch=0,dir=null) => ({t,n,z,pitch,onIce:'blade',...(dir?{dir}:{})});
+const ON = (t,n,z,pitch=0,dir=null) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'blade',...(dir?{dir}:{})});
 
 export const MOVES = {
   waltz: {
@@ -264,6 +269,83 @@ export const MOVES = {
        sh:P(8,0,110), L:P(30,-6,0), R:P(46,8,16), skate:'L', edge:'I', dir:'F'},
       {t:1.00, ph:'Held low, free leg extended', hipZ:40, hipYaw:0, shYaw:-2,
        sh:P(16,0,88), L:P(29,-5,0), R:P(80,8,10), skate:'L', edge:'I', dir:'F'},
+    ]},
+
+  /* PROBE — an upright spin, LBI, anticlockwise. Not content; a test of whether
+     the rig can hold a spin at all. See the session notes.
+
+     A spin is an arc of very small radius. lobeSense(L,I,B) = +1, anticlockwise,
+     which is the direction an anticlockwise skater actually spins, so the model
+     picks the foot and edge without being told.
+
+     THE HIP MUST SIT AT THE CENTRE OF CURVATURE. The pose is hip-relative in a
+     frame that rotates with the path, so the hip traces a circle about the path's
+     centre of whatever radius separates them. A spin's body axis is stationary,
+     so that radius has to be zero: the blade's lateral offset from the hip must
+     EQUAL the path radius, and its along-track offset must be zero. Everywhere
+     else in this file the lateral offset is lean and the radius is the lobe, two
+     free numbers. In a spin they are one number. */
+  uprightSpin: {
+    name:'Upright spin',
+    note:'PROBE · back inside edge · three revolutions on the spot',
+    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
+    radius:12, duration:4.5,
+    /* The basic position this spin claims. tools/spin.mjs tests the claim
+       against the ISU's own definition of it. */
+    position:'upright',
+    keys:[
+      {t:0.00, ph:'Rotation established', hipZ:93, hipYaw:180, shYaw:176,
+       sh:P(0,0,145), L:P(0,12,0,2.2), R:P(-16,20,26), skate:'L', edge:'I', dir:'B'},
+      {t:0.35, ph:'Free leg closing', hipZ:95, hipYaw:180, shYaw:178,
+       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-10,17,22), skate:'L', edge:'I', dir:'B'},
+      {t:1.00, ph:'Held — free foot crossed, spinning upright', hipZ:96, hipYaw:180, shYaw:180,
+       sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-6,16,20), skate:'L', edge:'I', dir:'B'},
+    ]},
+
+  /* PROBE — a sit spin. The teapot, spun: same fold, same free leg forward, on
+     a rotating path instead of a glide. hipYaw is 180 so the front of the body
+     is at NEGATIVE t, which is why the free leg's t is the teapot's negated. */
+  sitSpin: {
+    name:'Sit spin',
+    note:'PROBE · back inside edge · folded, free leg forward',
+    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
+    radius:12, duration:4.5,
+    /* The basic position this spin claims. tools/spin.mjs tests the claim
+       against the ISU's own definition of it. */
+    position:'sit',
+    keys:[
+      {t:0.00, ph:'Upright, beginning to sink', hipZ:92, hipYaw:180, shYaw:176,
+       sh:P(-8,0,144), L:P(-18,12,0,2.2), R:P(-40,-6,24), skate:'L', edge:'I', dir:'B'},
+      {t:0.33, ph:'Thigh reaches parallel', hipZ:50, hipYaw:180, shYaw:178,
+       sh:P(-14,0,100), L:P(-32,12,0,2.2), R:P(-72,-6,14), skate:'L', edge:'I', dir:'B'},
+      {t:1.00, ph:'Held — thigh parallel, free leg forward', hipZ:40, hipYaw:180, shYaw:180,
+       sh:P(-16,0,88), L:P(-34,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+    ]},
+
+  /* PROBE — a camel spin. The spiral, spun. Same claim as the sit: the position
+     already exists in this file and the only thing a spin adds is the path. */
+  camelSpin: {
+    name:'Camel spin',
+    note:'PROBE · back inside edge · free leg extended behind at hip height',
+    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
+    radius:12, duration:4.5,
+    /* The basic position this spin claims. tools/spin.mjs tests the claim
+       against the ISU's own definition of it. */
+    position:'camel',
+    keys:[
+      {t:0.00, ph:'Free leg up, chest beginning to drop', hipZ:93, hipYaw:180, shYaw:174,
+       sh:P(-24,0,140), L:P(0,12,0,2.2), R:P(72,-14,114,0,24), skate:'L', edge:'I', dir:'B'},
+      /* The free leg is complete here and does not move again — only the torso
+         settles. Same shape as the extended edge, whose position is complete a
+         third of the way in so that the held part is the part the syllabus asks
+         for. Here the handbook asks for two revolutions and this is the start of
+         them. A leg that kept changing through the held part would be a position
+         the checker could watch being lost, which is the point of measuring it
+         per frame rather than at the keyframes. */
+      {t:0.33, ph:'Reaching back, torso lowering', hipZ:93, hipYaw:180, shYaw:171,
+       sh:P(-42,0,120), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
+      {t:1.00, ph:'Held — free knee above hip level', hipZ:93, hipYaw:180, shYaw:168,
+       sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
     ]},
 };
 
