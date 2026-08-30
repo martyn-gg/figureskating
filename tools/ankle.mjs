@@ -24,7 +24,7 @@ import { THIGH, SHIN, D2R, ANKLE_MAX, ANKLE_POINT, anterior, twoBone, bootDir,
 const elevOf = (pose, w) => {
   const q = pose[w], hip = { t:0, n:0, z:pose.hipZ };
   const k0 = twoBone(hip, q, THIGH, SHIN, anterior(pose.hipYaw));
-  const bd = bootDir(pose, w, k0, q, false);
+  const bd = bootDir(pose, w, k0, q);
   return Math.asin(Math.max(-1, Math.min(1, -bd[2]))) / D2R;
 };
 const worstFree = (m, point) => {
@@ -80,7 +80,7 @@ const camels = (point) => {
        const pose = { hipZ, hipYaw: 180, skate: 'L', R: { t: ft, n: fn, z: fz, pitch: 0, point } };
        const hip = { t:0, n:0, z:hipZ }, q = pose.R;
        const k0 = twoBone(hip, q, THIGH, SHIN, anterior(180));
-       const bd = bootDir(pose, 'R', k0, q, false);
+       const bd = bootDir(pose, 'R', k0, q);
        const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
        const kn = twoBone(hip, an, THIGH, SHIN, anterior(180));
        if (kn.z > hipZ
@@ -94,3 +94,40 @@ for (const point of [10,15,20,25,30])
     (point === 10 ? '   <- none. this was the wall.' : ''));
 console.log('\n   The camel spin was undrawable at 10 and is drawable from 15 up. It is');
 console.log('   the same wall the lunge hit, and it is the same constant.');
+
+console.log('\n3. WHAT IT DECIDES. Same constant read backwards. A free foot authors its');
+console.log('   ankle angle and the boot follows; a PICKED foot authors the boot — pitch,');
+console.log('   on the ice — and the ankle angle follows. So ANKLE_MAX stops being a range');
+console.log('   to check a typed number against and becomes a constraint on the POSE.');
+console.log('   Steepest boot a picked foot can hold with its toe on the ice, by hip');
+console.log('   height, over a reach of 25-60 cm:\n');
+const pickCeiling = (hipZ) => {
+  let best = null;
+  for (let ft = 25; ft <= 60; ft += 1)
+    for (let p = 4; p <= 89; p += 1) {
+      const pose = { hipZ, hipYaw: 176, skate: 'R',
+                     L: { t: ft, n: -16, z: 0, pitch: p, onIce: 'pick' },
+                     R: { t: -34, n: 7, z: 0, pitch: -0.5 } };
+      const q = pose.L, hip = { t: 0, n: 0, z: hipZ };
+      const k0 = twoBone(hip, q, THIGH, SHIN, anterior(176));
+      const bd = bootDir(pose, 'L', k0, q);
+      const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
+      if (Math.hypot(an.t, an.n, an.z - hipZ) > THIGH + SHIN) continue;
+      const s = [q.t-k0.t, q.n-k0.n, q.z-k0.z], sl = Math.hypot(...s) || 1;
+      const a = Math.asin(Math.max(-1, Math.min(1,
+        (bd[0]*s[0] + bd[1]*s[1] + bd[2]*s[2]) / sl))) / D2R;
+      if (a >= 0 && a <= ANKLE_MAX && (!best || p > best.p)) best = { p, ft, a };
+    }
+  return best;
+};
+for (const hipZ of [46, 50, 54, 58, 62, 64, 66, 70, 74, 76, 78, 82, 86, 90, 94]) {
+  const b = pickCeiling(hipZ);
+  console.log(`   hip ${String(hipZ).padStart(2)} cm   ` + (b
+    ? `boot up to ${String(b.p).padStart(2)}deg   (reach ${b.ft} cm, ankle ${b.a.toFixed(0)}deg)`
+    : 'no legal pick at any pitch or reach'));
+}
+console.log('\n   A blade needs 3.5deg of pitch before the teeth reach the ice at all, so');
+console.log('   the bottom of that column is not "a shallow pick" — it is no pick. The');
+console.log('   only way to tilt the boot further with the toe down is to tilt the whole');
+console.log('   leg, and the only way to do that is to sink. Which is what a skater does');
+console.log('   before they pick: nobody authored it, this did.');

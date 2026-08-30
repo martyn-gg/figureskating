@@ -370,49 +370,100 @@ the two tracings are a boot's width apart on a four-metre lobe and resolve to on
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
 
-## The pick is a third kind of contact — specified 30/08/2026, not built
+## The pick is a third kind of contact — specified and built 30/08/2026
 
-Four of the seven jumps are toe-assisted, the jump pages now say out loud that the pick is
-what separates a flip from a Salchow and a toe loop from a loop, and the rig cannot draw it.
-This is what it would take. Written as one decision with every touch point listed, because
-that is what this repository asks of a change that moves something other files point at.
+Four of the seven jumps are toe-assisted, the jump pages say out loud that the pick is what
+separates a flip from a Salchow and a toe loop from a loop, and the rig could not draw it.
+It can now. What follows is the specification as it was written, marked up with what
+building it actually cost — the list of files was right, two of its rows were wrong, and it
+was silent about the two things that turned out to decide the shape of the pose.
 
-**`pick: true` already exists and is wrong.** It is a KEYFRAME flag, and `blade.mjs` reads it
-as "exempt every on-ice blade in this frame from the ±3.5° limit". The moment a pose has one
-foot on an edge and another on the pick — which is the only pose that needs it — that exempts
-the wrong foot too. It has never been set on any keyframe, so nothing is broken today; it is a
-description waiting to be believed, which is this repository's recurring failure mode. It goes.
+**`pick: true` is gone.** It was a KEYFRAME flag, and `blade.mjs` read it as "exempt every
+on-ice blade in this frame from the ±3.5° limit" — which, in the only pose that would ever
+set it, exempts the foot on the edge as well as the foot on the teeth. It had never been set
+on any keyframe, so nothing was broken; it was a description waiting to be believed.
 
-**The shape is `onIce: 'pick'`,** the same field two blades added, with a third value. A picked
-foot is not a blade and it is not free: it is on the ice, carrying weight, with no edge, no
-lean claim and a boot pitched far past what a blade allows.
+**The shape is `onIce: 'pick'`,** the same field two blades added, with a third value. A
+picked foot is not a blade and it is not free: it is on the ice, carrying weight, with no
+edge, no lean claim and a boot pitched far past what a blade allows.
 
-**Two functions already handle it and need no change**, which is the two-blades work paying
-forward: `onIceOf` returns whatever the foot declares, and `bladesDown` filters for `'blade'`
-and so excludes a picked foot correctly. What remains is every place that still asks
-`=== 'blade'` and means *on the ice*. They are enumerable:
+**Two functions already handled it and needed no change**, which is the two-blades work
+paying forward: `onIceOf` returns whatever the foot declares, and `bladesDown` filters for
+`'blade'` and so excludes a picked foot correctly. `contactsDown` joins them — every foot
+touching the ice by any means — and is what the old `=== 'blade'` tests became wherever they
+meant *on the ice*. Those were enumerable, and the enumeration held:
 
-| File | What it does now | What a pick needs |
+| File | What it did | What the pick needed |
 |---|---|---|
-| `rig-math.js` `edgeOf` | returns the reference blade's edge for any non-blade foot | a pick has no edge; return null |
-| `rig-math.js` `bootDir` | branches skating / free | a third branch: planted, pitched past `MAX_BLADE_PITCH` |
-| `rig-math.js` | — | wants `contactsDown(pose)`, every foot touching by any means |
-| `moves.js` `ON()` | hardcodes `onIce:'blade'` | a `PICK()` sibling; and `pick:true` removed |
-| `body-frame.js` ×2 | `down`/`skating` = `=== 'blade'` | a picked foot would draw pale, in free weight, and vanish with the free-foot toggle off — **the exact bug the two-blades comment beside it describes**, one contact type along |
-| `blade.mjs` | keyframe-level `!k.pick` | per foot |
-| `freefoot.mjs` | skips `=== 'blade'` | a picked foot would be measured against the free-boot limit and called a pointe. It *is* pointed, deliberately |
-| `boot.mjs` | every edge dot is on a blade on the ice | a picked foot must not get a dot — the renderer decides, so check rather than assume |
-| `continuity.mjs` ×3 | `down` = `=== 'blade'`, incl. landing detection | a pick going in would read as a landing |
+| `rig-math.js` `edgeOf` | returned the reference blade's edge for any non-blade foot | a pick has no edge; returns null |
+| `rig-math.js` `bootDir` | branched skating / free | **a third RULE, not a third branch of the second** — see below |
+| `rig-math.js` | — | `contactsDown(pose)`, every foot touching by any means |
+| `moves.js` `ON()` | hardcoded `onIce:'blade'` | `PICK()` beside it; `pick:true` removed |
+| `body-frame.js` ×2 | `down`/`skating` = `=== 'blade'` | **three decisions wearing one name** — see below |
+| `blade.mjs` | keyframe-level `!k.pick` | per foot, and asserted from BOTH sides |
+| `freefoot.mjs` | skipped `=== 'blade'` | skips any contact — and gained the assertion that decides the pose |
+| `boot.mjs` | every edge dot is on a blade on the ice | no dot on a pick; the roll limit follows the weight instead |
+| `continuity.mjs` ×3 | `down` = `=== 'blade'`, incl. landing detection | a pick going in changes the rule exactly as a landing does |
 | `twofoot.mjs` | every free foot is clear of the ice | a picked foot sits at z 0 and is not free |
 | `lean.mjs` | iterates `bladesDown` | correct already — a pick makes no lean claim |
+| `shin.mjs` | iterates `bladesDown` | **correct already, and tried the other way first** — see below |
 
-Four model and render files, five checkers, one of them correct already. That is the size of
-the two-blades change, and it should be a session of its own rather than the tail of one.
+Two things the specification did not say, and one it said wrongly.
 
-**What it buys, in order:** the difference between a flip and a Salchow and between a toe loop
-and a loop, which is the question a skater actually asks and which four jump pages now name
-and cannot show; the toe-assisted hop into the Skills 3 spirals, the last item on the BIS gap
-list; and the Lutz, whose whole identity is an outside edge plus a pick.
+**`bootDir` has three rules, and the third is the reach.** "Planted, pitched past
+`MAX_BLADE_PITCH`" reads as the skating branch with a bigger number, and it is not. A blade
+takes its direction from the tracing because a blade on the ice can only lie along its own
+line. **A pick is not travelling** — it is a jab; the teeth go in and stay in one spot while
+the skater goes past — so it has no line, and what points the toe is the REACH: the
+horizontal direction from the hip to the foot. Using the tracing was the tempting shortcut,
+the formula being already written above it, and it points the toe *at the skater* on the one
+move that needs it, because a toe loop reaches back on a backward edge and back there is +t
+while the tracing runs −t.
+
+`bootDir` also stopped taking `skating` as an argument. Seven callers each computed
+`onIceOf(pose, which) === 'blade'` and handed the answer in: one derivation in seven places,
+and a boolean free to disagree with the pose it came from, which is the shape this file's own
+opening comment warns about. It reads the pose now.
+
+**`skating` in the renderer was three decisions under one name.** Weight, edge colour and the
+edge dot moved together for as long as being on the ice meant being on a blade. A picked foot
+is bearing load — it must not draw pale, in free weight, or vanish with the free-foot toggle
+— and it has no biting edge, so it must take neither a colour nor a dot. `planted` decides
+the first, `bladed` the other two, and the four glyph functions take the contact rather than
+a boolean.
+
+**A picked foot's SHIN lean cannot be checked, and its ANKLE angle can.** `shin.mjs` was
+extended to picks and then put back. The lean it measures is the shin against a boot up-axis
+built from world up, which is what "lean inside the boot" means while the boot is near flat;
+a picked boot is pitched 80° and there that vector stops being the boot's axis at all. Use
+the boot's real up-axis instead and it comes from the knee, one iteration from the shin being
+measured, and the angle collapses towards an identity — the same trap as a free foot's.
+
+What a pick genuinely constrains is the ankle, and it is `ANKLE_MAX` read backwards. A free
+foot authors its ankle angle and the boot's direction follows; **a picked foot authors the
+boot's direction and the ankle angle follows**, as whatever the shin and that direction leave
+between them. Same boot, same allowance, so the same limit — and this is the first time that
+constant has bitten on a pose rather than on a number somebody typed. Measured over the
+space by `npm run ankle`, and it is three bands rather than a slope: **at a hip of 62 cm and
+below the boot reaches 89°**, standing on end; **between 64 and 76 there is no legal pick at
+all**, at any pitch or reach; **at 78 and above only 4 to 12° survives**, barely past the
+3.5° a blade already has — a scuff rather than a jab. **The only way to tilt the boot further with the toe on the
+ice is to tilt the whole leg, and the only way to do that is to sink** — which is what a
+skater does before they pick. Nobody authored that; the constraint did.
+
+**And a pick is the first contact in this model that is fixed to the ice.** Every foot is
+authored relative to the hip, and only the reference blade is pinned to the path. A gliding
+blade travels with the skater, so this has never cost anything; a pick stays where it was
+put, and held through a real span of travel its hip-relative position would have to sweep
+backwards by however far the hip went. `toePick` is therefore a HELD position rather than a
+movement, `twoFoot` fashion. Expressing a contact that stays put needs an anchor the rig has
+not got, and that is a bigger change than this one was.
+
+**What it buys, in order:** the difference between a flip and a Salchow and between a toe
+loop and a loop, which is the question a skater actually asks and which four jump pages name
+and could not show; the toe-assisted hop into the Skills 3 spirals, the last item on the BIS
+gap list; and the Lutz, whose whole identity is an outside edge plus a pick. Each of those is
+still a jump rig away — the contact exists, the elements do not.
 
 **What it does not buy:** the lunge. That needs a boot rolled onto its side, which is a
 missing axis rather than a missing contact type.

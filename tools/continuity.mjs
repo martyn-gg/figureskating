@@ -30,8 +30,12 @@
    2  A DRAWN GLYPH'S POSITION MOVES SMOOTHLY.
    3  THE BOOT'S OWN 3D DIRECTION MOVES SMOOTHLY, except across a landing or a
       takeoff, where bootDir changes rule by construction — along the tracing for a
-      skating foot, off the shin for a free one — and a step in the drawn direction
-      is expected. That one is bounded separately and more loosely.
+      PLANTED foot, off the shin for a free one — and a step in the drawn direction
+      is expected. That one is bounded separately and more loosely. The rule changes
+      at a pick going in and coming out for exactly the same reason it changes at a
+      landing, so the test is "is this foot on the ice", not "is it on a blade": ask
+      the narrow question and a pick reads as a landing that never happened, and the
+      real change of rule beside it goes unbounded.
 
    WHAT IT REPORTS RATHER THAN FAILING:
 
@@ -134,9 +138,9 @@ for (const [key, m] of Object.entries(MOVES)) {
              choice is three-way — the boot's three axes are orthonormal, so their
              camera components square to one and the glyph is the view down
              whichever is largest. A tie is two of them within TIE of each other. */
-          const q = pose[foot], down = onIceOf(pose, foot) === 'blade';
+          const q = pose[foot], down = onIceOf(pose, foot) != null;
           const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
-          const bd = bootDir(pose, foot, kn, q, down);
+          const bd = bootDir(pose, foot, kn, q);
           const ank = ankleOf(q, bd, [kn.t - q.t, kn.n - q.n, kn.z - q.z]);
           const toA = [ank.t - q.t, ank.n - q.n, ank.z - q.z];
           const f3 = unit(bd);
@@ -149,7 +153,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         }
 
         const k = `${view}:${foot}`, p = prev[k];
-        const landing = p && p.down !== (onIceOf(pose, foot) === 'blade');
+        const landing = p && p.down !== (onIceOf(pose, foot) != null);
         if (p && orient !== null && p.orient !== null) {
           checked++;
           const d = dAng(orient, p.orient);
@@ -165,7 +169,7 @@ for (const [key, m] of Object.entries(MOVES)) {
             fail(`${key} ${view} ${foot}: the glyph slides ${(travel * 100).toFixed(0)}% of the ` +
               `view between frames ${i - 1} and ${i}`);
         }
-        prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) === 'blade' };
+        prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) != null };
       }
     }
     if (flipCount) flips.push(`${key} ${view}: ${flipCount}`);
@@ -178,9 +182,9 @@ for (const [key, m] of Object.entries(MOVES)) {
     let p = null;
     for (let i = 0; i < path.length; i++) {
       const pose = poseAt(m, i / (path.length - 1));
-      const q = pose[w], down = onIceOf(pose, w) === 'blade';
+      const q = pose[w], down = onIceOf(pose, w) != null;
       const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
-      const bd = bootDir(pose, w, kn, q, down);
+      const bd = bootDir(pose, w, kn, q);
       if (p) {
         const a = Math.acos(Math.max(-1, Math.min(1, bd[0] * p.bd[0] + bd[1] * p.bd[1] + bd[2] * p.bd[2]))) * 180 / Math.PI;
         const rule = p.down !== down;

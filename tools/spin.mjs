@@ -61,7 +61,7 @@ const isSpin = m => m.path.length === 1 && m.path[0].kind === 'arc' && m.path[0]
 const kneeOf = (pose, which) => {
   const q = pose[which], hip = { t: 0, n: 0, z: pose.hipZ };
   const k0 = twoBone(hip, q, THIGH, SHIN, anterior(pose.hipYaw));
-  const bd = bootDir(pose, which, k0, q, which === pose.skate);
+  const bd = bootDir(pose, which, k0, q);
   const an = ankleOf(q, bd, [k0.t - q.t, k0.n - q.n, k0.z - q.z]);
   return twoBone(hip, an, THIGH, SHIN, anterior(pose.hipYaw));
 };

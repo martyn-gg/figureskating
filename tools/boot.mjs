@@ -1,10 +1,14 @@
 /* The two things a boot glyph claims, asserted on every frame of every move in
    both profile views.
 
-   1  THE EDGE DOT MARKS A BITING EDGE, so it is drawn on a boot that is on the
-      ice and on no other. A free foot is in the air — the glyph says so in
-      --free — and a dot on it asserts ice contact the model is simultaneously
-      denying. It was drawn on both.
+   1  THE EDGE DOT MARKS A BITING EDGE, so it is drawn on a boot that is on a
+      BLADE on the ice and on no other. A free foot is in the air — the glyph says
+      so in --free — and a dot on it asserts ice contact the model is simultaneously
+      denying. It was drawn on both. Since 30/08/2026 there is a third role, `pick`,
+      and it takes no dot either: a picked foot is on the ice and has no biting
+      edge, so the dot and the weight have come apart. The roll limit follows the
+      weight rather than the dot — a planted boot is a boot the ice is holding
+      upright, whichever part of it is down, and only a free one may lie over.
 
    2  A BOOT DRAWN END-ON ROLLS WITH ITS OWN BOOT, and a skating boot is never
       drawn past the roll a stiff boot allows.
@@ -66,7 +70,8 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (!role) return;
         glyphs++;
         const which = holder.attrs['data-foot'];
-        const skating = role === 'skating';
+        const skating = role === 'skating';        // on a blade: an edge, and a dot
+        const planted = role !== 'free';           // on the ice at all: held upright
 
         /* what the picture claims */
         let drawn = null, dot = 0;
@@ -79,7 +84,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (dot) dots++;
         if (!skating && dot) {
           dotBad++;
-          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a free boot`);
+          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a ${role} boot, which has no biting edge`);
         }
         if (skating && drawn !== null && !dot) {
           dotBad++;
@@ -92,7 +97,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         /* 2 — the roll, expected from where the model put the ankle */
         const q = pose[which];
         const kn0 = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
-        const bd = bootDir(pose, which, kn0, q, skating);
+        const bd = bootDir(pose, which, kn0, q);
         const ank = ankleOf(q, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
         const up = [ank.t - q.t, ank.n - q.n, ank.z - q.z];
         const f3 = unit(bd);
@@ -109,9 +114,9 @@ for (const [key, m] of Object.entries(MOVES)) {
             `boot's own up-axis ${want.toFixed(1)}°  (off by ${off.toFixed(1)}°)`);
         }
 
-        if (skating && Math.abs(drawn) > ROLL_LIMIT) {
+        if (planted && Math.abs(drawn) > ROLL_LIMIT) {
           overBad++;
-          if (overBad <= 8) say(`OVER  ${key} ${mode} f=${i} ${which}  skating boot drawn at ${drawn.toFixed(1)}° ` +
+          if (overBad <= 8) say(`OVER  ${key} ${mode} f=${i} ${which}  ${role} boot drawn at ${drawn.toFixed(1)}° ` +
             `of roll, past the ${ROLL_LIMIT}° a boot allows`);
         }
       });
@@ -126,5 +131,5 @@ console.log(bad
   ? `${dotBad} edge dots on the wrong foot, ${rollBad} rolls disagreeing with the boot, ` +
     `${overBad} past ${ROLL_LIMIT}°`
   : `every edge dot is on a blade that is on the ice; every end-on boot rolls with its own ` +
-    `up-axis, and no skating boot is drawn past ${ROLL_LIMIT}°`);
+    `up-axis, and no boot the ice is holding up is drawn past ${ROLL_LIMIT}°`);
 process.exit(bad ? 1 : 0);

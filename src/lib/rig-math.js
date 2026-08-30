@@ -26,6 +26,17 @@ export const lateral  = yawDeg => [Math.sin(yawDeg*D2R),  Math.cos(yawDeg*D2R), 
    secondFoot in skating.js. Storing it would be the second source of truth that
    style.md bans, and it would make an impossible pair representable.
 
+   A THIRD VALUE, `onIce: 'pick'` — 30/08/2026. A picked foot is not a blade and
+   it is not free: it is on the ice, carrying weight, with no edge, no lean claim
+   and a boot pitched far past what a rockered blade allows. It replaces a
+   keyframe flag `pick: true`, which blade.mjs read as exempting EVERY on-ice
+   blade in that frame — precisely backwards for the only pose that needs it, and
+   never set on any keyframe, so it was a description waiting to be believed.
+
+   So there are now two questions, not one: `bladesDown` is every foot on a blade
+   and `contactsDown` is every foot touching the ice by any means. Reach for the
+   second wherever the old code said `=== 'blade'` and meant "on the ice".
+
    Read these rather than comparing against pose.skate. The comparison was
    correct while a pose could hold one blade and it silently means "free" the
    moment a pose can hold two — the same shape as the featured filter that
@@ -39,15 +50,26 @@ export const dirOf = (pose, which) =>
 
 export function edgeOf(pose, which) {
   if (!pose.skate || which === pose.skate) return pose.edge;
-  if (onIceOf(pose, which) !== 'blade') return pose.edge;
+  const on = onIceOf(pose, which);
+  /* A PICK HAS NO EDGE. The runner is out of the ice and the teeth are in it, so
+     there is no biting side to name. Handing back the reference blade's edge here
+     would give the renderer a colour and a dot side for a claim the model is not
+     making — the same shape as the flag this replaced. */
+  if (on === 'pick') return null;
+  if (on !== 'blade') return pose.edge;
   return secondFoot({ foot: pose.skate, edge: pose.edge, dir: pose.dir },
                     dirOf(pose, which)).edge;
 }
 
+const refFirst = pose => (a, b) => (a === pose.skate ? 0 : 1) - (b === pose.skate ? 0 : 1);
+
 /** Every foot with a blade on the ice, reference blade first. */
 export const bladesDown = pose =>
-  ['L', 'R'].filter(w => onIceOf(pose, w) === 'blade')
-            .sort((a, b) => (a === pose.skate ? 0 : 1) - (b === pose.skate ? 0 : 1));
+  ['L', 'R'].filter(w => onIceOf(pose, w) === 'blade').sort(refFirst(pose));
+
+/** Every foot touching the ice by any means — a blade or a pick. */
+export const contactsDown = pose =>
+  ['L', 'R'].filter(w => onIceOf(pose, w) !== null).sort(refFirst(pose));
 
 export const THIGH = 44, SHIN = 42, UPPER = 31, FORE = 29, SHOULDER_HALF = 19;
 
@@ -166,12 +188,34 @@ export const elbowFace = (pose, side) => {
 
 /* Where the boot actually points, in 3D.
 
-   A blade on ice can only lie along its own tracing, so a skating foot takes
-   its direction from the travel direction, tilted by any toe-pick pitch
-   (+ = toe down). A free foot is not free to be flat: it hangs off the shin.
-   So its direction is built from the shin and an ankle angle — 90° would be
-   fully pointed, in line with the leg; 0° a right angle. Same transport trick
-   as the knee, so the ankle bends about the correct axis wherever the leg is. */
+   THREE RULES, ONE PER KIND OF CONTACT.
+
+   A BLADE on the ice can only lie along its own tracing, so it takes its direction
+   from the travel direction, tilted by its pitch (+ = toe down). Held inside ±3.5°,
+   because that is all the length a rockered runner has.
+
+   A PICK is not travelling. It is a jab: the teeth go into the ice and stay in one
+   spot while the skater goes past. So it has no tracing to lie along, and what
+   decides where its toe points is the REACH — a jab goes in where the leg sends
+   it, which is the horizontal line from the hip to the foot. Its pitch is past
+   what a blade allows by definition; that is what makes it a pick and not a badly
+   authored blade, and `blade.mjs` asserts it from both sides.
+
+   Taking the travel direction here instead would have been the tempting shortcut,
+   since the formula is already written above — and it would have pointed the toe at
+   the skater on the only move that needs it. A toe loop reaches BACK and picks, and
+   back on a backward edge is +t while the tracing's own direction is −t.
+
+   A FREE foot is not free to be flat: it hangs off the shin. So its direction is
+   built from the shin and an ankle angle — 90° would be fully pointed, in line
+   with the leg; 0° a right angle. Same transport trick as the knee, so the ankle
+   bends about the correct axis wherever the leg is.
+
+   WHICH RULE APPLIES IS READ HERE, not handed in. Every caller used to compute
+   `onIceOf(pose, which) === 'blade'` and pass the answer, which is one derivation
+   in seven places and a boolean that can disagree with the pose it came from —
+   the shape this file's own opening comment warns about. There is nothing to
+   disagree with now. */
 /* How far a free foot points, measured from neutral — 0° is the right angle you
    stand at, 90° would be fully in line with the shin.
 
@@ -208,9 +252,18 @@ export const elbowFace = (pose, side) => {
 export const ANKLE_MAX = 30;                       // degrees, the boot's allowance
 export const ANKLE_POINT = 10;                     // degrees, an unauthored foot
 
-export function bootDir(pose, which, knee, foot, skating){
-  if(skating){
-    const y = (dirOf(pose, which) === 'F' ? 0 : 180) * D2R, p = (foot.pitch || 0) * D2R;
+export function bootDir(pose, which, knee, foot){
+  const on = onIceOf(pose, which);
+  const p = (foot.pitch || 0) * D2R;
+  if(on === 'pick'){
+    /* Along the reach. Foot coordinates are already relative to the hip, so the
+       horizontal part of the foot vector IS the reach; a pick under the hip has no
+       reach to speak of and falls back to the tracing rather than dividing by it. */
+    const h = Math.hypot(foot.t, foot.n);
+    if(h > 1e-6) return [foot.t/h*Math.cos(p), foot.n/h*Math.cos(p), -Math.sin(p)];
+  }
+  if(on){                                          // planted: along the tracing
+    const y = (dirOf(pose, which) === 'F' ? 0 : 180) * D2R;
     return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
   }
   const s = [foot.t-knee.t, foot.n-knee.n, foot.z-knee.z];

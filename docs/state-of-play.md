@@ -12,8 +12,9 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **thirteen checkers, all green**, plus `npm run drift` which reports rather than
-fails.
+worker; **seventeen checkers in the `check` chain, all green** — count them out of
+`package.json` rather than trusting a number in prose, which this line was wrong about for
+four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 
 **Content:** 254 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and twelve clusters**, seven
@@ -1075,3 +1076,100 @@ Mac's own shell — the desktop MCP that runs commands natively rather than in t
 Linux VM — runs git cleanly: `git status` and a `find .git -name '*.lock'` immediately after
 it leave nothing behind. Same route the build has to take anyway, since `node_modules` is
 built for macOS and `npm run build` cannot run in the VM at all.
+
+
+## The pick, built — 30/08/2026
+
+Specified earlier the same day in `docs/model.md` and built in the session after it, from
+the touch-point list in that specification. The list was right about the files. It was
+wrong about the size of two of them and silent about two findings.
+
+**`onIce: 'pick'`, the third value of the field two blades added.** `pick: true` is gone —
+a keyframe flag that `blade.mjs` read as exempting *every* on-ice blade in the frame, which
+is backwards for the only pose that would ever set it, and which had never been set. Four
+model and render files, five checkers, `PICK()` beside `ON()` in `moves.js`, and one probe
+rig, `toePick`, so that the branches are exercised by content and not only by construction.
+
+**`bootDir` takes the contact from the pose rather than a boolean argument.** Seven callers
+each computed `onIceOf(pose, w) === 'blade'` and handed the answer in — one derivation in
+seven places, and a boolean able to disagree with the pose it came from, which is the shape
+`rig-math.js`'s own opening comment warns about. All seven now pass four arguments and
+`bootDir` asks. That is not in the specification; it fell out of touching every call site
+at once, which is what a change of this shape is for.
+
+**Three rules, not two.** The specification said a picked boot is "planted, pitched past
+`MAX_BLADE_PITCH`", which reads as the skating branch with a bigger number. It is not. A
+blade takes its direction from the tracing because a blade on ice can only lie along its
+own line — but **a pick is not travelling**, so it has no line, and what points the toe is
+the REACH: the horizontal direction from the hip to the foot. Taking the tracing instead
+was the tempting shortcut, the formula being already written, and it points the toe *at the
+skater* on the only move that needs it — a toe loop reaches back on a backward edge, and
+back there is +t while the tracing runs −t.
+
+**The renderer's `skating` was three decisions wearing one name**, and they came apart:
+`planted` decides weight, `bladed` decides the edge colour and the dot. A picked boot is
+bearing load and must not draw pale or vanish with the free-foot toggle; it has no biting
+edge and must not take a colour or a dot. The four glyph functions take the contact now.
+
+### Two findings the specification did not have
+
+**The ankle is the constraint, and it decides the pose.** A free foot authors its ankle
+angle and the boot's direction follows; a picked foot authors the boot's direction and the
+ANKLE ANGLE follows, as whatever the shin and that direction leave between them. Same boot,
+same `ANKLE_MAX`, so the same limit — and it turns out to be the first time that constant
+has bitten on a pose rather than on a number somebody typed. Measured over the space, `npm run ankle` prints it, and it
+is not a slope but three bands. **At a hip of 62 cm and below the boot can be pitched to 89°**
+— standing on end, which is what a jab is. **Between 64 and 76 there is no legal pick at
+all**, at any pitch or any reach. **At a standing 78 and above only 4 to 12° survives**,
+which is barely past the 3.5° a blade already has: a scuff, not a jab. Nobody authored any of
+that. **The only way to tilt the boot further with the toe
+on the ice is to tilt the whole leg, and the only way to do that is to sink** — which is
+what a skater does before they pick. `freefoot.mjs` asserts it.
+
+**A pick is the first contact in this model that is fixed to the ice.** Every foot is
+authored relative to the hip and only the reference blade is pinned to the path. A gliding
+blade travels with the skater, so that has cost nothing until now; a pick stays where it was
+put. Held through a real span of travel its hip-relative position would have to sweep
+backwards by however far the hip went — 168 cm over `toePick`'s arc, out of reach within the
+first centimetres. So `toePick` is a HELD position, `twoFoot` fashion, and the arc beneath it
+is where the skating blade is going and not a claim that the toe is sliding with it.
+Expressing a contact that stays put needs an anchor the rig has not got.
+
+### What the entry cost, and why it is not drawn
+
+Authored first as a movement — glide, sink, reach, pick — and it failed twice, both times
+for real reasons. The free boot descending onto the pick reaches **78° from level over 92
+frames**, because a boot square to a shin that steep points at the ice. And the top-down
+glyph turns **155° in the single frame** where `bootDir` changes rule, against the 95
+`continuity.mjs` allows across a landing. Neither is a defect in the pick: they say the
+frames between *free* and *picked* are a state the model has not got, the foot being neither
+hanging nor planted. Inventing one to make a probe animate would be authoring pose data to
+satisfy a checker.
+
+### The plan glyph never pivoted about its contact, and nothing had noticed
+
+Found by looking at the rear view, which is the whole argument for looking. `bootSide` has
+always shifted itself so that whatever part of the blade is touching sits at the origin,
+because the origin is on the ice. The plan branch never did and never needed to: a skating
+boot cannot reach that glyph and a free boot has no contact to pivot about, so the shift was
+zero every time it ran. **A pick is the first boot that is both plan-drawn and touching**,
+and without the shift the rear view drew the whole footprint centred on the ice with half
+the boot underneath it. Carried in the matrix's own translation and written as a bare `0`
+where there is nothing to shift, so **every frame that existed before today draws
+byte-identically** — checked as one hash over 189 standalone frames of nine moves, before
+and after.
+
+### What it buys, and what it still does not
+
+It buys the thing four jump pages now name and could not show: **the difference between a
+flip and a Salchow and between a toe loop and a loop**. It does not buy the jumps
+themselves — a toe loop is a full jump rig, and the Axel notes in `figure-skating-jumps`
+apply to all of them. It does not buy the lunge, which needs a boot rolled onto its side:
+a missing axis, not a missing contact type.
+
+**Open, and a coach's question.** `pitch` on a picked foot is authored and the ankle angle
+follows. The other way round is arguable — a skater jabbing a pick points the foot as hard
+as the boot allows, so the ankle could be pinned at `ANKLE_MAX` and the pitch derived, which
+would make `blade.mjs`'s "past what a blade allows" a test of the POSE rather than of a typed
+number. It was not done, because `pitch` means one thing everywhere else in the file and
+because nobody has asked a coach whether a pick really is at the boot's limit.

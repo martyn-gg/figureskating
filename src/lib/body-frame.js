@@ -92,13 +92,33 @@ export function armsAuthored(move){
   return move.keys.some(k => (k.LH && k.LH.authored) || (k.RH && k.RH.authored));
 }
 
+/* THE GLYPHS TAKE A CONTACT, NOT A BOOLEAN — 30/08/2026.
+
+   Each of these used to take `skating`, and it decided three separate things at
+   once: how heavily the boot is drawn, whether the runner takes an edge colour,
+   and whether an edge dot appears. Those came apart the moment a foot could be on
+   the ice without being on a blade. They are two questions now:
+
+     planted — on the ice by any means. Decides WEIGHT. A picked foot is bearing
+               load and must not be drawn as though it were in the air.
+     bladed  — on the ice on a runner. Decides EDGE COLOUR and the DOT, both of
+               which name a biting edge, and a pick has none to name.
+
+   What is left is the pick's own picture: the runner up out of the ice and the
+   teeth in it. That is drawn by giving the runner the limb colour rather than an
+   edge colour, and the teeth full ink rather than the faint wash they carry when
+   they are only along for the ride. */
+const planted = c => c != null;
+const bladed  = c => c === 'blade';
+
 /* boot seen from above: toe at +x */
-function bootTop(edge, skating, foot){
+function bootTop(edge, contact, foot){
   const g = el('g');
   g.appendChild(el('path',{d:'M -15 -6.5 L 4 -8 Q 13.5 -7 15.5 0 Q 13.5 7 4 8 L -15 6.5 Q -18 0 -15 -6.5 Z',
-    fill:'var(--paper)',stroke:LIMB,'stroke-width':skating?2.6:1.7,
+    fill:'var(--paper)',stroke:LIMB,'stroke-width':planted(contact)?2.6:1.7,
     'stroke-linejoin':'round'}));
-  g.appendChild(el('line',{x1:-14,y1:0,x2:16,y2:0,stroke:skating?edgeCol(edge):'var(--free)',
+  g.appendChild(el('line',{x1:-14,y1:0,x2:16,y2:0,
+    stroke:bladed(contact)?edgeCol(edge):planted(contact)?'var(--ink)':'var(--free)',
     'stroke-width':2.8,'stroke-linecap':'round'}));
   return g;
 }
@@ -123,12 +143,13 @@ function bootTop(edge, skating, foot){
    off the ice. Every one of those 285 frames is a free boot, and a skating boot can
    never reach this glyph — a blade on the ice has its up-axis pointing up, never at
    a camera beside or behind the skater. */
-function bootSole(edge, skating, foot){
+function bootSole(edge, contact, foot){
+  const skating = bladed(contact), weight = planted(contact);
   const g = el('g');
   /* The same footprint as the plan view. Handedness is the transform's job — the
      glyph is drawn in the boot's own frame and the plan branch mirrors it. */
   g.appendChild(el('path',{d:'M -15 -6.5 L 4 -8 Q 13.5 -7 15.5 0 Q 13.5 7 4 8 L -15 6.5 Q -18 0 -15 -6.5 Z',
-    fill:'var(--paper)',stroke:LIMB,'stroke-width':skating?2.6:1.7,'stroke-linejoin':'round'}));
+    fill:'var(--paper)',stroke:LIMB,'stroke-width':weight?2.6:1.7,'stroke-linejoin':'round'}));
   /* The mounting plates, faint — they are what tells you this is the underside and
      not the top, before you have read the blade. */
   for (const x of [-10.5, 9]) g.appendChild(el('rect',{x:x-2.5,y:-5,width:5,height:10,
@@ -143,8 +164,16 @@ function bootSole(edge, skating, foot){
   return g;
 }
 
+/* Where a pick touches, in the side glyph's own units: the deepest tooth of the
+   toe pick, which is drawn at (17.8, 3.2). A blade's contact point slides along
+   the rocker with pitch and comes from contactAlong; a pick's does not move,
+   because teeth do not roll. Both end up at the origin after the glyph's shift,
+   which is the point the boot pivots about. */
+const PICK_ALONG = 17.8, PICK_TOOTH_Y = 3.2;
+
 /* boot seen from the side: toe at +x, blade and pick beneath */
-function bootSide(edge, skating, along, foot){
+function bootSide(edge, contact, along, foot){
+  const skating = bladed(contact), weight = planted(contact), picked = contact === 'pick';
   /* The glyph is drawn with the blade's midpoint at x=0, then shifted so that
      whichever part of the blade is actually touching sits at the origin — which
      is the point the whole boot pivots about. */
@@ -159,20 +188,23 @@ function bootSide(edge, skating, along, foot){
   for (let x = -12; x <= 18.001; x += 1.5) under.push(`${x.toFixed(1)} ${bladeY(x).toFixed(2)}`);
 
   g.appendChild(el('path',{d:'M -11 -21 L -9 -3 L 15 -3 L 17 -8 L 6 -13 L 3 -21 L -1 -16 L -7 -16 Z',
-    fill:'var(--paper)',stroke:LIMB,'stroke-width':skating?2.6:1.7,
+    fill:'var(--paper)',stroke:LIMB,'stroke-width':weight?2.6:1.7,
     'stroke-linejoin':'round'}));
 
   g.appendChild(el('path',{
     d:`M -12 -3 L 18 -3 L ${under.slice().reverse().join(' L ')} Z`,
-    fill:skating?edgeCol(edge):LIMB,stroke:'none',opacity:skating?1:.32}));
+    fill:skating?edgeCol(edge):LIMB,stroke:'none',opacity:skating?1:picked?.6:.32}));
 
   /* Toe pick: teeth at the front, reaching to about the blade's lowest plane.
      That is why engaging them takes a real pitch — they are barely proud of the ice. */
   g.appendChild(el('path',{d:'M 15.5 -2.4 L 16.4 2.6 L 17.1 0.6 L 17.8 3.2 L 18.4 0.9 L 18.6 -2.6 Z',
-    fill:skating?'var(--ink)':LIMB,opacity:skating?.75:.3}));
+    fill:weight?'var(--ink)':LIMB,opacity:picked?1:skating?.75:.3}));
 
-  if(skating){
-    g.appendChild(el('circle',{cx:along.toFixed(2),cy:bladeY(along).toFixed(2),r:2.6,
+  /* The contact marker rings whatever is actually touching: the point on the
+     rocker for a blade, and the teeth for a pick. Both sit at the origin after the
+     translate above, which is the point the boot pivots about. */
+  if(weight){
+    g.appendChild(el('circle',{cx:along.toFixed(2),cy:(picked?PICK_TOOTH_Y:bladeY(along)).toFixed(2),r:2.6,
       fill:'none',stroke:'var(--ink)','stroke-width':1.3,opacity:.85}));
   }
   return g;
@@ -183,11 +215,12 @@ function bootSide(edge, skating, along, foot){
    facing −1 = heel toward the viewer (square heel, tall cuff, back seam).
    This is also where the edge itself becomes visible: the blade tips and
    the biting side is the one touching the ice. */
-function bootEnd(edge, skating, foot, facing, dotSide){
+function bootEnd(edge, contact, foot, facing, dotSide){
   const g = el('g',{transform:'translate(0 -2.2)'});   // edge marker sits on the ice
+  const skating = bladed(contact), weight = planted(contact);
   const col = skating ? edgeCol(edge) : 'var(--free)';
-  const stroke = skating ? 'var(--ink)' : 'var(--free)';
-  const sw = skating ? 2.6 : 1.7;
+  const stroke = weight ? 'var(--ink)' : 'var(--free)';
+  const sw = weight ? 2.6 : 1.7;
 
   /* At this size the silhouette does the work, not the detail — so the toe
      is drawn narrow and domed with the pick jutting below, and the heel wide,
@@ -320,12 +353,14 @@ function viewTop(svg, move, path, frames, SHOW){
       /* "Is this foot on the ice", not "is this the skating foot". They were the
          same question until a pose could hold two blades; asking the old one here
          would draw the second blade of an Ina Bauer in free weight, in the free
-         colour, and hide it entirely with the free-foot toggle off. */
-      const down = onIceOf(pose, which) === 'blade';
+         colour, and hide it entirely with the free-foot toggle off. Since a foot
+         can also be on its pick, the answer is the contact itself rather than a
+         boolean: three values, and the glyph reads them apart. */
+      const contact = onIceOf(pose, which), down = contact != null;
       if(!SHOW.free && !down) continue;
       const q=pose[which], pos=rel(q);
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
-      const bd0 = bootDir(pose, which, kn0, q, down);
+      const bd0 = bootDir(pose, which, kn0, q);
       /* data-boot, data-foot and data-heading, on the same argument that put them
          on the profile glyphs: role, side and orientation are facts the renderer
          knows and the markup was throwing away. Nothing could read this glyph, so
@@ -334,12 +369,13 @@ function viewTop(svg, move, path, frames, SHOW){
          tools/continuity.mjs reads it now. */
       const heading = (p.th - Math.atan2(-bd0[1], bd0[0]))*180/Math.PI;
       const g=el('g',{transform:`translate(${pos.x} ${pos.y}) rotate(${heading}) scale(${Math.min(1,1.05/s)})`,
-        'data-boot':down?'skating':'free','data-foot':which,'data-heading':heading.toFixed(2),
+        'data-boot':contact === 'blade' ? 'skating' : (contact || 'free'),
+        'data-foot':which,'data-heading':heading.toFixed(2),
         'data-horiz':Math.hypot(bd0[0],bd0[1]).toFixed(4)});
       /* Each blade takes its OWN edge. On a two-foot pose the two differ by
          definition — one outside, one inside — and that difference is the whole
          of what the position is, so the top view is where it has to show. */
-      g.appendChild(bootTop(edgeOf(pose, which), down, which));
+      g.appendChild(bootTop(edgeOf(pose, which), contact, which));
       body.appendChild(g);
     }
     /* Arms belong here more than anywhere: seen from above, "out to the sides"
@@ -481,21 +517,24 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
     for(const which of byDepth){
       /* `skating` here has always meant "drawn as a blade on the ice" — heavier
          stroke, edge colour, a rockered blade under it, an edge dot. That is a
-         property of being ON THE ICE, not of being the reference blade. */
-      const skating = onIceOf(pose, which) === 'blade';
+         property of being ON THE ICE, not of being the reference blade — and since
+         30/08/2026 it is TWO properties, because a picked foot is on the ice and
+         has no edge. `planted` carries the weight, `bladed` carries the edge. */
+      const contact = onIceOf(pose, which);            // 'blade' | 'pick' | null
+      const onIce = contact != null, skating = contact === 'blade';
       const edge = edgeOf(pose, which);
-      if(!SHOW.free && !skating) continue;
+      if(!SHOW.free && !onIce) continue;
       const q=pose[which];
       // two passes: the boot direction needs a shin, the shin needs an ankle
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
-      const bd  = bootDir(pose, which, kn0, q, skating);
+      const bd  = bootDir(pose, which, kn0, q);
       const ank = ankleOf(q, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
       const kn  = twoBone({t:0,n:0,z:pose.hipZ}, ank, THIGH, SHIN, anterior(pose.hipYaw));
       const pt  = {x:ax(ank), y:H(ank.z)};                 // the leg ends at the ankle
       const kp  = {x:ax(kn), y:H(kn.z)};
       const bootPt = {x:ax(q), y:H(q.z)};                  // the boot sits on the blade
-      const wid = skating ? LIMB_W.skating : LIMB_W.free;
-      const role = skating ? 'skating' : 'free';
+      const wid = onIce ? LIMB_W.skating : LIMB_W.free;
+      const role = skating ? 'skating' : (contact || 'free');
 
       /* The boot's frame in this view is two directions rather than an angle:
          where the toe points, and which way is up out of the boot. Deriving the
@@ -579,7 +618,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       const toward = mode === 'side' ? bd[1] : -bd[0];
       const endo = Math.abs(toward);
       const facing = (Math.sign(toward) || 1);            // +1 = toe toward viewer
-      const along = skating ? contactAlong(pitchOf(bd)) : 0;
+      const along = skating ? contactAlong(pitchOf(bd)) : contact === 'pick' ? PICK_ALONG : 0;
 
       /* Two items, ordered independently. The knee circle and the boot travel
          with the shin, because both are attached to it. */
@@ -592,7 +631,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       items.push({part:'leg'+which, depth:(kneeD + ankD)/2, paint: cased => {
         seg(kp, pt, LIMB, wid, {'data-limb':role,'data-leg':'shin'}, [back(wid), 0])(cased && SHOW.free);
         g.appendChild(el('circle',{cx:kp.x,cy:kp.y,r:wid*0.62,fill:'var(--ice)',
-          stroke:LIMB,'stroke-width':skating?2.2:1.7}));
+          stroke:LIMB,'stroke-width':onIce?2.2:1.7}));
 
         /* data-boot and data-foot for tools/boot.mjs, on the same argument that
            put data-limb on the legs: role and side are facts the renderer knows
@@ -614,10 +653,26 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
              left stay on the correct hand. */
           const px = vx(f3), py = -f3[2];
           const qx = vx(latL) * Math.sign(camU || 1), qy = -latL[2] * Math.sign(camU || 1);
+          /* THE PLAN GLYPH PIVOTS ABOUT THE CONTACT TOO — 30/08/2026. bootSide has
+             always shifted itself so that whatever part of the blade is touching sits
+             at the origin, because the origin is placed on the ice. The plan branch
+             never did, and never needed to: a skating boot cannot reach this glyph
+             (its up-axis points up, never at a camera beside or behind the skater)
+             and a free boot has no contact point to pivot about, so `along` was zero
+             every time this ran. A PICK is the first boot that is both plan-drawn and
+             touching, and without the shift the plan view drew the whole footprint
+             centred on the ice — half the boot underneath it, in the rear view of the
+             only pose that has one. Carried in the matrix's own translation rather
+             than a wrapping group, and written as a bare 0 where there is nothing to
+             shift, so every frame that existed before today draws byte-identically to
+             what it did — checked as one hash over 189 standalone frames of nine
+             moves, before the change and after it. */
+          const e = px * -along, f = py * -along;
           const gt = el('g',{transform:
-            `matrix(${px.toFixed(4)} ${py.toFixed(4)} ${(-qx).toFixed(4)} ${(-qy).toFixed(4)} 0 0)`,
+            `matrix(${px.toFixed(4)} ${py.toFixed(4)} ${(-qx).toFixed(4)} ${(-qy).toFixed(4)} ` +
+            `${e ? e.toFixed(4) : 0} ${f ? f.toFixed(4) : 0})`,
             'data-plan':(camU > 0 ? 'top' : 'sole'),'data-fore':Math.hypot(px,py).toFixed(3)});
-          gt.appendChild((camU > 0 ? bootTop : bootSole)(edge, skating, which));
+          gt.appendChild((camU > 0 ? bootTop : bootSole)(edge, contact, which));
           holder.appendChild(gt);
         } else if(glyph === 'side'){
           /* A KNOWN FUDGE, measured on 29/08/2026 and deliberately left standing.
@@ -647,7 +702,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
           const p2 = Math.max(prof, 0.12);
           const gp = el('g',{transform:
             `matrix(${(tx*p2).toFixed(4)} ${(ty*p2).toFixed(4)} ${(-sx).toFixed(4)} ${(-sy).toFixed(4)} 0 0)`});
-          gp.appendChild(bootSide(edge, skating, along, which));
+          gp.appendChild(bootSide(edge, contact, along, which));
           holder.appendChild(gp);
         } else {
           /* End-on the glyph is a CROSS-SECTION: what it rolls with is the boot's
@@ -668,7 +723,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
 
           const ge = el('g',{transform:`rotate(${roll.toFixed(2)}) scale(${Math.max(endo,0.12).toFixed(3)} 1)`,
             'data-roll':roll.toFixed(2)});
-          ge.appendChild(bootEnd(edge, skating, which, facing, dotSide));
+          ge.appendChild(bootEnd(edge, contact, which, facing, dotSide));
           holder.appendChild(ge);
         }
         g.appendChild(holder);

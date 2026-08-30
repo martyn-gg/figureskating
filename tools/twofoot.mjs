@@ -13,8 +13,9 @@
       the ice, and an airborne pose has no blade down at all. A second blade
       declared on a jump would otherwise draw a tracing under a skater in mid-air.
 
-   2  A BLADE ON THE ICE IS ON THE ICE, AND A FREE FOOT IS NOT. Within 3 cm and
-      at least 5 cm respectively — the existing poses sit at 0-2 and 10-117, so
+   2  A FOOT ON THE ICE IS ON THE ICE, AND A FREE FOOT IS NOT. Within 3 cm and
+      at least 5 cm respectively. Blade or pick: a pick that is not touching is not
+      a pick, and the teeth reach the ice or they do not — the existing poses sit at 0-2 and 10-117, so
       there is a real gap between them and nothing has to be nudged to pass.
       This is the assertion model.md asked for: the lunge "would have passed
       every checker with the trailing foot lifted 30 cm", and authoring a second
@@ -51,7 +52,7 @@ import { execFileSync } from 'node:child_process';
 import { ROOT } from './_rig.mjs';
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense, secondFoot, label } from '../src/lib/skating.js';
-import { onIceOf, edgeOf, dirOf, bladesDown, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { onIceOf, edgeOf, dirOf, bladesDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const ON_ICE = 3, CLEAR = 5, NEAR = 5, FAR = 70;
@@ -80,16 +81,18 @@ for (const [id, m] of Object.entries(MOVES))
   for (const raw of m.keys) {
     const k = BREAK ? brk(raw) : raw;
     keys++;
-    const down = bladesDown(k);
+    const down = bladesDown(k), touching = contactsDown(k);
 
     if (k.skate && !down.includes(k.skate))
       fail(`${where(id, k)}: skate is ${k.skate}, which is not on the ice`);
-    if (!k.skate && down.length)
-      fail(`${where(id, k)}: airborne, but ${down.join(' and ')} claims a blade on the ice`);
+    /* Any contact, not just a blade. A pick jabbed into the ice under a skater in
+       mid-air is the same lie as a second blade there, and reads worse. */
+    if (!k.skate && touching.length)
+      fail(`${where(id, k)}: airborne, but ${touching.join(' and ')} claims contact with the ice`);
 
     for (const w of ['L', 'R']) {
-      const z = k[w].z;
-      if (onIceOf(k, w) === 'blade') {
+      const z = k[w].z, on = onIceOf(k, w);
+      if (on) {
         if (Math.abs(z) > ON_ICE)
           fail(`${where(id, k)}: ${w} is on the ice at z=${z} — more than ${ON_ICE} cm above it`);
       } else if (k.skate && z < CLEAR) {
@@ -97,6 +100,10 @@ for (const [id, m] of Object.entries(MOVES))
       }
     }
 
+    /* Deliberately BLADES and not contacts. The 5-70 cm bound is about two blades
+       on one circle, a leg's width apart; a picking foot is reaching behind and
+       belongs at neither end of that range. What holds a pick honest is its height
+       above the ice, checked above, and reach.mjs. */
     if (down.length === 2) {
       twoFoot++;
       const [a, b] = down.map(w => k[w]);
@@ -161,6 +168,6 @@ console.log(`  ${frames} frames, ${twoFootFrames} with two blades down`);
 console.log(`  ${pairs} two-foot pairs read out of British Ice Skating's Skills 1`);
 console.log(bad
   ? `\n${bad} failure${bad === 1 ? '' : 's'}`
-  : '\nevery blade claimed on the ice is on it, every free foot is clear of it,\n' +
+  : '\nevery contact claimed with the ice is touching it, every free foot is clear,\n' +
     'and both blades of every two-foot pose are on one lobe');
 process.exit(bad ? 1 : 0);

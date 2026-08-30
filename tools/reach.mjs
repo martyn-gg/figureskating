@@ -10,14 +10,14 @@ console.log(`hip → ankle distance against a ${REACH} cm leg\n`);
 for (const [key, m] of Object.entries(MOVES))
   for (const k of m.keys)
     for (const w of ['L', 'R']) {
-      const q = k[w], skating = onIceOf(k, w) === 'blade';
+      const q = k[w], on = onIceOf(k, w);
       const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
-      const bd = bootDir(k, w, k0, q, skating);
+      const bd = bootDir(k, w, k0, q);   // planted or free — bootDir reads the pose
       const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       const d = Math.hypot(an.t, an.n, an.z - k.hipZ);
       if (d > REACH) {
         bad++;
-        console.log(`  OVER  ${key.padEnd(7)} t=${k.t.toFixed(2)} ${w}${skating ? '*' : ' '}  ` +
+        console.log(`  OVER  ${key.padEnd(9)} t=${k.t.toFixed(2)} ${w} ${(on || 'free').padEnd(5)}  ` +
           `${d.toFixed(0)}cm = ${(100 * d / REACH).toFixed(0)}%   blade(${q.t},${q.n},${q.z})`);
       }
     }

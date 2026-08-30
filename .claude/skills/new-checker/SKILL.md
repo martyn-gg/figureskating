@@ -13,7 +13,9 @@ Seventeen of these exist and every one was written by breaking the thing on purp
 the file's header, then fix it. Counts on record: sign flip 104, boot roll 1102 of 1828, edge
 dot 583 of 583, torso drawn as a layer 7,005, casing not retracted 26,659, the free-leg pose 5
 discontinuities, a change of edge drawn as a step 8, a camel's free foot 10 cm lower 102 of
-321, a spin's position claim removed 1 move, an ankle authored past the boot 1 foot.
+321, a spin's position claim removed 1 move, an ankle authored past the boot 1 foot, every
+pick set to a blade's pitch 3 of 3, every blade set to a pick's 37 of 40, the picked pose's
+hip raised 20 cm 3 feet, an ankle angle written onto a picked foot 3 feet.
 
 Ship a `--break` flag where the old behaviour can be restored in a line. Where it would need a
 second copy of a renderer, put the pre-fix counts in the header instead — `boot.mjs` does that.
@@ -66,6 +68,32 @@ The window came from the source in the end, like the assertion: the ISU asks for
 revolutions in a position, so on a three-revolution spin it is the last two thirds of the
 clock. Fixing it immediately failed two moves that were reaching their position at the very
 end. **If the assertion comes from the document, the interval should too.**
+
+## An exemption can only excuse a pose. Assert from both sides — 30/08/2026
+
+`pick: true` was a keyframe flag meaning "this pose is allowed past the blade's pitch limit",
+and it could never have been anything but a hole in a checker. It exempted; it held nothing
+to anything. It was also read at the wrong level — per keyframe, so on the only pose that
+would ever set it, the foot on the edge was exempted along with the foot on the teeth.
+
+Replace an exemption with a DECLARATION and the same file gets a second assertion for free,
+pointing the other way: a blade must be inside ±3.5°, and **a pick must be outside it**, or
+the pose is claiming a contact its geometry does not make. That second one is what a flag
+could not express. Ask, of any exemption in this repository, what the exempted case must
+instead be true of.
+
+## The constraint that decides the pose is the one worth having — 30/08/2026
+
+`freefoot.mjs`'s assertion that a picked foot's implied ankle angle is inside `ANKLE_MAX` was
+written expecting to confirm a pose that had already been authored. It did the opposite: it
+rejected the pose, and then dictated the next one. To hold a boot pitched steeply enough for
+the toe to reach the ice, the hip has to be at 62 cm or below — so the skater has to be sunk,
+which is exactly what a skater does before they pick.
+
+**That is the difference between a checker and a test.** It was not confirming something
+known; it was the only thing in the repository that knew it. Prefer assertions on quantities
+the pose IMPLIES over assertions on quantities the pose STATES — a stated number can only ever
+be checked against its own range, where an implied one can tell you the pose is wrong.
 
 ## A clamp is a silent correction of somebody's number
 

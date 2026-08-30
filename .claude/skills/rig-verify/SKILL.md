@@ -131,6 +131,28 @@ whether the rule works. The jump figure's rasterisation is what revealed that a 
 curves are **identical** — it leaves and returns to RBO — which is true, and which reads as a
 bug unless the caption says so. No structure check would ever have asked.
 
+## A glyph that has never met a case has never been tested in it — 30/08/2026
+
+The toe pick's rear view drew the boot with half of it under the ice. Every checker was green,
+including the one that reads the drawn roll back against the boot's own up-axis.
+
+`bootSide` has always shifted itself so that whatever part of the blade is touching sits at
+the origin, because the origin is placed on the ice. The plan branch never did — and never
+needed to, because **no boot had ever been both plan-drawn and touching**: a skating boot
+cannot reach the plan glyph (its up-axis points up, never at a camera beside or behind the
+skater), and a free boot has no contact to pivot about. The shift was zero every time that
+code ran, for six sessions.
+
+So when a new case reaches an old branch, the question is not whether the branch is correct.
+It is **which of its inputs have only ever had one value**. Those are unexercised by
+definition, and no checker built on the old cases will say so. A picture will.
+
+The fix went into the matrix's own translation rather than a wrapping group, and writes a bare
+`0` where there is nothing to shift, so the markup of every existing frame is unchanged. That
+is worth doing deliberately: **hash the frames before and after**. `tools/frame-svg.mjs` over
+every move at seven times is 189 files and one `shasum`, and it turns "this should not have
+changed anything" into a fact. It caught a `0` that had become `0.0000`.
+
 ## Still open
 
 **From directly behind, two feet at the same lateral offset coincide**, so the rear view has
