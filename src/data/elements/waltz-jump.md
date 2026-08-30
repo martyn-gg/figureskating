@@ -1,6 +1,7 @@
 ---
 name: Waltz jump
 kind: jump
+aliases: [three jump]
 summary: The first jump, and the only one with a forward takeoff apart from the Axel it grows into.
 jump:
   takeoff: { foot: L, edge: O, dir: F }

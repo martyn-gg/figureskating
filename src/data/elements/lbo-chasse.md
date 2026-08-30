@@ -4,6 +4,7 @@ kind: transition
 summary: LBO to RBI — a step onto the other foot, still travelling backwards, and the lobe continues.
 entry: { foot: L, edge: O, dir: B }
 turn: chasse
+aliases: [open chassé, simple chassé]
 prerequisites: [lbo]
 verified: { checked: false }
 ---

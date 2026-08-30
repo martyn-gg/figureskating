@@ -4,6 +4,7 @@ kind: transition
 summary: LFO to RFI — a step onto the other foot, still travelling forwards, and the lobe continues.
 entry: { foot: L, edge: O, dir: F }
 turn: chasse
+aliases: [open chassé, simple chassé]
 prerequisites: [lfo]
 verified: { checked: false }
 ---

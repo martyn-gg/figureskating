@@ -22,9 +22,7 @@
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lobeSense, label, exitState, chainStates,
-         TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, LANDING, ALL_TURNS,
-         halves } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, chainStates, TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, LANDING, ALL_TURNS, halves } from '../src/lib/skating.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
@@ -40,12 +38,15 @@ const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', c
                     mohawk: 'mohawk', choctaw: 'choctaw',
                     coe: 'change of edge', loop: 'loop', crossover: 'crossover',
                     chasse: 'chassé', crossroll: 'cross roll',
-                    twizzle: 'twizzle', twizzle15: '1½ twizzle', twizzle2: 'double twizzle' };
+                    crossbehind: 'crossed step behind', slipchasse: 'slip chassé',
+                    twizzle: 'twizzle', twizzle15: '1½ twizzle', twizzle2: 'double twizzle',
+                    twizzle25: '2½ twizzle' };
 
 /* Slugs spell the rotation count out. A URL cannot hold a ½, and `twizzle-15`
    reads as fifteen of them. */
 const TWIZZLE_SLUG = { twizzle: 'twizzle', twizzle15: 'one-and-a-half-twizzle',
-                       twizzle2: 'double-twizzle' };
+                       twizzle2: 'double-twizzle',
+                       twizzle25: 'two-and-a-half-twizzle' };
 
 /* Which entry edges each transition is actually skated from. A crossover, a chassé
    and a cross roll all begin on an outside edge — that is not a modelling
@@ -54,6 +55,23 @@ const TWIZZLE_SLUG = { twizzle: 'twizzle', twizzle15: 'one-and-a-half-twizzle',
 const TRANSITION_ENTRIES = {
   coe: ['O', 'I'], loop: ['O', 'I'],
   crossover: ['O'], chasse: ['O'], crossroll: ['O'],
+  /* Both are crossing or placing steps and take the same outside entry as the
+     three above them — that is what the elements are, not a limitation. */
+  crossbehind: ['O'], slipchasse: ['O'],
+};
+
+/* Other names the same movement goes by, keyed on the turn rather than the element,
+   because an alias names the movement. Everything here has a source:
+
+     open / simple chassé   British Ice Skating's own definitions document heads the
+                            entry SIMPLE/OPEN CHASSE', so both are theirs.
+     slide chassé           the same document, SLIP/SLIDE CHASSE'.
+
+   Nothing goes in without one. The list is short on purpose and grows as names are
+   confirmed, not as they are remembered. */
+const ALIASES = {
+  chasse:     ['open chassé', 'simple chassé'],
+  slipchasse: ['slide chassé'],
 };
 
 const slug = s => `${s.foot}${s.dir}${s.edge}`.toLowerCase();
@@ -442,6 +460,45 @@ If it fails it usually fails between the curls, where the edge flattens and the 
 rotation is skidded rather than turned. The tracing is unambiguous about it — a flat is a
 straight line, and a straight line in the middle of a twizzle is the whole fault.`,
   },
+
+  twizzle25: {
+    FO: `Two and a half rotations from a forward outside entry: two curls in the tracing and
+then a half that has to be produced out of whatever rotation is left. The count is not a
+detail here. It decides which way you are facing at the end, and everything about the exit
+follows from that.
+
+Rotation is cheapest at the beginning and this asks for the awkward part last. A skater with
+enough for a double and no more finishes the second curl, runs out, and steps the last half
+round — which is a double twizzle with a turn stuck on the back of it, and it looks exactly
+like what it is.`,
+
+    FI: `The one the British syllabus asks for, at Skills 7, and it is not entered from a
+standing start: a backward inside counter hands it over. So the twizzle inherits whatever the
+counter left, and a counter that could not be checked leaves nothing worth inheriting.
+
+Two full curls and a half, on an edge that was already working hard. What separates this from
+a double is not the extra rotation but where the extra rotation has to come from, since there
+is no fresh push and no new edge between them. Skaters who can do both will tell you the
+double is a twizzle and this one is an exit.`,
+
+    BO: `Two and a half rotations entered backwards on an outside edge, finishing the other
+way round from how it started. Rare outside a step sequence, and useful there for exactly
+that reason: it turns backward travel into forward travel without a step and without losing
+the line.
+
+Blind at the start and sighted at the end, like every backward twizzle, but the half rotation
+moves where that changes. You come round to face the rink with half a turn still to find,
+which is the worst possible moment to discover the edge has gone flat.`,
+
+    BI: `Backwards on an inside edge, two and a half rotations. The hardest of the four to
+begin, because a backward inside edge gives the least help of any entry and this one needs
+help for longest.
+
+Watch the first curl. If it is bigger than the second the rotation was thrown rather than
+carried, and the half at the end will be a scrape however good the middle looked. The tracing
+records the whole argument: three marks, the last of them incomplete, evenly spaced along a
+lobe that has not been allowed to open out.`,
+  },
 };
 
 const TRANSITION_TEXT = {
@@ -546,6 +603,57 @@ Because there is no crossing action to hide behind, a chassé shows up a weak ed
 If the lobe opens out as the feet change, the edge was never deep.`,
   },
 
+  crossbehind: {
+    FO: `Crossed behind rather than in front, and the difference is the whole element. The foot
+still goes down on the outer edge side of the skating foot and the legs still cross below the
+knee; what changes is that you are stepping past your own heel, onto a blade you cannot see.
+
+Turnout is what it costs. Crossing behind closes the hips towards the circle, so a skater who
+has not opened them beforehand arrives with the new foot square to the old one and nothing to
+stand on. The knees are the honest place to look: legs that cross high have hinged from the
+hip, and the step will be a stumble however tidy the feet look.
+
+It draws a cross roll's tracing. Where the foot goes is the difference, and no blade records
+that.`,
+
+    BO: `Travelling backwards, with the foot going down behind the skating one on the outer edge
+side and the weight crossing onto it. This is the version the British syllabus asks for, once,
+at the top of Skills 8.
+
+The fault is a hop. There is no instant in which both feet are square, so a skater who cannot
+get the free hip round in time lifts rather than crosses, and a gap opens in the tracing where
+a step belongs. Depth in the skating knee is what buys that instant, and it has to be there
+before the crossing starts rather than found during it.
+
+Moving into the space the crossing foot needs is what makes this the harder direction, not the
+blindness.`,
+  },
+
+  slipchasse: {
+    FO: `The same shape as an open chassé until the free foot leaves. An open chassé lifts it
+with the blade level; a slip chassé slides it away along the ice, ahead of the skating foot,
+so it is still bearing something as it goes.
+
+The slide is the element and it is what makes the step quiet. A lifted foot has to be put
+somewhere afterwards; a sliding one is already going where it will be needed, and the weight
+crosses under the body rather than beside it. Impatience is the usual fault: take the foot up
+early and you have skated an open chassé under another name.
+
+Not to be confused with the slip step, which is a different movement and has both blades flat
+on the ice throughout.`,
+
+    BO: `Backwards, with the free foot sliding away to the rear as the weight arrives on the
+new one. Which way it slides is the only thing separating this from the forward version, and
+it always goes against the way you are travelling.
+
+Keeping the foot on the ice keeps it available, which is the point of the movement. A chassé
+that has to reach for its free foot has already lost the edge it was there to protect, and
+going backwards you cannot see whether it has. What you can feel is load: a foot that has
+gone light has left early.
+
+Skate it slower than feels right. The slide takes time that a lift does not.`,
+  },
+
   crossroll: {
     FO: `The free foot swings in from the side, passes the skating foot and goes down on
 its own outside edge — and because the new edge is outside on the other foot, the curve
@@ -637,6 +745,152 @@ usually take.
 Entering backwards you cannot watch the first turn arrive, so the second one has to be felt
 rather than timed. Skaters who rush it end up with a scrape where the second cusp should be
 and no edge at all coming out.`,
+  },
+
+  'triple-three': {
+    F: `Three three turns on one foot, entering forwards, with nothing in between them. Each
+turn shortens the lobe it is standing on, so the third has the least edge under it and the
+least speed to work with. That is the whole difficulty and it is arithmetic rather than
+technique.
+
+Where the free foot goes decides it. Two turns can be absorbed by a free side that swings a
+little each time; three cannot, and a leg that has drifted by the third turn takes the
+shoulders with it. Hold it still and turn under it.
+
+The tell is a pivot. A third turn produced by the body rather than the blade leaves a scrape
+where the cusp should be, and the tracing shows all three marks side by side for comparison.`,
+
+    B: `Three three turns on one foot from a backward entry, which is where checking stops
+being optional. You cannot see any of them arrive, so each check has to be released on feel
+alone, twice, without pausing.
+
+Speed is what runs out. A backward entry has less of it to start with and every turn takes
+some, so a skater who enters at a comfortable pace is standing still by the third and turning
+on a flat. Enter faster than feels sensible; there is nowhere to add it later.`,
+  },
+
+  'double-three-mohawk': {
+    F: `Two three turns on one foot and then a change of foot, entering forwards, with nothing
+between any of them. By the time the mohawk arrives the lobe has been shortened twice and
+whatever speed the two turns cost has already gone.
+
+So the free foot has to be found early. It cannot be placed after the second turn, because a
+step is instantaneous and there is no glide to find it in; it has to be waiting through the
+second turn, which is the turn most likely to need the whole body's attention. Skaters who
+get the double right and the mohawk wrong have almost always been thinking about them in that
+order.`,
+
+    B: `Two three turns from a backward entry, then a step onto the other foot. Backwards you
+cannot watch either turn arrive, and the step lands at the point where you have least
+information about where you are.
+
+Judge it by the exit edge rather than the turns. A double three turn that has drifted leaves
+the mohawk on a lobe it was not aiming at, and the new foot then goes down on a curve that
+does not match the one the body is still leaning into. That mismatch is what makes a good
+double and a poor cluster look so different from the side.`,
+  },
+
+  'rocker-mohawk': {
+    F: `A rocker, which hands you a new circle, and then a step onto the other foot on that
+new circle. Two changes of lobe of two different kinds, back to back and forwards.
+
+The trap is placing the mohawk on the circle you came from. A rocker's exit curves the other
+way from its entry, so the free foot has to go down where the new lobe is going and not where
+the body has just been. It is a small distance and it is the whole exercise: put the foot on
+the old curve and the step becomes a scrape with a change of direction in it.
+
+British Ice Skating asks for it open on one side and closed on the other, which the tracing
+cannot tell apart.`,
+
+    B: `A rocker from a backward edge into a step onto the other foot. This is the version the
+syllabus asks for at Skills 6, on all four backward entries, and it is entered from a
+crossover so the edge has to be made quickly.
+
+Everything hangs on the check. A rocker rotates into its entry curve and then has to be
+stopped dead on the new one, and the mohawk gives you no time at all to do it in — the step
+is already happening. A rocker that runs on takes the free foot with it and the two elements
+merge into one long scrape.`,
+  },
+
+  'bracket-crossroll': {
+    F: `A bracket, then a rolling step onto the other foot and its outside edge. Two opposite
+demands in succession: a bracket has to be checked hard on landing, and a cross roll works
+only if the body is already rolling across to the new circle.
+
+Which is why it is the pairing and not either half that gets practised. Check too long and
+the cross roll has nothing to roll with; release early and the bracket runs on and the exit
+edge is gone before the free foot arrives. There is a moment between them and it is short.`,
+
+    B: `A bracket from a backward entry into a cross roll. It appears once in the syllabus, in
+the first section of Skills 8, and it is doing something specific: turning a difficult
+one-foot turn into travel across the ice rather than into another turn.
+
+Watch the free side through the bracket. A bracket rotates against its curve, so the free hip
+is already working against the direction the cross roll needs — and the transfer has to
+happen anyway, on time, with the shoulders still holding the check. That is the reason this
+sits where it does in the test.`,
+  },
+
+  'counter-two-and-a-half-twizzle': {
+    F: `A counter and then two and a half rotations on the same foot, with no push and no new
+edge between them. The counter's check is the twizzle's fuel: there is nowhere else for the
+rotation to come from.
+
+That makes the exit of the counter the whole element. Checked, it holds enough to meter the
+twizzle across all five half-turns; unchecked, the rotation arrives all at once and the last
+half is stepped rather than skated. Nothing done during the twizzle recovers a counter that
+ran on.`,
+
+    B: `The pairing British Ice Skating asks for at Skills 7, from a backward inside edge and
+entered off a crossover. Two difficult turns joined, and the document says as much in its
+objectives.
+
+The count matters here in a way it does not on a standing twizzle. Two and a half rotations
+leave the skater facing the way they did not start, so the counter's check has to be set
+against where the twizzle will finish rather than where it begins. Skaters who can do both
+separately and not together are almost always checking for the wrong exit.`,
+  },
+
+  'three-coe-double-twizzle': {
+    F: `Three different things on one foot with no step anywhere in them: a three turn, then
+the blade rolling to the other edge, then two rotations. The change of edge in the middle is
+the quiet part and the part that decides it.
+
+A change of edge has nothing to see — no cusp, no pivot, no break in the tracing — so it is
+where a skater can arrive at the twizzle on the wrong edge without anything having looked
+wrong. The twizzle then unwinds, and the fault is two elements upstream. Skate the roll
+deliberately rather than letting the turn's exit drift into it.`,
+
+    B: `A three turn, a change of edge and a double twizzle run together from a backward
+entry. It is the technical middle of Skills 8 and the hardest continuous passage in the
+British syllabus.
+
+There is no moment in it where the foot can be reset, which is unusual — most clusters at
+least change foot somewhere. So the knee does all the work: it absorbs the turn, carries the
+roll and then holds still for the rotation, and a knee that is still rising when the twizzle
+starts sends the whole thing off the edge.
+
+BIS write a push, or touch down, before the twizzle. The guide has no element for it.`,
+  },
+
+  'rocker-counter-double-twizzle': {
+    F: `The rocker-counter, and then two rotations on the edge it hands back. The pair returns
+the skater to the edge they entered on, so the twizzle happens where the cluster started —
+which sounds like a rest and is not.
+
+By then the lobe has been changed twice and the check has been set and released twice, and
+the twizzle asks for a third setting on whatever is left. Skaters who own the rocker-counter
+often lose it here, because they arrive at the familiar edge with none of the speed they
+usually have on it.`,
+
+    B: `A rocker into a counter into a double twizzle, from a backward entry. October 2026
+adds it to the last section of Skills 8, as one of two optional directions, and it is the
+longest single-foot run in the test.
+
+The counter is the pivot of it in both senses. It has to undo the rocker's change of lobe and
+then hold still enough for the rotation to be metered rather than thrown, and there is no
+step, no push and no glide anywhere in which to fix a bad one. Everything that goes wrong
+here goes wrong in the first half.`,
   },
 
   'three-mohawk': {
@@ -824,9 +1078,21 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
     if (!TRANSITION_ENTRIES[key_].includes(edge)) continue;
     const x = exitState(s, key_);
     const continues = lobeSense(s.foot, s.edge, s.dir) === lobeSense(x.foot, x.edge, x.dir);
-    const how = { roll: 'the blade rolls across without turning',
-                  loop: 'a small circle traced on the same edge',
-                  step: 'a step onto the other foot' }[tr.join];
+    /* The join says what the TRACING does and three elements share `step`, which was fine
+       while a crossover, a chassé and a cross roll all landed on different edges. It stopped
+       being fine on 30/08/2026: a crossed step behind produces exactly the states a cross
+       roll produces, and a slip chassé exactly those of a chassé, so both summaries came out
+       word for word identical to an existing one. A summary that does not distinguish is a
+       summary doing nothing, which style.md says in as many words.
+
+       So the two that collide say what the FOOT does instead. The other three keep the
+       join's phrase, because nothing of theirs collides and rewriting settled pages to fix a
+       problem they do not have is how a repository loses its history. */
+    const how = { crossbehind: 'a step behind, with the legs crossed below the knee',
+                  slipchasse: 'a step in which the free foot slides away along the ice' }[key_]
+      ?? { roll: 'the blade rolls across without turning',
+           loop: 'a small circle traced on the same edge',
+           step: 'a step onto the other foot' }[tr.join];
 
     files.push({
       id: `${slug(s)}-${key_}`,
@@ -838,6 +1104,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
           `${continues ? 'continues' : 'reverses'}.`,
         `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
         `turn: ${key_}`,
+        ...(ALIASES[key_] ? [`aliases: [${ALIASES[key_].join(', ')}]`] : []),
         `prerequisites: [${slug(s)}]`,
       ],
       body: TRANSITION_TEXT[key_][key(s)],
@@ -870,6 +1137,27 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
 
   for (const [comboKey, combo] of Object.entries(CLUSTERS)) {
     const states = chainStates(s, combo.turns);
+
+    /* A CLUSTER IS ONLY REAL IF EVERY ELEMENT IN IT IS REAL FROM THE STATE IT
+       STARTS AT. Transitions are generated from some entry edges and not others —
+       a cross roll, a crossover and a chassé are skated from outside edges, which
+       is what the elements are rather than a limitation of the model. A chain can
+       pass through a state where its next element does not exist.
+
+       bracket-crossroll is the case that found this. A bracket changes edge, so
+       from an OUTSIDE entry it exits on an inside one, and there is no such thing
+       as a cross roll from an inside edge — so four of the eight entries named a
+       prerequisite with no page. British Ice Skating write it once, at Skills 8
+       section 1, as LBI bracket-cross roll: an inside entry, which is the half
+       that is legal.
+
+       Astro logs a dangling content reference as an error and BUILDS ANYWAY, so
+       `npm run check` stayed green while four pages pointed at nothing. It
+       surfaced only when the dev server was restarted. syllabus.mjs now asserts
+       that every prerequisite resolves, because the build will not. */
+    const impossible = combo.turns.findIndex((t, i) =>
+      TRANSITIONS[t] && !TRANSITION_ENTRIES[t].includes(states[i].edge));
+    if (impossible >= 0) continue;
     const x = states.at(-1);
     const feet = new Set(states.map(st => st.foot)).size;
     const returns = label(x) === label(s);
@@ -879,12 +1167,21 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
       front: [
         `name: ${FOOT_WORD[foot]} ${DIR_WORD[dir]} ${EDGE_WORD[edge]} ${combo.name}`,
         `kind: combination`,
+        /* "Turns" was true while a cluster could only hold turns and steps. Six of
+           them now hold a change of edge, a cross roll or a twizzle, and calling a
+           change of edge a turn is the one thing skating.js is most careful not to
+           do — not reversing the direction of travel is exactly what makes it not
+           one. */
         `summary: ${states.map(label).join(' → ')}${returns ? ', back where it started' : ''} — ` +
-          `${combo.turns.length} turns on ${feet === 1 ? 'one foot' : 'two feet'}.`,
+          `${combo.turns.length} ${combo.turns.every(t => TURNS[t] || STEPS[t]) ? 'turns' : 'elements'}` +
+          ` on ${feet === 1 ? 'one foot' : 'two feet'}.`,
         `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
         `turns: [${combo.turns.join(', ')}]`,
         /* A cluster is built on its parts, so the parts are its prerequisites. */
-        `prerequisites: [${[...new Set(combo.turns.map((t, i) => `${slug(states[i])}-${t}`))].join(', ')}]`,
+        /* A twizzle's own page spells its rotation count out, so the key cannot be
+           pasted into a slug — TWIZZLE_SLUG is the one place that mapping lives. */
+        `prerequisites: [${[...new Set(combo.turns.map((t, i) =>
+            `${slug(states[i])}-${TWIZZLE_SLUG[t] ?? t}`))].join(', ')}]`,
       ],
       body: COMBO_TEXT[comboKey][dir],
     });
