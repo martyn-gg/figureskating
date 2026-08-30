@@ -18,7 +18,17 @@ const { Content } = await render(entry);
 
 /* Every test that references this element, in any country. Free, because tests
    point at elements and never the other way round. */
-const tests = (await getCollection('tests')).filter(t => t.data.elements.some(r => r.id === entry.id));
+const allTests = await getCollection('tests');
+const allExercises = await getCollection('exercises');
+/* Two routes in, because a test either owns a flat list of elements or owns
+   exercises that do. Both are answered by pointing at this element, never by this
+   element knowing about them. */
+const exercisesHere = allExercises.filter(x => x.data.elements.some(r => r.id === entry.id))
+  .sort((a, b) => a.data.test.id.localeCompare(b.data.test.id) || a.data.order - b.data.order);
+const tests = allTests.filter(t =>
+  t.data.elements.some(r => r.id === entry.id) ||
+  exercisesHere.some(x => x.data.test.id === t.id));
+const testName = id => allTests.find(t => t.id === id)?.data.name ?? id;
 
 /* Nothing below is stored on the element. */
 const turnLine = d.entry && d.turn ? describeTurn(d.entry, d.turn) : null;
@@ -56,6 +66,13 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
 <Base title={d.name} subtitle={d.summary}>
   <h1>{d.name}</h1>
   <p class="lede">{d.summary}</p>
+  {/* The guide keeps the governing body's word and never translates it silently.
+      This is not a translation — it is so a reader searching for what their coach
+      calls it lands somewhere. src/content.config.ts has the rule. */}
+  {d.aliases.length > 0 &&
+    <p class="aka">Also called {d.aliases.map((a, i) =>
+      <>{i > 0 ? (i === d.aliases.length - 1 ? ' or ' : ', ') : ''}a <b>{a}</b></>)}.
+      {' '}<a href={url('elements/other-names/')}>Other names</a>.</p>}
 
   <div class="meta">
     <span class="chip">{d.kind}</span>
@@ -170,4 +187,13 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
     : <ul class="plain">{tests.map(t => (
         <li><a href={url(`tests/${t.id}/`)}>{t.data.name}</a><span>{t.data.governingBody} · level {t.data.level}</span></li>
       ))}</ul>}
+
+  {exercisesHere.length > 0 && (
+    <ul class="plain">{exercisesHere.map(x => (
+      <li>
+        <a href={url(`exercises/${x.id}/`)}>{testName(x.data.test.id)}, exercise {x.data.order} — {x.data.name}</a>
+        <span>{x.data.summary}</span>
+      </li>
+    ))}</ul>
+  )}
 </Base>

@@ -1,0 +1,178 @@
+---
+/* An addendum, not part of the ladder. Someone who passed a British test years ago
+   arrives holding a name that no longer exists anywhere on the site, and the only
+   published conversion — field moves to Skills — is a table in BIS's own handbook.
+   Nothing here links through to an element: the older schemes' requirements are not
+   recorded in the guide, so this is a lookup for a name and nothing more. */
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+
+/* From the transition table in the BIS National Skills Tests handbook. Read as data
+   rather than transcribed as a table: the columns are ours and the numbers are theirs. */
+const transition = [
+  { old: '1',  interim: '1',       skills: '1', next: '2'   },
+  { old: '2',  interim: '2',       skills: '2', next: '3'   },
+  { old: '3',  interim: '3',       skills: '3', next: '4'   },
+  { old: '4',  interim: 'BN',      skills: '5', next: '6'   },
+  { old: '5',  interim: 'BN',      skills: '5', next: '6'   },
+  { old: '6',  interim: 'INT',     skills: '6', next: '7'   },
+  { old: '7',  interim: 'INT',     skills: '6', next: '7'   },
+  { old: '8',  interim: 'Adv Nov', skills: '7', next: '8'   },
+  { old: '9',  interim: 'JNR',     skills: '8', next: null  },
+  { old: '10', interim: 'SNR',     skills: '8', next: null  },
+];
+---
+<Base title="Older test names" subtitle="What the older British test levels were called, and what they convert to.">
+  <h1>Older test names</h1>
+  <p class="lede">
+    You passed something years ago and the name has since gone. This page holds the older
+    British test names and, where British Ice Skating has published a conversion, what the
+    modern equivalent is.
+  </p>
+
+  <Unverified verified={{ checked: false }} what="names and dates" />
+
+  <h2>Four sets of names</h2>
+
+  <p>
+    The body renamed itself as well as its tests. The National Ice Skating Association began
+    rebranding as British Ice Skating in November 2018, so NISA and BIS are the same
+    organisation and an old NISA pass is a British Ice Skating pass.
+  </p>
+
+  <p>
+    <b>The medal tests.</b> Preliminary, Inter-Bronze, Bronze, Inter-Silver, Silver,
+    Inter-Gold and Gold, with Gold Star above them for free skating only. A level was
+    several separate tests rather than one: moves in the field, elements and free skating
+    were taken independently and at different paces. So Inter-Silver names a rung on the
+    ladder rather than a single pass, which matters below.
+  </p>
+
+  <p>
+    <b>Levels 1 to 10.</b> By July 2015 the singles test manual sets out ten numbered levels
+    and makes no mention of the medal names. The field moves test at each of those levels is
+    the one the Skills tests replaced, and it is what the handbook means by old field moves.
+  </p>
+
+  <p>
+    <b>Interim field moves.</b> A short-lived set that kept 1, 2 and 3 and then switched to
+    the competition categories — BN, INT, Adv Nov, JNR, SNR. The handbook does not expand the
+    abbreviations. Reading them as basic novice, intermediate novice, advanced novice, junior
+    and senior matches the category ladder, but it is a reading and not a quotation.
+  </p>
+
+  <p>
+    <b>Skills 1 to 8.</b> The current tests, and the ones this guide covers. British Ice
+    Skating revised them on 01/10/2026, adding an exercise or two to most levels rather than
+    replacing anything.
+  </p>
+
+  <h2>What converts to what</h2>
+
+  <p>
+    One conversion is published, and it is the field moves one. The table in the National
+    Skills Tests handbook awards a Skills pass for a field moves pass and names the test to
+    take next.
+  </p>
+
+  <div class="scroll-x">
+    <table class="ladder">
+      <caption>
+        The conversion is British Ice Skating's, from the <i>National Skills Tests</i>
+        handbook — reproduced here as a historical reference for passes that predate Skills.
+        The columns and everything written around them are ours. Check it against
+        <a href="https://www.iceskating.org.uk/test-information">BIS's own test information</a>
+        before you rely on it.
+      </caption>
+      <thead>
+        <tr>
+          <th>Old field moves</th>
+          <th>Interim field moves</th>
+          <th>Skills awarded</th>
+          <th>Next Skills test</th>
+        </tr>
+      </thead>
+      <tbody>
+        {transition.map(r => (
+          <tr>
+            <td>{r.old}</td>
+            <td>{r.interim}</td>
+            <td>{r.skills}</td>
+            <td>{r.next ?? '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Ten rungs become eight, so the mapping is not one to one and the compression is all at
+    the top. Levels 4 and 5 both award Skills 5, 6 and 7 both award Skills 6, and 9 and 10
+    both award Skills 8 with nothing left to take. Nobody arrives at Skills 4 by
+    conversion at all: it is a test you take rather than one you are given.
+  </p>
+
+  <h2>The medal tests do not convert</h2>
+
+  <p>
+    There is no published mapping from Inter-Bronze or Inter-Silver onto a numbered level,
+    and none onto Skills. Two renamings sit in between, and a medal level was a set of tests
+    rather than a single pass, so there is no one number for it to become. Anyone who offers
+    you an exact equivalence is guessing, and this guide will not add to the guessing.
+  </p>
+
+  <p>
+    The answerable version of the question is what you can hold now. Skills asks for specific
+    exercises at each level, so the way in is to read the level pages and find where you
+    stop. What credit an older pass carries is a question for your coach and the BIS office,
+    and the table above is the whole of what BIS publishes about it.
+  </p>
+
+  <p>
+    One trap worth naming: bronze, silver and gold appear twice in British skating. The Skate
+    UK awards use the same three words at a far earlier stage, so a Skate UK gold badge and an
+    old Gold medal test are not the same thing, and are nowhere near the same standard.
+  </p>
+
+  <h2>Ice dance changed separately</h2>
+
+  <p>
+    Dance moved to a new test structure on 01/09/2025 with its own chart for carrying existing
+    awards across and a transition period running to April 2026. That chart is published as an
+    image in BIS's announcement, so it is not reproduced or paraphrased here — read it there.
+  </p>
+
+  <h2>Where this comes from</h2>
+
+  <ul class="sources">
+    <li>The numbered levels: the NISA singles test manual of July 2015.</li>
+    <li>
+      The medal test names: legacy NISA material still circulating on club sites. No current
+      BIS document lists them, which is the main reason this page is marked unverified.
+    </li>
+    <li>
+      Ice dance: British Ice Skating's
+      <a href="https://www.iceskating.org.uk/post/new-ice-dance-test-structure">new ice dance test structure</a>
+      announcement.
+    </li>
+  </ul>
+</Base>
+
+<style>
+  .scroll-x{overflow-x:auto;margin:.25rem 0 1.25rem}
+  table.ladder{border-collapse:collapse;width:100%;min-width:22rem;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.88rem}
+  /* The attribution belongs to the table rather than to the page, so it is the
+     table's caption and sits under it. Two copies of it would be one too many. */
+  table.ladder caption{caption-side:bottom;text-align:left;padding:.7rem .6rem 0;
+    font-size:.82rem;color:var(--ink-soft);line-height:1.5}
+  table.ladder th{text-align:left;font-weight:600;color:var(--ink-soft);font-size:.7rem;
+    letter-spacing:.07em;text-transform:uppercase;padding:.5rem .6rem .45rem;
+    border-bottom:1px solid var(--rule)}
+  table.ladder td{padding:.55rem .6rem;border-bottom:1px solid var(--rule);
+    font-variant-numeric:tabular-nums}
+  table.ladder td:nth-child(3){font-weight:600}
+  table.ladder td:last-child{color:var(--ink-soft)}
+  ul.sources{padding-left:1.1rem;font-size:.9rem;color:var(--ink-soft)}
+  ul.sources li{margin:.4rem 0}
+</style>

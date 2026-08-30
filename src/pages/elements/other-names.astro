@@ -1,0 +1,80 @@
+---
+/* An addendum, the same shape as /tests/older-names/ and for the same reason.
+
+   That page exists because a skater arrives holding the name of a test that no
+   longer exists. This one exists because they arrive holding a name for a MOVEMENT
+   that the guide does not use — their coach's word, or an older one. Without a way
+   in, an unfamiliar name is a dead end.
+
+   The guide's own rule does not move: the governing body's word is the name of the
+   page, and nothing here renames anything. These are ways IN.
+
+   Generated from the collection rather than written out, so a name recorded on an
+   element appears here automatically and the two cannot disagree. Short on purpose:
+   nothing goes in that cannot be pointed at a source. */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import { url } from '../../lib/url.js';
+
+const elements = await getCollection('elements');
+
+/* One row per alias, not per element — the reader has the alias and wants the
+   page. Where a movement has eight entries the row names the movement once and
+   links to the family, which is what "open chassé" means to somebody anyway. */
+const byAlias = new Map();
+for (const e of elements)
+  for (const a of e.data.aliases ?? []) {
+    if (!byAlias.has(a)) byAlias.set(a, []);
+    byAlias.get(a).push(e);
+  }
+const rows = [...byAlias.entries()]
+  .map(([alias, es]) => ({ alias, es: es.sort((x, y) => x.data.name.localeCompare(y.data.name)) }))
+  .sort((x, y) => x.alias.localeCompare(y.alias));
+---
+<Base title="Other names" subtitle="Names skaters and coaches use for movements this guide files under something else.">
+  <h1>Other names</h1>
+  <p class="lede">
+    Your coach's word for something and the governing body's word are not always the same.
+    This guide files a movement under British Ice Skating's name; here are the other names
+    it goes by, so a name you already know is a way in rather than a dead end.
+  </p>
+
+  <Unverified />
+
+  {rows.length === 0
+    ? <p>No alternative names are recorded yet.</p>
+    : <ul class="aliases">
+        {rows.map(r =>
+          <li>
+            <b>{r.alias}</b>
+            <span>
+              {r.es.length > 4
+                ? <>{r.es.length} elements — <a href={url(`elements/${r.es[0].id}/`)}>{r.es[0].data.name}</a> and the rest of the family</>
+                : r.es.map((e, i) => <>{i > 0 ? ', ' : ''}<a href={url(`elements/${e.id}/`)}>{e.data.name}</a></>)}
+            </span>
+          </li>)}
+      </ul>}
+
+  <h2>What is not here</h2>
+  <p>
+    A name only goes on this list once it can be pointed at a source — a governing body's
+    own document, or a dictionary. Names that are certainly in use but that nobody has
+    checked are left off rather than guessed at, which is the same rule the rest of the
+    guide runs on. If a name you use is missing, that is worth telling us.
+  </p>
+  <p>
+    Older <em>test</em> names are a separate question and are on
+    <a href={url('tests/older-names/')}>older test names</a>. If you are looking for a
+    movement and do not know any of its names, <a href={url('search/')}>search</a> also
+    matches edge codes and descriptions.
+  </p>
+</Base>
+
+<style>
+  .aliases{list-style:none;padding:0;margin:0 0 1rem}
+  .aliases li{display:grid;grid-template-columns:1fr;gap:.1rem;
+    padding:.7rem 0;min-height:44px;border-bottom:1px solid var(--rule)}
+  .aliases b{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600}
+  .aliases span{color:var(--ink-soft);font-size:.9rem;line-height:1.45}
+</style>
