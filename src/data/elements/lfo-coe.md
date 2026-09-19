@@ -4,7 +4,7 @@ kind: transition
 summary: LFO to LFI — the blade rolls across without turning, still travelling forwards, and the lobe reverses.
 entry: { foot: L, edge: O, dir: F }
 turn: coe
-prerequisites: [lfo]
+prerequisites: [lfo, two-foot-change-of-edge]
 verified: { checked: false }
 ---
 

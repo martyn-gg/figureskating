@@ -4,7 +4,7 @@ kind: turn
 summary: RFI to LBI — a step onto the other foot, holding the edge and staying on the same lobe. No cusp.
 entry: { foot: R, edge: I, dir: F }
 turn: mohawk
-prerequisites: [rfi]
+prerequisites: [rfi, two-foot-turn]
 verified: { checked: false }
 ---
 

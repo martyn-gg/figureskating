@@ -3,6 +3,7 @@ name: Right forward outside edge
 kind: edge
 summary: RFO — the right foot travelling forwards on an outside edge, tracing a clockwise lobe.
 entry: { foot: R, edge: O, dir: F }
+prerequisites: [forward-stroking, one-foot-glide]
 verified: { checked: false }
 ---
 

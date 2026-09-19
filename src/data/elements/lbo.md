@@ -3,6 +3,7 @@ name: Left backward outside edge
 kind: edge
 summary: LBO — the left foot travelling backwards on an outside edge, tracing a clockwise lobe.
 entry: { foot: L, edge: O, dir: B }
+prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
 ---
 

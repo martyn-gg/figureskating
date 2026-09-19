@@ -4,7 +4,7 @@ kind: transition
 summary: LFO to RFO — a step behind, with the legs crossed below the knee, still travelling forwards, and the lobe reverses.
 entry: { foot: L, edge: O, dir: F }
 turn: crossbehind
-prerequisites: [lfo]
+prerequisites: [lfo, half-swizzle-pumps]
 verified: { checked: false }
 ---
 

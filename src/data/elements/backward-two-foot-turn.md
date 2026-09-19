@@ -3,6 +3,7 @@ name: Backward two-foot turn
 kind: basic
 summary: The same half turn on two blades, backwards to forwards.
 aliases: ["backward to forward two-foot turn"]
+prerequisites: [two-foot-turn]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

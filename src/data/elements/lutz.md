@@ -10,7 +10,7 @@ jump:
 verified: { checked: false }
 ---
 
-A long back outside edge, the right toe pick placed behind, and the vault over the
+A long back outside edge, the free toe pick placed behind, and the vault over the
 pick sends you into a rotation that runs *against* the curve you have been tracing.
 That counter-rotation is what makes it feel different from every other jump.
 

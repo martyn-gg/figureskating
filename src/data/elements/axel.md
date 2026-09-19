@@ -18,3 +18,7 @@ It is a waltz jump with a full rotation added, and that is the useful way to hol
 mind. The entry edge, the swing, the check on the landing and the run-out are all things a
 waltz jump already teaches. Getting the waltz jump right rather than merely getting past it
 is most of the work.
+
+Underneath both is the forward outside edge, held and checked, and the back outside edge to
+land on. Those are elements here in their own right, and an Axel that will not close is
+usually one of them going wrong a second earlier.

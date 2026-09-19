@@ -4,6 +4,7 @@ kind: basic
 summary: The trailing blade laid across behind the glide, braking on its outside edge.
 aliases: ["T stop"]
 rig: tStop
+prerequisites: [one-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

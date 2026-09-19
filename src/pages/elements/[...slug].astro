@@ -59,6 +59,30 @@ const sharesDetail = shares.map(k => ({
 const allElements = await getCollection('elements');
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
 
+/* WHAT THIS LEADS TO — 19/09/2026, Martyn: say how a basic prepares a skater for
+   something harder, and link to it.
+
+   Inverted from `prerequisites` rather than stored, which is the same rule that
+   keeps exit edges out of the element files: a second field would be a second
+   source of truth and the second one always goes stale. So a page's "leads to"
+   list is every element that names it as something to build on, and the two
+   directions of every link are one fact.
+
+   It earns its place most on the basics, which are the bottom of the ladder and
+   whose whole reason for existing is what sits above them — a skater looking at
+   the push wants to know that it is what an edge is made of. Sorted so the
+   nearest thing comes first: a basic's own siblings before the edges, the edges
+   before the turns built on them.
+
+   Capped, because forward-stroking is under every edge in the guide and a list of
+   thirty is a wall rather than a way through. The count is printed either way. */
+const KIND_NEAR = ['basic', 'edge', 'position', 'transition', 'turn', 'twizzle', 'jump', 'spin', 'combination'];
+const leadsToAll = allElements
+  .filter(e => e.id !== entry.id && (e.data.prerequisites || []).some(r => r.id === entry.id))
+  .sort((a, b) => (KIND_NEAR.indexOf(a.data.kind) - KIND_NEAR.indexOf(b.data.kind))
+                  || a.data.name.localeCompare(b.data.name));
+const leadsTo = leadsToAll.slice(0, 8);
+
 /* Which way the tracing goes. Derived from the same function the diagram uses, so
    the sentence and the picture cannot disagree. */
 const spin = d.entry ? (lobeSense(d.entry.foot, d.entry.edge, d.entry.dir) > 0 ? 'anticlockwise' : 'clockwise') : null;
@@ -226,6 +250,21 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
       <h2>Build on</h2>
       <ul class="plain">
         {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
+      </ul>
+    </>
+  )}
+
+  {leadsTo.length > 0 && (
+    <>
+      <h2>Leads to</h2>
+      <p class="lede">
+        {leadsToAll.length === 1
+          ? 'One element in the guide is built on this one.'
+          : <>{leadsToAll.length} elements in the guide are built on this one{leadsToAll.length > leadsTo.length
+              ? <>, and the {leadsTo.length} nearest are listed here</> : null}.</>}
+      </p>
+      <ul class="plain">
+        {leadsTo.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
       </ul>
     </>
   )}

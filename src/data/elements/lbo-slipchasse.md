@@ -5,7 +5,7 @@ summary: LBO to RBI — a step in which the free foot slides away along the ice,
 entry: { foot: L, edge: O, dir: B }
 turn: slipchasse
 aliases: [slide chassé]
-prerequisites: [lbo]
+prerequisites: [lbo, backward-stroking]
 verified: { checked: false }
 ---
 

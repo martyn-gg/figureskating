@@ -3,6 +3,7 @@ name: Left forward outside edge
 kind: edge
 summary: LFO — the left foot travelling forwards on an outside edge, tracing an anticlockwise lobe.
 entry: { foot: L, edge: O, dir: F }
+prerequisites: [forward-stroking, one-foot-glide]
 verified: { checked: false }
 ---
 

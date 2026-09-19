@@ -9,6 +9,7 @@ trace:
   path:
     - { kind: arc, foot: L, edge: O, dir: F, sweep: 75 }
     - { kind: arc, foot: L, edge: I, dir: F, sweep: 75 }
+prerequisites: [two-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

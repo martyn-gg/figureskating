@@ -3,6 +3,7 @@ name: Left forward inside edge
 kind: edge
 summary: LFI — the left foot travelling forwards on an inside edge, tracing a clockwise lobe.
 entry: { foot: L, edge: I, dir: F }
+prerequisites: [forward-stroking, one-foot-glide]
 verified: { checked: false }
 ---
 

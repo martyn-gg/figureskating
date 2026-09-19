@@ -3,6 +3,8 @@ name: Backward snowplough stop
 kind: basic
 summary: The same scrape travelling backwards, with the heels drawn out rather than the toes in.
 aliases: ["backward snowplow stop"]
+rig: ploughBack
+prerequisites: [snowplough-stop]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

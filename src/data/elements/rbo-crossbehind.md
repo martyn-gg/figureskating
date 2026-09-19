@@ -4,7 +4,7 @@ kind: transition
 summary: RBO to LBO — a step behind, with the legs crossed below the knee, still travelling backwards, and the lobe reverses.
 entry: { foot: R, edge: O, dir: B }
 turn: crossbehind
-prerequisites: [rbo]
+prerequisites: [rbo, backward-half-swizzle-pumps]
 verified: { checked: false }
 ---
 

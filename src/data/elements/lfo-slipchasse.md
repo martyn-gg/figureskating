@@ -5,7 +5,7 @@ summary: LFO to RFI — a step in which the free foot slides away along the ice,
 entry: { foot: L, edge: O, dir: F }
 turn: slipchasse
 aliases: [slide chassé]
-prerequisites: [lfo]
+prerequisites: [lfo, forward-stroking]
 verified: { checked: false }
 ---
 

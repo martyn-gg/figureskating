@@ -22,6 +22,6 @@ rather than getting past. The entry edge, the swing, the check on the landing an
 the run-out are all the same movements you will need later with another full turn
 added on top.
 
-Watch the run-out rather than the jump. Landing is easy; holding a checked back
+Watch the run-out rather than the jump. Landing is not the difficulty; holding a checked back
 outside edge afterwards, without the free leg swinging round, is the part that
 takes time.

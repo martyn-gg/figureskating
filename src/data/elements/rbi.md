@@ -3,6 +3,7 @@ name: Right backward inside edge
 kind: edge
 summary: RBI — the right foot travelling backwards on an inside edge, tracing a clockwise lobe.
 entry: { foot: R, edge: I, dir: B }
+prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
 ---
 

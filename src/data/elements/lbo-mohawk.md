@@ -4,7 +4,7 @@ kind: turn
 summary: LBO to RFO — a step onto the other foot, holding the edge and staying on the same lobe. No cusp.
 entry: { foot: L, edge: O, dir: B }
 turn: mohawk
-prerequisites: [lbo]
+prerequisites: [lbo, backward-two-foot-turn]
 verified: { checked: false }
 ---
 

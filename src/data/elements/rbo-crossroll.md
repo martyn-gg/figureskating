@@ -4,7 +4,7 @@ kind: transition
 summary: RBO to LBO — a step onto the other foot, still travelling backwards, and the lobe reverses.
 entry: { foot: R, edge: O, dir: B }
 turn: crossroll
-prerequisites: [rbo]
+prerequisites: [rbo, backward-stroking]
 verified: { checked: false }
 ---
 

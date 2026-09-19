@@ -4,7 +4,7 @@ kind: turn
 summary: RBO to RFI — half a turn into the circle, changing edge and staying on the same lobe.
 entry: { foot: R, edge: O, dir: B }
 turn: three
-prerequisites: [rbo]
+prerequisites: [rbo, backward-two-foot-turn]
 verified: { checked: false }
 ---
 

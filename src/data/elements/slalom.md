@@ -11,6 +11,7 @@ trace:
     - { kind: arc, foot: L, edge: I, dir: F, sweep: 110 }
     - { kind: arc, foot: L, edge: O, dir: F, sweep: 110 }
     - { kind: arc, foot: L, edge: I, dir: F, sweep: 55 }
+prerequisites: [two-foot-change-of-edge]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

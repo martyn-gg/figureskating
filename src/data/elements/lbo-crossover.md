@@ -4,7 +4,7 @@ kind: transition
 summary: LBO to RBI — a step onto the other foot, still travelling backwards, and the lobe continues.
 entry: { foot: L, edge: O, dir: B }
 turn: crossover
-prerequisites: [lbo]
+prerequisites: [lbo, backward-half-swizzle-pumps]
 verified: { checked: false }
 ---
 

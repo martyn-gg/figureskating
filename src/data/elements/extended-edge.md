@@ -4,7 +4,7 @@ kind: position
 summary: A plain edge held long enough — a third of a circle — to be a position rather than a step.
 entry: { foot: R, edge: O, dir: B }
 rig: extendedEdge
-prerequisites: [rbo]
+prerequisites: [rbo, one-foot-glide]
 verified: { checked: false }
 ---
 

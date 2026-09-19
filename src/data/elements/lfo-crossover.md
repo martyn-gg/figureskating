@@ -4,7 +4,7 @@ kind: transition
 summary: LFO to RFI — a step onto the other foot, still travelling forwards, and the lobe continues.
 entry: { foot: L, edge: O, dir: F }
 turn: crossover
-prerequisites: [lfo]
+prerequisites: [lfo, half-swizzle-pumps]
 verified: { checked: false }
 ---
 

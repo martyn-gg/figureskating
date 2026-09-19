@@ -17,3 +17,7 @@ more than effort in the air.
 It is usually entered from a forward outside three turn, so a poor three turn is the most
 common reason a Salchow fails — the jump was fine and the thing before it was not.
 Practise the entry as its own element before blaming the takeoff.
+
+What it rests on is the forward outside three turn and the back inside edge it leaves you
+on. Both exist as elements here, and both are worth more attention than the jump when a
+Salchow is not going round.

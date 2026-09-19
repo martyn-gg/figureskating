@@ -4,7 +4,7 @@ kind: transition
 summary: RBO to RBI — the blade rolls across without turning, still travelling backwards, and the lobe reverses.
 entry: { foot: R, edge: O, dir: B }
 turn: coe
-prerequisites: [rbo]
+prerequisites: [rbo, two-foot-change-of-edge]
 verified: { checked: false }
 ---
 

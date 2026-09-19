@@ -27,7 +27,10 @@ had: stroking, the swizzles and pumps, the glides, the dip, the drag, four stops
 two-foot turns, the slaloms, the two-foot change of edge and the pivot. `docs/gaps-basics.md`
 is the whole account, including why Learn to Skate USA is the anchor and the per-foot yaw that
 keeps fourteen of the twenty-two out of the rig. **Eight of them were given tracings on 19/09/2026** and
-`tools/drawn.mjs` is the nineteenth checker and `tools/turnout.mjs` the twentieth: every element page draws something or names
+`tools/drawn.mjs` is the nineteenth checker, `tools/turnout.mjs` the twentieth and
+`tools/house.mjs` the twenty-first — which found **167 places** where the house style in
+`docs/style.md` was not kept, on the day it was first run. Every rule in that document had
+been written and none of them had ever been checked: every element page draws something or names
 itself, with its reason, as one that cannot. Fifteen are named — fourteen basics waiting on a
 per-foot yaw, and `other-names`, which is a listing.
 

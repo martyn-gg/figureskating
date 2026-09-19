@@ -3,6 +3,7 @@ name: Right forward inside edge
 kind: edge
 summary: RFI — the right foot travelling forwards on an inside edge, tracing an anticlockwise lobe.
 entry: { foot: R, edge: I, dir: F }
+prerequisites: [forward-stroking, one-foot-glide]
 verified: { checked: false }
 ---
 

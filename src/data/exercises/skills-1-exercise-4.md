@@ -21,7 +21,7 @@ verified: { checked: false }
 ---
 
 A change of edge is the one element in this test with nothing to see. The blade does not
-pivot, the foot does not change, the tracing does not come to a point — it simply crosses
+pivot, the foot does not change, the tracing does not come to a point — it crosses
 from one side of the blade to the other and the curve goes the other way. That is the whole
 difficulty of it, and the reason this guide draws it as a roll rather than a join.
 

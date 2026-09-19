@@ -3,6 +3,7 @@ name: Backward half-swizzle pumps
 kind: basic
 summary: The same circle, the same pumping foot, travelling backwards.
 aliases: ["backward circle thrusts"]
+prerequisites: [backward-swizzle]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

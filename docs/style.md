@@ -64,8 +64,14 @@ great deal easier if the answer to *where did you get this?* is *your website*.
 
 ## Element pages
 
-Two or three paragraphs. Ninety to a hundred and sixty words. Longer than that and it stops
-being a field guide.
+Two or three paragraphs. **Ninety to a hundred and sixty words on a hand-written page,
+sixty to a hundred and sixty on a derived one** — turns, transitions, twizzles and clusters.
+Longer than that and it stops being a field guide.
+
+The two floors are one rule that had only ever met one kind of page. Ninety was written
+before the derived tier existed, and a generated cluster page says what the cluster is and
+the one thing that is not obvious about it in seventy words; holding it to ninety would pad
+two hundred and forty pages to meet a number. The ceiling is the same for both.
 
 Each paragraph has a job:
 
@@ -173,6 +179,13 @@ tracing, flat.
 
 Do not use *simply*, *just*, *easy*, *of course*, *obviously*, *all you have to do*. Every
 one of them tells a skater who is struggling that they should not be.
+
+**`tools/house.mjs` asserts this**, and asserting it made the rule more precise than it was
+written. It is the DIMINISHING sense that is banned, not the word: *the body has just been
+there* and *released just enough* and *one hip opens more easily than the other* are a
+tense, a quantity and a comparison, and none of them tells anybody they should not be
+struggling. The checker exempts those and catches the rest. It found 167 places on the day
+it was written, which is what an unasserted rule is worth.
 
 Do not use *master*, *nail*, *conquer*, or any other verb borrowed from a motivational
 poster. Elements are learned, held, checked, or not yet.

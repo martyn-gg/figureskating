@@ -3,6 +3,7 @@ name: Left backward inside edge
 kind: edge
 summary: LBI — the left foot travelling backwards on an inside edge, tracing an anticlockwise lobe.
 entry: { foot: L, edge: I, dir: B }
+prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
 ---
 

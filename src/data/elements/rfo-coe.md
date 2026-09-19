@@ -4,7 +4,7 @@ kind: transition
 summary: RFO to RFI — the blade rolls across without turning, still travelling forwards, and the lobe reverses.
 entry: { foot: R, edge: O, dir: F }
 turn: coe
-prerequisites: [rfo]
+prerequisites: [rfo, two-foot-change-of-edge]
 verified: { checked: false }
 ---
 

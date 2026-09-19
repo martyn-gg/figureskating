@@ -5,7 +5,7 @@ summary: LFO to RFI — a step onto the other foot, still travelling forwards, a
 entry: { foot: L, edge: O, dir: F }
 turn: chasse
 aliases: [open chassé, simple chassé]
-prerequisites: [lfo]
+prerequisites: [lfo, forward-stroking]
 verified: { checked: false }
 ---
 

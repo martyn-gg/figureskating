@@ -138,10 +138,10 @@ instead.`,
 
     FI: `Forwards on the inside edge, rotating into the circle, out backwards on the outside
 edge of the same foot. It is usually the second three turn a skater learns and it is the
-one that flatters them — the rotation goes the easy way and the exit arrives on a strong
+one that flatters them — the rotation goes the way the edge is already turning and the exit arrives on a strong
 backward edge.
 
-Treat that as a warning rather than a compliment. Because it comes easily it is often done
+Treat that as a warning rather than a compliment. Because it arrives without much asking, it is often done
 with the shoulders leading and the edge only nominally present. The honest test is whether
 you can hold the exit for as long as you held the entry.`,
 
@@ -210,8 +210,8 @@ turn's rotation; the destination is somewhere else entirely.`,
 the back. Because the edge holds and the direction reverses, the new lobe curves opposite
 to the old one — you have changed circles without changing edges.
 
-Watch the exit rather than the turn. It is easy to rotate, land on a flat, and pick the
-new lobe up a beat later. The turn is only really finished when the new curve starts at
+Watch the exit rather than the turn. Rotating, landing on a flat and picking the new
+lobe up a beat later is the common fault. The turn is only really finished when the new curve starts at
 the cusp and not after it.`,
 
     BO: `Backwards on the outside edge — the edge you land jumps on — rotating into the
@@ -682,13 +682,17 @@ a straight line between them instead of one continuous roll.`,
 const JUMP_SLUG = { toeLoop: 'toe-loop', salchow: 'salchow', loop: 'loop', axel: 'axel' };
 
 const JUMP_TEXT = {
-  toeLoop: `Backwards on a right outside edge, the left toe pick placed behind, and the
-vault carries you through one rotation to land on the edge you left. Usually the first toe
-jump a skater lands, and often the first double as well.
+  toeLoop: `Backwards on a back outside edge, the free toe pick placed behind, and the vault carries
+you through one rotation to land on the edge you left. Usually the first toe jump a skater
+lands, and often the first double as well.
 
 The trap is the pick. It is a jab, not a stance — it sets the height and comes straight out
 again. Reach back and *press* on it and the rotation stalls, and the jump gets spent on the
-ice rather than above it.`,
+ice rather than above it.
+
+It is built on a back outside edge held with the free side checked, which is the extended
+edge, and on the pick set behind without weight on it. A skater who cannot hold that edge
+for three seconds has nothing to vault off.`,
 
   salchow: `From a back inside edge, no pick, the free leg swinging through to carry you
 round. The edge does the work, which is why a Salchow rewards patience on the entry far
@@ -696,14 +700,22 @@ more than effort in the air.
 
 It is usually entered from a forward outside three turn, so a poor three turn is the most
 common reason a Salchow fails — the jump was fine and the thing before it was not.
-Practise the entry as its own element before blaming the takeoff.`,
+Practise the entry as its own element before blaming the takeoff.
+
+What it rests on is the forward outside three turn and the back inside edge it leaves you
+on. Both exist as elements here, and both are worth more attention than the jump when a
+Salchow is not going round.`,
 
   loop: `A back outside edge, no pick, and the rotation comes entirely from the edge and
 the check. Nothing helps you: there is no swing through and nothing to vault off, which is
 what makes the loop the honest test of a skater's edge.
 
 It shares its takeoff with the toe loop, and the two are told apart by whether a pick goes
-in. Seen from above they are the same entry; seen from the side, one has a jab in it.`,
+in. Seen from above they are the same entry; seen from the side, one has a jab in it.
+
+What it rests on is the back outside edge held with the free side checked. That is the
+extended edge, and a loop is very close to being that position asked to leave the ice
+without help.`,
 
   axel: `The only jump here with a forward takeoff, which is why it carries an extra half
 rotation — you leave facing forwards and land facing backwards, so one and a half turns is
@@ -712,7 +724,11 @@ the least a single can be.
 It is a waltz jump with a full rotation added, and that is the useful way to hold it in
 mind. The entry edge, the swing, the check on the landing and the run-out are all things a
 waltz jump already teaches. Getting the waltz jump right rather than merely getting past it
-is most of the work.`,
+is most of the work.
+
+Underneath both is the forward outside edge, held and checked, and the back outside edge to
+land on. Those are elements here in their own right, and an Axel that will not close is
+usually one of them going wrong a second earlier.`,
 };
 
 /* ------------------------------------------------------------ combinations */
@@ -949,7 +965,7 @@ which is which.`,
   'counter-three': {
     F: `A counter into a three turn, forwards. The counter fights the curve and changes the
 circle; the three turn then goes with the new curve and stays on it. So the cluster is hard
-then easy, which is its own trap — the three turn arrives while you are still recovering
+then unremarkable, which is its own trap — the three turn arrives while you are still recovering
 from the counter and tends to be thrown away.
 
 Skate the second turn as deliberately as the first. It is the one that leaves you with an
@@ -1043,12 +1059,17 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
        then the bracket and the rocker off it, then the counter off both. The
        two-foot turns hang off the plain edge and off each other. Unverified like
        everything else — a plausible ladder, not a syllabus. */
+    /* THE BASICS SIT UNDER THE LADDER — 19/09/2026. A three turn is a two-foot turn
+       with a foot taken away, and a mohawk is the same claim about a step, so the
+       basics tier belongs at the bottom of this list rather than beside it. It is
+       the same field doing the work, so a basic appears on the pages it prepares
+       without any of them naming it, and gets its "leads to" list back for free. */
     const prereq = {
-      three: [slug(s)],
+      three: [slug(s), dir === 'F' ? 'two-foot-turn' : 'backward-two-foot-turn'],
       bracket: [`${slug(s)}-three`],
       rocker: [`${slug(s)}-three`],
       counter: [`${slug(s)}-bracket`, `${slug(s)}-rocker`],
-      mohawk: [slug(s)],
+      mohawk: [slug(s), dir === 'F' ? 'two-foot-turn' : 'backward-two-foot-turn'],
       choctaw: [`${slug(s)}-mohawk`],
     }[turnKey];
 
@@ -1105,7 +1126,18 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
         `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
         `turn: ${key_}`,
         ...(ALIASES[key_] ? [`aliases: [${ALIASES[key_].join(', ')}]`] : []),
-        `prerequisites: [${slug(s)}]`,
+        /* The basic each transition is built out of. A crossover is half-swizzle
+           pumps with the free foot crossing rather than closing; a change of edge
+           is the two-foot one with a foot lifted; a chassé and its relatives are
+           the push itself with a step in them. */
+        `prerequisites: [${[slug(s), {
+          crossover:  dir === 'F' ? 'half-swizzle-pumps' : 'backward-half-swizzle-pumps',
+          crossbehind:dir === 'F' ? 'half-swizzle-pumps' : 'backward-half-swizzle-pumps',
+          crossroll:  dir === 'F' ? 'forward-stroking' : 'backward-stroking',
+          coe:        'two-foot-change-of-edge',
+          chasse:     dir === 'F' ? 'forward-stroking' : 'backward-stroking',
+          slipchasse: dir === 'F' ? 'forward-stroking' : 'backward-stroking',
+        }[key_]].filter(Boolean).join(', ')}]`,
       ],
       body: TRANSITION_TEXT[key_][key(s)],
     });

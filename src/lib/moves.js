@@ -459,6 +459,27 @@ export const MOVES = {
        sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
     ]},
 
+  /* A BACKWARD SNOWPLOUGH STOP — the forward one's mirror in everything except
+     which way the toes go. Travelling backwards the heels lead, so the feet press
+     out and the TOES turn out rather than in — and out is the cheap direction at
+     the hip, forty degrees against twenty. The forward plough has to buy its
+     toes-in with a bent knee; this one does not, which is a fact about hips and
+     not about difficulty. Everything else a skater finds hard about it is that the
+     weight has to move forward while the stop pushes them back. */
+  ploughBack: {
+    name:'Backward snowplough stop',
+    note:'both blades skidding, travelling backwards · toes turned out, inside edges',
+    path:[{kind:'line', len:140}],
+    radius:200, duration:2.6,
+    keys:[
+      {t:0.00, ph:'Both blades pressed out and flat', hipZ:90, hipYaw:180, shYaw:180,
+       sh:P(0,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
+      {t:0.50, ph:'Scraping — the weight held forward against the stop', hipZ:90, hipYaw:180, shYaw:180,
+       sh:P(2,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
+      {t:1.00, ph:'Held — the feet finishing wider than they started', hipZ:90, hipYaw:180, shYaw:180,
+       sh:P(3,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
+    ]},
+
   /* A T-STOP — the rig for t-stop, and the first thing in this file that SKIDS.
 
      The gliding blade runs true on a forward outside edge and is the reference;

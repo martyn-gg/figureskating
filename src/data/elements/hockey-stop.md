@@ -3,6 +3,7 @@ name: Hockey stop
 kind: basic
 summary: Both blades turned across the line of travel at once and skidded flat to a halt.
 aliases: ["side stop", "parallel stop"]
+prerequisites: [snowplough-stop]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

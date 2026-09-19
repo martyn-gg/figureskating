@@ -4,7 +4,7 @@ kind: transition
 summary: RFO to LFO — a step onto the other foot, still travelling forwards, and the lobe reverses.
 entry: { foot: R, edge: O, dir: F }
 turn: crossroll
-prerequisites: [rfo]
+prerequisites: [rfo, forward-stroking]
 verified: { checked: false }
 ---
 

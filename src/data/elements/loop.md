@@ -16,3 +16,7 @@ what makes the loop the honest test of a skater's edge.
 
 It shares its takeoff with the toe loop, and the two are told apart by whether a pick goes
 in. Seen from above they are the same entry; seen from the side, one has a jab in it.
+
+What it rests on is the back outside edge held with the free side checked. That is the
+extended edge, and a loop is very close to being that position asked to leave the ice
+without help.

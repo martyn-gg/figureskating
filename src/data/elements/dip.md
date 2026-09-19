@@ -8,6 +8,7 @@ trace:
   feet: 2
   path:
     - { kind: line, len: 240 }
+prerequisites: [two-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

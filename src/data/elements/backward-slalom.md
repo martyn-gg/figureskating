@@ -11,6 +11,7 @@ trace:
     - { kind: arc, foot: L, edge: I, dir: B, sweep: 110 }
     - { kind: arc, foot: L, edge: O, dir: B, sweep: 110 }
     - { kind: arc, foot: L, edge: I, dir: B, sweep: 55 }
+prerequisites: [slalom, backward-two-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

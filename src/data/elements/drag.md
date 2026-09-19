@@ -3,6 +3,7 @@ name: Drag
 kind: basic
 summary: A glide with the free foot trailed on the ice behind, pointed and touching lightly.
 aliases: ["forward drag", "toe drag"]
+prerequisites: [one-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

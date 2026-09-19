@@ -3,6 +3,7 @@ name: Right backward outside edge
 kind: edge
 summary: RBO — the right foot travelling backwards on an outside edge, tracing an anticlockwise lobe.
 entry: { foot: R, edge: O, dir: B }
+prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
 ---
 

@@ -5,7 +5,7 @@ summary: RBO to LBI — a step onto the other foot, still travelling backwards, 
 entry: { foot: R, edge: O, dir: B }
 turn: chasse
 aliases: [open chassé, simple chassé]
-prerequisites: [rbo]
+prerequisites: [rbo, backward-stroking]
 verified: { checked: false }
 ---
 

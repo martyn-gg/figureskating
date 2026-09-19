@@ -3,6 +3,7 @@ name: Pivot
 kind: basic
 summary: One toe pick set in the ice as an anchor while the other foot scribes a circle round it.
 aliases: ["forward pivot"]
+prerequisites: [one-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
