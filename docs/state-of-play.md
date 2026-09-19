@@ -12,7 +12,7 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **seventeen checkers in the `check` chain, all green** — count them out of
+worker; **twenty-one steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 
@@ -22,7 +22,7 @@ jumps, three held positions and **twenty-two basics**. 338 pages build. Count ki
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
 
-**The basics went in on 06/09/2026** — the floor below the edges, which the guide had never
+**The basics went in on 19/09/2026** — the floor below the edges, which the guide had never
 had: stroking, the swizzles and pumps, the glides, the dip, the drag, four stops, the
 two-foot turns, the slaloms, the two-foot change of edge and the pivot. `docs/gaps-basics.md`
 is the whole account, including why Learn to Skate USA is the anchor and the per-foot yaw that

@@ -77,7 +77,7 @@ export function elementGroups(elements) {
   /* ORDER THE REMAINING KINDS RATHER THAN LETTING THEM FALL OUT OF `rest`, which is
      sorted by element NAME and so orders its kinds by whichever happens to sort first.
      That was harmless while the remainder was jumps and positions. It stopped being
-     harmless on 06/09/2026, when the basics arrived and landed BELOW the jumps: the
+     harmless on 19/09/2026, when the basics arrived and landed BELOW the jumps: the
      floor of the guide, printed last. `basic` is named first here and everything else
      keeps the order it had.
 

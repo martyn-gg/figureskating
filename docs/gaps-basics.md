@@ -1,6 +1,6 @@
 # The basics — the floor below the edges
 
-Written 06/09/2026, Martyn: *the guide lacks basic techniques like stroking.*
+Written 19/09/2026, Martyn: *the guide lacks basic techniques like stroking.*
 
 It did. Every one of the 250 elements the guide held began from a curve the skater was
 already carrying. Nothing in it said how you get moving, how you stop, or how you turn round
@@ -14,7 +14,7 @@ pivot in Skills 8, and the toe-assisted hop in Skills 3.
 **Learn to Skate USA, Basic 1–6.** Chosen over Skate UK because BIS publishes its
 Fundamentals curriculum as a **paid booklet** rather than a free PDF, and `docs/style.md`
 says the guide is built from public material only so that the answer to *where did you get
-this?* is *your website*. Two independent copies of Basic 1–6 were read on 06/09/2026 and
+this?* is *your website*. Two independent copies of Basic 1–6 were read on 19/09/2026 and
 agree level by level; both, and the Skate UK and CanSkate cross-checks, are recorded in
 `sources/usfs/MANIFEST.md`.
 
@@ -29,7 +29,7 @@ swizzle, which is checked.
 
 ## The twenty-two
 
-`kind: basic`, added to the enum on 06/09/2026. Most carry no `entry`, because most are
+`kind: basic`, added to the enum on 19/09/2026. Most carry no `entry`, because most are
 two-foot or straight and the derived machinery keys off `entry` — so a basic is written
 rather than generated, which is why it is its own kind rather than an edge with a field
 missing.

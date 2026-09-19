@@ -21,7 +21,7 @@ const elements = defineCollection({
   loader: md('./src/data/elements'),
   schema: z.object({
     name: z.string(),
-    /* `basic` added 06/09/2026. Everything else in this enum starts from a curve
+    /* `basic` added 19/09/2026. Everything else in this enum starts from a curve
        the skater is already holding; `basic` is the floor below that — the push
        itself, the glide, the swizzle, the stop, the two-foot turn. Nine exercises
        said so in `notCovered` before the kind existed, all of them some version of
