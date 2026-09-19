@@ -50,7 +50,14 @@ missing.
 | | two-foot change of edge | yes |
 | | pivot | **no — the pick has no anchor** |
 
-Eight of twenty-two. The other fourteen are all blocked by one thing.
+Eight of twenty-two. The other fourteen looked like one blocker and were three.
+
+**The yaw went in on 19/09/2026** — `docs/model.md`, *A blade on the ice may point somewhere
+other than where it is going*. It accounts for **five** of the fourteen: stroking both ways,
+half-swizzle pumps both ways, and the drag. `forward-stroking` has a rig. The rest split into
+**six needing the skid** (both snowplough stops, the T-stop, the hockey stop, both two-foot
+turns), **two needing a second path** (the swizzles — both blades run true, but their lines
+diverge and the rig has one path), and **one needing an anchor** (the pivot).
 
 **The eight were drawn on 19/09/2026**, as tracings rather than rigs. `trace` on the element
 carries segments in exactly a rig move's `path` vocabulary and `PathThumb` runs them through

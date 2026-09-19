@@ -54,6 +54,17 @@ const ON = (t,n,z,pitch=0,dir=null) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'bl
    freefoot.mjs asserts that nobody writes one. */
 const PICK = (t,n,z,pitch) => ({t,n,z,pitch,onIce:'pick'});
 
+/* A BLADE ON THE ICE, TURNED OFF THE LINE OF TRAVEL — 19/09/2026. Its own helper
+   rather than a sixth argument to ON(), for the reason PICK() has one: the yaw is
+   not a trim on a normal second blade, it is the whole of what makes this a push.
+   Degrees, + anticlockwise from above, the convention hipYaw already uses; what a
+   hip will allow is HIP_OUT and HIP_IN and tools/turnout.mjs asserts it.
+
+   NOT FOR THE REFERENCE BLADE. That one is pinned to the path and the path is its
+   tracing, so turning it off its own line is a claim that it skids — and a skid
+   leaves a scrape, which this guide has no mark for. turnout.mjs refuses it. */
+const PUSH = (t,n,z,yaw,pitch=0) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'blade',yaw});
+
 export const MOVES = {
   waltz: {
     name:'Waltz jump',
@@ -395,6 +406,40 @@ export const MOVES = {
        sh:P(-42,0,120), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
       {t:1.00, ph:'Held — free knee above hip level', hipZ:95, hipYaw:180, shYaw:168,
        sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
+    ]},
+
+  /* A PUSH — the rig for forward-stroking, and the fourth thing the rig learned to hold, after a second blade,
+     a pick and a corrected ankle, and the first that needed a blade on the ice to
+     point somewhere other than where it is going.
+
+     The gliding foot is the reference blade and runs true along its lobe. The other
+     is planted, flat, and turned thirty-five degrees off the line of travel onto its
+     inside edge — which is a push, and the thing every syllabus in the sport starts
+     with. `notCovered` in nine BIS exercises says "the push back" because until
+     today there was nothing to link to.
+
+     THIRTY-FIVE IS NOT A ROUND NUMBER, it is most of what a weight-bearing hip has.
+     HIP_OUT is forty. Turning the foot further is not available at the hip, so a
+     skater who wants a wider push turns the pelvis instead — which is why a strong
+     push looks like the whole body opening rather than a foot twisting.
+
+     A HELD POSITION, like twoFoot and toePick, and for a plainer reason than
+     either: a push is a change of weight, and the rig carries one hip height and
+     one reference blade per frame. Drawing the changeover means the reference blade
+     handing over mid-move, which the waltz does and which is a movement rather than
+     a probe. This holds the instant the push is at its widest. */
+  pushOff: {
+    name:'Push',
+    note:'forward outside edge · the other blade planted and turned thirty-five degrees out',
+    path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:60}],
+    radius:300, duration:3.2,
+    keys:[
+      {t:0.00, ph:'Weight over the gliding blade, the push at its widest', hipZ:94, hipYaw:0, shYaw:-6,
+       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.45, ph:'Still pushing, the shoulders squaring up', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:1.00, ph:'Held — the push complete, the glide running', hipZ:94, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
     ]},
 
   /* PROBE — a toe pick in the ice. Not an element page: it exists to hold the

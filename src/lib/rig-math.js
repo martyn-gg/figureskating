@@ -285,6 +285,33 @@ export const elbowFace = (pose, side) => {
 export const ANKLE_MAX = 30;                       // degrees, the boot's allowance
 export const ANKLE_POINT = 10;                     // degrees, an unauthored foot
 
+/* HOW FAR A BLADE ON THE ICE MAY POINT OFF THE WAY THE PELVIS FACES — 19/09/2026.
+
+   The third constant of this shape, after ANKLE_MAX and MAX_BLADE_PITCH, and the
+   same argument: a number the body imposes, read off a study rather than chosen,
+   which then decides what poses can exist.
+
+   WEIGHT-BEARING, and that is the whole point of the numbers being these numbers.
+   The textbook ranges — internal 40-45 degrees, external 44-52 — are measured
+   lying down with the leg free. A skater is standing on the foot in question.
+   Kadlec et al. measured 135 adults rotating about a planted foot, pelvis and
+   shoulders held square (the Functional Footprint device), and got EXTERNAL 37 to
+   41 degrees but INTERNAL only 20 to 23 — roughly half the free-leg figure. Their
+   own conclusion is the one that matters here: an athlete whose task asks for more
+   transverse-plane motion than their weight-bearing range is at risk of injury.
+
+   So the allowance is ASYMMETRIC, and it is the toes-in direction that is scarce.
+   That is not a detail: a snowplough turns both toes IN, which is the expensive
+   way round, and a hockey stop asks for ninety degrees of it. Neither can be
+   authored from a square pelvis, and the honest answer in both cases is that the
+   skater turns the pelvis and widens the stance rather than twisting the feet off
+   it — which is what they are taught to do.
+
+   NOT A COACH'S NUMBER, like the other two. A study of what a hip does is not a
+   study of what a skater's hip does after ten years of turnout. */
+export const HIP_OUT = 40;                         // degrees, toe away from the midline
+export const HIP_IN  = 20;                         // degrees, toe toward it
+
 export function bootDir(pose, which, knee, foot){
   const on = onIceOf(pose, which);
   const p = (foot.pitch || 0) * D2R;
@@ -295,8 +322,30 @@ export function bootDir(pose, which, knee, foot){
     const h = Math.hypot(foot.t, foot.n);
     if(h > 1e-6) return [foot.t/h*Math.cos(p), foot.n/h*Math.cos(p), -Math.sin(p)];
   }
-  if(on){                                          // planted: along the tracing
-    const y = (dirOf(pose, which) === 'F' ? 0 : 180) * D2R;
+  if(on){
+    /* PLANTED: ALONG THE TRACING, PLUS WHATEVER THE SKATER HAS TURNED THE FOOT —
+       19/09/2026. Until then this was the tracing and nothing else: nought or a
+       hundred and eighty, with no value in between, because a blade on the ice can
+       only lie along its own line and for six sessions every blade the rig held
+       was running along one.
+
+       It is not true of a blade that is PUSHING. A push drives sideways against
+       the inside edge while the skater goes somewhere else, so the boot points off
+       the line of travel by thirty or forty degrees and grips the whole time —
+       which is the opposite of a skid, and the reason this is a yaw and not a new
+       kind of contact. `bootDir` was answering "where does this boot point" with
+       "where is this foot going", and those are the same question only while the
+       foot is a wheel.
+
+       Degrees, + anticlockwise seen from above, which is the convention hipYaw and
+       shYaw already use — one rotation sense in this file, not two. Defaults to
+       zero, so every pose written before today draws byte-identically.
+
+       NOT ON A PICK: that branch is above and takes its direction from the reach,
+       because a pick is not travelling either and already had to solve this. And
+       what limits the number is not the tracing but the hip — see HIP_OUT and
+       HIP_IN, asserted per pose by tools/turnout.mjs. */
+    const y = ((dirOf(pose, which) === 'F' ? 0 : 180) + (foot.yaw || 0)) * D2R;
     return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
   }
   const s = [foot.t-knee.t, foot.n-knee.n, foot.z-knee.z];

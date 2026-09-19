@@ -23,11 +23,12 @@
    Broken on purpose, both ways, because an exemption asserted from one side only is
    the shape this repository keeps finding in its own checkers:
 
-       --break=blank  strip every tracing from the slalom ......... 1 page reported
-       --break=stale  declare the slalom undrawable while it draws  1 page reported
+       --break=blank  strip every tracing from the slalom .............. 1 page
+       --break=stale  declare the slalom undrawable while it draws ..... 1 page
+       --break=rig    strip the mounted rig from forward-stroking ...... 1 page
 
        node tools/drawn.mjs
-       node tools/drawn.mjs --break=blank|stale
+       node tools/drawn.mjs --break=blank|stale|rig
 */
 import { readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
@@ -38,8 +39,7 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 /* slug → why it draws nothing. Remove an entry when the page gains a picture. */
 const cannotDraw = {
   'other-names':                 'a listing of aliases, not an element',
-  'forward-stroking':            'the push is not along the tracing — no per-foot yaw',
-  'backward-stroking':           'the push is not along the tracing — no per-foot yaw',
+  'backward-stroking':           'has the yaw it needs; wants a rig of its own',
   'swizzle':                     'the blades are turned out against the travel',
   'backward-swizzle':            'the blades are turned out against the travel',
   'half-swizzle-pumps':          'the pushing blade is angled across the circle',
@@ -65,9 +65,20 @@ for (const slug of dirs) {
   try { html = await readFile(join(DIST, slug, 'index.html'), 'utf8'); } catch { continue; }
   const body = html.includes('<main') ? html.slice(html.indexOf('<main')) : html;
   /* --break removes every tracing from one page, which is the fault this exists for. */
-  const stripped = BREAK === 'blank' && slug === 'slalom'
-    ? body.replace(/<svg[\s\S]*?<\/svg>/g, '') : body;
-  const draws = /<svg/.test(stripped) || /body-frame|data-rig/.test(stripped);
+  let stripped = body;
+  if (BREAK === 'blank' && slug === 'slalom') stripped = stripped.replace(/<svg[\s\S]*?<\/svg>/g, '');
+  /* The rig mutation needs a page whose ONLY picture is a rig, or stripping it
+     proves nothing — which is precisely how the missing pattern stayed hidden. */
+  if (BREAK === 'rig' && slug === 'forward-stroking') stripped = stripped.replace(/data-move=/g, 'x=');
+  /* A RIG IS NOT AN <svg> IN THE HTML. BodyFrame ships `<figure class="bf"
+     data-move=...>` and mounts the three views from script, so the built page
+     carries no SVG at all until a browser runs. The first version of this checker
+     looked for `body-frame` and `data-rig`, NEITHER OF WHICH THIS REPOSITORY HAS
+     EVER EMITTED — and it passed anyway, because every rigged page until today
+     also had an entry edge and therefore an EdgeDiagram to find. A pattern that
+     has never matched anything cannot fail, which is this file's own subject
+     turning up inside the file. `data-move` is what the renderer actually reads. */
+  const draws = /<svg/.test(stripped) || /data-move=/.test(stripped);
   const excused = Object.prototype.hasOwnProperty.call(cannotDraw, slug);
 
   if (draws) { drew++; if (excused) {

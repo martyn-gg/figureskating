@@ -3,6 +3,7 @@ name: Forward stroking
 kind: basic
 summary: "The push itself: one blade drives against its inside edge while the other glides away."
 aliases: ["stroking", "forward skating"]
+rig: pushOff
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

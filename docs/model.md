@@ -541,6 +541,83 @@ code hold the same distance, one of them has an origin the other does not. `boot
 pivoted about the contact; `ankleOf` measured from the centre; nothing compared them,
 because until a pick arrived the difference was small enough to look like the drawing.
 
+## A blade on the ice may point somewhere other than where it is going — 19/09/2026
+
+`bootDir`'s planted branch took a boot's heading from the tracing: nought or a hundred and
+eighty, nothing in between, no per-foot yaw anywhere in the model. Correct for an edge, and
+an edge is all the rig had ever been asked to hold. **Wrong for a push**, which is the first
+thing every syllabus in the sport teaches and which nine BIS exercises name in `notCovered`
+because there was nothing to link to.
+
+`yaw` on a foot, in degrees, **+ anticlockwise seen from above** — the convention `hipYaw`
+and `shYaw` already use, so there is one rotation sense in the file rather than two.
+Defaults to zero, so every pose written before today draws byte-identically. Read only in
+the planted branch: a pick already takes its direction from the reach, having had to solve
+the same problem first.
+
+### The limit is the hip, and the scarce direction is inward
+
+`pitch` has `MAX_BLADE_PITCH`, `point` has `ANKLE_MAX`, and an unasserted number in this
+file is a description waiting to be believed. What limits a yaw is not the tracing but how
+far a hip will turn over a planted foot.
+
+**Weight-bearing, and that is the whole point.** The textbook ranges — internal 40–45°,
+external 44–52° — are measured lying down with the leg free. A skater is standing on the
+foot in question. Kadlec et al. measured 135 adults rotating about a planted foot with the
+pelvis held square and got **external 37–41° but internal only 20–23°**, roughly half the
+free-leg figure. So `HIP_OUT` is 40 and `HIP_IN` is 20, and the allowance is asymmetric.
+
+That asymmetry is not a detail. **A snowplough turns both toes IN**, which is the expensive
+way round, and **a hockey stop asks for ninety degrees of it**. Neither is available from a
+square pelvis, and the honest answer in both cases is that the skater turns the pelvis and
+widens the stance rather than twisting the feet off it — which is what they are taught.
+
+`tools/turnout.mjs` asserts it per pose, blades only. Reading a boot's heading against the
+pelvis is only hip rotation while the leg is somewhere near under the skater: extend it
+behind and a toe pointing away from the body is hip EXTENSION with a pointed ankle, and the
+plan angle reads as 154° of rotation that nobody is doing — `toePick`'s pick does exactly
+that. Same failure shape as `shin.mjs` measuring lean against world up at eighty degrees.
+
+### A yaw on the reference blade is refused
+
+The reference blade is pinned to the path and **the path is its tracing**, so turning it off
+its own line is a claim that it skids. A skid leaves a scrape, the guide has no mark for one,
+and `lean.mjs` would still be asserting that the blade leans over a biting edge it no longer
+has. Saying so out loud beats drawing a tracing that is a lie.
+
+### What a push costs, and nobody authored it
+
+`pushOff` is the rig for **forward stroking**, and its pose was found by sweeping rather than
+by eye, because three limits close on it at once:
+
+| | asks for | has |
+|---|---|---|
+| turnout at the hip | 35° | `HIP_OUT` 40 |
+| the boot's lean | 26° | `shin.mjs` 28 |
+| the leg's length | 86 cm | `THIGH + SHIN` 86 |
+
+The widest push the model permits is a hip at 94 cm with the feet **28 cm apart laterally**,
+and every one of those three is within a couple of units of its limit. Push wider and the
+leg runs out; sink to push harder and the shin passes what a stiff boot allows. **A push
+cannot be both wide and sunk**, which is the third time this repository has met that fact —
+it already shapes the teapot, the sit spin and `toePick`.
+
+Worth a coach's eye, because the pose sits hard against `shin.mjs`'s 28°, and like
+`ANKLE_MAX` that number is read off a study rather than off a skater.
+
+### What the yaw does not unblock
+
+Fourteen basics drew nothing. The yaw accounts for **five** of them — stroking both ways,
+half-swizzle pumps both ways, and the drag. The rest are three separate pieces of work:
+
+- **Six need the skid** — both snowplough stops, the T-stop, the hockey stop and both
+  two-foot turns. A blade flat and sliding across itself, which needs a scrape to draw and a
+  `lean.mjs` exemption paired with an assertion the other way.
+- **Two need a second path** — the swizzles. Both blades run true along their own lines;
+  the trouble is that those lines diverge and converge, and the rig has one path.
+- **One needs an anchor** — the pivot, whose pick is fixed to the ice, which
+  `docs/gaps-basics.md` and the pick's own notes already describe.
+
 ## A spin is an arc — 30/08/2026
 
 A spin was written up in this file as a second rig, rooted in the skater rather than the
