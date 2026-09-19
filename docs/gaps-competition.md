@@ -5,8 +5,12 @@ is built and nothing here should be built on the strength of this file alone —
 point of writing it down is that the next person can see the size of the thing before
 deciding whether to start.
 
-Read `docs/state-of-play.md` first for what exists. The short version: **182 elements, and
-not one of them is a spin.**
+Read `docs/state-of-play.md` first for what exists. The short version when this was
+written: **182 elements, and not one of them is a spin.** It is 275 now, and three of them
+are spins — the sentence below about that being a rig project rather than a content one was
+right, and the rig work has since been done. Count with
+`grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting any line
+here.
 
 ## ANSWERED, 30/08/2026 — both, in that order
 
@@ -83,16 +87,23 @@ ladder of eight tests is another syllabus half.
 
 ## What a free skating programme contains
 
-Unverified, as above. Against the 182 elements the guide holds:
+Unverified, as above. Against the elements the guide holds:
 
-**Spins — nothing at all, and it is not an oversight.** `kind: spin` is in the content
-schema and there are zero spin elements. `docs/model.md` explains why the rig cannot hold
-one: `hipYaw` is measured from the direction of travel and a spin has none, so a spin
-position is a second rig rooted in the skater rather than the track. That boundary is
-correctly drawn and it is also the largest hole in any competition coverage — upright, sit
-and camel positions, the layback and the Biellmann, flying entries, change of foot,
-combination spins. A programme cannot be described without them. **This is the biggest
-single item in this file and it is a rig project, not a content one.**
+**Spins — the three basic positions, drawn, and nothing beyond them.** Written here as
+*nothing at all*, on the reasoning that `hipYaw` is measured from the direction of travel
+and a spin has none. That turned out to be answerable without a second rig: a spin is an
+arc of very small radius, and what makes it one is that the HIP SITS AT THE CENTRE OF
+CURVATURE — the blade's lateral offset from the hip equals the path radius, so the body
+axis stands still while the path turns under it. `uprightSpin`, `sitSpin` and `camelSpin`
+followed, and `tools/spin.mjs` holds each against the ISU's own definition of the position
+it claims, per frame. The three got element pages on 19/09/2026.
+
+What is still missing is everything above the positions: **the layback and the Biellmann**,
+which need a spine and, for the Biellmann, an overhead reach; **flying entries**, which need
+the air; **change of foot**, which needs the reference blade to hand over mid-spin the way
+the waltz jump's does; and **combination spins**, which are a joining rule over the three
+that exist. The first two are model work. The last two are not, and are the cheapest spin
+content left.
 
 **Jumps above one rotation.** Seven jumps, all single. Competition is doubles and triples
 from Advanced Novice up and quads at the top. `JUMPS` already carries a `rotations` field,

@@ -16,11 +16,27 @@ worker; **twenty-one steps in the `check` chain, build included, all green** —
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 
-**Content:** 272 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+**Content:** 275 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions and **twenty-two basics**. 338 pages build. Count kinds with
+jumps, three held positions, **twenty-two basics** and **three spins**. 351 pages build, 267
+of the 276 element pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**The spins went in on 19/09/2026**, which closes the largest item in
+`docs/gaps-competition.md` — upright, sit and camel, one page each, mounted on the three rigs
+that had been sitting in `moves.js` as probes since 30/08/2026. Nothing new was needed: the
+rigs existed, `tools/spin.mjs` already held them against the ISU's definitions per frame, and
+the elements page grows a section for a new kind on its own. The layback, the Biellmann,
+flying entries, change of foot and combination spins are all still absent, and
+`docs/gaps-competition.md` says which of them are model work and which are not.
+
+**The two two-foot turns got rigs the same day** — the first elements to use the skid and the
+per-foot yaw, which had landed the session before with nothing using either. What that cost
+is in `docs/gaps-basics.md`: a turn is a yaw sweeping through a half circle and `dir` never
+changes, the rig starts and ends mid-skid because the skid floor cuts both ends off, and two
+faults fell out of it — `turnout.mjs` reading that floor off nought only, and the scrape
+drawn as a stroke when one stroke can carry one width.
 
 **The basics went in on 19/09/2026** — the floor below the edges, which the guide had never
 had: stroking, the swizzles and pumps, the glides, the dip, the drag, four stops, the

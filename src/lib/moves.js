@@ -349,8 +349,14 @@ export const MOVES = {
        sh:P(16,0,88), L:P(29,-5,0), R:P(80,8,10), skate:'L', edge:'I', dir:'F'},
     ]},
 
-  /* PROBE — an upright spin, LBI, anticlockwise. Not content; a test of whether
-     the rig can hold a spin at all. See the session notes.
+  /* AN UPRIGHT SPIN, LBI, anticlockwise.
+
+     IT WAS A PROBE, and stopped being one on 19/09/2026 when the three spins got
+     element pages. It was written to test whether the rig could hold a spin at
+     all; what it turned out to hold was the ISU's own definition of the position,
+     which tools/spin.mjs tests it against per frame. The three notes below lost
+     the word PROBE with the pages, because a move a reader arrives at is not a
+     probe whatever it was built as.
 
      A spin is an arc of very small radius. lobeSense(L,I,B) = +1, anticlockwise,
      which is the direction an anticlockwise skater actually spins, so the model
@@ -365,7 +371,7 @@ export const MOVES = {
      free numbers. In a spin they are one number. */
   uprightSpin: {
     name:'Upright spin',
-    note:'PROBE · back inside edge · three revolutions on the spot',
+    note:'back inside edge · three revolutions on the spot',
     path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
     radius:12, duration:4.5,
     /* The basic position this spin claims. tools/spin.mjs tests the claim
@@ -380,12 +386,12 @@ export const MOVES = {
        sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-6,16,20), skate:'L', edge:'I', dir:'B'},
     ]},
 
-  /* PROBE — a sit spin. The teapot, spun: same fold, same free leg forward, on
+  /* A SIT SPIN. The teapot, spun: same fold, same free leg forward, on
      a rotating path instead of a glide. hipYaw is 180 so the front of the body
      is at NEGATIVE t, which is why the free leg's t is the teapot's negated. */
   sitSpin: {
     name:'Sit spin',
-    note:'PROBE · back inside edge · folded, free leg forward',
+    note:'back inside edge · folded, the free leg forward',
     path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
     radius:12, duration:4.5,
     /* The basic position this spin claims. tools/spin.mjs tests the claim
@@ -400,11 +406,11 @@ export const MOVES = {
        sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
     ]},
 
-  /* PROBE — a camel spin. The spiral, spun. Same claim as the sit: the position
+  /* A CAMEL SPIN. The spiral, spun. Same claim as the sit: the position
      already exists in this file and the only thing a spin adds is the path. */
   camelSpin: {
     name:'Camel spin',
-    note:'PROBE · back inside edge · free leg extended behind at hip height',
+    note:'back inside edge · the free leg extended behind at hip height',
     path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
     radius:12, duration:4.5,
     /* The basic position this spin claims. tools/spin.mjs tests the claim
