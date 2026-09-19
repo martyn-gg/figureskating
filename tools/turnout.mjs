@@ -106,11 +106,16 @@ for (const [key, m] of Object.entries(MOVES))
         }
       }
 
-      /* A yaw on the reference blade is a claim that the tracing is not the blade. */
-      if (yaw && w === k.skate) {
+      /* A YAW ON THE REFERENCE BLADE IS A CLAIM THAT IT SKIDS, so it has to say so.
+         The reference blade is pinned to the path and the path is its tracing:
+         turned off its own line it is sliding, and the mark it leaves is a scrape
+         rather than a clean curve. Since 19/09/2026 the tracing can draw one — but
+         only when the pose declares the skid, because that is what tells the
+         renderer to smear the mark instead of drawing a line that would be a lie. */
+      if (yaw && w === k.skate && onIceOf(k, w) !== 'skid') {
         bad++;
-        console.log(`  TRACING ${key.padEnd(13)} ${w} t=${k.t.toFixed(2)}  the reference blade is yawed ${yaw}°, ` +
-          `which says it skids —\n          and its tracing is drawn as a clean line along the path`);
+        console.log(`  TRACING ${key.padEnd(13)} ${w} t=${k.t.toFixed(2)}  the reference blade is yawed ${yaw}° ` +
+          `and not declared a skid —\n          so its tracing draws as a clean line along a path it is sliding across`);
         continue;
       }
 

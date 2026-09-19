@@ -426,6 +426,39 @@ export const MOVES = {
        sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
     ]},
 
+  /* A SNOWPLOUGH STOP — the rig for snowplough-stop, and the first pose in which
+     the REFERENCE blade skids. Both blades are sliding, so there is no gliding
+     foot to hang the path off; `skate` still names the blade the path is built
+     from, and that blade declares `onIce: 'skid'` like the other one.
+
+     Which is why the tracing had to learn a third state. A blade sliding across
+     itself leaves a band the width of its own length foreshortened by its yaw, not
+     a curve — so the top-down view smears the mark here instead of drawing the
+     confident thin line it draws everywhere else.
+
+     FORTY DEGREES OF TOE-IN EACH, and it took bent knees to buy them. Toes-in is
+     the expensive direction — a weight-bearing hip gives twenty — and a knee bent
+     thirty-one degrees adds twenty-two more. So the pose comes out sunk, which is
+     how a snowplough is taught and is not what anybody authored here: the sweep
+     was for the most toe-in the constants would allow and this is where it landed,
+     against the shin's 28 degrees of lean on both legs at once.
+
+     Held rather than animated. A stop is a loss of speed and the path runs at one,
+     so this is the pose mid-scrape and not the stopping of it. */
+  snowplough: {
+    name:'Snowplough stop',
+    note:'both blades skidding · toes turned in, inside edges, scraping straight',
+    path:[{kind:'line', len:150}],
+    radius:200, duration:2.6,
+    keys:[
+      {t:0.00, ph:'Both blades turned in and pressed', hipZ:90, hipYaw:0, shYaw:0,
+       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:0.50, ph:'Scraping — the knees driving the blades down', hipZ:90, hipYaw:0, shYaw:0,
+       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:1.00, ph:'Held — the scrape taking the speed off', hipZ:90, hipYaw:0, shYaw:0,
+       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+    ]},
+
   /* A T-STOP — the rig for t-stop, and the first thing in this file that SKIDS.
 
      The gliding blade runs true on a forward outside edge and is the reference;

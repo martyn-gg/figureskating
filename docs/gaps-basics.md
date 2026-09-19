@@ -60,10 +60,11 @@ turns), **two needing a second path** (the swizzles — both blades run true, bu
 diverge and the rig has one path), and **one needing an anchor** (the pivot).
 
 **The skid went in the same day** — `onIce: 'skid'`, `docs/model.md`, *A blade that is not
-travelling along itself*. **The T-stop has a rig.** The other five stops and turns need one
-more thing on top of it: their reference blade skids, and a reference blade is pinned to the
-path, so its tracing would have to be a **scrape** and the guide has no mark for one. That is
-the next piece — a one-foot snowplough would work today, a two-foot one would not.
+travelling along itself* — and the scrape with it. **The T-stop and the snowplough stop both
+have rigs**, and the reference blade may now declare a skid, which is what a two-foot stop
+needs. The backward snowplough, the hockey stop and the two two-foot turns have everything
+they need and want rigs of their own; the swizzles still need a second path, and the pivot
+still needs an anchor.
 
 **The eight were drawn on 19/09/2026**, as tracings rather than rigs. `trace` on the element
 carries segments in exactly a rig move's `path` vocabulary and `PathThumb` runs them through

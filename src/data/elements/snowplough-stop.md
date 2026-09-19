@@ -3,6 +3,7 @@ name: Snowplough stop
 kind: basic
 summary: One or both blades turned in and pressed flat, scraping speed off in a straight line.
 aliases: ["snowplow stop", "snowplough", "half snowplough"]
+rig: snowplough
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

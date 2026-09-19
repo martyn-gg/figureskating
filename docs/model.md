@@ -700,6 +700,32 @@ can read. Broken on purpose: drop `yaw` from `lpP`, six feet reported.
 
 **Render, don't reason — and then measure, don't eye.**
 
+### The reference blade may skid, and then the tracing is a scrape
+
+`onIceOf` hardcoded `'blade'` for the reference foot, which was true for as long as the
+reference was the one gliding. **A two-foot snowplough and a hockey stop have both blades
+sliding**, so the reference IS the skid. It declares its contact on the foot now, like
+every other foot in the model, and `'blade'` is what silence means.
+
+That forced the top-down tracing into a third state. A blade sliding across itself does not
+leave a curve — its whole length sweeps sideways — so the mark is a **band**, and its width
+is not authored and could not be: it is `BLADE_FRONT − BLADE_BACK` foreshortened by
+`sin(yaw)`, zero on a true-running blade and the whole 26 cm at a right angle. Drawing a
+thin line there would be the most confident lie this view could tell, because the tracing
+is the one mark in the guide a reader is meant to take as a record of what the blade did.
+
+`turnout.mjs`'s refusal changed shape with it: a yaw on the reference blade is refused
+**unless the pose declares the skid**. The objection was never the yaw, it was claiming a
+skid without saying so — and now saying so is what tells the renderer to smear the mark.
+
+**A snowplough needs forty degrees of toe-in on each foot, and bent knees to buy them.**
+Toes-in is the expensive direction; a weight-bearing hip gives twenty. A knee bent 31°
+adds twenty-two more, so the widest plough the constants allow comes out sunk, with both
+shins at the 28° limit at once. That is how a snowplough is taught, and nobody authored it.
+
+The second blade's scrape is still not drawn, because no second blade's tracing ever is —
+the same one-path limit that keeps the swizzles out.
+
 ## A spin is an arc — 30/08/2026
 
 A spin was written up in this file as a second rig, rooted in the skater rather than the

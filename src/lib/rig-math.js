@@ -60,8 +60,14 @@ export const lateral  = yawDeg => [Math.sin(yawDeg*D2R),  Math.cos(yawDeg*D2R), 
    correct while a pose could hold one blade and it silently means "free" the
    moment a pose can hold two — the same shape as the featured filter that
    absorbed the twizzles. */
+/* THE REFERENCE BLADE MAY DECLARE A CONTACT TOO — 19/09/2026. It was hardcoded to
+   'blade', which was true for as long as the reference foot was the one gliding.
+   A two-foot snowplough and a hockey stop have BOTH blades skidding, so the
+   reference is the skid, and there was no way to say so. The contact is declared
+   on the foot for every other foot in this model; now it is for this one as well,
+   and 'blade' is what it means when nothing is said. */
 export const onIceOf = (pose, which) =>
-  which === pose.skate ? (pose.skate ? 'blade' : null)
+  which === pose.skate ? (pose.skate ? ((pose[which] && pose[which].onIce) || 'blade') : null)
                        : ((pose[which] && pose[which].onIce) || null);
 
 export const dirOf = (pose, which) =>

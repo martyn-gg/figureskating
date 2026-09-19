@@ -6,7 +6,7 @@ import { MOVES } from './moves.js';
 import {
   D2R, anterior, THIGH, SHIN, UPPER, FORE,
   ankleOf, twoBone, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
-  contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf,
+  contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf, BLADE_FRONT, BLADE_BACK,
 } from './rig-math.js';
 
 /* ═══ drawing helpers ════════════════════════════════════════ */
@@ -337,17 +337,53 @@ function viewTop(svg, move, path, frames, SHOW){
     const {p, pose, idx} = frame;
     live.textContent=''; body.textContent='';
 
-    // trace so far: solid where a blade is down, dashed while airborne
-    let run=[], runAir=null;
+    /* THE TRACE SO FAR, in three states rather than two — 19/09/2026.
+
+       Solid where a blade is running along its own line, dashed while airborne,
+       and SMEARED where the reference blade is skidding. A blade sliding across
+       itself does not leave a curve: its whole length sweeps sideways, so what is
+       on the ice afterwards is a band, and drawing a thin line there would be the
+       most confident lie this view could tell — it is the only mark in the guide a
+       reader is meant to take as a record of what the blade did.
+
+       The band's width is not authored and could not be: it is the blade's own
+       length foreshortened by how far the boot is turned off the line of travel,
+       BLADE_FRONT − BLADE_BACK by sin(yaw), which is zero at a true-running blade
+       and the whole runner at a right angle. Same derivation the glyph uses, in
+       the same centimetres — the tracing is drawn at true scale here, only the
+       body is enlarged.
+
+       A run breaks on a change of state AND on a change of yaw, because one
+       stroke can carry one width. Ten-degree buckets: fine enough that the step is
+       invisible, coarse enough that a held stop stays a single stroke. */
+    let run=[], runKey=null;
+    const stateOf = f => {
+      const po = f.pose;
+      if (!po.skate) return { air:true, yaw:0, edge:po.edge };
+      const q = po[po.skate];
+      const skid = onIceOf(po, po.skate) === 'skid';
+      return { air:false, skid, yaw: skid ? (q.yaw || 0) : 0, edge:po.edge };
+    };
+    const keyOf = st => `${st.air?'a':st.skid?'s':'e'}${st.edge}${Math.round(st.yaw/10)}`;
     const flush=()=>{ if(run.length>1){
-      const seg=el('path',{d:d(run),fill:'none','stroke-width':4.2/s,'stroke-linecap':'round',
-        stroke: runAir?'var(--ink-soft)':edgeCol(run.edge)});
-      if(runAir) seg.setAttribute('stroke-dasharray',`${6/s} ${7/s}`);
-      live.appendChild(seg);} };
+      const st=run.st;
+      if(st.skid){
+        /* The swept band. Round caps, so the ends read as the smear tailing off
+           rather than as a stroke that was cut. */
+        const wide=Math.abs(Math.sin(st.yaw*D2R))*(BLADE_FRONT-BLADE_BACK);
+        live.appendChild(el('path',{d:d(run),fill:'none',
+          'stroke-width':Math.max(4.2/s, wide),'stroke-linecap':'round',
+          stroke:edgeCol(st.edge),opacity:.32}));
+      } else {
+        const seg=el('path',{d:d(run),fill:'none','stroke-width':4.2/s,'stroke-linecap':'round',
+          stroke: st.air?'var(--ink-soft)':edgeCol(st.edge)});
+        if(st.air) seg.setAttribute('stroke-dasharray',`${6/s} ${7/s}`);
+        live.appendChild(seg);
+      }} };
     for(let i=0;i<=idx;i++){
-      const f=frames[i], air=!f.pose.skate;
-      if(runAir===null){runAir=air;run=[path[i]];run.edge=f.pose.edge;}
-      else if(air!==runAir){ flush(); runAir=air; const keep=run[run.length-1]; run=[keep,path[i]]; run.edge=f.pose.edge; }
+      const st=stateOf(frames[i]), k2=keyOf(st);
+      if(runKey===null){runKey=k2;run=[path[i]];run.st=st;}
+      else if(k2!==runKey){ flush(); runKey=k2; const keep=run[run.length-1]; run=[keep,path[i]]; run.st=st; }
       else run.push(path[i]);
     }
     flush();

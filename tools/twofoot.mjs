@@ -52,7 +52,7 @@ import { execFileSync } from 'node:child_process';
 import { ROOT } from './_rig.mjs';
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense, secondFoot, label } from '../src/lib/skating.js';
-import { onIceOf, edgeOf, dirOf, edgesDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { onIceOf, edgeOf, dirOf, edgesDown, runnersDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const ON_ICE = 3, CLEAR = 5, NEAR = 5, FAR = 70;
@@ -83,7 +83,10 @@ for (const [id, m] of Object.entries(MOVES))
     keys++;
     const down = edgesDown(k), touching = contactsDown(k);
 
-    if (k.skate && !down.includes(k.skate))
+    /* RUNNERS for this one: the claim is that the reference foot is on the ice at
+       all, and since 19/09/2026 it may be there as a skid — both blades of a
+       hockey stop are. Asking edgesDown would call every two-foot stop airborne. */
+    if (k.skate && !runnersDown(k).includes(k.skate))
       fail(`${where(id, k)}: skate is ${k.skate}, which is not on the ice`);
     /* Any contact, not just a blade. A pick jabbed into the ice under a skater in
        mid-air is the same lie as a second blade there, and reads worse. */
