@@ -13,7 +13,7 @@ for (const [key, m] of Object.entries(MOVES))
       const q = k[w], on = onIceOf(k, w);
       const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
       const bd = bootDir(k, w, k0, q);   // planted or free — bootDir reads the pose
-      const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
+      const an = ankleOf(k, w, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       const d = Math.hypot(an.t, an.n, an.z - k.hipZ);
       if (d > REACH) {
         bad++;

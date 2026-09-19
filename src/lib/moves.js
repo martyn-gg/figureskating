@@ -343,11 +343,11 @@ export const MOVES = {
        against the ISU's own definition of it. */
     position:'upright',
     keys:[
-      {t:0.00, ph:'Rotation established', hipZ:93, hipYaw:180, shYaw:176,
+      {t:0.00, ph:'Rotation established', hipZ:95, hipYaw:180, shYaw:176,
        sh:P(0,0,145), L:P(0,12,0,2.2), R:P(-16,20,26), skate:'L', edge:'I', dir:'B'},
-      {t:0.35, ph:'Free leg closing', hipZ:95, hipYaw:180, shYaw:178,
+      {t:0.35, ph:'Free leg closing', hipZ:97, hipYaw:180, shYaw:178,
        sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-10,17,22), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — free foot crossed, spinning upright', hipZ:96, hipYaw:180, shYaw:180,
+      {t:1.00, ph:'Held — free foot crossed, spinning upright', hipZ:98, hipYaw:180, shYaw:180,
        sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-6,16,20), skate:'L', edge:'I', dir:'B'},
     ]},
 
@@ -366,9 +366,9 @@ export const MOVES = {
       {t:0.00, ph:'Upright, beginning to sink', hipZ:92, hipYaw:180, shYaw:176,
        sh:P(-8,0,144), L:P(-18,12,0,2.2), R:P(-40,-6,24), skate:'L', edge:'I', dir:'B'},
       {t:0.33, ph:'Thigh reaches parallel', hipZ:50, hipYaw:180, shYaw:178,
-       sh:P(-14,0,100), L:P(-32,12,0,2.2), R:P(-72,-6,14), skate:'L', edge:'I', dir:'B'},
+       sh:P(-14,0,100), L:P(-38,12,0,2.2), R:P(-72,-6,14), skate:'L', edge:'I', dir:'B'},
       {t:1.00, ph:'Held — thigh parallel, free leg forward', hipZ:40, hipYaw:180, shYaw:180,
-       sh:P(-16,0,88), L:P(-34,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
     ]},
 
   /* PROBE — a camel spin. The spiral, spun. Same claim as the sit: the position
@@ -382,7 +382,7 @@ export const MOVES = {
        against the ISU's own definition of it. */
     position:'camel',
     keys:[
-      {t:0.00, ph:'Free leg up, chest beginning to drop', hipZ:93, hipYaw:180, shYaw:174,
+      {t:0.00, ph:'Free leg up, chest beginning to drop', hipZ:95, hipYaw:180, shYaw:174,
        sh:P(-24,0,140), L:P(0,12,0,2.2), R:P(72,-14,114,0,24), skate:'L', edge:'I', dir:'B'},
       /* The free leg is complete here and does not move again — only the torso
          settles. Same shape as the extended edge, whose position is complete a
@@ -391,9 +391,9 @@ export const MOVES = {
          them. A leg that kept changing through the held part would be a position
          the checker could watch being lost, which is the point of measuring it
          per frame rather than at the keyframes. */
-      {t:0.33, ph:'Reaching back, torso lowering', hipZ:93, hipYaw:180, shYaw:171,
+      {t:0.33, ph:'Reaching back, torso lowering', hipZ:95, hipYaw:180, shYaw:171,
        sh:P(-42,0,120), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — free knee above hip level', hipZ:93, hipYaw:180, shYaw:168,
+      {t:1.00, ph:'Held — free knee above hip level', hipZ:95, hipYaw:180, shYaw:168,
        sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
     ]},
 

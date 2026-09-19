@@ -6,7 +6,7 @@ import { MOVES } from './moves.js';
 import {
   D2R, anterior, THIGH, SHIN, UPPER, FORE,
   ankleOf, twoBone, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
-  contactAlong, pitchOf, bladeZone, onIceOf, edgeOf, bladesDown,
+  contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf, bladesDown,
 } from './rig-math.js';
 
 /* ═══ drawing helpers ════════════════════════════════════════ */
@@ -165,11 +165,14 @@ function bootSole(edge, contact, foot){
 }
 
 /* Where a pick touches, in the side glyph's own units: the deepest tooth of the
-   toe pick, which is drawn at (17.8, 3.2). A blade's contact point slides along
-   the rocker with pitch and comes from contactAlong; a pick's does not move,
-   because teeth do not roll. Both end up at the origin after the glyph's shift,
-   which is the point the boot pivots about. */
-const PICK_ALONG = 17.8, PICK_TOOTH_Y = 3.2;
+   toe pick, drawn at (PICK_ALONG, 3.2). A blade's contact point slides along the
+   rocker with pitch and comes from contactAlong; a pick's does not move, because
+   teeth do not roll. Both end up at the origin after the glyph's shift, which is
+   the point the boot pivots about — and it is the same shift the MODEL steps back
+   by to place the ankle, which is why the distance is imported rather than typed
+   here. Drawn at one distance and reasoned about at another, the leg comes out of
+   the toe. */
+const PICK_TOOTH_Y = 3.2;
 
 /* boot seen from the side: toe at +x, blade and pick beneath */
 function bootSide(edge, contact, along, foot){
@@ -197,7 +200,8 @@ function bootSide(edge, contact, along, foot){
 
   /* Toe pick: teeth at the front, reaching to about the blade's lowest plane.
      That is why engaging them takes a real pitch — they are barely proud of the ice. */
-  g.appendChild(el('path',{d:'M 15.5 -2.4 L 16.4 2.6 L 17.1 0.6 L 17.8 3.2 L 18.4 0.9 L 18.6 -2.6 Z',
+  g.appendChild(el('path',{
+    d:`M 15.5 -2.4 L 16.4 2.6 L 17.1 0.6 L ${PICK_ALONG} ${PICK_TOOTH_Y} L 18.4 0.9 L 18.6 -2.6 Z`,
     fill:weight?'var(--ink)':LIMB,opacity:picked?1:skating?.75:.3}));
 
   /* The contact marker rings whatever is actually touching: the point on the
@@ -528,7 +532,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       // two passes: the boot direction needs a shin, the shin needs an ankle
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
       const bd  = bootDir(pose, which, kn0, q);
-      const ank = ankleOf(q, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
+      const ank = ankleOf(pose, which, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
       const kn  = twoBone({t:0,n:0,z:pose.hipZ}, ank, THIGH, SHIN, anterior(pose.hipYaw));
       const pt  = {x:ax(ank), y:H(ank.z)};                 // the leg ends at the ankle
       const kp  = {x:ax(kn), y:H(kn.z)};
@@ -618,7 +622,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       const toward = mode === 'side' ? bd[1] : -bd[0];
       const endo = Math.abs(toward);
       const facing = (Math.sign(toward) || 1);            // +1 = toe toward viewer
-      const along = skating ? contactAlong(pitchOf(bd)) : contact === 'pick' ? PICK_ALONG : 0;
+      const along = contactAlongOf(pose, which, bd);
 
       /* Two items, ordered independently. The knee circle and the boot travel
          with the shin, because both are attached to it. */

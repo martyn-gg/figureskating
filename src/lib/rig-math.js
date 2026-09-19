@@ -107,13 +107,41 @@ export function bladeZone(pitchDeg) {
 /** Boot pitch in degrees from a boot direction (+ = toe down). */
 export const pitchOf = bd => -Math.asin(Math.max(-1, Math.min(1, bd[2]))) * 180 / Math.PI;
 
-/* Foot positions are authored as the blade contact, because that is what has to
-   sit on the ice. The ankle is elsewhere: up inside the boot and a little back
-   of centre. The shin has to end there — run it to the blade instead and the leg
-   appears to come out of the sole. Offsets are in the boot's own frame. */
+/* WHERE THE TOE PICK'S DEEPEST TOOTH SITS, along the boot from the blade's
+   lowest point. It lived in body-frame.js as a glyph coordinate until 30/08/2026,
+   which is where it was measured but not where it belongs: how far forward of the
+   ankle the teeth go in is a fact about a boot, and it decides where the leg has
+   to be when they do. The glyph still draws the teeth at this distance — from
+   here, so the drawing and the model cannot drift apart. */
+export const PICK_ALONG = 17.8;
+
+/* HOW FAR ALONG THE BOOT THE CONTACT IS, from the blade's lowest point: the
+   rocker for a blade, the teeth for a pick, and nothing at all for a foot in the
+   air, which touches nowhere.
+
+   ONE DERIVATION, because two things need it and they have to agree. The renderer
+   shifts the boot glyph back by this much so that whatever is actually touching
+   sits on the ice; ankleOf steps back by it so the ankle ends up over the BOOT
+   rather than over the contact. Where the two disagreed, the leg was drawn
+   entering the boot somewhere other than its opening — by up to 2 cm on a pitched
+   blade, which nobody saw, and by the whole 17.8 on a pick, which is what finally
+   made it visible. */
+export const contactAlongOf = (pose, which, bd) => {
+  const c = onIceOf(pose, which);
+  return c === 'blade' ? contactAlong(pitchOf(bd)) : c === 'pick' ? PICK_ALONG : 0;
+};
+
+/* Foot positions are authored as the CONTACT, because that is what has to sit on
+   the ice. The ankle is elsewhere: up inside the boot and a little back of the
+   BLADE'S CENTRE. Those are two different origins whenever the contact is not the
+   blade's centre, which is every pitched blade and every pick — see
+   contactAlongOf above. The shin has to end at the ankle — run it to the contact
+   instead and the leg appears to come out of the sole, or, on a pick, out of the
+   toe. Offsets are in the boot's own frame. */
 export const ANKLE_UP = 15, ANKLE_BACK = 5;
 
-export function ankleOf(blade, bd, toKnee){
+export function ankleOf(pose, which, bd, toKnee){
+  const foot = pose[which];
   /* The boot's up-axis is the direction the leg leaves in, not world up. Using
      world up works while the foot is below the knee and fails the moment it is
      not — a raised free foot, as in a spiral, ends up with the shin entering
@@ -126,9 +154,14 @@ export function ankleOf(blade, bd, toKnee){
     up = [-bd[0]*bd[2], -bd[1]*bd[2], 1 - bd[2]*bd[2]];
   }
   const ul = Math.hypot(...up) || 1;
-  return {t: blade.t - bd[0]*ANKLE_BACK + up[0]/ul*ANKLE_UP,
-          n: blade.n - bd[1]*ANKLE_BACK + up[1]/ul*ANKLE_UP,
-          z: blade.z - bd[2]*ANKLE_BACK + up[2]/ul*ANKLE_UP};
+  /* Back along the boot from the contact: past the ankle's own offset from the
+     blade's centre, AND past however far the contact is from that centre. On a
+     flat blade the second term is zero, which is why one term did for fifteen
+     sessions. */
+  const back = ANKLE_BACK + contactAlongOf(pose, which, bd);
+  return {t: foot.t - bd[0]*back + up[0]/ul*ANKLE_UP,
+          n: foot.n - bd[1]*back + up[1]/ul*ANKLE_UP,
+          z: foot.z - bd[2]*back + up[2]/ul*ANKLE_UP};
 }
 
 /* Shortest-arc rotation taking `from` onto `to`, applied to v (Rodrigues). */

@@ -98,7 +98,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         const q = pose[which];
         const kn0 = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
         const bd = bootDir(pose, which, kn0, q);
-        const ank = ankleOf(q, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
+        const ank = ankleOf(pose, which, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
         const up = [ank.t - q.t, ank.n - q.n, ank.z - q.z];
         const f3 = unit(bd);
         const d = up[0] * f3[0] + up[1] * f3[1] + up[2] * f3[2];

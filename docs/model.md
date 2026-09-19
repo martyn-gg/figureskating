@@ -53,7 +53,8 @@ shouts across a rink is this angle.
 | `THIGH` / `SHIN` | 44 / 42 | hip to ankle, **not** hip to blade |
 | `UPPER` / `FORE` | 31 / 29 | shoulder joint to hand |
 | `SHOULDER_HALF` | 19 | half the shoulder width |
-| `ANKLE_UP` / `ANKLE_BACK` | 15 / 5 | ankle position **in the boot's own frame** |
+| `ANKLE_UP` / `ANKLE_BACK` | 15 / 5 | ankle position in the boot's own frame, **from the blade's centre** — the contact is elsewhere, see `contactAlongOf` |
+| `PICK_ALONG` | 17.8 | how far forward of the blade's centre the deepest tooth is |
 | `ANKLE_MAX` | 30° | what the boot allows a free foot to point; 90° would be in line with the shin |
 | `ANKLE_POINT` | 10° | how far an unauthored free foot points. A keyframe may say `point` |
 
@@ -467,6 +468,78 @@ still a jump rig away — the contact exists, the elements do not.
 
 **What it does not buy:** the lunge. That needs a boot rolled onto its side, which is a
 missing axis rather than a missing contact type.
+
+## The ankle sits behind the BOOT, not behind the contact — 30/08/2026
+
+Martyn, on the toe pick's side view: *the leg isn't sitting in the boot*. It was not,
+and it never had been on any pitched blade either — by 2 cm, where nobody could see it.
+
+`ankleOf` places the ankle `ANKLE_BACK` behind and `ANKLE_UP` above the foot marker.
+Both constants were measured from **the blade's centre**; the marker is **the contact**.
+Those are the same point only on a blade at exactly zero pitch. Everywhere else they
+differ by `ROCKER × sin(pitch)` — and on a pick they differ by the whole length of the
+front of the boot, because the teeth are 17.8 cm forward of the blade's centre.
+
+The renderer already knew. `bootSide` shifts the glyph back by that distance so that
+whatever is touching sits on the ice; nothing shifted the ankle to match, so the leg was
+drawn ending over the contact while the boot was drawn hanging off behind it. On a pick
+the leg came out of the toe.
+
+**One derivation, in the model.** `PICK_ALONG` moved out of `body-frame.js` into
+`rig-math.js` — how far forward of the ankle the teeth go in is a fact about a boot, not
+a glyph coordinate — and `contactAlongOf(pose, which, bd)` is now the single answer to
+*how far along the boot is the contact*: the rocker for a blade, the teeth for a pick,
+nothing for a foot in the air. `ankleOf` steps back by it and the glyph shifts by it, so
+they cannot part company again. `ankleOf` takes the pose and the side now rather than a
+foot marker, the same correction `bootDir` took earlier the same day.
+
+Measured across every foot in the file, the distance from the ankle to the cuff opening
+was 5.1 to 17.5 cm and is now **5.1 cm everywhere** — which is what a fixed point inside
+a rigid boot should be.
+
+### What it moved, and the two poses it caught
+
+96 of 210 rendered frames changed. The spiral, the checked spiral and the teapot are
+authored at exactly zero pitch and are byte-identical — the same property that hid the
+end-on roll collapse for four sessions.
+
+**It broke two checkers, and both were the fault arriving rather than a new one.** All
+three spins are authored at 2.2° of pitch, spinning on the front of the blade, which puts
+the contact 8.2 cm forward of centre — so their ankles had been 8.2 cm too far forward
+since they were written. Corrected, six shins passed 28° (`shin.mjs`) and the sit spin's
+skating thigh rose above parallel in 66 of 321 frames (`spin.mjs`, against the ISU
+definition).
+
+### Re-authored 19/09/2026, and the lever is not the same one twice
+
+`shin.mjs` says *the foot is in the wrong place under the hip*, and `twoFoot`'s own note says
+the opposite — *raising the hip fixes it; moving the feet does not*. **Both are true, of
+different poses**, and the three spins happen to contain one of each.
+
+**A near-extended leg takes hip height.** `uprightSpin` and `camelSpin` both hold the skating
+foot at `t: 0`, directly under the hip, and there is a reason: the spin axis sits square off
+the blade at exactly `radius`, so a foot level with the hip fore-and-aft is what puts **the
+hip exactly on the axis** — `spin.mjs` reports the hip sweeping 0 cm per revolution, which is
+the whole of what spinning on the spot means. Moving those feet to fix the lean would have
+traded that away. Both were raised 2 cm instead: upright 93/95/96 → 95/97/98, camel 93 → 95
+throughout, the authored rise preserved, and the hip still sweeps 0.
+
+**A folded leg takes the foot, because hip height is no lever at all there.** Swept over the
+sit spin's held key, raising the hip moved the lean by **0.6° across 4 cm** and at the last
+key moved it the *wrong way* — 30.5 up to 31.5 — because with the hip already at 40 cm and
+the foot 34 cm in front, lifting the hip does not extend the leg. The foot does: `sitSpin`'s
+skating foot travels out to `-38` and `-40`, six centimetres further than before, which is the
+same "the blade travels out from under the hip as the hip drops" that already shapes the
+teapot and `toePick`, intensified by 8.2 cm of contact offset.
+
+`npm run check` is green end to end. The sit spin's hip now sweeps 40 cm per revolution rather
+than 34 — reported by `spin.mjs` and not asserted, because where a skater actually balances is
+a question about mass and this rig has markers and no mass.
+
+**The general form**, and this is the second time in two sessions: when two pieces of
+code hold the same distance, one of them has an origin the other does not. `bootSide`
+pivoted about the contact; `ankleOf` measured from the centre; nothing compared them,
+because until a pick arrived the difference was small enough to look like the drawing.
 
 ## A spin is an arc — 30/08/2026
 

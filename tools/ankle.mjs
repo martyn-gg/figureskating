@@ -81,7 +81,7 @@ const camels = (point) => {
        const hip = { t:0, n:0, z:hipZ }, q = pose.R;
        const k0 = twoBone(hip, q, THIGH, SHIN, anterior(180));
        const bd = bootDir(pose, 'R', k0, q);
-       const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
+       const an = ankleOf(pose, 'R', bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
        const kn = twoBone(hip, an, THIGH, SHIN, anterior(180));
        if (kn.z > hipZ
            && Math.hypot(an.t, an.n, an.z - hipZ) <= THIGH + SHIN
@@ -111,7 +111,7 @@ const pickCeiling = (hipZ) => {
       const q = pose.L, hip = { t: 0, n: 0, z: hipZ };
       const k0 = twoBone(hip, q, THIGH, SHIN, anterior(176));
       const bd = bootDir(pose, 'L', k0, q);
-      const an = ankleOf(q, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
+      const an = ankleOf(pose, 'L', bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       if (Math.hypot(an.t, an.n, an.z - hipZ) > THIGH + SHIN) continue;
       const s = [q.t-k0.t, q.n-k0.n, q.z-k0.z], sl = Math.hypot(...s) || 1;
       const a = Math.asin(Math.max(-1, Math.min(1,
