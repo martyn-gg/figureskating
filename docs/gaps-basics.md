@@ -59,6 +59,12 @@ half-swizzle pumps both ways, and the drag. `forward-stroking` has a rig. The re
 turns), **two needing a second path** (the swizzles — both blades run true, but their lines
 diverge and the rig has one path), and **one needing an anchor** (the pivot).
 
+**The skid went in the same day** — `onIce: 'skid'`, `docs/model.md`, *A blade that is not
+travelling along itself*. **The T-stop has a rig.** The other five stops and turns need one
+more thing on top of it: their reference blade skids, and a reference blade is pinned to the
+path, so its tracing would have to be a **scrape** and the guide has no mark for one. That is
+the next piece — a one-foot snowplough would work today, a two-foot one would not.
+
 **The eight were drawn on 19/09/2026**, as tracings rather than rigs. `trace` on the element
 carries segments in exactly a rig move's `path` vocabulary and `PathThumb` runs them through
 **`buildPath`** — the same function that lays the tracing under the body frame, so this is not

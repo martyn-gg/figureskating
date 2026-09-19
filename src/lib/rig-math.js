@@ -33,9 +33,28 @@ export const lateral  = yawDeg => [Math.sin(yawDeg*D2R),  Math.cos(yawDeg*D2R), 
    blade in that frame — precisely backwards for the only pose that needs it, and
    never set on any keyframe, so it was a description waiting to be believed.
 
-   So there are now two questions, not one: `bladesDown` is every foot on a blade
-   and `contactsDown` is every foot touching the ice by any means. Reach for the
-   second wherever the old code said `=== 'blade'` and meant "on the ice".
+   A FOURTH VALUE, `onIce: 'skid'` — 19/09/2026. A skidding foot has its runner on
+   the ice and is sliding ACROSS it rather than along it, which is what a stop is.
+   Steel down and weight on it, like a blade; no biting edge, like a pick; flat,
+   because a blade on a real edge grips instead of skidding. It is the yaw's other
+   half — `yaw` says where the boot points and this says the ice is not holding it
+   there.
+
+   SO THERE ARE THREE QUESTIONS NOW, AND THE MIDDLE ONE USED TO BE MISSING.
+
+     edgesDown     on an EDGE — has a biting side, leans over it, curves
+     runnersDown   STEEL on the ice — an edge or a skid, but not teeth
+     contactsDown  touching by any means at all
+
+   `edgesDown` was called `bladesDown` until today, and the rename is the point
+   rather than tidiness. It answered "on an edge" while being named for "a blade
+   on the ice", and those were the same set only while every blade down was
+   gripping. A skidding blade IS a blade down, so the next person to reach for
+   `bladesDown` meaning steel would have silently excluded every stop in the
+   guide. Same fault as the renderer's `skating`, which was three decisions under
+   one name until a pick arrived; same fault as `pick: true`. A name that answers
+   a narrower question than it asks is a bug with a delay on it. Six call sites,
+   all in this repository, all changed together.
 
    Read these rather than comparing against pose.skate. The comparison was
    correct while a pose could hold one blade and it silently means "free" the
@@ -56,6 +75,13 @@ export function edgeOf(pose, which) {
      would give the renderer a colour and a dot side for a claim the model is not
      making — the same shape as the flag this replaced. */
   if (on === 'pick') return null;
+  /* A SKID HAS AN EDGE AND IT IS AUTHORED. It cannot be derived: secondFoot below
+     works because both blades are on one circle, and a skidding blade is not on
+     the circle at all — it is across it. But the edge is real and it is the whole
+     teaching point of a T-stop, which is on the OUTSIDE edge and whose classic
+     error is doing it on the inside. So it is stated on the foot, like pitch and
+     yaw, and a pose that omits it is refused rather than guessed at. */
+  if (on === 'skid') return pose[which].edge ?? null;
   if (on !== 'blade') return pose.edge;
   return secondFoot({ foot: pose.skate, edge: pose.edge, dir: pose.dir },
                     dirOf(pose, which)).edge;
@@ -63,11 +89,15 @@ export function edgeOf(pose, which) {
 
 const refFirst = pose => (a, b) => (a === pose.skate ? 0 : 1) - (b === pose.skate ? 0 : 1);
 
-/** Every foot with a blade on the ice, reference blade first. */
-export const bladesDown = pose =>
+/** Every foot on an EDGE — gripping, with a biting side. Reference blade first. */
+export const edgesDown = pose =>
   ['L', 'R'].filter(w => onIceOf(pose, w) === 'blade').sort(refFirst(pose));
 
-/** Every foot touching the ice by any means — a blade or a pick. */
+/** Every foot with STEEL on the ice — an edge or a skid, but not teeth. */
+export const runnersDown = pose =>
+  ['L', 'R'].filter(w => ['blade', 'skid'].includes(onIceOf(pose, w))).sort(refFirst(pose));
+
+/** Every foot touching the ice by any means — an edge, a skid or a pick. */
 export const contactsDown = pose =>
   ['L', 'R'].filter(w => onIceOf(pose, w) !== null).sort(refFirst(pose));
 
@@ -128,6 +158,10 @@ export const PICK_ALONG = 17.8;
    made it visible. */
 export const contactAlongOf = (pose, which, bd) => {
   const c = onIceOf(pose, which);
+  /* A SKID FALLS THROUGH TO ZERO, and that is the right answer rather than an
+     omission: a flat blade sliding sideways is in contact along most of its
+     length, so there is no one point on the rocker to name, and its middle is as
+     honest a place to pivot the glyph as any. */
   return c === 'blade' ? contactAlong(pitchOf(bd)) : c === 'pick' ? PICK_ALONG : 0;
 };
 
@@ -312,6 +346,60 @@ export const ANKLE_POINT = 10;                     // degrees, an unauthored foo
 export const HIP_OUT = 40;                         // degrees, toe away from the midline
 export const HIP_IN  = 20;                         // degrees, toe toward it
 
+/* AND THE KNEE ADDS TO IT, BUT ONLY WHEN IT IS BENT.
+
+   A straight knee barely rotates: the femoral and tibial condyles interlock at
+   full extension and hold the tibia where it is. Bend it and they disengage —
+   rotation rises to roughly 18 degrees external and 25 internal by about 30 to 40
+   degrees of flexion, and then stays level until deep flexion tightens the soft
+   tissue again (Freeman & Pinskerova, via WikiMSK).
+
+   WHICH IS WHY A SKATER BENDS THE KNEE TO FIND TURNOUT, and why a dancer pliés to
+   find it. It is the same observation the rest of this file keeps making: the
+   limit is not a constant, it is a function of the pose. ANKLE_MAX turned out to
+   decide the pick's hip height; this decides how wide a push or a stop can be, and
+   it says a straight-legged one is narrower than a bent-kneed one by nearly twenty
+   degrees a side.
+
+   Without it the model forbids a right-angled T-stop outright — two feet at 40
+   each is eighty degrees between them and a T is ninety. With it there is
+   comfortably enough. That was the check on whether the term was missing. */
+export const KNEE_TWIST_OUT = 18, KNEE_TWIST_IN = 25;
+export const KNEE_TWIST_FULL = 35;                 // degrees of flexion for all of it
+
+/** Knee flexion in degrees, from the hip-to-ankle distance. 0 = straight. */
+export const kneeFlex = d => 180 - Math.acos(Math.max(-1, Math.min(1,
+  (THIGH*THIGH + SHIN*SHIN - d*d) / (2*THIGH*SHIN)))) * 180 / Math.PI;
+
+/** How far this leg may turn the foot, given how bent its knee is. */
+export const turnoutAllowed = d => {
+  const f = Math.min(1, Math.max(0, kneeFlex(d) / KNEE_TWIST_FULL));
+  return { out: HIP_OUT + KNEE_TWIST_OUT * f, in: HIP_IN + KNEE_TWIST_IN * f };
+};
+
+/* THE LEAST YAW THAT MAKES A STOP A STOP.
+
+   A SKID IS NOT A FLAT BLADE, and this was written the other way round first. The
+   reasoning was that a blade tipped onto an edge grips, so a skid must be flat —
+   and it is wrong. A T-stop is unanimously on the trailing blade's OUTSIDE edge,
+   with the inside edge named by coaches as the classic error; a hockey stop has
+   both blades "tilted so their edges dig in". What stops a blade gripping is not
+   being flat, it is being turned ACROSS its own line: there is no groove to follow
+   sideways however hard the edge is pressed. Tilting only decides how much bite.
+   Written up here so the flat version is not reasoned out a second time.
+
+   So what a skid is held to is its YAW, and the assertion is the pick's read back:
+   a blade must be inside the rocker's pitch and a pick outside it; a blade running
+   true is aligned with its travel and a SKID MUST NOT BE. Below this a pose would
+   be calling a contact a stop while its geometry runs along the line like any
+   other edge.
+
+   It does NOT separate a skid from a push — a push is turned thirty-five degrees
+   and grips the whole time, and whether a contact slips or holds is a fact about
+   friction that a rig of markers cannot see. That is why the contact is declared
+   rather than derived. This is the floor on the declaration, not a proof of it. */
+export const SKID_MIN_YAW = 15;                    // degrees off the line of travel
+
 export function bootDir(pose, which, knee, foot){
   const on = onIceOf(pose, which);
   const p = (foot.pitch || 0) * D2R;
@@ -404,7 +492,23 @@ const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(
                           point visible in the keyframe and nowhere else — the failure
                           this function's own comment warns about, one field along. */
                        point:lp(a.point ?? ANKLE_POINT, b.point ?? ANKLE_POINT, u),
-                       ...(a.onIce ? {onIce:a.onIce} : {}), ...(a.dir ? {dir:a.dir} : {})});
+                       /* `yaw` is a quantity too and interpolates. IT WAS LEFT OUT WHEN IT
+                          WAS ADDED, on 19/09/2026, and the comment above had already
+                          named the consequence: the push was authored turned thirty-five
+                          degrees, every checker that reads keyframes agreed, and every
+                          frame the renderer drew had it running true. It was looked at and
+                          passed, because two boots in different places look different
+                          whether or not one of them is turned. Measure the rendered
+                          heading, do not eye it. */
+                       
+                       yaw:lp(a.yaw ?? 0, b.yaw ?? 0, u),
+                       /* `edge` on a foot is a STATE and carries, like onIce and dir. Only
+                          a skid has one — every other foot's edge is derived from the
+                          reference blade — and a skid without it draws on the wrong edge,
+                          which on a T-stop is the error coaches name. Same omission, same
+                          line, same day. */
+                       ...(a.onIce ? {onIce:a.onIce} : {}), ...(a.dir ? {dir:a.dir} : {}),
+                       ...(a.edge ? {edge:a.edge} : {})});
 
 export function poseAt(move, t){
   const K = move.keys;

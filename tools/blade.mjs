@@ -44,7 +44,12 @@ for (const [key, m] of Object.entries(MOVES))
       if (BREAK === 'lie' && on === 'blade' && w === k.skate) pitch = 40;
       const line = `  ${key.padEnd(9)} t=${k.t.toFixed(2)} ${w} ${on.padEnd(5)} ${String(pitch).padStart(5)}°  ` +
         `${contactAlong(pitch).toFixed(1).padStart(6)} cm  ${bladeZone(pitch)}`;
-      if (on === 'blade') {
+      /* A SKID IS A RUNNER. It has no edge and it is sliding, but it is the same
+         rockered steel and it runs off its own front at the same three and a half
+         degrees — so it is held to the blade's limit, not the pick's. Sending it
+         down the else branch would have demanded it be pitched PAST the blade,
+         which is the opposite of flat and the opposite of a stop. */
+      if (on === 'blade' || on === 'skid') {
         blades++;
         if (Math.abs(pitch) > MAX_BLADE_PITCH + 1e-9) {
           bad++; console.log(line + '   ← off the blade, and not declared a pick'); continue;

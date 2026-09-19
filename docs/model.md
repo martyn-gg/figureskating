@@ -618,6 +618,88 @@ half-swizzle pumps both ways, and the drag. The rest are three separate pieces o
 - **One needs an anchor** — the pivot, whose pick is fixed to the ice, which
   `docs/gaps-basics.md` and the pick's own notes already describe.
 
+## A blade that is not travelling along itself — 19/09/2026
+
+`onIce: 'skid'`, the fourth kind of contact. Steel on the ice and weight on it, like a
+blade; not gripping, because it is turned across its own line and there is no groove to
+follow sideways however hard the edge is pressed. A stop.
+
+**A skid is not a flat blade, and this was written the other way round first.** The
+reasoning was that a blade tipped onto an edge grips, so a skid must be flat. It is wrong:
+a T-stop is unanimously on the trailing blade's **outside** edge, with the inside named by
+coaches as the classic error, and a hockey stop has both blades tilted so their edges dig
+in. What stops a blade gripping is direction, not tilt. Tilting only decides how much bite.
+
+So **a skid carries its own edge**, authored rather than derived — the derivation for a
+second blade assumes both are on one circle, and a skid is across the circle, not on it.
+It takes an edge colour and an edge dot like any blade. What says it is a stop is the
+contact mark: a bar the length of the runner instead of a ring round one point of the
+rocker, because a skid touches along itself.
+
+### Three questions about a foot, and the middle one was missing
+
+`bladesDown` answered *on an edge* while being named for *a blade on the ice*. Those are
+the same set only while every blade down is gripping, so it became:
+
+| | |
+|---|---|
+| `edgesDown` | on an edge — a biting side, leans over it, curves |
+| `runnersDown` | steel on the ice — an edge or a skid, but not teeth |
+| `contactsDown` | touching by any means |
+
+`lean.mjs` takes edges, `shin.mjs` and `turnout.mjs` take runners, `blade.mjs` takes
+contacts. Same fault as the renderer's `skating`, which was three decisions under one name
+until a pick arrived: **a name that answers a narrower question than it asks is a bug with
+a delay on it.**
+
+### The exemption, and where its other half went
+
+`lean.mjs` does not judge a skid, and the honest reason is not "it has no edge" — it has
+one. It has no part of either *claim*: the TRACK route puts the blade on the far side of
+the hip from a lobe centre, and a skid is across the lobe; the BODY route says the skater
+has fallen over the biting edge, and in a T-stop the weight stays on the **gliding** foot
+while the trailing ankle turns out under almost none of it.
+
+An exemption can only excuse a pose, so the assertion lives where the yaw does:
+`turnout.mjs` holds a skid to `SKID_MIN_YAW` and requires it to name its edge. That is the
+pick's assertion read back — a blade inside the rocker's pitch and a pick outside it; a
+blade aligned with its travel and a skid not. It does **not** separate a skid from a push,
+and is not trying to: a push is turned further and grips throughout, and whether a contact
+slips or holds is friction, which a rig of markers cannot see. That is why the contact is
+declared rather than derived.
+
+### The knee was the missing term, and a T-stop is how it was found
+
+A right angle between the feet is ninety degrees of turnout to find. Two weight-bearing
+hips give forty each — eighty, and **not enough**: the model forbade a T-stop outright.
+
+A straight knee barely rotates, because the condyles interlock at full extension. Bend it
+and they disengage: roughly **18° external and 25° internal by about 35° of flexion**
+(Freeman & Pinskerova, via WikiMSK). **Which is why a skater bends the knee to find
+turnout, and why a dancer pliés to find it.** With the term in, `turnoutAllowed` is read
+per foot off how bent that leg is, and the sweep finds a legal right-angled T-stop at a hip
+of 94 with **both knees bent 35° and the pelvis opened 35° toward the trailing foot** —
+which is what a T-stop looks like. None of that was authored.
+
+It rises fast, too: 2 cm off full extension is already 25° of flexion and lifts turnout
+from 40 to 53, because a two-bone chain near full reach is nearly locked.
+
+### `lpP` dropped two fields, and the picture looked fine anyway
+
+`yaw` and `edge` were added to a foot and left out of the pose interpolator. The push was
+authored turned 35°, every checker that reads keyframes agreed, and **every frame the
+renderer drew had it running true.** It was rendered, looked at, and passed — because two
+boots in different places look different whether or not one of them is turned.
+
+`lpP`'s own comment had named the failure in advance: *a field left out of this line would
+make a second blade disappear everywhere except in the authoring*. The test that existed
+was by side effect — assertion 4 needed `onIce`, so `onIce` was safe and nothing else was.
+`twofoot.mjs` now asserts the round trip **by name**, over whatever a keyframe carries, so
+a field added tomorrow and forgotten fails on the first run rather than in a picture nobody
+can read. Broken on purpose: drop `yaw` from `lpP`, six feet reported.
+
+**Render, don't reason — and then measure, don't eye.**
+
 ## A spin is an arc — 30/08/2026
 
 A spin was written up in this file as a second rig, rooted in the skater rather than the

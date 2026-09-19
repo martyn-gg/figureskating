@@ -6,7 +6,7 @@ import { MOVES } from './moves.js';
 import {
   D2R, anterior, THIGH, SHIN, UPPER, FORE,
   ankleOf, twoBone, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
-  contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf, bladesDown,
+  contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf,
 } from './rig-math.js';
 
 /* ═══ drawing helpers ════════════════════════════════════════ */
@@ -109,7 +109,13 @@ export function armsAuthored(move){
    edge colour, and the teeth full ink rather than the faint wash they carry when
    they are only along for the ride. */
 const planted = c => c != null;
-const bladed  = c => c === 'blade';
+/* HAS AN EDGE THE ICE IS ON — and a skid does. It rides one, it just cannot grip
+   along it, which is a fact about direction and not about the edge. So a skid
+   takes an edge colour and an edge dot like any blade; what says it is a stop is
+   the contact mark, which runs the length of the runner instead of ringing one
+   point of the rocker. The first version of this had a skid drawn edgeless, on
+   the reasoning that a skid must be flat — see SKID_MIN_YAW for why that is wrong. */
+const bladed  = c => c === 'blade' || c === 'skid';
 
 /* boot seen from above: toe at +x */
 function bootTop(edge, contact, foot){
@@ -177,6 +183,7 @@ const PICK_TOOTH_Y = 3.2;
 /* boot seen from the side: toe at +x, blade and pick beneath */
 function bootSide(edge, contact, along, foot){
   const skating = bladed(contact), weight = planted(contact), picked = contact === 'pick';
+  const skid = contact === 'skid';
   /* The glyph is drawn with the blade's midpoint at x=0, then shifted so that
      whichever part of the blade is actually touching sits at the origin — which
      is the point the whole boot pivots about. */
@@ -202,12 +209,19 @@ function bootSide(edge, contact, along, foot){
      That is why engaging them takes a real pitch — they are barely proud of the ice. */
   g.appendChild(el('path',{
     d:`M 15.5 -2.4 L 16.4 2.6 L 17.1 0.6 L ${PICK_ALONG} ${PICK_TOOTH_Y} L 18.4 0.9 L 18.6 -2.6 Z`,
-    fill:weight?'var(--ink)':LIMB,opacity:picked?1:skating?.75:.3}));
+    fill:weight?'var(--ink)':LIMB,opacity:picked?1:skating||skid?.75:.3}));
 
   /* The contact marker rings whatever is actually touching: the point on the
      rocker for a blade, and the teeth for a pick. Both sit at the origin after the
      translate above, which is the point the boot pivots about. */
-  if(weight){
+  if(skid){
+    /* A SKID TOUCHES ALONG ITS LENGTH, so a ring round one point of the rocker
+       would be the wrong claim — that is the picture for a blade, which touches a
+       centimetre or two. A bar under the whole runner says what a skid is, and it
+       is the only mark in this file that means "not one place". */
+    g.appendChild(el('line',{x1:-11,y1:5.4,x2:17,y2:5.4,stroke:'var(--ink)',
+      'stroke-width':1.8,'stroke-linecap':'round',opacity:.85}));
+  } else if(weight){
     g.appendChild(el('circle',{cx:along.toFixed(2),cy:(picked?PICK_TOOTH_Y:bladeY(along)).toFixed(2),r:2.6,
       fill:'none',stroke:'var(--ink)','stroke-width':1.3,opacity:.85}));
   }

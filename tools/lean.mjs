@@ -39,7 +39,7 @@
 
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense } from '../src/lib/skating.js';
-import { lateral, poseAt, edgeOf, dirOf, bladesDown } from '../src/lib/rig-math.js';
+import { lateral, poseAt, edgeOf, dirOf, edgesDown, onIceOf } from '../src/lib/rig-math.js';
 
 const BREAK = process.argv.includes('--break');
 const FRAMES = 320;
@@ -48,7 +48,7 @@ const FRAMES = 320;
    it, the outside of the right foot the right side. +1 = the skater's right. */
 const bitingSide = (foot, edge) => ((foot === 'L') === (edge === 'O')) ? -1 : +1;
 
-let bad = 0, checked = 0, routes = 0;
+let bad = 0, checked = 0, routes = 0, skids = 0;
 const fail = m => { bad++; console.error(`  x ${m}`); };
 
 console.log(`lean, ${BREAK ? 'with the old waltz landing put back' : 'as authored'}\n`);
@@ -60,7 +60,12 @@ for (const [id, move] of Object.entries(MOVES)) {
     const pose = poseAt(move, i / (FRAMES - 1));
     if (!pose.skate) continue;                      // airborne: no edge to lean on
 
-    for (const w of bladesDown(pose)) {
+    /* EDGES, and deliberately not every runner. Both routes below are claims
+       about a BITING EDGE — which side of the blade is down and which way the
+       skater has fallen over it — and a skidding blade has neither: it is flat,
+       because a blade on a real edge grips and stops skidding. An exemption can
+       only excuse a pose, so the counter-assertion is below: a skid must BE flat. */
+    for (const w of edgesDown(pose)) {
       const q = { ...pose[w] };
       if (BREAK && id === 'waltz' && pose.dir === 'B') q.n = -q.n;
       n++; checked++;
@@ -85,6 +90,22 @@ for (const [id, move] of Object.entries(MOVES)) {
         worstBody = worstBody && Math.abs(worstBody.lean) > Math.abs(rightward) ? worstBody
           : { t: i / (FRAMES - 1), lean: rightward, side, w, ph: pose.ph };
     }
+
+    /* SKIDS ARE COUNTED AND NOT JUDGED HERE, and where the judging went is the
+       point. A skid rides an edge — a T-stop is unanimously on the trailing
+       blade's outside edge — so the obvious exemption, "it has no edge", is wrong.
+       What it has no part of is either claim this file makes: the TRACK route puts
+       the blade on the far side of the hip from a lobe centre, and a skidding blade
+       is across the lobe rather than on it; the BODY route says the skater has
+       fallen over the biting edge, and in a T-stop the weight stays on the GLIDING
+       foot while the trailing ankle turns out under almost none of it.
+
+       An exemption can only excuse a pose, so the assertion that holds a skid to
+       something lives in turnout.mjs, where the yaw does: a skid must be turned off
+       its own line past SKID_MIN_YAW, and must name the edge it rides. Written up
+       in rig-math.js, including the flat-blade version of this that was reasoned
+       out first and is wrong. */
+    for (const w of ['L', 'R']) if (onIceOf(pose, w) === 'skid') skids++;
   }
 
   routes += 2;
@@ -102,6 +123,7 @@ for (const [id, move] of Object.entries(MOVES)) {
 }
 
 console.log(bad
-  ? `\n${bad} of ${routes} claims failed over ${checked} blade-frames on an edge`
-  : `\n${checked} blade-frames on an edge, every blade leaning into its circle and over its edge`);
+  ? `\n${bad} of ${routes} claims failed over ${checked} blade-frames on an edge and ${skids} skidding`
+  : `\n${checked} blade-frames on an edge, every blade leaning into its circle and over its edge` +
+    (skids ? `,\nand ${skids} skidding frames left to turnout.mjs, which is where their claim is` : ''));
 process.exit(bad ? 1 : 0);

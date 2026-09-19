@@ -70,7 +70,14 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (!role) return;
         glyphs++;
         const which = holder.attrs['data-foot'];
-        const skating = role === 'skating';        // on a blade: an edge, and a dot
+        /* AN EDGE, AND THEREFORE A DOT — 19/09/2026. This was `role === 'skating'`
+           until a skid arrived, and a skid rides an edge: a T-stop is on the
+           trailing blade's outside edge, which is the whole element. What a skid
+           has no part of is LEANING over that edge, which is lean.mjs's claim and
+           not this one. So the dot follows the edge, the roll limit follows the
+           weight, and the two were only ever the same question while every boot on
+           the ice was gripping. */
+        const edged = role === 'skating' || role === 'skid';
         const planted = role !== 'free';           // on the ice at all: held upright
 
         /* what the picture claims */
@@ -82,13 +89,13 @@ for (const [key, m] of Object.entries(MOVES)) {
 
         /* 1 — the dot */
         if (dot) dots++;
-        if (!skating && dot) {
+        if (!edged && dot) {
           dotBad++;
-          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a ${role} boot, which has no biting edge`);
+          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a ${role} boot, which has no edge`);
         }
-        if (skating && drawn !== null && !dot) {
+        if (edged && drawn !== null && !dot) {
           dotBad++;
-          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  no edge dot on a skating boot drawn end-on`);
+          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  no edge dot on a ${role} boot drawn end-on`);
         }
 
         if (drawn === null) return;                 // side-on glyph: no roll claimed

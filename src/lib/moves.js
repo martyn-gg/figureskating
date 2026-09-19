@@ -65,6 +65,24 @@ const PICK = (t,n,z,pitch) => ({t,n,z,pitch,onIce:'pick'});
    leaves a scrape, which this guide has no mark for. turnout.mjs refuses it. */
 const PUSH = (t,n,z,yaw,pitch=0) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'blade',yaw});
 
+/* A BLADE SLIDING ACROSS ITSELF — 19/09/2026. The fourth kind of contact, and the
+   yaw's other half: PUSH says where the boot points and the ice holds it there,
+   this says the ice does not. A stop.
+
+   Steel down and weight on it, so it draws solid. IT HAS AN EDGE AND SAYS WHICH:
+   a T-stop rides the trailing blade's outside edge and doing it on the inside is
+   the error coaches name, so the edge is the element rather than a detail. It
+   cannot be derived the way a second blade's is, because that derivation assumes
+   both blades are on one circle and a skid is across the circle, not on it.
+
+   Yaw and edge are both required rather than defaulted, for the reason PICK()
+   requires its pitch: a skid with no yaw is a blade running true, and calling
+   that a stop would be a pose claiming a contact its geometry does not make.
+   SKID_MIN_YAW asserts the floor. What a skid is NOT held to is lean.mjs, whose
+   two routes are both claims about an edge that is carrying the skater's weight
+   into a circle — a T-stop's trailing blade carries neither. */
+const SKID = (t,n,z,yaw,edge,pitch=0) => ({t,n,z,pitch,onIce:'skid',yaw,edge});
+
 export const MOVES = {
   waltz: {
     name:'Waltz jump',
@@ -406,6 +424,39 @@ export const MOVES = {
        sh:P(-42,0,120), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
       {t:1.00, ph:'Held — free knee above hip level', hipZ:95, hipYaw:180, shYaw:168,
        sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
+    ]},
+
+  /* A T-STOP — the rig for t-stop, and the first thing in this file that SKIDS.
+
+     The gliding blade runs true on a forward outside edge and is the reference;
+     the trailing blade is laid across it at a right angle, on its OUTSIDE edge,
+     and slides. Coaches are unanimous about that edge and name the inside as the
+     classic error, which is why a skid states its edge rather than having one
+     derived — the derivation assumes both blades share a circle, and this one is
+     across the circle.
+
+     THE POSE WAS FOUND BY SWEEPING AND IT NEEDED THE KNEE. A right angle between
+     the feet is ninety degrees of turnout to find, and two weight-bearing hips give
+     forty each: eighty, and not enough. A knee bent thirty-five degrees adds
+     eighteen more a side, which is why a skater bends to find turnout and why this
+     pose comes out with BOTH knees bent and the pelvis opened thirty-five degrees
+     toward the trailing foot. None of that was authored; the constants chose it,
+     and it is what a T-stop actually looks like.
+
+     Held rather than animated, like the other probes: a stop is a loss of speed and
+     the path runs at one. This is the braking instant. */
+  tStop: {
+    name:'T-stop',
+    note:'forward outside edge · the trailing blade across it, on its outside edge, sliding',
+    path:[{kind:'arc', foot:'R', edge:'O', dir:'F', sweep:40}],
+    radius:400, duration:3.0,
+    keys:[
+      {t:0.00, ph:'The trailing blade set down across the glide', hipZ:94, hipYaw:35, shYaw:40,
+       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
+      {t:0.45, ph:'Weight easing onto it, the outside edge shaving', hipZ:94, hipYaw:35, shYaw:42,
+       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
+      {t:1.00, ph:'Held — the glide holding its line, the trailing blade scraping', hipZ:94, hipYaw:35, shYaw:44,
+       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
     ]},
 
   /* A PUSH — the rig for forward-stroking, and the fourth thing the rig learned to hold, after a second blade,

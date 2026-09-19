@@ -1,7 +1,7 @@
 /* A skating boot is stiff. If a pose needs more than about 28° of shin lean, the
    foot is in the wrong place under the hip — the ankle is not the problem. */
 import { MOVES } from '../src/lib/moves.js';
-import { D2R, THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, bladesDown, onIceOf } from '../src/lib/rig-math.js';
+import { D2R, THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, runnersDown, onIceOf } from '../src/lib/rig-math.js';
 
 const LIMIT = 28;
 let bad = 0;
@@ -20,7 +20,11 @@ for (const [key, m] of Object.entries(MOVES))
        real up-axis instead and it comes from the knee, one iteration from the shin
        being measured, so the angle collapses towards an identity. What a pick
        genuinely constrains is its ANKLE angle, and freefoot.mjs asserts that. */
-    for (const w of bladesDown(k)) {
+    /* RUNNERS, NOT EDGES — 19/09/2026. A skidding blade is flat and has no biting
+       edge, but the leg above it is in the same stiff boot and leans the same way,
+       so the limit this file exists for applies unchanged. Picks are still out,
+       for the reason written above. */
+    for (const w of runnersDown(k)) {
     const q = k[w];
     const bd = bootDir(k, w, twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw)), q);
     const up = [-bd[0] * bd[2], -bd[1] * bd[2], 1 - bd[2] * bd[2]];

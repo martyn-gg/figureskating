@@ -52,7 +52,7 @@ import { execFileSync } from 'node:child_process';
 import { ROOT } from './_rig.mjs';
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense, secondFoot, label } from '../src/lib/skating.js';
-import { onIceOf, edgeOf, dirOf, bladesDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { onIceOf, edgeOf, dirOf, edgesDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const ON_ICE = 3, CLEAR = 5, NEAR = 5, FAR = 70;
@@ -81,7 +81,7 @@ for (const [id, m] of Object.entries(MOVES))
   for (const raw of m.keys) {
     const k = BREAK ? brk(raw) : raw;
     keys++;
-    const down = bladesDown(k), touching = contactsDown(k);
+    const down = edgesDown(k), touching = contactsDown(k);
 
     if (k.skate && !down.includes(k.skate))
       fail(`${where(id, k)}: skate is ${k.skate}, which is not on the ice`);
@@ -113,6 +113,40 @@ for (const [id, m] of Object.entries(MOVES))
     }
   }
 
+/* ── 3b: EVERY AUTHORED PER-FOOT FIELD SURVIVES poseAt ───────────────────
+   This file's header already says the round trip is what it is for, and assertion
+   4 tested it for one field — onIce — by needing it. That is a test by side
+   effect, and it caught nothing when `yaw` and `edge` were added to a foot on
+   19/09/2026 and left out of `lpP`: the push was authored turned thirty-five
+   degrees, every keyframe checker agreed, and every frame the renderer drew ran
+   true. It was looked at, and passed, because two boots in different places look
+   different whether or not one is turned.
+
+   So the round trip is now asserted directly and by NAME, over whatever the
+   keyframe actually carries. A field added tomorrow and forgotten in `lpP` fails
+   here on the first run rather than in a picture nobody can read.
+
+   Interpolated quantities are checked at the keyframe's own t, where the
+   interpolation is an identity; states are checked across the span they hold. */
+const FOOT_FIELDS = ['onIce', 'dir', 'edge', 'yaw', 'pitch', 'point'];
+let carried = 0;
+for (const [id, m] of Object.entries(MOVES))
+  for (const k of m.keys)
+    for (const w of ['L', 'R']) {
+      const authored = k[w];
+      if (!authored) continue;
+      const got = poseAt(m, k.t)[w];
+      for (const f of FOOT_FIELDS) {
+        if (authored[f] === undefined) continue;
+        carried++;
+        const a = authored[f], b = got && got[f];
+        const same = typeof a === 'number' ? Math.abs(a - (b ?? NaN)) < 1e-6 : a === b;
+        if (!same)
+          fail(`${where(id, k)}: the ${w} foot's ${f} is ${JSON.stringify(a)} in the keyframe ` +
+            `and ${JSON.stringify(b)} after poseAt — lpP is dropping it`);
+      }
+    }
+
 /* ── 4: one lobe, every frame, through poseAt ────────────────────────── */
 let frames = 0, twoFootFrames = 0;
 for (const [id, m] of Object.entries(MOVES)) {
@@ -120,7 +154,9 @@ for (const [id, m] of Object.entries(MOVES)) {
   for (let i = 0; i < path.length; i++) {
     const pose = poseAt(m, i / (path.length - 1));
     frames++;
-    const down = bladesDown(pose);
+    /* Edges: the assertion below is that two blades share a lobe sense, and a
+       skid has no edge to take a sense from. */
+    const down = edgesDown(pose);
     if (down.length < 2) continue;
     twoFootFrames++;
     const senses = down.map(w => (BREAK === 'sense' && w !== pose.skate ? -1 : 1) *
@@ -164,6 +200,7 @@ if (!files.length) {
 
 /* ── report ──────────────────────────────────────────────────────────── */
 console.log(`  ${keys} keyframes, ${twoFoot} with two blades down`);
+console.log(`  ${carried} authored per-foot fields, every one of them surviving poseAt`);
 console.log(`  ${frames} frames, ${twoFootFrames} with two blades down`);
 console.log(`  ${pairs} two-foot pairs read out of British Ice Skating's Skills 1`);
 console.log(bad
