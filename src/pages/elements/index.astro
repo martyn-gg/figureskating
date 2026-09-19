@@ -65,7 +65,20 @@ const comboGroups = [...new Map(combos.map(e => [e.data.turns.join('-'), e.data.
 const rest = elements
   .filter(e => !['edge', 'turn', 'twizzle', 'transition', 'combination'].includes(e.data.kind))
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
-const restKinds = [...new Set(rest.map(e => e.data.kind))];
+/* ORDER THE REMAINING KINDS RATHER THAN LETTING THEM FALL OUT OF `rest`, which is
+   sorted by element NAME and so orders its kinds by whichever happens to sort first.
+   That was harmless while the remainder was jumps and positions. It stopped being
+   harmless on 06/09/2026, when the basics arrived and landed BELOW the jumps: the
+   floor of the guide, printed last. `basic` is named first here and everything else
+   keeps the order it had.
+
+   This is not the page's ordering question, which is still open and still belongs to
+   docs/gaps-competition.md — whether a section's place should be decided by whether
+   its elements appear in a test the guide holds. Under that rule the basics would
+   move again, and further up. This is only the floor not being the footer. */
+const KIND_ORDER = ['basic'];
+const restKinds = [...new Set(rest.map(e => e.data.kind))]
+  .sort((a, b) => (KIND_ORDER.indexOf(a) + 1 || 99) - (KIND_ORDER.indexOf(b) + 1 || 99));
 
 const nEdges = elements.filter(e => e.data.kind === 'edge').length;
 const nTurns = elements.filter(e => e.data.kind === 'turn').length;

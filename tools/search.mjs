@@ -107,7 +107,15 @@ const QUERIES = [
   ['crossed behind',   'Left forward outside crossed step behind'],
   ['skills 8',         'BIS Skills 8'],
   ['spiral',           'Spiral'],
-  ['slalom',           'BIS Skills 1 · exercise 4 — Slalom'],
+  /* SLALOM CHANGED HANDS ON 06/09/2026, and the change is the right way round. Until
+     the basics existed there was no slalom element and the top hit could only be the
+     exercise that asks for one. A skater typing "slalom" wants to know what a slalom
+     IS; the exercise that contains it is the second answer, not the first. The old
+     expectation was never a judgement about ranking — it was the only page there was. */
+  ['slalom',           'Slalom'],
+  ['stroking',         'Forward stroking'],
+  ['snowplough',       'Snowplough stop'],
+  ['lemon',            'Swizzle'],               // the alias a British rink actually uses
 ];
 for (const [q, want] of QUERIES) {
   const got = rank(docs, q)[0];
@@ -116,8 +124,15 @@ for (const [q, want] of QUERIES) {
 }
 
 /* A query that should find nothing must find nothing, or the ranking is matching
-   on noise and every search looks like it worked. */
-for (const q of ['zzzz', 'quadruple axel', 'drag'])
+   on noise and every search looks like it worked.
+
+   "drag" LEFT THIS LIST ON 06/09/2026 because the guide gained a drag. It was a fair
+   probe while it lasted — a real skating word for a movement the guide did not hold,
+   so a hit on it could only have been noise. That is exactly what makes such a probe
+   expire: it tests the absence of content, and content is the thing that changes.
+   Replaced with "shoot the duck", which is a real movement the guide still does not
+   have, and which should be moved out of here rather than deleted if it ever arrives. */
+for (const q of ['zzzz', 'quadruple axel', 'shoot the duck'])
   if (rank(docs, q).length) fail(`"${q}" matched ${rank(docs, q).length} records and should match none`);
 
 const size = statSync(join(DIST, 'search.json')).size;

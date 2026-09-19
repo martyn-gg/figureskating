@@ -16,9 +16,19 @@ worker; **seventeen checkers in the `check` chain, all green** — count them ou
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 
-**Content:** 254 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
-turns, thirty-two twizzles, thirty-six transitions, **a hundred and twelve clusters**, seven
-jumps and three held positions. 316 pages build.
+**Content:** 272 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
+jumps, three held positions and **twenty-two basics**. 338 pages build. Count kinds with
+`grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
+which has been wrong about its own numbers three times.
+
+**The basics went in on 06/09/2026** — the floor below the edges, which the guide had never
+had: stroking, the swizzles and pumps, the glides, the dip, the drag, four stops, the
+two-foot turns, the slaloms, the two-foot change of edge and the pivot. `docs/gaps-basics.md`
+is the whole account, including why Learn to Skate USA is the anchor and the per-foot yaw that
+keeps fourteen of the twenty-two out of the rig. **Twenty-two of them still draw nothing**,
+which is the same fault Session 14 found on six jump pages and fixed — measured on the built
+HTML, not the source.
 
 *(That paragraph read 182 / 187 / 4,719 until 30/08/2026, before the syllabus half and the
 finishing pass below.)*

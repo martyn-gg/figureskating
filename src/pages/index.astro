@@ -13,7 +13,7 @@ const byKind = k => elements.filter(e => e.data.kind === k);
    listed the exclusions, so the twenty-four twizzles added on 29/08/2026 fell
    through it and landed alphabetically in amongst the jumps — a new kind should
    not be able to appear here by not having been thought of. */
-const KINDS = ['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position'];
+const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position'];
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
 const unnamed = elements.filter(e => !KINDS.includes(e.data.kind)).length;
 

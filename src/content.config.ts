@@ -21,7 +21,15 @@ const elements = defineCollection({
   loader: md('./src/data/elements'),
   schema: z.object({
     name: z.string(),
-    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance']),
+    /* `basic` added 06/09/2026. Everything else in this enum starts from a curve
+       the skater is already holding; `basic` is the floor below that — the push
+       itself, the glide, the swizzle, the stop, the two-foot turn. Nine exercises
+       said so in `notCovered` before the kind existed, all of them some version of
+       *the step wide and the push back*. A basic mostly has no `entry`, because
+       most of them are two-foot or straight, and the derived machinery keys off
+       `entry` — so a basic is written rather than generated, and that is the point
+       of it being its own kind rather than an edge with a missing field. */
+    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance', 'basic']),
     summary: z.string(),
     entry: z.object({ foot, edge, dir }).optional(),
     /* One-foot turns first, then the two-foot ones. A mohawk and a choctaw change
