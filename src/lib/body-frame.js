@@ -353,9 +353,31 @@ function viewTop(svg, move, path, frames, SHOW){
        the same centimetres — the tracing is drawn at true scale here, only the
        body is enlarged.
 
-       A run breaks on a change of state AND on a change of yaw, because one
-       stroke can carry one width. Ten-degree buckets: fine enough that the step is
-       invisible, coarse enough that a held stop stays a single stroke. */
+       A run breaks on a change of state, and ON NOTHING ELSE. It used to break on
+       the yaw as well, in ten-degree buckets, because the band was drawn as one
+       round-capped STROKE and a stroke carries one width — which is true of a held
+       stop, where the yaw never moves and the run is a single stroke, and false of
+       the first move whose yaw SWEEPS. A two-foot turn puts the blade through 130
+       degrees, so it bucketed into thirteen short strokes of rising width, each one
+       round-capped: a caterpillar of overlapping discs where the mark should taper.
+       Every checker was green. It was found by looking, which is the third time a
+       glyph has been wrong in a case it had never met — ask which of a branch's
+       inputs have only ever had one value.
+
+       So the band is a FILLED SHAPE now rather than a stroke, with its half-width
+       read off each frame's own yaw. It tapers exactly, it has no seams, and the
+       bucket is gone. The ends are square where the old caps were round, which
+       shortens the two held snowploughs' marks by half a blade at each end — the
+       mark starts where the blade started skidding rather than half a runner
+       before it.
+
+       MEASURED, and the measurement corrected the sentence that was here first.
+       tools/frame-svg.mjs over all sixteen moves at seven times, 336 frames
+       hashed before and after: 24 moved, all of them the TOP view of four moves —
+       snowplough, ploughBack and the two turns. The first draft of this note said
+       five, counting the T-stop, and the T-stop did not move: its skid is the
+       TRAILING blade and the mark is the reference blade's, which on a T-stop is
+       gliding. Only a skidding REFERENCE blade draws a band. */
     let run=[], runKey=null;
     const stateOf = f => {
       const po = f.pose;
@@ -364,16 +386,29 @@ function viewTop(svg, move, path, frames, SHOW){
       const skid = onIceOf(po, po.skate) === 'skid';
       return { air:false, skid, yaw: skid ? (q.yaw || 0) : 0, edge:po.edge };
     };
-    const keyOf = st => `${st.air?'a':st.skid?'s':'e'}${st.edge}${Math.round(st.yaw/10)}`;
+    const keyOf = st => `${st.air?'a':st.skid?'s':'e'}${st.edge}`;
     const flush=()=>{ if(run.length>1){
       const st=run.st;
       if(st.skid){
-        /* The swept band. Round caps, so the ends read as the smear tailing off
-           rather than as a stroke that was cut. */
-        const wide=Math.abs(Math.sin(st.yaw*D2R))*(BLADE_FRONT-BLADE_BACK);
-        live.appendChild(el('path',{d:d(run),fill:'none',
-          'stroke-width':Math.max(4.2/s, wide),'stroke-linecap':'round',
-          stroke:edgeCol(st.edge),opacity:.32}));
+        /* THE SWEPT BAND, as a shape. Its half-width at a point is the blade's own
+           length foreshortened by how far THAT frame's boot is turned off the line
+           of travel — so a sweeping yaw draws a mark that widens and narrows with
+           the turn, which is what a two-foot turn leaves on the ice. The floor is
+           the tracing's own stroke width, so a blade barely off its line still
+           reads as a mark rather than vanishing to a hairline.
+
+           Offset along each point's OWN normal, not the run's: the path may curve
+           under the skid, and a single normal would shear the band. */
+        const half=i=>Math.max(2.1/s,
+          Math.abs(Math.sin((run.yaws[i]||0)*D2R))*(BLADE_FRONT-BLADE_BACK)/2);
+        const lo=[], hi=[];
+        for(let i=0;i<run.length;i++){
+          const nx=-Math.sin(run[i].th), ny=Math.cos(run[i].th), h=half(i);
+          lo.push(`${run[i].x+nx*h} ${run[i].y+ny*h}`);
+          hi.push(`${run[i].x-nx*h} ${run[i].y-ny*h}`);
+        }
+        live.appendChild(el('path',{d:`M ${lo.join(' L ')} L ${hi.reverse().join(' L ')} Z`,
+          fill:edgeCol(st.edge),stroke:'none',opacity:.32}));
       } else {
         const seg=el('path',{d:d(run),fill:'none','stroke-width':4.2/s,'stroke-linecap':'round',
           stroke: st.air?'var(--ink-soft)':edgeCol(st.edge)});
@@ -382,9 +417,13 @@ function viewTop(svg, move, path, frames, SHOW){
       }} };
     for(let i=0;i<=idx;i++){
       const st=stateOf(frames[i]), k2=keyOf(st);
-      if(runKey===null){runKey=k2;run=[path[i]];run.st=st;}
-      else if(k2!==runKey){ flush(); runKey=k2; const keep=run[run.length-1]; run=[keep,path[i]]; run.st=st; }
-      else run.push(path[i]);
+      /* The yaw travels with the point now, because the band's width is per-point.
+         Carrying it on the run instead — which is what the bucket key amounted to —
+         is the thing that made a sweeping skid draw as a row of discs. */
+      if(runKey===null){runKey=k2;run=[path[i]];run.st=st;run.yaws=[st.yaw];}
+      else if(k2!==runKey){ flush(); runKey=k2; const keep=run[run.length-1], keepY=run.yaws[run.yaws.length-1];
+        run=[keep,path[i]]; run.st=st; run.yaws=[keepY,st.yaw]; }
+      else { run.push(path[i]); run.yaws.push(st.yaw); }
     }
     flush();
 

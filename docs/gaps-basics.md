@@ -36,21 +36,26 @@ missing.
 
 | | element | the rig |
 |---|---|---|
-| **Getting moving** | forward stroking, backward stroking | **no — the push is not along the tracing** |
+| **Getting moving** | forward stroking | yes — a rig |
+| | backward stroking | **no — has the yaw it needs, wants a rig of its own** |
 | | swizzle, backward swizzle | **no** |
 | | half-swizzle pumps, backward half-swizzle pumps | **no** |
 | **Gliding** | two-foot glide, backward two-foot glide | yes |
 | | one-foot glide, backward one-foot glide | yes |
 | | dip | yes, and the most worthwhile of them |
 | | drag | **no — the trailing foot is turned out** |
-| **Stopping** | snowplough stop, backward snowplough stop | **no** |
-| | T-stop, hockey stop | **no** |
-| **Turning and changing edge** | two-foot turn, backward two-foot turn | **no — mid-turn the blades point across the travel** |
+| **Stopping** | snowplough stop, backward snowplough stop | yes — a rig each |
+| | T-stop | yes — a rig |
+| | hockey stop | **no — counter-rotation and a free upper body** |
+| **Turning and changing edge** | two-foot turn, backward two-foot turn | yes — a rig each, and the first use of the skid on an element |
 | | slalom, backward slalom | yes |
 | | two-foot change of edge | yes |
 | | pivot | **no — the pick has no anchor** |
 
-Eight of twenty-two. The other fourteen looked like one blocker and were three.
+Eight of twenty-two, on the day this was written. **Fourteen of twenty-two now**, and the
+count and the reasons are held by `tools/drawn.mjs` rather than by this table — read them
+there if the two ever disagree. The fourteen that could not be drawn looked like one blocker
+and were three.
 
 **The yaw went in on 19/09/2026** — `docs/model.md`, *A blade on the ice may point somewhere
 other than where it is going*. It accounts for **five** of the fourteen: stroking both ways,
@@ -60,11 +65,41 @@ turns), **two needing a second path** (the swizzles — both blades run true, bu
 diverge and the rig has one path), and **one needing an anchor** (the pivot).
 
 **The skid went in the same day** — `onIce: 'skid'`, `docs/model.md`, *A blade that is not
-travelling along itself* — and the scrape with it. **The T-stop and the snowplough stop both
-have rigs**, and the reference blade may now declare a skid, which is what a two-foot stop
-needs. The backward snowplough, the hockey stop and the two two-foot turns have everything
-they need and want rigs of their own; the swizzles still need a second path, and the pivot
-still needs an anchor.
+travelling along itself* — and the scrape with it. **The T-stop, both snowplough stops and
+both two-foot turns have rigs**, and the reference blade may now declare a skid, which is
+what a two-foot stop and a two-foot turn both need. The hockey stop wants counter-rotation
+and a free upper body, the swizzles still need a second path, and the pivot still needs an
+anchor. Only the drag and backward stroking are waiting on nothing but authoring.
+
+## The turns, and what a sweeping yaw cost — 19/09/2026, later the same day
+
+The two two-foot turns are the first elements to USE the skid and the yaw, and they are the
+first poses in the file whose yaw moves at all: every skid before them was a held stop at a
+single angle. Three things came out of that, and none of them was a new capability.
+
+**A turn is a yaw sweeping through a half circle, and `dir` never changes.** The skater ends
+up gliding backwards and there is a field that says so, and it cannot be used: `dir` is a
+carried state and `yaw` is an interpolated quantity, so flipping `dir` partway takes 180° off
+the base and sends the yaw back through zero to compensate. Every frame between those two
+keyframes would draw the blades swinging the wrong way and back. So the whole rotation lives
+in the yaw, which on a skid is exact rather than a convention — a skidding blade has no line
+of its own to travel along.
+
+**The rig starts and ends mid-skid, at 25° and 155° of body rotation, and that span is the
+skid floor read from both ends.** A skid must be turned past `SKID_MIN_YAW`; a blade running
+true is not a skid; and `yaw` interpolates, so no arrangement of keyframes gets from a
+true-running blade to a skidding one without frames in between that are a yawed blade
+claiming to grip. The rig draws the turn and not the glide into it.
+
+**Which found a hole in the checker.** `turnout.mjs` read the skid floor off nought only, so
+a blade at 176° — running as true along its own line as one at 4°, backwards — passed it by
+a mile. No pose could reach that while the only skids in the file were three held stops at
+40, 45 and 90 degrees. Asserted from both ends now, `--break=back`, 35 feet reported.
+
+**And the scrape was drawn as a stroke.** One stroke carries one width, so a sweeping yaw
+bucketed into thirteen short round-capped strokes of rising width: a caterpillar of
+overlapping discs where the mark should taper. Every checker was green; it was found by
+looking. The band is a filled shape now, its half-width read off each frame's own yaw.
 
 **The eight were drawn on 19/09/2026**, as tracings rather than rigs. `trace` on the element
 carries segments in exactly a rig move's `path` vocabulary and `PathThumb` runs them through

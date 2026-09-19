@@ -44,18 +44,25 @@
    (docs/model.md, "A blade that is not travelling along itself"), and until it
    exists, saying so out loud beats drawing a tracing that is a lie.
 
-   Broken on purpose. The first mutation is worth keeping in mind when reading the
-   counts: there is only ONE second blade in the whole file that is not a pick, so a
-   mutation aimed at second blades has almost nothing to land on, and the three feet
-   it reports are three keyframes of `twoFoot`. The reference-blade mutation reaches
-   every move, which is the asymmetry the pose data has and not a fault in either.
+   Broken on purpose, and the counts are from 19/09/2026 evening, with the two
+   two-foot turns in. They moved: the file had ONE second blade that was not a pick
+   and three skidding feet when these were first written, and it now has eleven and
+   thirty-five, so a mutation aimed at either lands on an order of magnitude more.
+   The asymmetry between the second-blade and reference-blade mutations is the pose
+   data's shape and not a fault in either — every move has a reference blade.
 
-     --break=in     30 degrees of toe-in on every second blade ....  3 feet reported
-     --break=ref    12 degrees of yaw on every reference blade .... 37 feet reported
-     --break=true   every skid straightened to 4 degrees of yaw ...  3 feet reported
+     --break=in     30° of toe-in on every second blade ......... 12 (6 out, 6 in)
+     --break=ref    12° of yaw on every reference blade ......... 67 (43 tracing,
+                                                                  16 true, 8 in)
+     --break=true   every skid straightened to 4° of yaw ........ 49 (35 true)
+     --break=back   every skid turned to 176° — true, backwards . 64 (35 true)
+
+   The last two are the same assertion read from its two ends, and 35 is every
+   skidding foot in the file both times, which is the point: a blade 4° off its line
+   and a blade 176° off it are the same blade running true.
 
        node tools/turnout.mjs
-       node tools/turnout.mjs --break=in|ref|true
+       node tools/turnout.mjs --break=in|ref|true|back
 */
 import { MOVES } from '../src/lib/moves.js';
 import { HIP_OUT, HIP_IN, SKID_MIN_YAW, KNEE_TWIST_OUT, THIGH, SHIN, anterior,
@@ -79,6 +86,7 @@ for (const [key, m] of Object.entries(MOVES))
       if (BREAK === 'in' && w !== k.skate) yaw = w === 'L' ? -30 : 30;   // toes IN, past the 20
       if (BREAK === 'ref' && w === k.skate) yaw = 12;
       if (BREAK === 'true' && onIceOf(k, w) === 'skid') yaw = Math.sign(yaw) * 4;
+      if (BREAK === 'back' && onIceOf(k, w) === 'skid') yaw = 176;      // true, backwards
       feet++;
       if (yaw) turned++;
 
@@ -94,10 +102,24 @@ for (const [key, m] of Object.entries(MOVES))
          holds is friction, which a rig of markers cannot see, which is exactly why
          the contact is declared. */
       if (onIceOf(k, w) === 'skid') {
-        if (Math.abs(yaw) < SKID_MIN_YAW) {
+        /* FROM BOTH ENDS, AND IT USED TO BE ONE — 19/09/2026 evening. The test was
+           `|yaw| < SKID_MIN_YAW`, which reads the floor off nought only: a blade at
+           176° passed it by a mile while running as true along its own line as one
+           at 4°, backwards. No pose could reach that while the only skids in the
+           file were three held stops at 40, 45 and 90 degrees, so the branch had
+           never met the case. The two-foot turns are the first poses whose yaw
+           SWEEPS, and they sweep toward 180.
+
+           This repository's own rule, for the fourth time: an exemption can only
+           excuse a pose, so assert from both sides. A skid is exempt from lean.mjs;
+           what holds it is that it is turned across its line, and 180 is along the
+           line as surely as nought is. */
+        const w180 = Math.abs(wrap(yaw)), off = Math.min(w180, 180 - w180);
+        if (off < SKID_MIN_YAW) {
           bad++;
-          console.log(`  TRUE    ${key.padEnd(13)} ${w} t=${k.t.toFixed(2)}  declared a skid and yawed only ` +
-            `${Math.abs(yaw).toFixed(0)}° — below ${SKID_MIN_YAW}° it is running along its own line`);
+          console.log(`  TRUE    ${key.padEnd(13)} ${w} t=${k.t.toFixed(2)}  declared a skid and yawed ` +
+            `${w180.toFixed(0)}°, which is ${off.toFixed(0)}° off running along its own line — ` +
+            `below ${SKID_MIN_YAW}° from either nought or 180 it is an edge, not a stop`);
         }
         if (!edgeOf(k, w)) {
           bad++;
@@ -151,5 +173,5 @@ console.log(`furthest out ${worst.out.toFixed(0)}°${worst.key ? ` (${worst.key}
   `furthest in ${worstIn.in.toFixed(0)}°${worstIn.key ? ` (${worstIn.key} ${worstIn.w})` : ''}`);
 console.log(bad
   ? `\n${bad} foot${bad === 1 ? '' : ' positions'} the hip cannot make`
-  : 'every blade on the ice points somewhere its hip can put it, and only the pushing feet are turned at all');
+  : 'every blade on the ice points somewhere its hip can put it, every skid is turned across its own line,\nand every foot turned off the tracing says which contact it is making');
 process.exit(bad ? 1 : 0);

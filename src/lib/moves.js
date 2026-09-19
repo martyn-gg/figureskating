@@ -513,6 +513,115 @@ export const MOVES = {
        sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
     ]},
 
+  /* A TWO-FOOT TURN — the rig for two-foot-turn, and the first element in this
+     file whose whole content is a ROTATION ON THE ICE. The skid and the per-foot
+     yaw both landed on 19/09/2026 and neither had an element using it; this is
+     the first, and it needed nothing new.
+
+     WHAT A TURN IS HERE: the boot's heading is the direction of travel plus the
+     yaw, so a body turning through a half circle is a yaw sweeping through a half
+     circle, and `dir` NEVER CHANGES. That reads backwards — the skater ends up
+     gliding backwards, and there is a field that says so. It cannot be used. `dir`
+     is a carried state and `yaw` is an interpolated quantity, so flipping `dir` to
+     'B' partway would take 180° off the base and send the yaw back through zero to
+     compensate: every frame between those two keys would draw the blades swinging
+     the wrong way and then back. So the whole 180° lives in the yaw, and a blade
+     at 163° off its line of travel IS a blade running very nearly backwards. On a
+     skid that is exact rather than a convention — a skidding blade has no line of
+     its own to travel along, which is the whole of what `onIce: 'skid'` says.
+
+     IT STARTS AND ENDS MID-SKID, at 25° and 155°, and that is the honest span
+     rather than a trimmed one. A skid must be turned past SKID_MIN_YAW; a blade
+     running true is not a skid; and `yaw` interpolates continuously, so there is no
+     arrangement of keyframes that goes from a true-running blade to a skidding one
+     without frames in between that are a yawed blade claiming to grip. Those frames
+     would be the lie turnout.mjs refuses on a keyframe. So the rig draws the turn
+     itself and not the glide into it — which is `two-foot-glide`, and has its own
+     page. twoFoot does not draw stepping onto two feet either.
+
+     THE PIVOT IS ON THE LEFT BLADE, and that is the rig's shape showing through.
+     The reference blade is pinned to the path, so the hip hangs off it: give the
+     reference foot a hip-relative position that rotates and the HIP orbits the
+     tracing instead, by the stance width, four times life in the plan view. A
+     skater swerving half a metre sideways is a worse picture than a pivot placed
+     a stance-width off centre. It is also where an anticlockwise turn would put it
+     — you turn around your inside, and the left is the inside of this one — so the
+     licence and the movement agree rather than merely not colliding.
+
+     BOTH BLADES ARE NEAR FLAT AND THE LETTERS SAY WHICH SIDE OF FLAT. Every
+     two-blade pose in this guide is one outside edge and one inside, and here the
+     turn decides which: rotating anticlockwise puts the skater fractionally over
+     the left of both boots, which is the left's outside and the right's inside.
+     lean.mjs does not hold a skid to it — its two routes are both claims about an
+     edge carrying weight into a circle, and a pivoting blade carries neither — so
+     the letters are a record of the tilt and not a load-bearing number. It belongs
+     on the list of things to put to a coach.
+
+     THE RISE IS THE TECHNIQUE. hipZ goes 94-97-94: a skater rises through the
+     middle of the turn to take weight off the blades so they will pivot, and sinks
+     again to hold the exit. And the SHOULDERS LEAD — shYaw is 25° ahead of hipYaw
+     at the first key and level with it at the last, which is the element's own
+     sentence about winding the upper body and letting the feet follow, written as
+     numbers rather than asserted in prose.
+
+     The arms are gathered to 46 cm rather than the default 67. A wide carriage
+     swung through 180° is the fore-and-aft sweep the waltz jump's note warns
+     about, and this turns through the same angle at a quarter of the speed. */
+  twoFootTurn: {
+    name:'Two-foot turn',
+    note:'both blades skidding · the body turning through a half circle, forwards to backwards',
+    path:[{kind:'line', len:200}],
+    radius:200, duration:3.4,
+    keys:[
+      {t:0.00, ph:'Shoulders wound, the blades letting go', hipZ:94, hipYaw:25, shYaw:50, arm:[46,6,20],
+       sh:P(0,0,146), L:SKID(0,0,0,33,'O'), R:SKID(6,14,0,17,'I'), skate:'L', edge:'O', dir:'F'},
+      {t:0.25, ph:'Rising — the rise taking the weight off the blades', hipZ:96, hipYaw:60, shYaw:78, arm:[46,6,20],
+       sh:P(0,0,148), L:SKID(0,0,0,68,'O'), R:SKID(13,8,0,52,'I'), skate:'L', edge:'O', dir:'F'},
+      {t:0.50, ph:'Square across the travel — the scrape at its widest', hipZ:97, hipYaw:90, shYaw:105, arm:[46,6,20],
+       sh:P(0,0,149), L:SKID(0,0,0,98,'O'), R:SKID(15,0,0,82,'I'), skate:'L', edge:'O', dir:'F'},
+      {t:0.75, ph:'The hips catching the shoulders up', hipZ:96, hipYaw:120, shYaw:132, arm:[46,6,20],
+       sh:P(0,0,148), L:SKID(0,0,0,128,'O'), R:SKID(13,-8,0,112,'I'), skate:'L', edge:'O', dir:'F'},
+      {t:1.00, ph:'Facing back down the ice, the blades settling', hipZ:94, hipYaw:155, shYaw:155, arm:[46,6,20],
+       sh:P(0,0,146), L:SKID(0,0,0,163,'O'), R:SKID(6,-14,0,147,'I'), skate:'L', edge:'O', dir:'F'},
+    ]},
+
+  /* THE SAME HALF TURN, BACKWARDS TO FORWARDS — the rig for backward-two-foot-turn.
+
+     Every number in the forward turn read off a base of nought; this one reads off
+     180, because the skater starts facing back down the ice. hipYaw runs 205 to 335
+     and the yaws are identical to the forward turn's, which is not a coincidence
+     and is worth stating: yaw is measured from the DIRECTION OF TRAVEL and the
+     skater is travelling the same way in both. Turning anticlockwise out of a
+     backward glide and turning anticlockwise out of a forward one put the blades
+     through exactly the same headings; all that differs is which end of the sweep
+     the skater could see where they were going.
+
+     Which is the element. Learn to Skate USA teaches this after the forward one and
+     what makes it harder is not the feet: the rotation finishes facing a stretch of
+     ice the skater has not been looking at. So the SHOULDER LEAD IS LARGER HERE —
+     25° at the first key as before, but held further into the turn, because the
+     correction coaches give is to turn the head and shoulders first and let the
+     feet follow rather than snapping them round. A rushed turn is the feet arriving
+     before the body, and that is a shape this rig can draw: it is the shoulder line
+     BEHIND the hip line, and it is what these numbers deliberately are not. */
+  twoFootTurnBack: {
+    name:'Backward two-foot turn',
+    note:'both blades skidding, travelling backwards · the body turning through a half circle to face forwards',
+    path:[{kind:'line', len:200}],
+    radius:200, duration:3.6,
+    keys:[
+      {t:0.00, ph:'Gliding backwards, the shoulders already wound', hipZ:94, hipYaw:205, shYaw:230, arm:[46,6,20],
+       sh:P(0,0,146), L:SKID(0,0,0,33,'O'), R:SKID(-6,-14,0,17,'I'), skate:'L', edge:'O', dir:'B'},
+      {t:0.25, ph:'The head turning first, the blades following', hipZ:96, hipYaw:240, shYaw:268, arm:[46,6,20],
+       sh:P(0,0,148), L:SKID(0,0,0,68,'O'), R:SKID(-13,-8,0,52,'I'), skate:'L', edge:'O', dir:'B'},
+      {t:0.50, ph:'Square across the travel — the scrape at its widest', hipZ:97, hipYaw:270, shYaw:295, arm:[46,6,20],
+       sh:P(0,0,149), L:SKID(0,0,0,98,'O'), R:SKID(-15,0,0,82,'I'), skate:'L', edge:'O', dir:'B'},
+      {t:0.75, ph:'Coming round onto ice the skater can now see', hipZ:96, hipYaw:300, shYaw:318, arm:[46,6,20],
+       sh:P(0,0,148), L:SKID(0,0,0,128,'O'), R:SKID(-13,8,0,112,'I'), skate:'L', edge:'O', dir:'B'},
+      {t:1.00, ph:'Facing the way the skater is going, the blades settling', hipZ:94, hipYaw:335, shYaw:335, arm:[46,6,20],
+       sh:P(0,0,146), L:SKID(0,0,0,163,'O'), R:SKID(-6,14,0,147,'I'), skate:'L', edge:'O', dir:'B'},
+    ]},
+
   /* A PUSH — the rig for forward-stroking, and the fourth thing the rig learned to hold, after a second blade,
      a pick and a corrected ankle, and the first that needed a blade on the ice to
      point somewhere other than where it is going.

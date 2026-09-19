@@ -16,9 +16,11 @@
    account. `cannotDraw` below names each page that legitimately draws nothing AND
    why, and the checker fails if a named page starts drawing — because then the
    reason has gone stale and the list is lying about the model. Fourteen of these
-   are one fact (docs/gaps-basics.md): a blade on the ice takes its heading from the
+   were one fact (docs/gaps-basics.md): a blade on the ice took its heading from the
    tracing, so a stop, a push and a two-foot turn — every movement where the blade
-   points somewhere other than where it is going — cannot be drawn at all yet.
+   points somewhere other than where it is going — could not be drawn at all. The
+   yaw and the skid closed most of it; ten remain, and each names what the MODEL
+   lacks rather than what a skater cannot do.
 
    Broken on purpose, both ways, because an exemption asserted from one side only is
    the shape this repository keeps finding in its own checkers:
@@ -54,8 +56,6 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  'two-foot-turn':               'the reference blade skids through the middle of the turn',
-  'backward-two-foot-turn':      'the reference blade skids through the middle of the turn',
   'drag':                        'has the yaw it needs; wants a rig of its own',
   'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
 };
