@@ -79,6 +79,33 @@ const elements = defineCollection({
     aliases: z.array(z.string()).default([]),
     /* Poses live in the body-frame rig, not here — this only names the move. */
     rig: z.string().optional(),
+    /* A TRACING FOR AN ELEMENT THAT HAS NO ENTRY EDGE — added 19/09/2026.
+
+       Everything with an `entry` draws itself: the page hands foot, edge and
+       direction to `buildTrace` and gets the lobe. The basics have no entry —
+       most are two-foot or straight — so twenty-two pages shipped drawing
+       nothing at all, which is the fault Session 14 found on six jump pages and
+       fixed. A field guide whose argument is that you can see the shape cannot
+       have its foundation be prose.
+
+       The segments are EXACTLY a rig move's `path`, and they are fed to
+       `buildPath` in rig-math.js — the same function that draws the tracing
+       under the body-frame rig. Not a second tracing engine: if the model ever
+       changed its mind about which way a lobe curves, this and the rig would
+       change together, which is the rule the derived tier already lives by.
+
+       `feet` is how many blades are on the ice. A two-foot glide that drew one
+       line would be claiming the wrong element — the two tracings a boot's width
+       apart ARE the fact, and it is what separates these from the edges. */
+    trace: z.object({
+      radius: z.number().positive().default(200),
+      feet: z.union([z.literal(1), z.literal(2)]).default(1),
+      path: z.array(z.union([
+        z.object({ kind: z.literal('line'), len: z.number().positive(), span: z.number().optional() }),
+        z.object({ kind: z.literal('arc'), foot, edge, dir,
+                   sweep: z.number(), span: z.number().optional() }),
+      ])).min(1),
+    }).optional(),
     prerequisites: z.array(reference('elements')).default([]),
     verified,
   }),

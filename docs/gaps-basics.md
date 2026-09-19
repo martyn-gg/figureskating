@@ -52,6 +52,38 @@ missing.
 
 Eight of twenty-two. The other fourteen are all blocked by one thing.
 
+**The eight were drawn on 19/09/2026**, as tracings rather than rigs. `trace` on the element
+carries segments in exactly a rig move's `path` vocabulary and `PathThumb` runs them through
+**`buildPath`** — the same function that lays the tracing under the body frame, so this is not
+a second tracing engine and `lobeSense` still decides which way a lobe curves in one place
+only. Blank element pages went from 23 to 15, and the 15 that remain are the fourteen above
+plus `other-names`, which is a listing.
+
+Two things the drawing settled that the prose had not:
+
+- **Two blades draw two lines, and they are on opposite edges.** A two-foot glide drawn as
+  one line is a picture of a one-foot glide. And two blades on one lobe are one outside edge
+  and one inside — `twoFoot` in `moves.js` is already authored on that — so the second tracing
+  takes the other letter and **the two colours swap at every change of edge**, which on a
+  slalom is the element itself.
+- **The separation is in screen units, not ice units.** A boot is 16 cm wide and a slalom is
+  eight metres long, so at the zoom that fits one in a thumbnail the two tracings land three
+  units apart under a stroke twenty-five wide: one thick line. Drawn at a fixed distance on
+  the reader's screen instead — the same licence the rocker's sag and the edge separation
+  already take.
+- **The drawing corrected the prose.** `two-foot-change-of-edge` said the tracing showed "a
+  single crossing point". The two tracings never cross; they stay side by side, and what
+  changes hands at the inflection is which of them is on an outside edge. Rewritten to say
+  what is actually drawn.
+
+**`tools/drawn.mjs` is the nineteenth checker**, and it exists because this repository has now
+shipped a block of pictureless element pages twice — six jumps, then twenty-two basics, both
+found by counting built HTML and by nothing else. It reads `dist/`, not the source, because
+what matters is whether a reader gets a picture. Its exemption list is a **declaration, not a
+skip**: each undrawable page is named with its reason, and the checker fails both when an
+unlisted page draws nothing AND when a listed page starts drawing, so a stale reason cannot
+sit there quietly. Broken on purpose both ways, one page reported each.
+
 ## A blade on the ice always points where it is going, and half the basics are movements where it does not
 
 `bootDir`'s planted branch takes the boot's direction from the tracing:

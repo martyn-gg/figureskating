@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import EdgeThumb from '../../components/EdgeThumb.astro';
+import PathThumb from '../../components/PathThumb.astro';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
@@ -107,6 +108,27 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
   <Unverified verified={d.verified} />
 
   {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} turns={d.turns ?? null} />}
+
+  {/* AN ELEMENT WITH NO ENTRY EDGE STILL LEAVES A MARK — 19/09/2026. The basics
+      arrived on 06/09 and twenty-two of them drew nothing, which is exactly the
+      fault the jumps had above and for the same underlying reason: the page could
+      only draw what it could hand to `buildTrace`, and `buildTrace` wants an entry
+      edge. A glide has none, a slalom has four, and half of them have two blades on
+      the ice.
+
+      `trace` carries the segments instead, in a rig move's own vocabulary, and
+      `PathThumb` runs them through `buildPath` — the function that draws the tracing
+      under the body frame. Two blades draw two lines, because that is the element. */}
+  {!d.entry && d.trace && (
+    <figure class="jumptrace">
+      <PathThumb trace={d.trace} box={200} />
+      <figcaption>
+        The mark this leaves on the ice{d.trace.feet === 2 ? ', both blades' : ''}. A
+        straight line is a claim as much as a curve is: it says the blade is flat, and
+        a blade that is not flat is an edge and a different element.
+      </figcaption>
+    </figure>
+  )}
 
   {/* A JUMP HAS TWO EDGES AND THE GUIDE WAS DRAWING NEITHER. Six of the seven jump
       pages contained no picture at all — not a tracing, not a rig — on a site whose

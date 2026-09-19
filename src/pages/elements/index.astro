@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
 import EdgeThumb from '../../components/EdgeThumb.astro';
+import PathThumb from '../../components/PathThumb.astro';
 import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../lib/skating.js';
 
 const elements = await getCollection('elements');
@@ -340,9 +341,15 @@ const SECTIONS = [
       <ul class="plain withthumb">
         {rest.filter(e => e.data.kind === k).map(e => {
           const begins = e.data.entry ?? e.data.jump?.takeoff ?? null;
+          /* A basic has no entry edge and draws from `trace` instead — see
+             PathThumb. Without this the Basics section is the only one on the page
+             with no pictures in it, which is most of why the jumps read as an
+             appendix before they got theirs. */
+          const path = !begins && e.data.trace ? e.data.trace : null;
           return (
             <li>
               {begins && <a class="th" href={url(`elements/${e.id}/`)} aria-hidden="true" tabindex="-1"><EdgeThumb entry={begins} box={56} pad={16} /></a>}
+              {path && <a class="th" href={url(`elements/${e.id}/`)} aria-hidden="true" tabindex="-1"><PathThumb trace={path} box={56} pad={16} /></a>}
               <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
               <span>{e.data.summary}</span>
             </li>

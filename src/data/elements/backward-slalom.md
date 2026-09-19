@@ -3,6 +3,14 @@ name: Backward slalom
 kind: basic
 summary: The same wave, drawn travelling backwards.
 aliases: ["backward two-foot slalom"]
+trace:
+  radius: 150
+  feet: 2
+  path:
+    - { kind: arc, foot: L, edge: O, dir: B, sweep: 55 }
+    - { kind: arc, foot: L, edge: I, dir: B, sweep: 110 }
+    - { kind: arc, foot: L, edge: O, dir: B, sweep: 110 }
+    - { kind: arc, foot: L, edge: I, dir: B, sweep: 55 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

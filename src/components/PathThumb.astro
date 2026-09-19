@@ -1,0 +1,114 @@
+---
+/* A TRACING FOR AN ELEMENT WITH NO ENTRY EDGE — 19/09/2026.
+
+   `EdgeThumb` draws a lobe from foot, edge and direction. The basics have none of
+   those: a glide is straight, a slalom is a wave, and half of them have two blades
+   on the ice. So this takes the element's `trace` — segments in exactly a rig move's
+   `path` vocabulary — and runs it through `buildPath`, the same function that lays
+   the tracing under the body-frame rig. One derivation, not two: `lobeSense` decides
+   which way a lobe curves here and there, or in neither place.
+
+   TWO BLADES DRAW TWO LINES. A two-foot glide drawn as one line is a picture of a
+   one-foot glide, and the difference is the whole element. The second tracing is the
+   first offset along its own normal by a boot's width — the same `STEP_OFFSET` the
+   edge diagram uses to keep a step beside the tracing it leaves rather than on top
+   of it.
+
+   COLOUR FOLLOWS THE EDGE, PER SEGMENT, because a slalom's whole content is that the
+   edge changes. A straight segment has no edge to name and takes the neutral ink. */
+import { buildPath } from '../lib/rig-math.js';
+
+const { trace, box = 132, pad = 24 } = Astro.props;
+const { frames } = { frames: buildPath({ path: trace.path, radius: trace.radius }) };
+
+/* Which segment each sample came from, so the stroke can change colour where the
+   edge does. buildPath spends samples in proportion to a segment's span, so the
+   boundaries are recovered the same way it allocated them. */
+const spans = trace.path.map(s => s.span ?? 1 / trace.path.length);
+const sum = spans.reduce((a, b) => a + b, 0);
+const counts = spans.map(sp => Math.max(2, Math.round(320 * sp / sum)));
+const runs = [];
+let i = 0;
+trace.path.forEach((seg, si) => {
+  const to = i + counts[si];
+  runs.push({ seg, from: i, to: Math.min(to, frames.length - 1) });
+  i = to;
+});
+
+/* Offset a polyline along its own normal — the second blade. */
+const shift = (pts, by) => pts.map(p => ({
+  x: p.x + Math.cos(p.th + Math.PI / 2) * by,
+  y: p.y + Math.sin(p.th + Math.PI / 2) * by,
+}));
+
+/* THE SEPARATION IS IN SCREEN UNITS, NOT ICE UNITS, and drawn first the other way
+   round. A boot's width is about 16 cm and a slalom is eight metres long, so at
+   the zoom that fits one in a thumbnail the two tracings land three units apart
+   under a stroke twenty-five units wide: one thick line, which is a picture of a
+   one-foot slalom. The same licence the rocker's sag and the edge separation
+   already take — drawn deeper than life because the fact matters more than the
+   scale — so the two blades sit a fixed distance apart on the reader's screen
+   whatever the tracing's length. */
+const SEP = 8;
+
+let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+for (const f of frames) {
+  x0 = Math.min(x0, f.x); y0 = Math.min(y0, f.y);
+  x1 = Math.max(x1, f.x); y1 = Math.max(y1, f.y);
+}
+/* Padding absorbs the second blade, which is placed in screen units after the fit
+   and so cannot be in the bounding box that decides it. */
+const w = x1 - x0 + pad * 2, h = y1 - y0 + pad * 2;
+const s = Math.min(box / w, box / h);
+const tx = (box - w * s) / 2 - (x0 - pad) * s;
+const ty = (box - h * s) / 2 - (y0 - pad) * s;
+
+const lines = trace.feet === 2
+  ? [{ pts: shift(frames, -SEP / 2 / s), other: false },
+     { pts: shift(frames,  SEP / 2 / s), other: true }]
+  : [{ pts: frames, other: false }];
+
+/* TWO BLADES ON ONE LOBE ARE ONE OUTSIDE EDGE AND ONE INSIDE — the model's own
+   fact, and `twoFoot` in moves.js is authored on it: lean both feet the same way
+   and the letters come out opposite, because outside and inside are named against
+   each foot and not against the ice. So the second tracing takes the other letter,
+   and on a slalom the two colours SWAP at every change of edge. That swap is the
+   element. A straight segment has no edge to name and both blades take the neutral
+   ink. */
+const colOf = (seg, other) => seg.kind !== 'arc' ? 'var(--ink-soft)'
+  : ((seg.edge === 'O') !== other ? 'var(--edge-out)' : 'var(--edge-in)');
+
+/* One path per segment per blade, so the colour can change at a change of edge.
+   Segments overlap by one sample so the joins do not show as gaps. */
+const paths = [];
+const starts = [];
+for (const l of lines) {
+  starts.push(l.pts[0]);
+  for (const r of runs) {
+    const pts = l.pts.slice(r.from, r.to + 1);
+    if (pts.length < 2) continue;
+    paths.push({
+      d: pts.map((p, n) => `${n ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' '),
+      stroke: colOf(r.seg, l.other),
+    });
+  }
+}
+---
+{/* Decorative: the link around it names the element in words already. */}
+<svg viewBox={`0 0 ${box} ${box}`} aria-hidden="true" focusable="false" class="ethumb">
+  <g transform={`translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${s.toFixed(4)})`}>
+    {paths.map(p => (
+      <path d={p.d} fill="none" stroke={p.stroke} stroke-width={(5.5 / s).toFixed(2)}
+            stroke-linecap="round" stroke-linejoin="round" />
+    ))}
+    {/* Where the blade goes down, on each blade that is down. */}
+    {starts.map(st => (
+      <circle cx={st.x.toFixed(1)} cy={st.y.toFixed(1)} r={(6.5 / s).toFixed(2)}
+              fill="var(--ink-soft)" />
+    ))}
+  </g>
+</svg>
+
+<style>
+  .ethumb{display:block;width:100%;height:auto}
+</style>

@@ -26,9 +26,10 @@ which has been wrong about its own numbers three times.
 had: stroking, the swizzles and pumps, the glides, the dip, the drag, four stops, the
 two-foot turns, the slaloms, the two-foot change of edge and the pivot. `docs/gaps-basics.md`
 is the whole account, including why Learn to Skate USA is the anchor and the per-foot yaw that
-keeps fourteen of the twenty-two out of the rig. **Twenty-two of them still draw nothing**,
-which is the same fault Session 14 found on six jump pages and fixed — measured on the built
-HTML, not the source.
+keeps fourteen of the twenty-two out of the rig. **Eight of them were given tracings on 19/09/2026** and
+`tools/drawn.mjs` is the nineteenth checker: every element page draws something or names
+itself, with its reason, as one that cannot. Fifteen are named — fourteen basics waiting on a
+per-foot yaw, and `other-names`, which is a listing.
 
 *(That paragraph read 182 / 187 / 4,719 until 30/08/2026, before the syllabus half and the
 finishing pass below.)*

@@ -2,6 +2,11 @@
 name: Backward two-foot glide
 kind: basic
 summary: The same flat glide travelling the other way, where you cannot see where you are going.
+trace:
+  radius: 200
+  feet: 2
+  path:
+    - { kind: line, len: 240 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

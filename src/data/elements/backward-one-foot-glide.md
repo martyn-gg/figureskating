@@ -2,6 +2,11 @@
 name: Backward one-foot glide
 kind: basic
 summary: Backwards, on one blade, with the weight forward and nothing behind you.
+trace:
+  radius: 200
+  feet: 1
+  path:
+    - { kind: line, len: 240 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

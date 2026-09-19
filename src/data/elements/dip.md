@@ -3,6 +3,11 @@ name: Dip
 kind: basic
 summary: A two-foot glide taken down into a deep knee bend and back up without a wobble.
 aliases: ["sit glide"]
+trace:
+  radius: 200
+  feet: 2
+  path:
+    - { kind: line, len: 240 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

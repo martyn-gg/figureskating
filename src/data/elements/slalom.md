@@ -3,6 +3,14 @@ name: Slalom
 kind: basic
 summary: Both blades held parallel and swung side to side, drawing a wave down the ice.
 aliases: ["forward slalom", "two-foot slalom"]
+trace:
+  radius: 150
+  feet: 2
+  path:
+    - { kind: arc, foot: L, edge: O, dir: F, sweep: 55 }
+    - { kind: arc, foot: L, edge: I, dir: F, sweep: 110 }
+    - { kind: arc, foot: L, edge: O, dir: F, sweep: 110 }
+    - { kind: arc, foot: L, edge: I, dir: F, sweep: 55 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

@@ -3,6 +3,11 @@ name: One-foot glide
 kind: basic
 summary: The same glide with the other foot lifted, which is where balance stops being shared.
 aliases: ["forward one-foot glide"]
+trace:
+  radius: 200
+  feet: 1
+  path:
+    - { kind: line, len: 240 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---

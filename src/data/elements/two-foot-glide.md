@@ -3,6 +3,11 @@ name: Two-foot glide
 kind: basic
 summary: Both blades flat and parallel, carrying speed you have already got.
 aliases: ["forward two-foot glide"]
+trace:
+  radius: 200
+  feet: 2
+  path:
+    - { kind: line, len: 240 }
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
