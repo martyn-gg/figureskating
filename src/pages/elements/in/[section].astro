@@ -1,0 +1,392 @@
+---
+/* ONE SECTION OF THE ELEMENTS PAGE, ON ITS OWN PAGE — 19/09/2026, Martyn: the
+   elements page is a long wall of links, and it was. 149 KB and 306 links across
+   nine sections, handed to somebody on a phone, in gloves, at a rink.
+
+   The markup is the markup that was already on that page, gated by which section
+   this route is for. The grouping comes from src/lib/element-groups.js, which the
+   hub uses too, so there is one answer to what a twizzle family is rather than
+   two that can drift.
+
+   The kinds with no bespoke grid — basics, jumps, positions — come through the
+   `rest` list at the bottom, which is why the guard there filters restKinds to
+   this section rather than mapping all of them. */
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { url } from '../../../lib/url.js';
+import EdgeThumb from '../../../components/EdgeThumb.astro';
+import PathThumb from '../../../components/PathThumb.astro';
+import { elementGroups, canonicalOf } from '../../../lib/element-groups.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../lib/skating.js';
+
+const allElements = await getCollection('elements');
+const G = elementGroups(allElements);
+
+export async function getStaticPaths() {
+  const { getCollection: gc } = await import('astro:content');
+  const { elementGroups: eg } = await import('../../../lib/element-groups.js');
+  return eg(await gc('elements')).SECTIONS.map(s => ({ params: { section: s.id }, props: { label: s.label, n: s.n } }));
+}
+
+const { section } = Astro.params;
+const { label: sectionLabel, n } = Astro.props;
+
+const {
+  STATES, TURN_KEYS, STEP_KEYS, find, EDGE_ROWS, ROW_WORD,
+  transitions, transitionGroups, twizzles, twizzleGroups, combos, comboGroups,
+  rest, restKinds, nEdges, nTurns, oneFoot, twoFoot, KIND_LABEL, SECTIONS,
+} = G;
+
+/* What each section is, in one line, so the page says what it is for before it
+   starts listing. The hub prints the same lines — one source, as ever. */
+import { SECTION_NOTE } from '../../../lib/element-groups.js';
+---
+<Base title={sectionLabel} subtitle={SECTION_NOTE[section]}>
+  <p class="lede"><a href={url('elements/')}>Elements</a> · {n} {sectionLabel.toLowerCase()}</p>
+  <h1>{sectionLabel}</h1>
+
+  {section === 'edges' && (<>
+  <h2 id="edges">Edges</h2>
+  <p class="note">
+    Three letters: foot, direction, edge. The two columns are the same edge on either
+    foot — mirror images, which is why the guide only has to describe them once.
+  </p>
+  <table class="grid">
+    <thead>
+      <tr>
+        <th scope="col"><span class="vh">Edge</span></th>
+        <th scope="col">Left</th><th scope="col">Right</th>
+      </tr>
+    </thead>
+    <tbody>
+      {EDGE_ROWS.map(([dir, edge]) => (
+        <tr>
+          <th scope="row">{ROW_WORD[dir + edge]}</th>
+          {['L', 'R'].map(foot => {
+            const e = find({ foot, edge, dir }, null);
+            return <td>{e
+              ? <a href={url(`elements/${e.id}/`)} title={describeEdge({ foot, edge, dir })}>{label({ foot, edge, dir })}</a>
+              : <span class="gap">—</span>}</td>;
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  </>)}
+
+  {section === 'one-foot' && (<>
+  <h2 id="one-foot">One-foot turns</h2>
+  <p class="note">
+    These keep the same foot and reverse the direction of travel. What is left to vary is
+    the edge and the rotation, and that is the whole table. Each cell shows the edge you
+    come out on.
+  </p>
+  <div class="scroller">
+    <table class="grid matrix">
+      <thead>
+        <tr>
+          <th scope="col">Entry</th>
+          {TURN_KEYS.map(k => (
+            <th scope="col">
+              {TURNS[k].name}
+              <span class="sub">
+                rotates {TURNS[k].rotatesInto ? 'into' : 'against'}<br />
+                edge {TURNS[k].edgeChanges ? 'changes' : 'holds'}
+              </span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {STATES.map(s => (
+          <tr>
+            <th scope="row">
+              {find(s, null)
+                ? <a href={url(`elements/${find(s, null).id}/`)} title={describeEdge(s)}>{label(s)}</a>
+                : label(s)}
+            </th>
+            {TURN_KEYS.map(k => {
+              const e = find(s, k);
+              return <td>{e
+                ? <a href={url(`elements/${e.id}/`)} title={e.data.name}>{label(exitState(s, k))}</a>
+                : <span class="gap">—</span>}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Across a row: what one edge can turn into. Down a column: what one turn does to every
+    edge it can start from.
+  </p>
+
+  </>)}
+
+  {section === 'two-foot' && (<>
+  <h2 id="two-foot">Two-foot turns</h2>
+  <p class="note">
+    A mohawk and a choctaw step onto the other foot instead of turning on the blade, so
+    there is no cusp — the tracing stops and starts again beside itself. The same rule
+    governs them: the foot flips and the direction flips, so a mohawk stays on its lobe and
+    a choctaw reverses.
+  </p>
+  <div class="scroller">
+    <table class="grid matrix">
+      <thead>
+        <tr>
+          <th scope="col">Entry</th>
+          {STEP_KEYS.map(k => (
+            <th scope="col">
+              {STEPS[k].name}
+              <span class="sub">
+                changes foot<br />
+                edge {STEPS[k].edgeChanges ? 'changes' : 'holds'}
+              </span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {STATES.map(s => (
+          <tr>
+            <th scope="row">
+              {find(s, null)
+                ? <a href={url(`elements/${find(s, null).id}/`)} title={describeEdge(s)}>{label(s)}</a>
+                : label(s)}
+            </th>
+            {STEP_KEYS.map(k => {
+              const e = find(s, k);
+              return <td>{e
+                ? <a href={url(`elements/${e.id}/`)} title={e.data.name}>{label(exitState(s, k))}</a>
+                : <span class="gap">—</span>}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Open and closed describe where the free foot is placed, not what the blade draws, so
+    each of these is one element rather than two. The tracing cannot tell them apart and
+    neither pretends to.
+  </p>
+
+  </>)}
+
+  {section === 'twizzles' && (<>
+  {twizzleGroups.length > 0 && (
+    <>
+      <h2 id="twizzles">Twizzles</h2>
+      <p class="note">
+        The one element here that the three flags do not decide on their own. A twizzle
+        rotates continuously while it travels, so its tracing curls rather than coming to
+        a cusp — and the curls cannot curve against themselves, which is why the lobe
+        always continues. A half rotation turns the skater to face the other way, and the
+        edge letter changes with them even though the blade never changes which way it is
+        curving.
+      </p>
+      {twizzleGroups.map(g => (
+        <div class="combo">
+          {/* THE FAMILY NAME GOES SOMEWHERE — 19/09/2026, Martyn: a link to "a three
+              turn" should land on one. canonicalOf picks the one taught first from the
+              model rather than from a slug, and the chips stay, because which entries a
+              family can begin from is information and not decoration: not every
+              transition starts on all eight. */}
+          <h3>{(() => { const c = canonicalOf(g.entries.map(e => e.el));
+            return c ? <a href={url(`elements/${c.id}/`)}>{g.def.name}</a> : g.def.name; })()}</h3>
+          <p class="combo-chain">
+            {g.def.rotations} rotation{g.def.rotations === 1 ? '' : 's'} ·
+            {' '}{Math.floor(g.def.rotations) === 1 ? 'one curl' : `${Math.floor(g.def.rotations)} curls`} ·
+            {' '}{g.def.reversesDir ? 'comes out the other way round' : 'comes out on the edge it began on'}
+          </p>
+          <p class="combo-links">
+            {g.entries.filter(({ el }) => el).map(({ s, el }) => (
+              <a href={url(`elements/${el.id}/`)}
+                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+            ))}
+          </p>
+        </div>
+      ))}
+    </>
+  )}
+
+  </>)}
+
+  {section === 'transitions' && (<>
+  {transitionGroups.length > 0 && (
+    <>
+      <h2 id="transitions">Transitions</h2>
+      <p class="note">
+        The connecting material — what happens between turns. None of it reverses the
+        direction of travel, which is exactly what makes it not a turn. The same three
+        flags still decide the lobe.
+      </p>
+      {transitionGroups.map(g => (
+        <div class="combo">
+          {/* THE FAMILY NAME GOES SOMEWHERE — 19/09/2026, Martyn: a link to "a three
+              turn" should land on one. canonicalOf picks the one taught first from the
+              model rather than from a slug, and the chips stay, because which entries a
+              family can begin from is information and not decoration: not every
+              transition starts on all eight. */}
+          <h3>{(() => { const c = canonicalOf(g.entries.map(e => e.el));
+            return c ? <a href={url(`elements/${c.id}/`)}>{g.def.name}</a> : g.def.name; })()}</h3>
+          <p class="combo-chain">
+            {g.def.changesFoot ? 'changes foot' : 'same foot'} ·
+            {' '}edge {g.def.edgeChanges ? 'changes' : 'holds'} ·
+            {' '}{{ roll: 'the blade rolls across', loop: 'a small circle on the same edge',
+                    step: 'a step onto the other foot' }[g.def.join]}
+          </p>
+          <p class="combo-links">
+            {g.entries.filter(({ el }) => el).map(({ s, el }) => (
+              <a href={url(`elements/${el.id}/`)}
+                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+            ))}
+          </p>
+        </div>
+      ))}
+    </>
+  )}
+
+  </>)}
+
+  {section === 'clusters' && (<>
+  {comboGroups.length > 0 && (
+    <>
+      <h2 id="clusters">Clusters</h2>
+      <p class="note">
+        Turns are done in runs as often as singly. A cluster stores its entry edge and the
+        order of its turns; every edge in between is chained out of the same rule, so a run
+        of three costs no more to add than one. Pick the edge you are starting from.
+      </p>
+      {comboGroups.map(g => (
+        <div class="combo">
+          <h3>{g.key}</h3>
+          <p class="combo-chain">{g.turns.map(t => ALL_TURNS[t].name.toLowerCase()).join(', then ')}</p>
+          <p class="combo-links">
+            {g.entries.map(({ s, el }) => (el
+              ? <a href={url(`elements/${el.id}/`)}
+                   title={`${el.data.name} — ${chainStates(s, g.turns).map(label).join(' → ')}`}>{label(s)}</a>
+              : <span class="gap">{label(s)}</span>))}
+          </p>
+        </div>
+      ))}
+    </>
+  )}
+
+  </>)}
+
+  {/* These were the only sections on the page with no picture in them, which is
+      most of why they read as an appendix to it. A jump carries its takeoff edge
+      and a held position carries its entry edge, so both can draw the curve they
+      begin on for nothing — same EdgeThumb, same buildTrace, no script. */}
+  {restKinds.filter(k => k === section).map(k => (
+    <>
+      <h2 id={k}>{KIND_LABEL(k)}</h2>
+      <ul class="plain withthumb">
+        {rest.filter(e => e.data.kind === k).map(e => {
+          const begins = e.data.entry ?? e.data.jump?.takeoff ?? null;
+          /* A basic has no entry edge and draws from `trace` instead — see
+             PathThumb. Without this the Basics section is the only one on the page
+             with no pictures in it, which is most of why the jumps read as an
+             appendix before they got theirs. */
+          const path = !begins && e.data.trace ? e.data.trace : null;
+          return (
+            <li>
+              {begins && <a class="th" href={url(`elements/${e.id}/`)} aria-hidden="true" tabindex="-1"><EdgeThumb entry={begins} box={56} pad={16} /></a>}
+              {path && <a class="th" href={url(`elements/${e.id}/`)} aria-hidden="true" tabindex="-1"><PathThumb trace={path} box={56} pad={16} /></a>}
+              <a href={url(`elements/${e.id}/`)}>{e.data.name}</a>
+              <span>{e.data.summary}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  ))}
+
+</Base>
+
+{/* THE STYLES CAME ACROSS WITH THE MARKUP — 19/09/2026, and they were left behind
+    for one build, which prose.mjs caught before a human could. Astro scopes a
+    page's styles to that page, so splitting the markup out without the `style`
+    block shipped nine section pages whose tables had no rules behind them: `.sub`
+    stopped being a block, the column heads ran their words together, and the
+    checker that exists for exactly that said so. Session 14's missing class rule,
+    arriving from the other direction. */}
+<style>
+  .toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:1.1rem 0 1.6rem}
+  .toc a{display:inline-flex;align-items:center;gap:.42rem;text-decoration:none;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.84rem;
+    padding:.34rem .62rem;border:1px solid var(--ice-line);border-radius:999px;
+    background:var(--ice);color:var(--ink)}
+  .toc a:hover,.toc a:focus-visible{border-color:var(--accent);color:var(--accent)}
+  .toc b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .toc a:hover b,.toc a:focus-visible b{color:var(--accent)}
+
+  /* The thumb is decorative — the link beside it names the element — so it is out
+     of the tab order and hidden from a screen reader rather than read twice. */
+  /* Matched to `ul.plain li`'s own strength in Base.astro so the display wins
+     without needing !important. */
+  ul.plain.withthumb li{display:grid;grid-template-columns:56px 1fr;
+    column-gap:.8rem;align-items:center}
+  ul.plain.withthumb li>a:not(.th){grid-column:2}
+  ul.plain.withthumb li>span{grid-column:2}
+  ul.plain.withthumb .th{grid-row:span 2;display:block;width:56px}
+
+  .note{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.84rem;
+    color:var(--ink-soft);margin:.2rem 0 .9rem}
+  .scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.grid{border-collapse:collapse;width:100%;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem}
+  table.grid th,table.grid td{border:1px solid var(--ice-line);padding:.5rem .4rem;text-align:center}
+  /* Every cell that can be tapped is 44 px tall, and the link fills it rather than
+     sitting in the middle of it — a link with its own padding leaves dead border
+     that looks tappable and is not. Padding moves off the cell and onto nothing:
+     the flex centring does that job. */
+  table.grid td,table.grid tbody th{height:44px;padding:0}
+  table.grid td a,table.grid tbody th a{min-height:44px;display:flex;align-items:center;
+    justify-content:center;padding:0 .25rem}
+  table.grid thead th{background:var(--ice);color:var(--ink-soft);font-weight:600;
+    font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+  table.grid tbody th{background:var(--ice);text-align:left;font-weight:600;
+    white-space:nowrap;padding-left:.6rem}
+  table.grid a{text-decoration:none;font-variant-numeric:tabular-nums;letter-spacing:.03em;
+    display:block;padding:.15rem 0}
+  table.grid td a{font-weight:600}
+  table.grid a:hover{text-decoration:underline}
+  .gap{color:var(--ink-soft);opacity:.5}
+  /* The four turns differ only in these two bits, so putting them in the column
+     head makes the whole taxonomy legible without a word of explanation. */
+  table.grid thead th .sub{display:block;margin-top:.25rem;font-weight:400;
+    text-transform:none;letter-spacing:0;font-size:.62rem;line-height:1.3;opacity:.85}
+  /* The matrix rules are structural — they carry the 8 x 4 reading, across a row and
+     down a column, so they take `--grid-line` rather than the lighter `--ice-line`
+     the edge table uses for a border that is only tidiness. */
+  .matrix th,.matrix td{border-color:var(--grid-line)}
+  .matrix tbody th{text-align:center;padding-left:0}
+  .combo{border-top:1px solid var(--rule);padding:.7rem 0}
+  .combo h3{margin:0;font-size:.9rem;font-weight:600;letter-spacing:0;text-transform:none;
+    color:var(--ink);font-family:ui-sans-serif,-apple-system,sans-serif}
+  .combo-chain{margin:.1rem 0 .45rem;font-size:.8rem;color:var(--ink-soft);
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .combo-links{margin:0;display:flex;flex-wrap:wrap;gap:.35rem}
+  /* Same thumb as the matrix. These are the most-tapped links on the page — every
+     transition and every cluster is reached through one — and they were the ones
+     left at 29 px. */
+  .combo-links a,.combo-links span{display:flex;align-items:center;justify-content:center;
+    min-height:44px;padding:0 .7rem;border-radius:999px;
+    border:1px solid var(--ice-line);background:var(--ice);text-decoration:none;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.78rem;font-weight:600;
+    letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  @media (max-width:26rem){
+    table.grid{font-size:.8rem}
+    /* The narrow-screen squeeze takes width, never height: 44 px is a thumb, and a
+       thumb is the same size on a small phone. */
+    table.grid th,table.grid td{padding:.45rem .25rem}
+    table.grid td,table.grid tbody th{padding:0}
+    table.grid td a,table.grid tbody th a{padding:0 .1rem}
+    table.grid thead th{font-size:.62rem;letter-spacing:.02em}
+  }
+</style>

@@ -572,6 +572,18 @@ way round, and **a hockey stop asks for ninety degrees of it**. Neither is avail
 square pelvis, and the honest answer in both cases is that the skater turns the pelvis and
 widens the stance rather than twisting the feet off it — which is what they are taught.
 
+**A rig limit is not an anatomy limit, and the hockey stop is where that matters.**
+Martyn's challenge: a hockey stop is usually thought of as a hockey-skate movement, so is
+the figure boot's allowance the right one, and is the model precise enough to be making
+this claim at all? The boot is the right boot — Learn to Skate USA teaches it at Basic 5,
+in figure skates, and the hockey-skate literature already in this file puts the gain at 5
+to 9 degrees of ankle, which is not the thirty the pose is short by. **The second half of
+the question is the one that lands.** The sweep finds no legal hockey stop, and what it has
+actually found is that THIS RIG cannot hold one: a hockey stop is made of the shoulders and
+hips counter-rotating against each other with the upper body leaning away from the travel,
+and the model has one hip yaw, a knee that faces wherever that yaw points, and no spine. So
+the reason recorded in `tools/drawn.mjs` says the rig, not the skater.
+
 `tools/turnout.mjs` asserts it per pose, blades only. Reading a boot's heading against the
 pelvis is only hip rotation while the leg is somewhere near under the skater: extend it
 behind and a toe pointing away from the body is hip EXTENSION with a pointed ankle, and the

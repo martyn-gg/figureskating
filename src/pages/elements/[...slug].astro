@@ -5,6 +5,7 @@ import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import EdgeThumb from '../../components/EdgeThumb.astro';
 import PathThumb from '../../components/PathThumb.astro';
+import { familyOf, teachRank } from '../../lib/element-groups.js';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
@@ -76,6 +77,25 @@ const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).f
 
    Capped, because forward-stroking is under every edge in the guide and a list of
    thirty is a wall rather than a way through. The count is printed either way. */
+/* THE SAME MOVEMENT FROM A DIFFERENT ENTRY EDGE — 19/09/2026, Martyn: link to an
+   element and give a dropdown to move between the variations.
+
+   The page already had a list for the OTHER axis — everything else that starts on
+   this entry edge — and nothing at all for this one, which is the axis a skater
+   actually moves along. You are on the left forward outside three and you want the
+   right one; the guide made you go back to the elements page to find it.
+
+   A `details` disclosure and plain links rather than a select and a script. This
+   site is a PWA a skater opens at a rink, and a switcher that needs JavaScript is
+   the wrong bet for a cold phone on bad signal — the links work with none, and they
+   are real URLs, which is the whole reason the per-state pages were kept. */
+const familyKey = familyOf(d);
+const variations = familyKey
+  ? allElements.filter(e => familyOf(e.data) === familyKey && e.data.kind === d.kind)
+      .sort((a, b) => teachRank(a.data) - teachRank(b.data))
+  : [];
+const others = variations.filter(e => e.id !== entry.id);
+
 const KIND_NEAR = ['basic', 'edge', 'position', 'transition', 'turn', 'twizzle', 'jump', 'spin', 'combination'];
 const leadsToAll = allElements
   .filter(e => e.id !== entry.id && (e.data.prerequisites || []).some(r => r.id === entry.id))
@@ -128,6 +148,25 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
     {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
   </div>
+
+  {others.length > 0 && (
+    <details class="variations">
+      <summary>
+        {d.entry ? <>On <b>{label(d.entry)}</b></> : <>This one</>}
+        {' '}· {others.length} other {others.length === 1 ? 'entry' : 'entries'}
+      </summary>
+      <ul class="plain">
+        {variations.map(v => (
+          <li>
+            {v.id === entry.id
+              ? <b>{v.data.entry ? label(v.data.entry) : v.data.name} — this page</b>
+              : <a href={url(`elements/${v.id}/`)}>{v.data.entry ? label(v.data.entry) : v.data.name}</a>}
+            <span>{v.data.summary}</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )}
 
   <Unverified verified={d.verified} />
 

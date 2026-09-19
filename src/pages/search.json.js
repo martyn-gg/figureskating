@@ -20,6 +20,7 @@
    number of pages built. */
 import { getCollection } from 'astro:content';
 import { label } from '../lib/skating.js';
+import { elementGroups, SECTION_NOTE } from '../lib/element-groups.js';
 
 export async function GET() {
   const [elements, exercises, tests] = await Promise.all(
@@ -28,6 +29,17 @@ export async function GET() {
   const testName = id => tests.find(t => t.id === id)?.data.name ?? id;
 
   const docs = [
+    /* THE SECTION PAGES — 19/09/2026. The elements page became a hub and its nine
+       sections became pages, and the moment they existed the search checker said
+       they could not be found, which is the assertion doing precisely its job.
+       They are worth a record on their own terms: "twizzles" and "basics" are what
+       a skater types, and landing on the list of them is a better answer than
+       landing on one of them. Derived from SECTIONS like everything else, so a kind
+       added tomorrow is searchable without anyone remembering. */
+    ...elementGroups(elements).SECTIONS.map(sec => ({
+      u: `elements/in/${sec.id}/`, t: sec.label, s: SECTION_NOTE[sec.id] ?? '',
+      k: 'section', a: [], e: '',
+    })),
     ...elements.map(e => ({
       u: `elements/${e.id}/`, t: e.data.name, s: e.data.summary, k: e.data.kind,
       a: e.data.aliases ?? [], e: e.data.entry ? label(e.data.entry) : '',

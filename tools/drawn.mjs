@@ -44,7 +44,16 @@ const cannotDraw = {
   'backward-swizzle':            'the blades are turned out against the travel',
   'half-swizzle-pumps':          'the pushing blade is angled across the circle',
   'backward-half-swizzle-pumps': 'the pushing blade is angled across the circle',
-  'hockey-stop':                 'no legal pose: 45 deg of toe-in needs a deep knee,\n                                  and a deep knee with the foot out to the side throws\n                                  the shin past 28 deg — see docs/gaps-basics.md',
+  /* NOT A CLAIM ABOUT SKATERS — 19/09/2026, Martyn's challenge, and he is right that
+     the first version of this line overreached. What the sweep found is that THIS RIG
+     has no legal pose for it, and the rig holds one hip height, a knee that faces
+     wherever hipYaw points, and no spine. A hockey stop is made of the things it does
+     not have: the shoulders and hips counter-rotating against each other and the
+     upper body leaning away from the travel while the feet go across it. The boot is
+     the right boot — Learn to Skate USA teaches this in Basic 5, in figure skates, and
+     a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
+  'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
+                               + 'a free upper body, and the model has one hip yaw and no spine',
   'two-foot-turn':               'the reference blade skids through the middle of the turn',
   'backward-two-foot-turn':      'the reference blade skids through the middle of the turn',
   'drag':                        'has the yaw it needs; wants a rig of its own',
@@ -53,8 +62,14 @@ const cannotDraw = {
 
 if (BREAK === 'stale') cannotDraw.slalom = 'a deliberately stale exemption';
 
-const dirs = (await readdir(DIST, { withFileTypes: true }))
-  .filter(e => e.isDirectory()).map(e => e.name).sort();
+/* Directories that are not element pages are not element pages. /elements/in/ holds
+   the section pages and has no index.html of its own, and counting it made the total
+   one more than the number of pages the sum of the two columns accounts for. */
+const dirs = [];
+for (const e of (await readdir(DIST, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+  if (!e.isDirectory()) continue;
+  try { await readFile(join(DIST, e.name, 'index.html'), 'utf8'); dirs.push(e.name); } catch { /* not a page */ }
+}
 
 let bad = 0, drew = 0;
 for (const slug of dirs) {
