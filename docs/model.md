@@ -316,6 +316,46 @@ got is net displacement, which is a different thing. The paragraph stood for a s
 cost nothing but the session; it is left here struck through because a model that quietly
 deletes its wrong turns teaches nobody anything.
 
+## A free leg that is up and behind cannot be brought down — 20/09/2026
+
+Found while giving the spins an entrance and an exit, and it is the reason the camel spin's
+free leg does not move and the combination spin has no camel in it.
+
+`bootDir` builds a **free boot square to the shin**. That is the rule that made the lunge
+undrawable and that made the waltz jump's free boot swing through the ice, and both of those
+were read as problems with the pose — a leg folding and unfolding, a shin sweeping through
+horizontal. This one is not. It is a property of the region.
+
+Measured across the whole plausible range, hip at 96 cm, free foot swept over `t` and `z`:
+
+| free foot | elevation of the free boot |
+|---|---|
+| in front, low (`t` −40, `z` 16) | +1° |
+| behind, low (`t` +40, `z` 16) | −52° |
+| **behind, mid height** (`t` 0–60, `z` 30–70) | **−67° to −85°, at every reach** |
+| behind, high (`t` +94, `z` 125) — the held camel | −47° |
+| over the hip, high (`t` 0, `z` 110) | −62°, between neighbours at +44° and +18° |
+
+Two things follow, and together they close the door.
+
+**The mid-height region behind the body is bad at every extension.** It is not a fold that a
+longer leg fixes: at 78% of reach the same boot reads −4° in front of the hip and −70° behind
+it. So a leg cannot be raised or lowered through it.
+
+**The way round it is the degenerate one.** Lifting the leg near the body and sweeping it back
+at height crosses the free foot over the hip, which is where the top view is looking straight
+into the boot's opening — the glyph swings a hundred degrees between neighbouring poses. That
+is the same missing glyph recorded under *the boot seen from above its own opening*.
+
+Blocked going up and blocked coming down. So a camel is drawable and a change into or out of
+one is not, and the rig that holds a camel starts and ends already in it. Same family as
+`twoFoot` not drawing the step-on and `toePick` not drawing its entry, and the same rule
+decides it: a pose that cannot be drawn honestly is not drawn.
+
+**What would fix it** is a free boot whose direction does not come from the shin alone — the
+`point` field already rotates it about one axis, and what a reaching leg needs is the other.
+That is a model change and nobody has costed it. It would also buy the lunge.
+
 ## Two blades, and the one fact that made them cheap — 30/08/2026
 
 A pose can hold two blades. `skate` did not become an array; it stayed single-valued and

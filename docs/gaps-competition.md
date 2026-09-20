@@ -89,7 +89,7 @@ ladder of eight tests is another syllabus half.
 
 Unverified, as above. Against the elements the guide holds:
 
-**Spins — the three basic positions, drawn, and nothing beyond them.** Written here as
+**Spins — the three basic positions, a change of foot and a combination.** Written here as
 *nothing at all*, on the reasoning that `hipYaw` is measured from the direction of travel
 and a spin has none. That turned out to be answerable without a second rig: a spin is an
 arc of very small radius, and what makes it one is that the HIP SITS AT THE CENTRE OF
@@ -98,12 +98,23 @@ axis stands still while the path turns under it. `uprightSpin`, `sitSpin` and `c
 followed, and `tools/spin.mjs` holds each against the ISU's own definition of the position
 it claims, per frame. The three got element pages on 19/09/2026.
 
-What is still missing is everything above the positions: **the layback and the Biellmann**,
-which need a spine and, for the Biellmann, an overhead reach; **flying entries**, which need
-the air; **change of foot**, which needs the reference blade to hand over mid-spin the way
-the waltz jump's does; and **combination spins**, which are a joining rule over the three
-that exist. The first two are model work. The last two are not, and are the cheapest spin
-content left.
+**The change of foot and the combination were built on 20/09/2026**, and the sentence above
+was right that neither needed model work. The change of foot needed nothing at all:
+`lobeSense` is +1 for both LBI and RBO, so the two arcs continue one circle about one centre,
+which is the ISU's own "the spinning centers must not be too far apart" satisfied by
+construction rather than by assertion.
+
+The same session gave all five spins an **entrance and an exit** and made the **rotation rate
+a per-phase quantity**, so a wind-up is an acceleration the animation plays rather than a
+caption. `tools/gather.mjs` asserts that the rate and the gather agree.
+
+What is still missing above the positions: **the layback and the Biellmann**, which need a
+spine and, for the Biellmann, an overhead reach; **flying entries**, which need the air; and
+**a combination containing a camel**, which is not the model work it looks like — it is the
+one recorded in `docs/model.md` under *A free leg that is up and behind cannot be brought
+down*. The camel itself draws; changing into or out of one does not, measured both ways. The
+combination the guide holds is sit into upright, which the ISU permits and scores below three
+positions, and the page says which is missing and why.
 
 **Jumps above one rotation.** Seven jumps, all single. Competition is doubles and triples
 from Advanced Novice up and quads at the top. `JUMPS` already carries a `rotations` field,

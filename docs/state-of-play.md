@@ -12,24 +12,46 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **twenty-one steps in the `check` chain, build included, all green** — count them out of
+worker; **twenty-two steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 
-**Content:** 275 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+**Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions, **twenty-two basics** and **three spins**. 351 pages build, 267
-of the 276 element pages drawing. Count kinds with
+jumps, three held positions, **twenty-two basics** and **five spins**. 269 of the 278 element
+pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
 
-**The spins went in on 19/09/2026**, which closes the largest item in
-`docs/gaps-competition.md` — upright, sit and camel, one page each, mounted on the three rigs
-that had been sitting in `moves.js` as probes since 30/08/2026. Nothing new was needed: the
-rigs existed, `tools/spin.mjs` already held them against the ISU's definitions per frame, and
-the elements page grows a section for a new kind on its own. The layback, the Biellmann,
-flying entries, change of foot and combination spins are all still absent, and
-`docs/gaps-competition.md` says which of them are model work and which are not.
+**The spins went in on 19/09/2026** — upright, sit and camel, mounted on the three rigs that
+had been sitting in `moves.js` as probes since 30/08/2026.
+
+**And were rebuilt on 20/09/2026, with an entrance, an exit and a rate that changes.** Martyn:
+a spin needs an entrance and an exit, and bringing the arms in increases the speed. The three
+began at "Rotation established" and ended "Held", turning at one rate throughout, which drew
+the result of a spin and never the doing of it. Two things the path already carried made the
+fix nearly free — a **per-segment radius**, so the entrance genuinely spirals in, and the fact
+that **sweep divided by span is rotation rate**, so a wind-up is an acceleration the animation
+plays. Both defaulted, so every move written before them draws byte-identically; measured, not
+assumed, over 336 frames.
+
+It also gave *centred* an exact meaning: **the blade's lateral offset from the hip equals the
+path radius**, and the entrance is that radius coming down to meet the lean. `tools/spin.mjs`
+asserts it and asserts the other side, that the first segment is not centred.
+
+**A change of foot and a combination followed**, both joining rules over what existed.
+`lobeSense` is +1 for LBI and for RBO, so a change of foot continues one circle about one
+centre — the ISU's own rule about the spinning centres, satisfied by construction. The
+combination is sit into upright; a camel cannot be changed into or out of, for the reason in
+`docs/model.md` under *A free leg that is up and behind cannot be brought down*. The layback,
+the Biellmann and flying entries are still absent and are model work.
+
+**`tools/gather.mjs` is the twenty-second checker.** Bringing the arms in must speed the spin
+up — angular momentum, from outside the rig, and "clear increase of speed" is the ISU's own
+Level feature. It asserts the direction and not the ratio, because this rig has markers and no
+mass; a change of foot is exempted from the shape rule and asserted the other way instead, that
+a step-over may cost rotation and never make it. It found two faults in the authoring that
+produced it, and one in itself.
 
 **The two two-foot turns got rigs the same day** — the first elements to use the skid and the
 per-foot yaw, which had landed the session before with nothing using either. What that cost
