@@ -1155,6 +1155,141 @@ the branch flips it already reports, which is the treatment this file gives to a
 is a design question rather than a defect.
 
 
+## The reference handover — specified 20/09/2026
+
+The section above found this and did not fix it: **the rig's root jumps at every reference
+change.** This is that, specified before it is built, and the measuring turned the fix into
+a different shape from the one that section predicted.
+
+### The path is doing three jobs and the hip is the casualty
+
+`buildPath` returns a curve. Three things read it, and they do not all want the same curve:
+
+- **the tracing**, drawn on the ice — a blade's own mark, and each segment carries the
+  `foot` that cut it;
+- **the rig's root** — `body-frame.js` places the hip at `at(-sk.t, -sk.n)`, so every drawn
+  point is `p + (q − sk)` and the reference blade is pinned to the curve;
+- **the clock** — sample index maps to time, which is how a pose is paired with a place.
+
+While one blade is down for the whole move these are one curve. The moment the move hands
+over, they are not. `buildPath` chains segments tangent-continuously — its own comment says
+so, and says it about the **radius** changing, which is the case it was written for. A
+segment's `foot` can change at the same boundary, and chaining the position there is a claim
+that the two blades were in the same place. They are 6 to 13 cm apart.
+
+So the anchor is re-derived from a different foot and the whole skater moves by the distance
+between them, in one frame. Measured per frame against the anchor the renderer actually
+uses:
+
+| move | worst hip step | where |
+|---|---|---|
+| waltz | **12.54 cm** | frame 141, the landing |
+| changeFootSpin | **14.49 cm** | frame 161, the step-over |
+
+against a waltz median of 1.78 cm and a spin median of nought, the spin being centred and
+not travelling at all through its middle.
+
+### And the anchor is meaningless while the blade is off the ice
+
+`skate` names the blade the tracing is built from — settled earlier today — and the tracing
+is only drawn where that blade has a contact. The root was never given the same condition.
+Pinning a blade to the tracing while it is 30 cm in the air makes the hip inherit the free
+foot's motion: the waltz's hip follows the take-off leg backwards, and the change of foot's
+hip is carried round the spin's own coil for the forty-six frames when neither blade is
+down, instead of staying on the spot a spin is defined by.
+
+**That is the same conflation one layer further out**, and it is why the obvious repair —
+displace the path at each reference change — leaves a residue. Tried and measured: it takes
+the waltz from 12.54 to 5.31 cm and the change of foot's step-over from 14.49 to 2.90, and
+the leftovers are the departing foot's own motion being read as the body's.
+
+### The decision: hold, then displace
+
+Three sentences.
+
+> **While the reference blade has a contact, the hip is placed from it**, as it is today.
+>
+> **While nothing is on the ice, the offset is HELD at its last value** — the body carries
+> on as it was. There is nothing cutting the ice to be measured from, and a held offset is
+> the only honest thing to say about where the hip is: it keeps whatever relationship to the
+> curve it had when the blade left.
+>
+> **When a blade takes the ice, the path is displaced so the hip does not move**:
+> `p_new = p_old − A + B`, with `A` the held offset and `B` the new blade's, in the ice frame
+> at that instant.
+
+Holding is what makes the two cases come out right with one rule, and neither was designed
+for. A jump's flight segment is a straight line, so a constant offset carries the hip
+straight through the air. A spin's coil is a circle whose radius **equals** the centred
+blade's lateral offset — that is `spin.mjs`'s definition of centred — so a constant offset
+holds the hip on the centre point for the whole step-over. One rule, a jump and a spin, and
+the spin's answer falls out of a fact the checkers already assert rather than being arranged.
+
+It also removes half the seams outright. A blade leaving the ice is no longer a change of
+anchor at all, because the offset it leaves behind is the offset that is held. Only a blade
+**arriving** needs a displacement, and there is one of those per handover.
+
+### Where it lives: the path point carries the hip
+
+The renderer must not keep deriving the anchor from `pose.skate`, because the held offset is
+a function of the history and a single pose does not have one. So `buildPath` computes it
+and **each path point carries the offset**, and `body-frame.js` reads it from there.
+
+That is the better shape for its own sake, and it is this repository's standing rule: the
+renderer was re-deriving from the pose a fact the path already had to know, which is two
+expressions of one thing. After it, `pose.skate` places nothing — it names the blade the
+tracing is drawn from, which is all it was ever supposed to mean.
+
+The displacement is keyed on the **pose's** contact, not on the segment's `foot` field.
+Those agree on the clock but not always on the sample: `buildPath` rounds its sample count
+per segment, so the change of foot's path boundary falls at index 162 while the pose's
+reference changes at 161. Keying on the pose means the root cannot drift from what the
+renderer draws, for the same reason `boot.mjs` takes its expected roll from `ankleOf`'s
+output rather than from the renderer's expression of it.
+
+### What it should buy, stated so it can be wrong
+
+- **The waltz's worst hip step falls from 12.54 cm to 3.34**, and no frame of it exceeds
+  three times the median of 1.78. The worst is then frame 88, which is not a seam.
+- **The change of foot's step-over falls from 14.49 cm to under 2**, and the hip is
+  stationary through the whole of it, which is what a spin is.
+- **The seam count halves**: one displacement per move, at the arrival, not two.
+- **No drawn tracing gains a visible step**, because every displacement falls inside a
+  stretch where no mark is drawn — the waltz's airborne gap and the change of foot's
+  thirty-three-frame contact gap. That is only true since this morning; before the contact
+  work a mark was drawn across both, and this change would have put a step in it.
+- `continuity.mjs`'s reference-seam report **empties**.
+- `spin.mjs`, `lean.mjs`, `tracing.mjs`, `freefoot.mjs`, `boot.mjs` are **unaffected**: every
+  one of them measures the body against itself or a blade against its own lobe, and none
+  cares where on the ice the whole thing sits.
+- `framing.mjs` **may go red**. The tracing's end moves 9.8 cm on the waltz and 8.0 on the
+  change of foot, so the panel's extent changes. **Unknown**, and the first thing to measure.
+- The frames that move are **every frame of those two moves after their first handover, in
+  the top view only** — the side and rear are drawn from the hip and cannot see the skater
+  move across the ice.
+
+### What it does not fix
+
+**A spin's hip goes from stationary to full speed between two frames**, and it is a
+different fault with the same smell. At the exit the segment's radius jumps from the spin's
+to the run-out's, and the hip's speed is made of the curvature when the blade's offset
+equals the radius — so the change of foot reads nought cm per frame at frame 302 and
+**10.46 at 303**, and again 7.5 to 3.9 across the entrance's two radii at frame 41.
+`buildPath`'s comment declares tangent continuity across a radius change and calls the
+curvature step intended, which it is for the tracing; nobody asked what it does to the body
+hanging off it. Its own piece of work.
+
+**And the change of foot's transfer key is not blocked by what the last handoff said it
+was.** That handoff claimed `twofoot.mjs`'s 5 cm floor on two blades down was in the way.
+Measured: the closest two blades ever come in this guide is **13.4 cm**, on `twoFoot`, so
+the floor has never been near a real pose and is not the obstacle. The obstacle is that the
+step-over is authored with **no moment when both feet are down at all** — the left rises
+from z 0 while the right descends to it, they cross at a horizontal gap of 1.6 cm with the
+left 11.7 cm in the air, and there is no instant where both are on the ice. Authoring a
+transfer key means re-authoring the step-over so the weight passes through two feet, which
+is a question about how a change of foot is actually skated and wants a coach, not a floor.
+
+
 ## A step is three different things, and the guide now means one of them — 20/09/2026
 
 `kind: 'step'` opened the same day the flat went in, with the slip step in it and nine
