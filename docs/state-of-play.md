@@ -64,14 +64,36 @@ departure half had never once been reached. No authored data moved; eleven of 44
 frames did. `twofoot.mjs`'s assertions 1 and 2 are per frame now, with `--break=carry`
 restoring the old reading and failing thirty-nine times. Full argument in `docs/model.md`.
 
-**Found while measuring it, and not fixed: the rig's root jumps at every reference
-change.** Because every drawn point is `p + (q − sk)`, changing which foot is the reference
-moves the whole skater by the old one's offset in a single frame — 11.3 and 12.5 cm on the
-waltz, 8.2 on the change of foot, which is 1.4% to 3.0% of the top view against a local
-rate of 0.3% to 0.6% and `continuity.mjs`'s bound of 6%. It shows in the top view alone,
-the side and rear being drawn from the hip. That is the reference handover `docs/model.md`
-calls a third thing. `continuity.mjs` **reports** it now, beside the branch flips, because
-tightening the bound onto a fault nobody has fixed turns the chain red without fixing it.
+**The reference handover, 20/09/2026 — found by measuring the above, and fixed the same
+day.** The rig's root jumped at every reference change, by the distance between the two
+blades: 12.54 cm in one frame on the waltz, 14.49 on the change of foot, against medians of
+1.78 and nought. Every drawn point is `p + (q − sk)`, and the root had never been given the
+condition the tracing has — it hung the hip off the reference blade whether that blade was
+touching or thirty centimetres up.
+
+Three rules, in `buildPath`. **While the reference blade has a contact the offset is that
+blade's; while nothing is on the ice the offset is HELD at its last value; when a blade takes
+the ice the path is displaced so the hip does not move.** Holding is what makes one rule cover
+a jump and a spin: a flight segment is a line, so a held offset carries the hip straight
+through the air, and a spin's coil is a circle whose radius equals the centred blade's lateral
+offset — `spin.mjs`'s own definition of centred — so a held offset holds the hip on the centre
+for the whole step-over. It also halves the seams, a departing blade no longer being a change
+of anchor at all. **The path point carries the offset and the renderer reads it from there**,
+because a held offset is a function of the history and one pose has not got one; `pose.skate`
+places nothing now.
+
+Results: the waltz's worst hip step 12.54 → **3.34 cm** with no frame over three times its
+median, the change of foot's step-over 14.49 → **0.00**. 14 of 441 hashed frames moved, every
+one of them a top view of those two moves. **The change of foot now draws two coils where it
+drew one** — the left foot's and the right foot's, offset by the step-over, which is what a
+change of foot leaves on the ice.
+
+**Still open, and now measured on three moves rather than guessed at:** a centred spin's hip
+goes from nought to full speed between two frames at the boundary where the segment radius
+changes to the run-out's — 6.14 cm on `uprightSpin`, 6.84 on `camelSpin`, 10.46 on
+`changeFootSpin`. `buildPath` declares tangent continuity across a radius change and calls the
+curvature step intended, which it is for the tracing; nobody asked what it does to a body
+hanging off the curve at exactly that radius.
 
 **The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
 largest block of unlinked syllabus text the guide had left.** It rested on one decision, what

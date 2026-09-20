@@ -1155,7 +1155,7 @@ the branch flips it already reports, which is the treatment this file gives to a
 is a design question rather than a defect.
 
 
-## The reference handover — specified 20/09/2026
+## The reference handover — specified and built 20/09/2026
 
 The section above found this and did not fix it: **the rig's root jumps at every reference
 change.** This is that, specified before it is built, and the measuring turned the fix into
@@ -1267,6 +1267,70 @@ output rather than from the renderer's expression of it.
 - The frames that move are **every frame of those two moves after their first handover, in
   the top view only** — the side and rear are drawn from the hip and cannot see the skater
   move across the ice.
+
+### What building it cost
+
+Six of eight held, one of the two misses was found by `astro build` rather than by any
+checker, and one prediction was right about the number and wrong about which frames.
+
+| prediction | outcome |
+|---|---|
+| waltz worst 12.54 → 3.34 cm, no frame over 3× the median | **held**; the handover frame reads 1.86 against a median of 1.78 |
+| the change of foot's step-over 14.49 → under 2 cm | **held, and better**: exactly **0.00** |
+| one displacement per move, at the arrival, not two | **held** |
+| no drawn tracing gains a visible step | **held**, and the change of foot gained something better |
+| `continuity.mjs`'s seam report empties | **wrong**: it shrank, and what is left is a different thing |
+| `spin`, `lean`, `tracing`, `freefoot`, `boot` unaffected | **held** |
+| `framing.mjs` may go red | **green**, 2,367 frame-panels, everything inside |
+| the frames that move are those after the first handover | **wrong**: every top frame of those two moves |
+
+**The seam report does not empty, and the residue is honest.** `continuity.mjs` measures the
+drawn boot glyph, and at a handover the two boots **exchange roles** — the one pinned to the
+tracing becomes free and the free one becomes pinned — so their drawn positions step by the
+little the pose moves them whatever the root does. It fell from 3.0%, 2.8% and 1.4% of the
+top view to 1.0%, 1.0% and 0.7%, and no amount of rooting will take it further. The report is
+re-keyed on the **anchor** rather than on `skate`, which places nothing now, and its prose
+says what it is measuring rather than what it used to be.
+
+**Every top frame moved, not only those after the handover** — 14 of 441, seven per move, and
+nothing in the side or rear views. The panel is fitted to the whole move's extent, so moving
+part of the path re-fits every frame of that view including the first. The count was right for
+the wrong reason.
+
+**`astro build` found a second caller and no checker could have.** `PathThumb.astro` runs a
+basic's `trace` through `buildPath` to draw a tracing for an element with no entry edge —
+deliberately, one derivation rather than two — and hands it a `path` and a `radius` and no
+`keys`. The offset pass called `poseAt` and died on `move.keys.length`. Twenty-three green
+checkers and a red build, because every checker here iterates `MOVES` and `MOVES` is not where
+that caller lives. **Fourth time this repository has been told that a green check chain is not
+a green build.** A path with no keys is a shape and not a skater, so it gets no offset and the
+curve it wants is the plain one.
+
+**What the change of foot draws now.** Before, the left foot's coil ran tangentially into the
+right foot's and the two were one continuous spiral — a picture of a spin that never changed
+foot. Now they are two circles, offset by the step-over, with the contact gap between them.
+That is what a change of foot leaves on the ice, and it is the first time the guide has drawn
+it. The waltz's two marks moved apart by the same reasoning and the change is barely visible,
+because both of its displacements fall inside the airborne stretch where only the dashed
+connector is drawn.
+
+**And the residual fault got bigger, not smaller, once it could be seen.** The curvature step
+at a segment boundary is not one spin's exit: it is every spin that is genuinely centred, and
+the centred ones are exactly the ones where it shows, because their hip is stationary and has
+nowhere to hide an acceleration.
+
+| move | frame | the hip goes from | to |
+|---|---|---|---|
+| uprightSpin | 291 | 0.00 cm | **6.14 cm** |
+| camelSpin | 295 | 0.00 cm | **6.84 cm** |
+| changeFootSpin | 303 | 0.00 cm | **10.46 cm** |
+
+in one frame, at the boundary where the segment's radius changes from the spin's to the
+run-out's. `buildPath`'s comment declares tangent continuity across a radius change and calls
+the curvature step intended, which it is for the tracing; nobody asked what it does to a body
+hanging off the curve at exactly the radius. That is its own piece of work and the numbers are
+here for it.
+
 
 ### What it does not fix
 

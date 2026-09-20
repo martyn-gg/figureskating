@@ -165,20 +165,25 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (p && pos && p.pos) {
           const box = num(svg.attrs.viewBox, /0 0 ([\d.]+) ([\d.]+)/) || [400, 400];
           const travel = Math.hypot(pos[0] - p.pos[0], pos[1] - p.pos[1]) / Math.max(...box);
-          /* THE REFERENCE SEAM, REPORTED RATHER THAN FAILED — 20/09/2026. Every drawn
-             point is `p + (q - sk)`, so changing WHICH foot is the reference moves the
-             whole skater by the old reference foot's offset in a single frame. It shows
-             in the top view alone, because the side and rear views are drawn from the
-             hip and cannot see the skater travel across the ice. It is a jump of five to
-             eight times the surrounding motion sitting at half this file's bound, and it
-             is the reference handover that docs/model.md calls a third thing: not caused
-             by the contact work of 20/09/2026 and not fixed by it. Reported, because
-             tightening SLIDE onto a fault nobody has fixed turns the chain red without
-             fixing anything, and leaving it unmeasured is how it stayed invisible. */
-          if (pose.skate !== prevSkate) {
+          /* THE HANDOVER SEAM, REPORTED RATHER THAN FAILED — 20/09/2026. It was the
+             rig's root moving: every drawn point was `p + (q - sk)` and changing which
+             foot `sk` is moved the whole skater by the distance between the two blades,
+             3.0% of the top view against a local rate of 0.3%. buildPath holds and
+             displaces the offset now, and what is left is smaller and is a different
+             thing: at a handover the two boots EXCHANGE ROLES, the one pinned to the
+             tracing becoming free and the free one pinned, so their drawn positions step
+             by the little the pose moves them. Around 1% of the view, and it cannot be
+             removed by any amount of rooting.
+
+             Reported and not failed, and keyed on the ANCHOR rather than on `skate`,
+             which since this morning places nothing. Both ends of a handover are anchor
+             changes and both are reported; only the arrival displaces the path, because
+             the offset a departing blade leaves behind is the one that is held. */
+          const anchor = pose.skate && onIceOf(pose, pose.skate) ? pose.skate : null;
+          if (anchor !== prevSkate) {
             const was = seams.find(x => x.key === key && x.view === view && x.i === i);
             if (was) was.travel = Math.max(was.travel, travel);
-            else seams.push({ key, view, i, travel, from: prevSkate || 'air', to: pose.skate || 'air' });
+            else seams.push({ key, view, i, travel, from: prevSkate || 'none', to: anchor || 'none' });
           }
           if (travel > SLIDE)
             fail(`${key} ${view} ${foot}: the glyph slides ${(travel * 100).toFixed(0)}% of the ` +
@@ -186,7 +191,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         }
         prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) != null };
       }
-      prevSkate = pose.skate;
+      prevSkate = pose.skate && onIceOf(pose, pose.skate) ? pose.skate : null;
     }
     if (flipCount) flips.push(`${key} ${view}: ${flipCount}`);
     if (tieFrames || flatFrames)
@@ -221,8 +226,8 @@ if (seams.length) {
      other behind a max. */
   const shown = seams.filter(s => s.travel > 0.005).sort((a, b) => b.travel - a.travel);
   if (shown.length)
-    console.log(`  the rig's root moves when the reference blade changes, which no bound here ` +
-      `catches: ${shown.map(s => `${s.key} ${s.view} ${s.from}->${s.to} ${(s.travel * 100).toFixed(1)}%`).join(', ')}`);
+    console.log(`  the two boots exchange roles at a handover, and their drawn positions ` +
+      `step: ${shown.map(s => `${s.key} ${s.view} ${s.from}->${s.to} ${(s.travel * 100).toFixed(1)}%`).join(', ')}`);
 }
 if (zones.length && VERBOSE) for (const z of zones) console.log(`  ${z}`);
 else if (zones.length) console.log(`  ${zones.length} view-move pairs spend frames in a degenerate zone (--verbose to list)`);
