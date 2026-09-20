@@ -981,6 +981,45 @@ export const MOVES = {
        sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
     ]},
 
+  /* BACKWARD STROKING — the rig for `backward-stroking`, and it is pushOff read
+     off a base of 180 rather than a new idea, the same way twoFootTurnBack is
+     twoFootTurn read off one.
+
+     THE YAW IS THE SAME NUMBER IN BOTH, AND THAT IS WORTH STATING because it looks
+     like it should not be. bootDir takes a planted blade's heading from the
+     direction of travel — 0 forwards, 180 backwards — plus the authored yaw. Going
+     backwards flips the base; facing backwards flips which side of the track is the
+     skater's right, because lateral(180) is -n. The two flips cancel, so a right
+     toe turned thirty-five degrees out is -35 either way. Exactly the property
+     twoFootTurnBack found in the yaws of a turn, arriving by the same route.
+
+     WHAT IS NOT MIRRORED IS THE BODY. Every syllabus teaches this long after the
+     forward version and the page says why: the difficulty is not the feet. So the
+     two things a coach actually says are authored rather than left to the mirror —
+     the SHOULDERS LEAD, and the WEIGHT STAYS FORWARD, which with the skater facing
+     back down the ice is the shoulder centre at negative t, over the toes and not
+     over the heels. A skater who sits back on a backward push has the blade run
+     away in front of them, and that is a shape this rig can draw: it is sh.t on
+     the wrong side of nought, and it is what this deliberately is not.
+
+     A HELD POSITION, for pushOff's reason and not a new one: a push is a change of
+     weight, the rig carries one reference blade per frame, and drawing the
+     changeover means handing that blade over mid-move. This holds the instant the
+     push is at its widest. */
+  backStroke: {
+    name:'Backward push',
+    note:'back outside edge · the other blade planted and turned thirty-five degrees out',
+    path:[{kind:'arc', foot:'L', edge:'O', dir:'B', sweep:60}],
+    radius:300, duration:3.4,
+    keys:[
+      {t:0.00, ph:'Weight over the gliding blade, the push at its widest', hipZ:94, hipYaw:180, shYaw:174,
+       sh:P(-5,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
+      {t:0.45, ph:'Still pushing, the shoulders squaring up', hipZ:94, hipYaw:180, shYaw:176,
+       sh:P(-5,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
+      {t:1.00, ph:'Held — the push complete, the glide running away behind', hipZ:94, hipYaw:180, shYaw:178,
+       sh:P(-4,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
+    ]},
+
   /* PROBE — a toe pick in the ice. Not an element page: it exists to hold the
      third kind of contact against every checker in the repository, the way
      twoFoot holds the second. The position is a toe-assisted jump's loaded

@@ -3,6 +3,7 @@ name: Backward stroking
 kind: basic
 summary: The same sideways push, travelling backwards, with the weight kept forward.
 aliases: ["backward skating"]
+rig: backStroke
 prerequisites: [backward-swizzle, backward-two-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }

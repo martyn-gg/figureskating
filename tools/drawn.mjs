@@ -41,7 +41,6 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 /* slug → why it draws nothing. Remove an entry when the page gains a picture. */
 const cannotDraw = {
   'other-names':                 'a listing of aliases, not an element',
-  'backward-stroking':           'has the yaw it needs; wants a rig of its own',
   'swizzle':                     'the blades are turned out against the travel',
   'backward-swizzle':            'the blades are turned out against the travel',
   'half-swizzle-pumps':          'the pushing blade is angled across the circle',
