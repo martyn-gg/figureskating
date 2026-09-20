@@ -36,15 +36,42 @@ feet closed four of the five outright, including 2.0 cm over 25 frames on the la
 and moved no foot a millimetre — only the ankle.
 
 The two that remain are **one fault with two instances**, which is what made a declared
-exemption worth writing rather than arguing over twice: a free foot in the last frames
-before it takes the weight, on the waltz at f=0.439 and on the change of foot at
-f=0.483–0.502. That is the step-over the rig does not draw, after `twoFoot` and `toePick`.
-`arriving` holds both from both sides — a run that goes deeper fails, a run that vanishes
-fails, and a run outside the window or on the other foot is not excused at all. Its depths
-are measured rather than chosen, because two attempts to deepen them by moving the pose
-found they cannot be moved: the last free frame is adjacent to a key at z 0 and the
-interpolation into it sets the number. `NEUTRAL` is authored per move and `ANKLE_POINT`
-is untouched, because that file's own finding is that the constant was never the lever.
+exemption worth writing rather than arguing over twice: a free foot in the frames either
+side of the moment it takes the weight or gives it up. Both are now in the change of foot,
+one at each end of its transfer — the right arriving at f=0.502 and the left leaving at
+f=0.361–0.364 — and the waltz's has gone, the arriving foot having been made neutral.
+That is the step-over the rig does not draw, after `twoFoot` and `toePick`. `handover`
+holds both from both sides — a run that goes deeper fails, a run that vanishes fails, and
+a run outside the window or on the other foot is not excused at all. Its depths are
+measured rather than chosen, because two attempts to deepen them by moving the pose found
+they cannot be moved: the frame is adjacent to a key at z 0 and the interpolation sets the
+number. `NEUTRAL` is authored per move and `ANKLE_POINT` is untouched, because that file's
+own finding is that the constant was never the lever.
+
+**What `skate` names, 20/09/2026 — settled, and it was the biggest thing open.** `skate`
+names **the blade the tracing is built from**, not the blade that is touching. It is the
+rig's frame of reference — every drawn point is `p + (q − sk)`, `edge` and `dir` attach to
+it, the second foot derives from it — and all of that is continuous by construction where
+a contact is not. Whether a foot is touching is `onIce`, on the foot, for every foot
+including the reference one. The second half: **a contact holds across a span only where
+both keys declare it**, because `onIce` is a geometric claim rather than a label and a span
+is the pose interpolating away from it. Before this, a blade CLAIMED on the ice was drawn
+29.99 cm above it for six frames of the waltz and 15.99 for thirty-three of the change of
+foot, with the tracing built from it, while every keyframe passed at nought to two. Three
+spans in the whole guide have a contact change and in all three the departing foot is the
+outgoing reference blade, which is why the arrival half of `bootDir`'s blend worked and the
+departure half had never once been reached. No authored data moved; eleven of 441 hashed
+frames did. `twofoot.mjs`'s assertions 1 and 2 are per frame now, with `--break=carry`
+restoring the old reading and failing thirty-nine times. Full argument in `docs/model.md`.
+
+**Found while measuring it, and not fixed: the rig's root jumps at every reference
+change.** Because every drawn point is `p + (q − sk)`, changing which foot is the reference
+moves the whole skater by the old one's offset in a single frame — 11.3 and 12.5 cm on the
+waltz, 8.2 on the change of foot, which is 1.4% to 3.0% of the top view against a local
+rate of 0.3% to 0.6% and `continuity.mjs`'s bound of 6%. It shows in the top view alone,
+the side and rear being drawn from the hip. That is the reference handover `docs/model.md`
+calls a third thing. `continuity.mjs` **reports** it now, beside the branch flips, because
+tightening the bound onto a fault nobody has fixed turns the chain red without fixing it.
 
 **The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
 largest block of unlinked syllabus text the guide had left.** It rested on one decision, what

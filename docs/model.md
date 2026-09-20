@@ -878,7 +878,7 @@ blade and drawing what those do means handing it over mid-move. Two blades exist
 30/08/2026 and the arrival would exist after this, but the reference handover is a third thing
 and is not specified here. The slip step draws because nothing in it hands over.
 
-## What `skate` names — specified 20/09/2026
+## What `skate` names — specified and built 20/09/2026
 
 The section above ends on a question it could not answer: *does `skate` name the blade the
 tracing is built from, or the blade that is touching?* This is that question, settled before
@@ -1061,6 +1061,72 @@ takeoff, and becomes *no foot claims a contact that both bounding keys do not de
 - `underice.mjs` stays at its one run of 0.027 cm or improves. A departing boot blended toward
   the contact it is leaving sits on the ice rather than through it, which is the arrival's
   claim in reverse.
+
+### What building it cost
+
+Four of the six held. Two were wrong, and one of the two was wrong about where the
+assertion belonged rather than about the model.
+
+| prediction | outcome |
+|---|---|
+| nothing claimed on the ice above 3 cm at any frame | **held**: `probe-skate-z.mjs` reports no move at all |
+| `boot.mjs` still 0.00°, no renderer change | **held**, across 26,952 glyphs. Third time |
+| only the departing feet inside the last `CLEAR` centimetres move | **wrong**: the whole span moves, 11 of 441 hashed frames |
+| `continuity.mjs` stays green, its `landing` flag moving | **held** |
+| `freefoot.mjs` may need departing feet excluded | **not needed** — green without it, as the arrival was |
+| `underice.mjs` stays at 0.027 cm or improves | **wrong**: it improved AND gained a run |
+
+**The window was the wrong unit.** A departing foot does not merely blend over the last
+`CLEAR` centimetres — it changes construction for the **whole span**, because `bootDir`
+was returning from the planted branch before the free one and now does not. The blend
+smooths the last five centimetres of that; above them the foot is simply drawn free,
+which is the larger change and the correct one. What moved: eleven of 441 hashed frames,
+all in the two moves that have a departure, and five of the eleven are the waltz's top
+view at every sampled time after the takeoff, because the ice mark is cumulative and
+ending it earlier changes every later frame of that view.
+
+**`underice.mjs` gained a run, and that is the fix working rather than failing.** Until
+this change a departing foot never reached that checker at all: it was claimed on the
+ice, so it was not a free boot and nothing measured it against the ice line. Now the two
+frames after the change of foot's left blade leaves sit 0.0370 cm below the line, for
+precisely the reason the arriving frames sit 0.0273 cm below it — the interpolation out
+of a key whose foot is at z 0. One fault, two directions. `arriving` became `handover`
+and takes a list per move; `--break=deeper` had to move from zeroing the declared depths
+to minus one, because the new entry's measured depth **is** nought and a mutation that
+has quietly become a no-op on one of its cases is no longer testing it.
+
+**Assertion 1's per-frame form was specified in the wrong place.** The specification said
+it should be *the renderer's ice mark and the reference blade's contact agree, frame by
+frame*. They agree by construction now, because `stateOf` derives the mark from
+`onIceOf` — one expression, which is the whole point — so asserting it would be reading
+the renderer's own `if` back to it. What went in instead is the claim that survives the
+construction being correct: **a reference blade that is off the ice is one that is
+changing hands.** That is the carry outliving the contact, stated so it cannot happen
+again quietly, and `--break=carry` restores exactly the pre-20/09 reading to prove it
+fires — thirty-nine failures, which is the six waltz frames and the thirty-three of the
+change of foot.
+
+**And the monotonic descent is not asserted, deliberately.** The specification asked for
+it: an arrival that dips and comes back up is not an arrival, and neither is one that
+never lands. Neither is expressible as a failure. `lpP` interpolates `z` linearly between
+the two bounding keys, so a dip is arithmetically impossible, and *reaching the contact*
+is assertion 2 holding at the contact key, which it already does per keyframe. Both would
+have been second expressions of facts the model already carries, which is this file's
+named recurring failure, and a checker that cannot fail is a decoration. The claim that
+does carry weight, and is asserted, is that a foot under `CLEAR` outside a handover fails
+— `--break=dip`, 3,192 failures.
+
+**What the change of foot looks like now.** The mark has a thirty-three-frame gap through
+the transfer, at the tightest part of the coil, and it reads as a step-over rather than as
+a missing line. It is the honest picture: the authoring has the left blade down at 0.36
+and the right at 0.50 and says nothing about what is touching in between, and drawing a
+mark there was drawing it from a blade sixteen centimetres up. The repair is an authoring
+one and is **not made here** — a transfer key with both blades down would put them about
+four centimetres apart, and `twofoot.mjs`'s assertion 3 floors two blades down at five
+because it was read off two blades a leg's width apart. A spin's change of foot is the
+first pose in the guide that is neither that nor a mistake, and ruling on that floor is
+its own piece of work.
+
 
 ### What it does not fix, and what measuring it turned up
 

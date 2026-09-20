@@ -85,7 +85,7 @@ const num = (s, re) => { const m = re.exec(s || ''); return m ? m.slice(1).map(N
 
 let bad = 0, checked = 0;
 const fail = m => { bad++; console.error(`  x ${m}`); };
-const flips = [], zones = [];
+const flips = [], zones = [], seams = [];
 
 for (const [key, m] of Object.entries(MOVES)) {
   const path = buildPath(m);
@@ -95,7 +95,7 @@ for (const [key, m] of Object.entries(MOVES)) {
     const { rig, byView } = rigFor(key, [view]);
     const svg = byView[view];
     const prev = {};
-    let flipCount = 0, tieFrames = 0, flatFrames = 0;
+    let flipCount = 0, tieFrames = 0, flatFrames = 0, prevSkate;
 
     for (let i = 0; i < rig.frames; i++) {
       rig.seek(i);
@@ -165,12 +165,28 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (p && pos && p.pos) {
           const box = num(svg.attrs.viewBox, /0 0 ([\d.]+) ([\d.]+)/) || [400, 400];
           const travel = Math.hypot(pos[0] - p.pos[0], pos[1] - p.pos[1]) / Math.max(...box);
+          /* THE REFERENCE SEAM, REPORTED RATHER THAN FAILED — 20/09/2026. Every drawn
+             point is `p + (q - sk)`, so changing WHICH foot is the reference moves the
+             whole skater by the old reference foot's offset in a single frame. It shows
+             in the top view alone, because the side and rear views are drawn from the
+             hip and cannot see the skater travel across the ice. It is a jump of five to
+             eight times the surrounding motion sitting at half this file's bound, and it
+             is the reference handover that docs/model.md calls a third thing: not caused
+             by the contact work of 20/09/2026 and not fixed by it. Reported, because
+             tightening SLIDE onto a fault nobody has fixed turns the chain red without
+             fixing anything, and leaving it unmeasured is how it stayed invisible. */
+          if (pose.skate !== prevSkate) {
+            const was = seams.find(x => x.key === key && x.view === view && x.i === i);
+            if (was) was.travel = Math.max(was.travel, travel);
+            else seams.push({ key, view, i, travel, from: prevSkate || 'air', to: pose.skate || 'air' });
+          }
           if (travel > SLIDE)
             fail(`${key} ${view} ${foot}: the glyph slides ${(travel * 100).toFixed(0)}% of the ` +
               `view between frames ${i - 1} and ${i}`);
         }
         prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) != null };
       }
+      prevSkate = pose.skate;
     }
     if (flipCount) flips.push(`${key} ${view}: ${flipCount}`);
     if (tieFrames || flatFrames)
@@ -199,6 +215,15 @@ for (const [key, m] of Object.entries(MOVES)) {
 
 console.log(`\n${checked} adjacent-frame comparisons across ${Object.keys(MOVES).length} moves, three views`);
 if (flips.length) console.log(`  glyph switched between two of the three views: ${flips.join(', ')}`);
+if (seams.length) {
+  /* Every seam, not the worst per move: the waltz has two and they are different
+     handovers — a takeoff and a landing — and reporting one of them would hide the
+     other behind a max. */
+  const shown = seams.filter(s => s.travel > 0.005).sort((a, b) => b.travel - a.travel);
+  if (shown.length)
+    console.log(`  the rig's root moves when the reference blade changes, which no bound here ` +
+      `catches: ${shown.map(s => `${s.key} ${s.view} ${s.from}->${s.to} ${(s.travel * 100).toFixed(1)}%`).join(', ')}`);
+}
 if (zones.length && VERBOSE) for (const z of zones) console.log(`  ${z}`);
 else if (zones.length) console.log(`  ${zones.length} view-move pairs spend frames in a degenerate zone (--verbose to list)`);
 console.log(bad
