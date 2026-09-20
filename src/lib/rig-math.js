@@ -545,6 +545,14 @@ export const SKID_MIN_YAW = 15;                    // degrees off the line of tr
    about. */
 export const CLEAR = 5;                            // cm, a free foot's clearance
 
+/* HOW MUCH TURN A SKATER TAKES TO WIND UP OR OPEN OUT — 20/09/2026, and the ninth
+   constant of this shape. **Verified against a coach: YES.** Martyn, asked how much
+   turn a skater takes to open from the wind-up onto the exit edge, and the same
+   amount going in: about half a revolution. It is the first of these numbers to be
+   answered on the day it was asked rather than read off a study of something else,
+   which is what ANKLE_POINT was and what a coach disagreed with. */
+export const RAMP = 180;                           // degrees of turn, each side of a boundary
+
 export function bootDir(pose, which, knee, foot){
   const on = onIceOf(pose, which);
   const p = (foot.pitch || 0) * D2R;
@@ -662,12 +670,116 @@ export function buildPath(move){
     const R = seg.radius ?? move.radius;
     const k = seg.kind==='arc' ? -lobeSense(seg.foot,seg.edge,seg.dir)/R : 0;
     const len = seg.kind==='arc' ? R*seg.sweep*D2R : seg.len;
-    for(let i=1;i<=N;i++){
-      const t = len*i/N;
-      let px,py;
-      if(Math.abs(k)<1e-9){ px = x+Math.cos(th)*t; py = y+Math.sin(th)*t; }
-      else { px = x+(Math.sin(th+k*t)-Math.sin(th))/k; py = y-(Math.cos(th+k*t)-Math.cos(th))/k; }
-      pts.push({x:px,y:py,th:th+k*t});
+
+    /* THE STAIRCASE, AND THE RAMP THAT TAKES IT OUT — 20/09/2026. docs/model.md,
+       *The path is a staircase*, has the argument and the tables.
+
+       A segment used to hold one radius and one rate throughout, and segments were
+       chained tangent-continuously — so position and heading were continuous and
+       NOTHING ELSE WAS. The body hangs off the curve and reads the derivatives the
+       curve has not got: the hip's speed is (R − the blade's lateral offset) × the
+       rate, and R_SPIN is by its own comment equal to that offset, so a centred
+       skater went from nought to 10.46 cm a frame between two frames at a spin's
+       exit, and the rotation rate roughly halved in the same frame.
+
+       So a segment's radius and rate are values it REACHES, not constants it holds.
+       Each enters at the mean of this segment's and the previous one's, leaves at the
+       mean of this one's and the next, and holds its own value in between — which
+       makes both continuous at the boundary, because the two sides meet at the same
+       mean.
+
+       THE AUTHORED RATE IS THE SEGMENT'S MEAN RATE, NOT ITS INSTANTANEOUS ONE, and
+       that is what keeps this safe. `span` stays exactly what `at()` computed, so the
+       duration, spinMove's bounds, every keyframe's `t` and the ISU revolution counts
+       spin.mjs asserts are untouched; the plateau is SOLVED so the segment still turns
+       `sweep` in `span`. One equation, monotone, bisected.
+
+       A RAMP IS BETWEEN TWO ARCS. A line does not take part — you cannot be partly
+       straight, and a take-off is not an artefact: the blade stops steering at a
+       definite instant and the body goes on with what it had. Smoothing the waltz's
+       arc-to-line boundaries made it measurably worse, which is the measurement that
+       found this rule.
+
+       A segment with nothing to ramp takes the closed form below unchanged, from the
+       segment's start in one evaluation, so every move that had no staircase renders
+       byte for byte as it did. */
+    const arcs = move.path.map(g => g.kind === 'arc');
+    const kOf  = (j) => -lobeSense(move.path[j].foot, move.path[j].edge, move.path[j].dir) /
+                        (move.path[j].radius ?? move.radius);
+    const mean = (a, b) => (a + b) / 2;
+    const isArc = seg.kind === 'arc';
+    /* A HELD SEGMENT HOLDS ITS RADIUS, AND MAY STILL CHANGE ITS RATE. `position` and
+       `windup` name a basic position the skater is holding through the segment, and
+       spin.mjs asserts those are CENTRED — the blade's lateral offset equals the path
+       radius, so the hip sits on the centre of curvature and stops travelling. A radius
+       that ramps through one of them would un-centre it, which is the ISU's own word for
+       a fault. So the transition is taken entirely by the segment either side that is
+       free to move, and it ramps to the held segment's own value rather than to a mean.
+
+       The RATE ramps through a held segment all the same, because a skater drawing in
+       accelerates while perfectly centred — that is what a wind-up IS. */
+    const heldOf = j => !!(move.path[j].position || move.path[j].windup);
+    const held = isArc && heldOf(si);
+    const target = (j) => held ? k : heldOf(j) ? kOf(j) : mean(k, kOf(j));
+    const kIn  = isArc && si > 0             && arcs[si-1] ? target(si-1) : k;
+    const kOut = isArc && si < arcs.length-1 && arcs[si+1] ? target(si+1) : k;
+    const r0   = isArc ? (seg.rate ?? null) : null;
+    const rIn  = r0 != null && si > 0             && arcs[si-1] && move.path[si-1].rate != null
+                 ? mean(move.path[si-1].rate, r0) : r0;
+    const rOut = r0 != null && si < arcs.length-1 && arcs[si+1] && move.path[si+1].rate != null
+                 ? mean(r0, move.path[si+1].rate) : r0;
+    const flat = kIn === k && kOut === k && (r0 == null || (rIn === r0 && rOut === r0));
+
+    if(flat){
+      for(let i=1;i<=N;i++){
+        const t = len*i/N;
+        let px,py;
+        if(Math.abs(k)<1e-9){ px = x+Math.cos(th)*t; py = y+Math.sin(th)*t; }
+        else { px = x+(Math.sin(th+k*t)-Math.sin(th))/k; py = y-(Math.cos(th+k*t)-Math.cos(th))/k; }
+        pts.push({x:px,y:py,th:th+k*t});
+      }
+    } else {
+      const TH = seg.sweep, w = Math.min(TH/2, RAMP);
+      const ramp = (inV, mid, outV) => phi =>
+        phi < w            ? inV + (mid - inV) * (phi / w)
+      : phi > TH - w       ? mid + (outV - mid) * ((phi - (TH - w)) / w)
+      :                      mid;
+      const kAt = ramp(kIn, k, kOut);
+      /* The plateau that keeps the segment's own clock. ∫dφ/ω over a linear ramp from
+         a to b across w is w·ln(b/a)/(b−a); the whole integral must come to TH/r0, and
+         it falls as the plateau rises, so bisection finds it in a handful of steps. */
+      let star = r0;
+      if(r0 != null && (rIn !== r0 || rOut !== r0)){
+        const leg = (a, b) => Math.abs(a - b) < 1e-9 ? w / a : w * Math.log(b / a) / (b - a);
+        const time = m => leg(rIn, m) + (TH - 2*w) / m + leg(m, rOut);
+        const want = TH / r0;
+        let lo = Math.min(rIn, r0, rOut) / 4, hi = Math.max(rIn, r0, rOut) * 4;
+        for(let it = 0; it < 60; it++){ const m = (lo + hi) / 2; if(time(m) > want) lo = m; else hi = m; }
+        star = (lo + hi) / 2;
+      }
+      const wAt = r0 == null ? null : ramp(rIn, star, rOut);
+      /* Two passes: the turn each sample takes, then scaled so the segment turns
+         exactly `sweep`. Stepping in time and hoping the total lands is how a heading
+         drifts, and every later segment is chained off this one's. */
+      const span = spans[si];                          // seconds, exactly as at() computed it
+      const dts = [];
+      let phi = 0;
+      for(let i=0;i<N;i++){
+        const om = wAt ? wAt(Math.min(TH, phi)) : null;
+        const dTh = om == null ? TH / N : 360 * om * (span / N);
+        dts.push(dTh); phi += dTh;
+      }
+      const scale = TH / dts.reduce((a,b)=>a+b, 0);
+      phi = 0;
+      for(let i=0;i<N;i++){
+        const dTh = dts[i] * scale;
+        const kk = kAt(Math.min(TH, phi + dTh/2));
+        const dth = dTh * D2R * Math.sign(k);
+        x = x + (Math.sin(th+dth)-Math.sin(th))/kk;
+        y = y - (Math.cos(th+dth)-Math.cos(th))/kk;
+        th += dth; phi += dTh;
+        pts.push({x,y,th});
+      }
     }
     const last = pts[pts.length-1]; x=last.x; y=last.y; th=last.th;
   });
