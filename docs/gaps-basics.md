@@ -43,7 +43,7 @@ missing.
 | **Gliding** | two-foot glide, backward two-foot glide | yes |
 | | one-foot glide, backward one-foot glide | yes |
 | | dip | yes, and the most worthwhile of them |
-| | drag | **no — the trailing shin is 30 to 44° over what the boot allows** |
+| | drag | **no — the contact is the boot's side and the rig cannot roll a boot** |
 | **Stopping** | snowplough stop, backward snowplough stop | yes — a rig each |
 | | T-stop | yes — a rig |
 | | hockey stop | **no — counter-rotation and a free upper body** |
@@ -76,18 +76,23 @@ anchor. Only the drag and backward stroking are waiting on nothing but authoring
 the claim above being true: it is `pushOff` read off a base of 180, and the yaw is the same
 number in both because flipping the direction of travel and flipping which side is the
 skater's right cancel. The drag was the claim being wrong, and the sentence "waiting on
-nothing but authoring" is what it was wrong about. **Measured, a trailing foot flat on the
-ice needs the shin 30 to 44 degrees over the 28 a boot allows, at every hip height below 96
-and every reach past ten centimetres, and pitching the boot makes it worse monotonically.**
-Only a locked skating leg keeps both shins legal, and the bent knee is what the element is
-about. `turnout.mjs` blocks it a second time, reading a trailing toe as 150 degrees of hip
-rotation — the case its own header predicted and excluded picks for.
+nothing but authoring" is what it was wrong about. **A drag's free boot is turned IN, the
+skating knee sinks until the free blade lifts clear of the ice, and what trails is the inside
+of the boot** — Martyn, correcting the first version of this paragraph, which had measured a
+trailing blade flat on the ice because that is what the element page said. So the contact is
+not a blade, and putting the boot's side down means rolling it: the axis the rig has never
+had, and the one that has blocked the lunge since Session 14.
+
+The measurement of the pose as the page described it stands as a footnote and is why that
+description could not have been animated: a trailing blade flat on the ice needs the shin 30
+to 44 degrees over the 28 a boot allows, pitching it makes that worse monotonically, and
+`turnout.mjs` reads a trailing toe as 150 degrees of hip rotation.
 
 That leaves seven, and `tools/drawn.mjs` holds the reason for each: both swizzles (the
 blades are turned out against the travel), both half-swizzle pumps (the pushing blade is
 angled across the circle), the hockey stop (counter-rotation and a spine), the pivot (the
-pick has no anchor), and the drag. The drag is the only one whose blocker is `shin.mjs`, and
-the only one waiting on the same thing as the camel change and the lunge.
+pick has no anchor), and the drag. The drag and the lunge want the same missing rotation — a boot
+that can roll onto its side — which is a different one from what the camel change wants.
 
 ## The turns, and what a sweeping yaw cost — 19/09/2026, later the same day
 

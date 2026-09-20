@@ -1,23 +1,22 @@
 ---
 name: Drag
 kind: basic
-summary: A glide with the free foot trailed on the ice behind, pointed and touching lightly.
+summary: A deep glide with the free leg trailed behind, the blade lifted clear and the side of the boot brushing the ice.
 aliases: ["forward drag", "toe drag"]
 prerequisites: [one-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-You glide on one foot with the other leg extended behind, the free boot turned out and its
-inside edge or toe trailing lightly along the ice. The skating knee stays bent and the
-trailing foot carries almost no weight.
+You glide on one foot with the other leg extended behind and the free foot turned in. The
+skating knee sinks until the free blade lifts clear of the ice, and what trails along the
+surface is the inside of the boot, carrying almost no weight.
 
-The word makes it sound like a brake and it is not one. The trailing foot touches the ice
-rather than pressing into it, and if it takes real weight the glide slows and the hips
-square up. It trains turnout in the free hip while the skating side stays over its own
-blade, the same separation a spiral needs, at a height where a fall costs
-nothing.
+The word makes it sound like a brake and it is not one. The boot brushes rather than presses,
+and if it takes real weight the glide slows and the hips square up. The depth of the skating
+knee is what makes the rest possible: without it the free leg cannot reach back far enough for
+the blade to leave the ice at all.
 
-There is no animation here. A trailing foot flat on the ice asks more of the shin inside the
-boot than a stiff boot allows, and asks more of it the lower the skating hip goes, so the
-bent knee that makes it a drag is what puts it out of reach.
+There is no animation here. The contact is the side of the boot rather than a blade, which
+means rolling the boot onto its inner edge, and that rotation is one this rig does not have.
+It is the same thing that stops it drawing a lunge.

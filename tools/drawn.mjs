@@ -60,17 +60,17 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  /* MEASURED, NOT GUESSED — 20/09/2026. The line here used to say the drag wanted
-     nothing but a rig, which was the same authoring-only claim backward stroking
-     carried, and backward stroking turned out to be true. This one is not. A
-     trailing foot flat on the ice needs the shin 30 to 44 degrees over inside a boot
-     that allows 28, at every hip height below 96 and every reach past 10 cm — and
-     pitching the boot makes it worse monotonically, because tilting the boot tilts
-     its up-axis away from the shin. Only a locked skating leg keeps both shins
-     legal, and the bent knee is the element. Full table in docs/model.md. */
-  'drag':                        'the trailing shin is 30 to 44 degrees over what the boot '
-                               + 'allows, and the bent skating knee the element is about is '
-                               + 'what puts it there',
+  /* CORRECTED TWICE IN ONE DAY, AND THE SECOND ONE MATTERS — 20/09/2026. This line
+     first said the drag wanted nothing but a rig, which was an authoring-only claim it
+     shared with backward stroking; backward stroking turned out to be true and this did
+     not. It was then replaced with a shin measurement, which was right about the pose
+     it measured and wrong about the element: a drag's free boot is turned IN, the
+     skating knee sinks until the free blade lifts clear, and what drags is the INSIDE
+     OF THE BOOT. So the contact is not a blade, and putting the boot's side on the ice
+     means rolling it — the axis this rig has never had, and the one that has blocked
+     the lunge since Session 14. docs/model.md. */
+  'drag':                        'the contact is the side of the boot, not a blade, and the '
+                               + 'rig cannot roll a boot onto its side — the lunge\'s blocker',
   'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
 };
 
