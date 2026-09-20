@@ -79,7 +79,7 @@
  * The two that remain turned out to be ONE fault with two instances, which is what made
  * an exemption list worth writing rather than arguing over twice. Both are a free foot
  * in the last frames before it takes the weight — the step-over this rig does not draw,
- * after twoFoot and toePick. `arriving` below declares them, from both sides, the way
+ * after twoFoot and toePick. `handover` below declares them, from both sides, the way
  * drawn.mjs holds its undrawable pages.
  */
 import { MOVES } from '../src/lib/moves.js';
@@ -96,11 +96,13 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
  * is the step-over this rig does not draw, after twoFoot and toePick.
  *
  * TWO INSTANCES, ONE FAULT, and that is what made this list worth writing rather
- * than arguing over twice. The waltz jump's is one frame at f=0.439, on the right
- * foot, which becomes the skating foot at the key t=0.44 — *Front of the blade
- * touches down*. The change of foot's is seven frames at f=0.483 to 0.502, on the
- * right foot, which becomes the skating foot at t=0.50366 — *Change of foot -
- * stepping over onto the right*. Same shape, same reason, two moves.
+ * than arguing over twice. Both are now in the change of foot, one at each end of its
+ * transfer: the right foot arrives for one frame at f=0.502, taking the weight at the
+ * key t=0.50366 — *Change of foot - stepping over onto the right* — and the left foot
+ * leaves for two frames at f=0.361 to 0.364, having had it at t=0.36. The waltz jump's
+ * arrival was the third and is gone: an arriving foot is neutral rather than pointed,
+ * which a coach settled on 20/09/2026, and the frame cleared the ice on its own. Same
+ * shape, same reason, opposite directions.
  *
  * ASSERTED FROM BOTH SIDES, because an exemption that only excuses is this
  * repository's oldest hole and this file's own header says so:
@@ -122,10 +124,23 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
  * THE WINDOWS ARE A CLAIM TOO — spin.mjs's lesson. Each runs from the key where the
  * foot is last unambiguously in the air to the key where it takes the weight, so a
  * boot dipping EARLIER than the handover is not covered by any of this. */
-const arriving = {
-  changeFootSpin: { foot: 'R', from: 0.49, to: 0.51, cm: 0.1,
-                    why: 'the two frames where the arriving right foot is at z 0 and has not '
-                       + 'yet taken the weight — the boot glyph sitting on the ice at contact' },
+/* DEPARTURES TOO, SINCE 20/09/2026, and the entry below is the first one. Until that
+ * day a departing foot never reached this file at all: onIceOf answered "on the ice"
+ * for anything the pose named `skate`, and the pose carries `skate` from the left key,
+ * so a blade that had left the ice went on being claimed down for the whole span. Now
+ * that `skate` names only the blade the tracing is built from, the frames just after a
+ * foot leaves are free frames like any other, and the first of them sits on the ice
+ * line for the same reason the last frames before an arrival do — the interpolation out
+ * of a key whose foot is at z 0. One fault, two directions, one list. */
+const handover = {
+  changeFootSpin: [
+    { foot: 'R', from: 0.49, to: 0.51, cm: 0,
+      why: 'the one frame where the arriving right foot is at z 0 and has not '
+         + 'yet taken the weight — the boot glyph sitting on the ice at contact' },
+    { foot: 'L', from: 0.35, to: 0.37, cm: 0,
+      why: 'the two frames after the departing left foot leaves the ice at t=0.36, '
+         + 'the boot glyph still on the line it has just come off' },
+  ],
 };
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();
@@ -211,14 +226,18 @@ function lowest(n, m) {
    them by much. A checker cannot be shown to work by a mutation that does not move it.
 
    So the branch is broken drawn.mjs's way, like --break=stale below: the DECLARATION
-   is made wrong rather than the pose. Both entries claim a depth of nought, and both
-   runs must say so. */
+   is made wrong rather than the pose. Every entry is made to claim a depth no run can
+   be shallower than, and every run must then report itself deeper. MINUS ONE and not
+   nought since 20/09/2026: the departure entry's measured depth IS nought, so zeroing
+   the declarations stopped breaking it the day it was added — a mutation that has
+   quietly become a no-op on one of its cases is a mutation that is no longer testing
+   it. */
 if (BREAK === 'deeper')
-  for (const ex of Object.values(arriving)) ex.cm = 0;
+  for (const exs of Object.values(handover)) for (const ex of exs) ex.cm = -1;
 
 if (BREAK === 'stale')
-  arriving.spiral = { foot: 'R', from: 0, to: 1, cm: 5,
-                      why: 'a deliberately stale declaration' };
+  handover.spiral = [{ foot: 'R', from: 0, to: 1, cm: 5,
+                       why: 'a deliberately stale declaration' }];
 
 if (BREAK === 'sink' || BREAK === 'flat')
   for (const m of Object.values(MOVES))
@@ -243,17 +262,17 @@ for (const id of Object.keys(MOVES)) {
     runs.delete(key);
     const where = `${r.cm.toFixed(1).padStart(5)} cm below at f=${r.at.toFixed(3)}` +
                   `   (${r.n} frame${r.n === 1 ? '' : 's'} from f=${r.from.toFixed(3)} to f=${r.to.toFixed(3)})`;
-    const ex = arriving[id];
-    /* The window and the foot decide whether this is the declared case at all. A run
+    /* The window and the foot decide whether this is a declared case at all. A run
        outside either is an ordinary failure, which is the point of naming them. */
-    if (ex && r.w === ex.foot && r.from >= ex.from && r.to <= ex.to) {
-      declared.add(id);
+    const ex = (handover[id] || []).find(e => r.w === e.foot && r.from >= e.from && r.to <= e.to);
+    if (ex) {
+      declared.add(ex);
       if (r.cm > ex.cm + JITTER) {
         bad++;
         console.log(`  DEEPER ${id.padEnd(16)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
         console.log(`         declared at ${ex.cm.toFixed(1)} cm — the pose got worse under cover of being named`);
       } else {
-        console.log(`  arriving ${id.padEnd(15)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
+        console.log(`  handover ${id.padEnd(15)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
       }
       return;
     }
@@ -295,16 +314,17 @@ for (const id of Object.keys(MOVES)) {
 
 /* The other side of the exemption. drawn.mjs's rule, word for word: an entry that
    no longer describes anything is the list lying about the model. */
-for (const [id, ex] of Object.entries(arriving))
-  if (!declared.has(id)) {
-    bad++;
-    console.log(`  STALE  ${id.padEnd(16)} clears the ice now, and arriving still declares it`);
-    console.log(`         ("${ex.why}") — delete the entry`);
-  }
+for (const [id, exs] of Object.entries(handover))
+  for (const ex of exs)
+    if (!declared.has(ex)) {
+      bad++;
+      console.log(`  STALE  ${id.padEnd(16)} ${ex.foot} clears the ice now, and handover still declares it`);
+      console.log(`         ("${ex.why}") — delete the entry`);
+    }
 
 console.log(`\n${glyphs} boot glyphs across ${views} views that draw an ice line`);
 if (worst) console.log(`deepest ${worst.cm.toFixed(1)} cm below, ${worst.id} ${worst.w} at f=${worst.f.toFixed(3)}`);
 console.log(bad ? `\n${bad} problem${bad === 1 ? '' : 's'}`
                 : `\nno boot that is off the ice is drawn below it, except the ` +
-                  `${Object.keys(arriving).length} declared arrivals, which are where and how deep they say`);
+                  `${Object.values(handover).flat().length} declared handovers, which are where and how deep they say`);
 process.exit(bad ? 1 : 0);

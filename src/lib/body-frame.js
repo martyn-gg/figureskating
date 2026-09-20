@@ -418,11 +418,18 @@ function viewTop(svg, move, path, frames, SHOW){
        TRAILING blade and the mark is the reference blade's, which on a T-stop is
        gliding. Only a skidding REFERENCE blade draws a band. */
     let run=[], runKey=null;
+    /* THE MARK IS DRAWN WHERE THE REFERENCE BLADE HAS A CONTACT, not merely where there
+       is a reference — 20/09/2026. `!po.skate` reads "is there a reference blade" and was
+       being used to mean "is anything on the ice", which is the conflation onIceOf's own
+       header warns about, one layer up. `skate` carries from the left key, so a blade that
+       left the ice at a key went on drawing a tracing until the next one: six frames of the
+       waltz, from a blade up to thirty centimetres in the air. */
     const stateOf = f => {
       const po = f.pose;
-      if (!po.skate) return { air:true, yaw:0, edge:po.edge };
+      const on = po.skate ? onIceOf(po, po.skate) : null;
+      if (!on) return { air:true, yaw:0, edge:po.edge };
       const q = po[po.skate];
-      const skid = onIceOf(po, po.skate) === 'skid';
+      const skid = on === 'skid';
       return { air:false, skid, yaw: skid ? (q.yaw || 0) : 0, edge:po.edge };
     };
     const keyOf = st => `${st.air?'a':st.skid?'s':'e'}${st.edge}`;

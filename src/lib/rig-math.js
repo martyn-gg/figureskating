@@ -66,9 +66,21 @@ export const lateral  = yawDeg => [Math.sin(yawDeg*D2R),  Math.cos(yawDeg*D2R), 
    reference is the skid, and there was no way to say so. The contact is declared
    on the foot for every other foot in this model; now it is for this one as well,
    and 'blade' is what it means when nothing is said. */
-export const onIceOf = (pose, which) =>
-  which === pose.skate ? (pose.skate ? ((pose[which] && pose[which].onIce) || 'blade') : null)
-                       : ((pose[which] && pose[which].onIce) || null);
+/* AND IT MAY DECLARE THAT IT HAS NONE — 20/09/2026, and this is the other half of
+   the sentence above. The fallback was unconditional, so the reference foot could say
+   WHICH contact it had and could not say it had none — and a default that cannot be
+   overridden is not a default, it is the answer with a comment about defaults over it.
+
+   The foot's own declaration wins, an explicit null included; the reference default is
+   what it means when the foot says nothing. Nothing authored writes `onIce: null`, so
+   every keyframe answers exactly as it did. What writes it is poseAt, onto a foot that
+   is arriving or departing, because `skate` NAMES THE BLADE THE TRACING IS BUILT FROM
+   and says nothing about contact. docs/model.md, *What `skate` names*, has the argument. */
+export const onIceOf = (pose, which) => {
+  const f = pose[which];
+  if (f && f.onIce !== undefined) return f.onIce;
+  return pose.skate && which === pose.skate ? 'blade' : null;
+};
 
 export const dirOf = (pose, which) =>
   which === pose.skate ? pose.dir : ((pose[which] && pose[which].dir) || pose.dir);
@@ -732,11 +744,23 @@ export function poseAt(move, t){
   const span = Math.max(1e-6, b.t-a.t);
   const raw = Math.min(1, Math.max(0, (t-a.t)/span));
   const u = raw*raw*(3-2*raw);
+  /* A CONTACT HOLDS ACROSS A SPAN ONLY WHERE BOTH KEYS DECLARE IT — 20/09/2026.
+     lpP carries onIce from the left key alongside edge and dir, under a comment calling
+     all three states rather than quantities. It is right about edge and dir: they are
+     labels that stay true while the foot moves. onIce is not that kind of thing. It is a
+     geometric claim — this foot is within ON_ICE of the ice — and a span is the pose
+     interpolating away from it. A claim the motion falsifies cannot be carried through
+     the motion, which is how a blade claimed on the ice came to be drawn 29.99 cm above
+     it for six frames of the waltz with the tracing built from it.
+
+     u > 0 and not u >= 0 because the declaration IS the truth at the instant of the key.
+     A blade leaves the ice at a moment, and the last key that declares the contact is
+     that moment. */
   const foot = which => {
     const f = lpP(a[which], b[which], u);
     if (!f) return f;
     const ar = arrivalOf(a, b, which);
-    return ar ? { ...f, arrival: ar } : f;
+    return ar ? { ...f, arrival: ar, ...(u > 0 ? { onIce: null } : {}) } : f;
   };
   return {
     hipZ: lp(a.hipZ,b.hipZ,u), hipYaw: lp(a.hipYaw,b.hipYaw,u), shYaw: lp(a.shYaw,b.shYaw,u),
