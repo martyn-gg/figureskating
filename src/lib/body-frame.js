@@ -340,10 +340,15 @@ function viewTop(svg, move, path, frames, SHOW){
        of it, and 18 in its backward twin. Found by framing.mjs the day Playwright
        first ran on this machine, having been wrong since the box was tightened.
 
-       The expression below is the renderer's own `hip = at(-sk.t,-sk.n)` and
-       `rel(q)` read back as a distance, rather than a guess at what they come to. */
-    const sk = ps.skate ? ps[ps.skate] : null;
-    const ot = sk ? (sk.t || 0) : 0, on = sk ? (sk.n || 0) : 0;
+       The expression below is the renderer's own `hip = at(-ot,-on)` and `rel(q)`
+       read back as a distance, rather than a guess at what they come to.
+
+       THE OFFSET COMES OFF THE PATH POINT — 20/09/2026. It used to be re-derived here
+       from `pose.skate`, in a second place, and the path now carries it because a held
+       offset is a function of the history and one pose has not got one. Two expressions
+       of the placement became one, and this loop and the placement below cannot
+       disagree about it any more. */
+    const ot = fr.p.ot || 0, on = fr.p.on || 0;
     reach = Math.max(reach, Math.abs(ot), Math.abs(on));        // the hip itself
     for(const k of ['L','R','LH','RH','sh']){
       const q = ps[k]; if(!q) continue;
@@ -475,8 +480,11 @@ function viewTop(svg, move, path, frames, SHOW){
 
     const T={x:Math.cos(p.th),y:Math.sin(p.th)}, Nv={x:-Math.sin(p.th),y:Math.cos(p.th)};
     const at=(t,n)=>({x:p.x+T.x*t*BS+Nv.x*n*BS, y:p.y+T.y*t*BS+Nv.y*n*BS});
-    const sk = pose.skate ? pose[pose.skate] : null;
-    const hip = sk ? at(-sk.t,-sk.n) : {x:p.x,y:p.y};
+    /* THE HIP HANGS OFF THE PATH'S OWN OFFSET, not off `pose.skate` — 20/09/2026.
+       buildPath carries it, because it is held across the frames where nothing is on
+       the ice and a single pose cannot say what was held. `pose.skate` places nothing
+       now: it names the blade the tracing is drawn from, which is all it ever meant. */
+    const hip = at(-(p.ot || 0), -(p.on || 0));
     const rel=(q)=>({x:hip.x+T.x*q.t*BS+Nv.x*q.n*BS, y:hip.y+T.y*q.t*BS+Nv.y*q.n*BS});
 
     const bar=(pos,yawDeg,halfCm,colour)=>{

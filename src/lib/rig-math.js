@@ -674,6 +674,67 @@ export function buildPath(move){
   // cumulative distance in cm (path units ≈ cm at this radius scale)
   let d=0; pts[0].d=0;
   for(let i=1;i<pts.length;i++){ d += Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y); pts[i].d=d; }
+
+  /* THE HIP'S OFFSET FROM THE PATH, AND THE DISPLACEMENT THAT KEEPS IT CONTINUOUS
+     — 20/09/2026. docs/model.md, *The reference handover*, has the argument.
+
+     Until today body-frame.js derived this itself, per frame, as `pose.skate`'s own
+     offset. That was two faults in one line. It re-derived from the pose a fact the
+     path has to know, which is this repository's named recurring failure; and it
+     gave the root no condition the TRACING has — `skate` names the blade the tracing
+     is built from, the mark is drawn only where that blade has a contact, and the
+     hip was hung off it whether it was touching or 30 cm in the air. So the root
+     moved by the distance between two blades whenever the reference changed: 12.54 cm
+     in one frame on the waltz, 14.49 on the change of foot, against medians of 1.78
+     and nought.
+
+     Three rules. While the reference blade has a contact the offset is that blade's.
+     While nothing is on the ice the offset is HELD at its last value, because there is
+     nothing cutting the ice to measure from and the body carries on as it was. When a
+     blade takes the ice the path is displaced so the hip does not move.
+
+     HOLDING IS WHAT MAKES ONE RULE COVER A JUMP AND A SPIN, and neither was designed
+     for. A flight segment is a line, so a constant offset carries the hip straight
+     through the air. A spin's coil is a circle whose radius EQUALS the centred blade's
+     lateral offset — spin.mjs's own definition of centred — so a constant offset holds
+     the hip on the centre point for the whole step-over. It also halves the seams: a
+     blade LEAVING the ice is no longer a change of anchor at all, because the offset it
+     leaves behind is the offset that is held.
+
+     Keyed on the POSE's contact, never on the segment's `foot`. They agree on the clock
+     and not always on the sample — the sample count is rounded per segment, so the
+     change of foot's path boundary falls at index 162 while the pose's reference changes
+     at 161 — and the renderer draws from the pose, so the root has to as well or the two
+     drift. boot.mjs's rule, one file along.
+
+     `d` is deliberately computed ABOVE this, so it stays the arc length actually
+     skated rather than picking up the displacement as distance travelled.
+
+     A PATH WITH NO KEYS IS A SHAPE AND NOT A SKATER, so it gets no offset. PathThumb
+     runs a basic's `trace` through this function to draw a tracing for an element with
+     no entry edge — deliberately, one derivation rather than two — and hands it a
+     `path` and a `radius` and nothing else. There is no body to place, so there is
+     nothing to hold or displace, and the curve it wants is the plain one. Found by
+     `astro build` and by nothing before it: every checker here iterates MOVES, and
+     MOVES is not where the second caller lives. */
+  if(!move.keys) return pts;
+  const n = pts.length;
+  let held = {t:0, n:0}, src = null, dx = 0, dy = 0;
+  for(let i=0;i<n;i++){
+    const po = poseAt(move, i/(n-1));
+    const down = po.skate && onIceOf(po, po.skate) ? po.skate : null;
+    if(down && down !== src){
+      if(i > 0){
+        const th2 = pts[i].th, dt = po[down].t - held.t, dn = po[down].n - held.n;
+        dx += Math.cos(th2)*dt - Math.sin(th2)*dn;
+        dy += Math.sin(th2)*dt + Math.cos(th2)*dn;
+      }
+      src = down;
+    }
+    if(down) held = {t: po[down].t, n: po[down].n};
+    pts[i].x += dx; pts[i].y += dy;
+    pts[i].ot = held.t; pts[i].on = held.n;
+  }
   return pts;
 }
 
