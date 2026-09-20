@@ -41,6 +41,31 @@ const P = (t,n,z,pitch=0,point=ANKLE_POINT,roll=0) => ({t,n,z,pitch,point,roll})
 const POINTED = 25;
 
 
+/* A FREE FOOT IS NOT POINTED UNLESS THE POSITION SAYS SO — Martyn, 20/09/2026,
+   and it is the first time a coach has ruled on either of these numbers.
+
+   `ANKLE_POINT` is 10°, applied to every unauthored free foot, and rig-math.js
+   records against it in as many words: *Verified against a coach: NO.* Both it and
+   `ANKLE_MAX` are read off a study of ankle injury, which is not a study of what a
+   position looks like. Ten degrees is not neutral; it is a tenth of the way to a
+   pointed foot, applied to every pose nobody had an opinion about.
+
+   ON THE WALTZ JUMP HE HAS AN OPINION. Landing it, the free foot is not pointed:
+   it is pushed back, and it is NEUTRAL — which is what lets the skater step
+   forward onto it and keep moving, or spike the toe in for the next element. Both
+   continuations exist and a learner should be shown neither; the neutral foot is
+   the one that leaves them available. And through the move itself it is neutral
+   too, where it is providing the momentum.
+
+   So `NEUTRAL` is authored on this move's free feet rather than `ANKLE_POINT`
+   being changed underneath every pose in the guide. rig-math.js's own finding is
+   that the constant was never the lever — plantarflexion drives the blade wherever
+   the shin already points, so one number lifts the toe on a spiral and drives it
+   at the ice on a landing. It is a quantity a skater chooses, per pose, which is
+   why `point` is on the keyframe. */
+const NEUTRAL = 0;
+
+
 /* An AUTHORED hand. The flag is the whole of the LH/RH fix below: it is what the
    default-carriage loop refuses to overwrite, and it is what the renderer reads
    to decide whether the guide names which hand is which. One field, in place of
@@ -282,33 +307,33 @@ export const MOVES = {
          direction of travel, at positive t. Getting that backwards is invisible frame
          by frame and obvious on a contact sheet. */
       {arm:[64,10,18], t:0.00, ph:'Set-up on the forward outside edge', hipZ:96, hipYaw:-8, shYaw:-24,
-       sh:P(-4,0,148), L:P(14,14,0,-0.5), R:P(-49,-6,27), skate:'L', edge:'O', dir:'F'},
+       sh:P(-4,0,148), L:P(14,14,0,-0.5), R:P(-49,-6,27,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[60,-2,24], t:0.14, ph:'Knee bends, edge deepens', hipZ:86, hipYaw:-6, shYaw:-20,
-       sh:P(2,0,132), L:P(19,18,0,-1), R:P(-55,-5,16), skate:'L', edge:'O', dir:'F'},
+       sh:P(2,0,132), L:P(19,18,0,-1), R:P(-55,-5,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:92, hipYaw:-2, shYaw:-10,
-       sh:P(0,0,138), L:P(15,16,0,0.5), R:P(0,-4,10), skate:'L', edge:'O', dir:'F'},
+       sh:P(0,0,138), L:P(15,16,0,0.5), R:P(0,-4,10,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[50,26,6], t:0.30, ph:'Takeoff — leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
-       sh:P(-4,0,154), L:P(2,8,2,3), R:P(46,0,62), skate:'L', edge:'O', dir:'F'},
+       sh:P(-4,0,154), L:P(2,8,2,3), R:P(46,0,62,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[36,22,6], t:0.32, ph:'Blade leaves the ice', hipZ:118, hipYaw:26, shYaw:18,
-       sh:P(-4,0,170), L:P(-12,6,30), R:P(40,-2,70), skate:null},
+       sh:P(-4,0,170), L:P(-12,6,30,0,NEUTRAL), R:P(40,-2,70,0,NEUTRAL), skate:null},
       {arm:[26,16,10], t:0.36, ph:'Rising, rotation begins', hipZ:126, hipYaw:70, shYaw:56,
-       sh:P(-2,0,178), L:P(-26,4,46), R:P(22,-4,74), skate:null},
+       sh:P(-2,0,178), L:P(-26,4,46,0,NEUTRAL), R:P(22,-4,74,0,NEUTRAL), skate:null},
       {arm:[22,14,12], t:0.39, ph:'Peak — legs pass', hipZ:132, hipYaw:110, shYaw:98,
-       sh:P(0,0,184), L:P(-4,8,60), R:P(4,-8,64), skate:null},
+       sh:P(0,0,184), L:P(-4,8,60,0,NEUTRAL), R:P(4,-8,64,0,NEUTRAL), skate:null},
       {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:114, hipYaw:158, shYaw:142,
-       sh:P(-2,0,166), L:P(59,10,46), R:P(-2,0,26), skate:null},
+       sh:P(-2,0,166), L:P(59,10,46,0,NEUTRAL), R:P(-2,0,26,0,NEUTRAL), skate:null},
       {arm:[34,14,14], t:0.44, ph:'Front of the blade touches down', hipZ:98, hipYaw:180, shYaw:162,
-       sh:P(-4,0,148), L:P(38,12,26), R:P(-4,11,1,3), skate:'R', edge:'O', dir:'B'},
+       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3), skate:'R', edge:'O', dir:'B'},
       {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:178, shYaw:158,
-       sh:P(-6,0,146), L:P(58,13,25), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
+       sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
       {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
-       sh:P(-8,0,136), L:P(52,15,10), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
+       sh:P(-8,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
       {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:174, shYaw:150,
-       sh:P(-8,0,142), L:P(50,15,15), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
+       sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:174, shYaw:154,
-       sh:P(-6,0,148), L:P(59,14,26), R:P(-6,17,0), skate:'R', edge:'O', dir:'B'},
+       sh:P(-6,0,148), L:P(59,14,26,0,NEUTRAL), R:P(-6,17,0), skate:'R', edge:'O', dir:'B'},
       {arm:[64,10,18], t:1.00, ph:'Run-out — still on the back outside edge', hipZ:98, hipYaw:172, shYaw:158,
-       sh:P(-5,0,150), L:P(60,13,28), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
+       sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
   spiral: {
