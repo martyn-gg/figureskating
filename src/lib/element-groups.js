@@ -85,9 +85,13 @@ export function elementGroups(elements) {
      docs/gaps-competition.md — whether a section's place should be decided by whether
      its elements appear in a test the guide holds. Under that rule the basics would
      move again, and further up. This is only the floor not being the footer. */
-  const KIND_ORDER = ['basic'];
-  const restKinds = [...new Set(rest.map(e => e.data.kind))]
-    .sort((a, b) => (KIND_ORDER.indexOf(a) + 1 || 99) - (KIND_ORDER.indexOf(b) + 1 || 99));
+  /* Was `KIND_ORDER = ['basic']` with everything else keeping the order an
+     alphabetical sort of element names happened to give it. SECTION_RANK below
+     now orders every section, including these, so ordering them again here
+     would be a second answer to the same question. Left unsorted on purpose:
+     SECTIONS sorts them. */
+  const KIND_ORDER = [];
+  const restKinds = [...new Set(rest.map(e => e.data.kind))];
 
   const nEdges = elements.filter(e => e.data.kind === 'edge').length;
   const nTurns = elements.filter(e => e.data.kind === 'turn').length;
@@ -110,6 +114,48 @@ export function elementGroups(elements) {
   const KIND_LABEL = k => k === 'position' ? 'Positions'
     : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`;
 
+  /* THE ORDER OF THE SECTIONS IS THE ORDER A SKATER MEETS THEM — 19/09/2026,
+     Martyn: these should be ordered properly, with basics at the top and then
+     moving through the others in a logical order according to a skater's
+     learning. Until now the first six were in the order they happened to be
+     written and the rest fell out of an alphabetical sort of element NAMES, so
+     the floor of the guide printed below the jumps.
+
+     Why this order. You cannot hold an edge before you can push and glide, so
+     the basics come first. The eight edges are next because everything after
+     them is a way of leaving one. Transitions join edges together and are the
+     first thing a skater does with two of them. Turns come after that, one foot
+     before two, because a three turn is taught before a mohawk and both before
+     brackets, rockers and counters. Twizzles are turns that travel and want the
+     turns first. Clusters are runs of what has come before, so they cannot come
+     before it. Then held positions, which need a secure edge and nothing else,
+     and last the free skating half: jumps, then spins.
+
+     THIS IS A PEDAGOGICAL CLAIM AND CANNOT BE DERIVED. What the guide already
+     derives is which sections EXIST; what no data here knows is which is taught
+     first. So it is written down — and written as a rank per id rather than as
+     a list of what to show, because a list of what to show is how twenty-four
+     twizzles once fell through the home page's featured filter and landed
+     amongst the jumps. A section with no rank is not quietly sorted last: it
+     throws, so that the kind added tomorrow is a build failure and not a
+     silently misplaced heading.
+
+     docs/gaps-competition.md proposes a different key for a different job —
+     whether an element appears in a test the guide holds — which decides which
+     TAB a section belongs on. That is orthogonal to this and still open. */
+  const SECTION_RANK = {
+    basic: 1, edges: 2, transitions: 3, 'one-foot': 4, 'two-foot': 5,
+    twizzles: 6, clusters: 7, position: 8, jump: 9, spin: 10,
+  };
+  const rankOf = id => {
+    const r = SECTION_RANK[id];
+    if (r === undefined) throw new Error(
+      `elementGroups: the section "${id}" has no place in SECTION_RANK. ` +
+      'Give it one in src/lib/element-groups.js — a new kind must be ordered ' +
+      'deliberately rather than landing at the bottom of the page unnoticed.');
+    return r;
+  };
+
   const SECTIONS = [
     { id: 'edges',       label: 'Edges',          n: nEdges },
     { id: 'one-foot',    label: 'One-foot turns', n: oneFoot.length },
@@ -119,7 +165,7 @@ export function elementGroups(elements) {
     { id: 'clusters',    label: 'Clusters',       n: combos.length },
     ...restKinds.map(k => ({ id: k, label: KIND_LABEL(k),
                              n: rest.filter(e => e.data.kind === k).length })),
-  ].filter(s => s.n > 0);
+  ].filter(s => s.n > 0).sort((a, b) => rankOf(a.id) - rankOf(b.id));
   return { STATES, TURN_KEYS, STEP_KEYS, find, EDGE_ROWS, ROW_WORD, transitions, transitionGroups, twizzles, twizzleGroups, combos, comboGroups, rest, KIND_ORDER, restKinds, nEdges, nTurns, oneFoot, twoFoot, KIND_LABEL, SECTIONS };
 }
 
