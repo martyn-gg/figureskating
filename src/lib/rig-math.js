@@ -81,6 +81,10 @@ export function edgeOf(pose, which) {
      would give the renderer a colour and a dot side for a claim the model is not
      making — the same shape as the flag this replaced. */
   if (on === 'pick') return null;
+  /* AND NEITHER HAS A BOOT ON ITS SIDE, for the same reason one step further: the
+     runner is not merely out of the ice, it is pointing sideways out of it. There is
+     no biting side to name and no colour to give the glyph. */
+  if (on === 'boot') return null;
   /* A SKID HAS AN EDGE AND IT IS AUTHORED. It cannot be derived: secondFoot below
      works because both blades are on one circle, and a skidding blade is not on
      the circle at all — it is across it. But the edge is real and it is the whole
@@ -103,7 +107,8 @@ export const edgesDown = pose =>
 export const runnersDown = pose =>
   ['L', 'R'].filter(w => ['blade', 'skid'].includes(onIceOf(pose, w))).sort(refFirst(pose));
 
-/** Every foot touching the ice by any means — an edge, a skid or a pick. */
+/** Every foot touching the ice by any means — an edge, a skid, a pick or a boot
+    lying on its side. */
 export const contactsDown = pose =>
   ['L', 'R'].filter(w => onIceOf(pose, w) !== null).sort(refFirst(pose));
 
@@ -151,6 +156,35 @@ export const pitchOf = bd => -Math.asin(Math.max(-1, Math.min(1, bd[2]))) * 180 
    here, so the drawing and the model cannot drift apart. */
 export const PICK_ALONG = 17.8;
 
+/* THE BOOT AS A SOLID, which until 20/09/2026 this model never needed. Every contact
+   it could express sat on the blade, and the blade is a line on the sole's centre
+   line, so the boot's width and depth were the glyph's business and nothing else's.
+   A boot lying on its SIDE touches along its edge, which is off that line in both
+   directions, and where that edge is decides both where the ankle goes and how far
+   the boot has to be over before the blade is clear of the ice.
+
+   READ OFF THE GLYPHS, NOT CHOSEN. `bootTop`'s footprint runs to ±8 in y; `bootSide`
+   puts the boot's body at y −3 and the rocker's lowest point at y 4. The glyphs are
+   drawn at true scale — the boot holder carries the view's own px-per-cm — so those
+   are centimetres. They are declared HERE because the model should own the dimensions
+   and the picture should draw them, and `tools/boot.mjs` asserts that the paths still
+   agree, because this is now a fact with two expressions. */
+export const BOOT_HALF_W = 8;                      // cm, centre line to the sole's edge
+export const BLADE_PROUD = 7;                      // cm, the runner below the sole
+
+/* HOW FAR OVER A LEVEL BOOT MUST BE BEFORE ITS EDGE IS LOWER THAN ITS BLADE:
+   BLADE_PROUD·cos θ = BOOT_HALF_W·sin θ, so 41.2°.
+
+   A REFERENCE FIGURE AND NOT A THRESHOLD, and the specification had it as a threshold
+   for an hour. It is only the answer while the boot is level — bd horizontal and the
+   up-axis vertical. Tilt the boot and the sole's edge moves with the whole frame: on a
+   lunge's trailing boot, reaching back and down, the edge reaches the ice at about 22°.
+   Measured, which is the only reason it is written down correctly here.
+
+   So what holds a side contact is not a constant. It is soleEdgeZ below, per pose, and
+   the pair of assertions that go with it. */
+export const SIDE_ROLL_LEVEL = Math.atan2(BLADE_PROUD, BOOT_HALF_W) / (Math.PI / 180);
+
 /* HOW FAR ALONG THE BOOT THE CONTACT IS, from the blade's lowest point: the
    rocker for a blade, the teeth for a pick, and nothing at all for a foot in the
    air, which touches nowhere.
@@ -168,6 +202,11 @@ export const contactAlongOf = (pose, which, bd) => {
      omission: a flat blade sliding sideways is in contact along most of its
      length, so there is no one point on the rocker to name, and its middle is as
      honest a place to pivot the glyph as any. */
+  /* A BOOT ON ITS SIDE falls through to zero for the skid's reason, not by omission:
+     it lies along most of its length, so there is no one point on it to name and its
+     middle is as honest a place to pivot as any. Where a side contact differs from
+     every other is ACROSS the boot, and that is not an offset here: the authored point
+     stays the blade's reference and soleEdgeZ below is what holds the roll to the ice. */
   return c === 'blade' ? contactAlong(pitchOf(bd)) : c === 'pick' ? PICK_ALONG : 0;
 };
 
@@ -193,6 +232,26 @@ export function ankleOf(pose, which, bd, toKnee){
   } else {
     up = [-bd[0]*bd[2], -bd[1]*bd[2], 1 - bd[2]*bd[2]];
   }
+  /* THE BOOT'S FOURTH ROTATION — 20/09/2026. Everything above builds the up-axis out
+     of the shin, which pins the whole boot frame to the plane containing the leg: a
+     boot could pitch and yaw and never roll, and that is what has blocked the lunge
+     since Session 14 and the drag since this morning. `roll` turns the up-axis about
+     the boot's own direction, which is the one rotation that plane cannot express.
+
+     HERE AND NOWHERE ELSE, WHICH IS THE WHOLE ECONOMY OF IT. The renderer does not
+     hold a boot frame of its own — it reads the up-axis back off the ankle this
+     function places, and takes the lateral axis as their cross product. So rotating
+     `up` rotates all three axes, the glyph chooser follows on its own, and
+     tools/boot.mjs's assertion that the drawn roll matches the model's is still true
+     by construction rather than by a second edit agreeing with this one.
+
+     The ankle MOVES, by up to ANKLE_UP·sin(roll) — thirteen centimetres at sixty
+     degrees. That is the model working rather than a side effect: roll your foot onto
+     its edge and the ankle travels over the contact, and twoBone re-solves the knee
+     from where it ends up. Defaults to zero and is a no-op there, so every pose
+     written before today draws byte-identically — hashed over 399 frames, both ways. */
+  const roll = foot.roll || 0;
+  if (roll) up = rotateAbout(bd, up, roll);
   const ul = Math.hypot(...up) || 1;
   /* Back along the boot from the contact: past the ankle's own offset from the
      blade's centre, AND past however far the contact is from that centre. On a
@@ -202,6 +261,53 @@ export function ankleOf(pose, which, bd, toKnee){
   return {t: foot.t - bd[0]*back + up[0]/ul*ANKLE_UP,
           n: foot.n - bd[1]*back + up[1]/ul*ANKLE_UP,
           z: foot.z - bd[2]*back + up[2]/ul*ANKLE_UP};
+}
+
+/* THE BOOT'S OWN FRAME, from the same two vectors the renderer draws it about. Exported
+   because the roll gave three different callers a reason to want the lateral axis and
+   the repository keeps one expression of a fact. `up` must be the unit up-axis. */
+export const bootLateral = (bd, up) =>
+  [bd[1]*up[2]-bd[2]*up[1], bd[2]*up[0]-bd[0]*up[2], bd[0]*up[1]-bd[1]*up[0]];
+
+/* HOW HIGH THE EDGE OF THE SOLE IS — 20/09/2026, and it is what holds a roll honest.
+   A foot is authored at the BLADE'S reference point, and that is true of all five
+   contacts including this one: it is not where a boot on its side touches, because what
+   touches is the edge of its sole, BOOT_HALF_W across the runner and BLADE_PROUD above
+   it. Keeping the authored point the same thing for every contact is worth more than
+   making it the touching point for one of them — the alternative puts an offset
+   perpendicular to the boot into `ank − contact`, which is the vector the renderer
+   recovers the up-axis FROM, and tools/boot.mjs's drift check would have to learn to
+   undo it.
+
+   So the roll is authored and this is the quantity it is held to, IN A PAIR, because an
+   exemption can only excuse a pose:
+
+     the sole's edge is ON the ice     soleEdgeZ === 0
+     and the runner is CLEAR of it     foot.z > 0
+
+   The second is what stops a side contact being a deep lean with a better name, and it
+   is not a separate claim so much as the first one read back: solving the first for z
+   gives z = −soleEdgeZ(at z 0), which is positive only once the boot is over far enough
+   for its edge to be the lowest thing on the foot. Same shape as a pick, which must be
+   pitched PAST the blade's limit or the runner still reaches the ice.
+
+   The edge that comes down is the one the boot is rolled toward, so the sign is the
+   roll's and is not a second number that could disagree with it. */
+export const soleEdgeZ = (pose, which, bd, up) => {
+  const ul = Math.hypot(...up) || 1, u = up.map(c => c/ul);
+  const lat = bootLateral(bd, u);
+  return pose[which].z + BLADE_PROUD*u[2] + Math.sign(pose[which].roll || 1)*BOOT_HALF_W*lat[2];
+};
+
+/* Rotation of v about a UNIT axis by an angle, Rodrigues. `transport` below is the
+   shortest arc between two vectors and cannot express this: a turn about an axis you
+   name, by an amount you name, which is what a roll is. */
+export function rotateAbout(axis, v, deg){
+  if(!deg) return v.slice();
+  const th = deg * D2R, c = Math.cos(th), sn = Math.sin(th);
+  const kv = [axis[1]*v[2]-axis[2]*v[1], axis[2]*v[0]-axis[0]*v[2], axis[0]*v[1]-axis[1]*v[0]];
+  const kd = axis[0]*v[0] + axis[1]*v[1] + axis[2]*v[2];
+  return v.map((c0,i) => c0*c + kv[i]*sn + axis[i]*kd*(1-c));
 }
 
 /* Shortest-arc rotation taking `from` onto `to`, applied to v (Rodrigues). */
@@ -521,6 +627,12 @@ const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(
                           heading, do not eye it. */
                        
                        yaw:lp(a.yaw ?? 0, b.yaw ?? 0, u),
+                       /* `roll` is a quantity and interpolates, and it is in this line on
+                          the day it was added rather than a session later. `yaw`'s note
+                          above is the reason: the omission is invisible in the authoring,
+                          invisible to every checker that reads keyframes, and visible only
+                          in what the renderer draws. */
+                       roll:lp(a.roll ?? 0, b.roll ?? 0, u),
                        /* `edge` on a foot is a STATE and carries, like onIce and dir. Only
                           a skid has one — every other foot's edge is derived from the
                           reference blade — and a skid without it draws on the wrong edge,

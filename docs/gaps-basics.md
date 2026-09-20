@@ -43,7 +43,7 @@ missing.
 | **Gliding** | two-foot glide, backward two-foot glide | yes |
 | | one-foot glide, backward one-foot glide | yes |
 | | dip | yes, and the most worthwhile of them |
-| | drag | **no — the contact is the boot's side and the rig cannot roll a boot** |
+| | drag | yes — a rig, 20/09/2026, the first to use the fifth contact |
 | **Stopping** | snowplough stop, backward snowplough stop | yes — a rig each |
 | | T-stop | yes — a rig |
 | | hockey stop | **no — counter-rotation and a free upper body** |
@@ -52,7 +52,7 @@ missing.
 | | two-foot change of edge | yes |
 | | pivot | **no — the pick has no anchor** |
 
-Eight of twenty-two, on the day this was written. **Fifteen of twenty-two now**, and the
+Eight of twenty-two, on the day this was written. **Sixteen of twenty-two now**, and the
 count and the reasons are held by `tools/drawn.mjs` rather than by this table — read them
 there if the two ever disagree. The fourteen that could not be drawn looked like one blocker
 and were three.

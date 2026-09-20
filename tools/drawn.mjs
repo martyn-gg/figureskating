@@ -60,17 +60,6 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  /* CORRECTED TWICE IN ONE DAY, AND THE SECOND ONE MATTERS — 20/09/2026. This line
-     first said the drag wanted nothing but a rig, which was an authoring-only claim it
-     shared with backward stroking; backward stroking turned out to be true and this did
-     not. It was then replaced with a shin measurement, which was right about the pose
-     it measured and wrong about the element: a drag's free boot is turned IN, the
-     skating knee sinks until the free blade lifts clear, and what drags is the INSIDE
-     OF THE BOOT. So the contact is not a blade, and putting the boot's side on the ice
-     means rolling it — the axis this rig has never had, and the one that has blocked
-     the lunge since Session 14. docs/model.md. */
-  'drag':                        'the contact is the side of the boot, not a blade, and the '
-                               + 'rig cannot roll a boot onto its side — the lunge\'s blocker',
   'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
 };
 

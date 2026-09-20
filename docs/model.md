@@ -481,6 +481,169 @@ side rather than on a runner, with an angle saying how far over it is.
 
 Until then the page says what is missing and why.
 
+## The boot's fourth rotation — specified and built 20/09/2026
+
+The lunge has been blocked since Session 14 and the drag joined it this morning. Both want the
+same thing and this file has named it loosely — "a boot can pitch but not roll". This is that,
+stated precisely enough to build from, and the precedent is *The pick is a third kind of
+contact*: specify it, then mark the specification up with what building it actually cost.
+
+**Built the same afternoon. What follows is the specification as written, with the four places
+it was wrong marked where they happened.** Its central claim — one field, one rotation, one
+function, and everything else follows — held exactly. Two of its details did not, one of them
+in a direction that reversed a decision.
+
+### What is missing, exactly
+
+A boot has three rotational degrees of freedom and this model authors two of them.
+
+`bootDir` returns one vector, `bd`. Its pitch comes from `point` (rotation about the boot's
+lateral axis) and its yaw from `yaw` or from the tracing. That is two. The third is **rotation
+about `bd` itself**, and it is not authored anywhere — it is *derived*, in `ankleOf`:
+
+```
+up = reject(toKnee, bd)        // the boot's up-axis: the direction the leg leaves in
+ankle = contact − bd·back + up̂·ANKLE_UP
+```
+
+So the boot's up-axis is the shin's own direction with the boot direction taken out, and the
+whole boot frame is pinned to the plane containing the shin. **There is no roll, and there is
+nowhere to put one.** The renderer then reads the axis straight back off the ankle —
+`u3 = unit(reject(ank − blade, bd))`, `latL = cross(bd, u3)` — which is the rule *The boot's
+up-axis is one vector* below, and is why `boot.mjs` can assert the drawn roll to 0.00°.
+
+### The shape: one field, one rotation, one function
+
+`roll` on the foot, in degrees, rotating `up` about `bd` inside `ankleOf`, before the ankle is
+placed along it. Defaulting to zero, so every pose written before it draws byte-identically —
+the same shape as `pitch`, `point` and `yaw`, and the same promise, which is checkable by
+hashing frames.
+
+**Everything else follows for free**, and this is the part worth checking before believing:
+
+- The renderer recovers the up-axis from the ankle, so a rotated `up` is a rotated glyph with
+  no renderer change at all, and `boot.mjs`'s 0.00° assertion stays true by construction.
+- `latL = cross(bd, u3)` rotates with it, so the **glyph choice follows automatically**. The
+  branch picks whichever of the boot's three axes most faces the camera, and a boot rolled onto
+  its side presents its up-axis sideways — which is `bootTop` or `bootSole`, a plan. That is the
+  right picture of a boot lying over, and it already exists.
+- The ankle moves, by up to `ANKLE_UP·sin(roll)`, 13 cm at 60°. **That is correct rather than a
+  side effect**: roll your foot onto its edge and your ankle goes over the contact. `twoBone`
+  re-solves the knee from the moved ankle, so the leg follows.
+
+**A stale note to retire.** *Still open — a glyph for a boot seen from above its own opening*
+has been carried in the memory file since Session 06 and is answered: *Three axes, three
+glyphs*, 30/08/2026, found the glyph had existed since the first session and the profile views
+simply could not reach for it. The roll needs no new glyph. It needs the axes to be able to get
+there.
+
+> **WRONG, AND CORRECTED THE SAME HOUR.** The next section makes 41.2° a threshold. It is
+> only the answer while the boot is level: tilt it and the sole's edge moves with the whole
+> frame, and on a lunge's trailing boot it reaches the ice at about 22°. There is no constant
+> here, only a per-pose pair. `SIDE_ROLL` became `SIDE_ROLL_LEVEL` and is a reference figure.
+
+### The contact, and the number that decides it
+
+Rolling far enough stops the blade being what touches. **Both dimensions are in the glyphs
+already, at true scale, so this is read rather than chosen:** the boot is 8 cm to the edge of
+its sole (`bootTop`'s path) and the blade stands 7 cm proud of that sole (`bootSide`: body at
+y −3, rocker's lowest at y 4). Rolling about the runner, the sole's edge sits at
+`7cos θ − 8sin θ` above the ice and reaches it at
+
+**θ = 41.2°.**
+
+Past that the boot's edge is the lowest thing on the foot and the blade is clear. So a
+boot-side contact is, **by construction, past the roll a boot on an edge can be at** — exactly
+as a pick is by construction past `MAX_BLADE_PITCH`. That symmetry is the argument that this is
+the right decomposition and not a fifth special case.
+
+For scale: `boot.mjs`'s `ROLL_LIMIT` is 30 and `shin.mjs` allows 28. Between 30 and 41 the boot
+is over further than a stiff cuff permits and the blade is *still* the lowest thing — a band
+that is a real pose and not a contact, and nothing needs to draw it.
+
+### `onIce: 'boot'` — the fifth contact
+
+`onIce` already carries `blade`, `pick` and `skid`. The fourth value says the ice is holding
+the boot's **side**: on the ice, bearing weight, no edge, no lean claim, and a roll far past
+what a blade allows.
+
+`contactAlongOf` gains a branch — a boot on its side touches along most of its length, so zero,
+the same answer and the same reason as a skid. What it also needs, and what has no precedent in
+the file, is a **lateral** twin: the contact is 8 cm off the boot's centre line rather than on
+it. Today every contact sits on the blade, which is on the centre line, so the offset has never
+existed. This is the one genuinely new mechanism in the specification.
+
+> **BUILT AND TAKEN BACK OUT.** `contactAcrossOf` was written, wired into `ankleOf`, and
+> removed within the hour. Putting an offset perpendicular to the boot between the authored
+> point and the ankle contaminates `ank − contact`, which is **the vector the renderer recovers
+> the up-axis from** — so the recovered axis came out 45° wrong and `boot.mjs`'s drift check
+> would have had to learn to undo it. The authored point keeps one meaning for all five
+> contacts, the blade's reference, and `soleEdgeZ` carries the difference as an assertion
+> instead. One meaning for the authored point was worth more than making it the touching point
+> for one contact out of five.
+
+### What it does to each checker
+
+| file | today | with the roll |
+|---|---|---|
+| `boot.mjs` | a *planted* boot may not roll past `ROLL_LIMIT`; a free one may lie over | a three-way rule. A boot on its **side** must be rolled **past** 41.2°, asserted from both sides — a boot declared on its side and drawn at 20° is claiming a contact its geometry does not make, which is `blade.mjs`'s pick assertion word for word |
+| `lean.mjs` | iterates `edgesDown` | untouched: a boot on its side has no edge, so it is not in the set. Its header's sentence *"a planted boot is a boot the ice is holding upright, whichever part of it is down"* becomes false and must be rewritten |
+| `blade.mjs` | `blade`/`skid` inside ±3.5° of pitch, `pick` outside | a boot on its side is neither; its pitch is free and its ROLL is what is held |
+| `shin.mjs` | iterates `runnersDown` | ~~widen it~~ **it cannot be widened: the quantity is an identity.** `roll` IS the rotation of the boot's up-axis away from the plane of the shin, so the shin-to-boot angle tracks it one for one — measured at roll 80 it reads 83 against world up and 95 against the boot's own axis. Same reason picks are excluded and free feet are. And a legal lunge needs **56 to 80° of roll**, which no ankle everts: a skater gets almost all of it by turning the leg, which this rig does not model separately, so `roll` carries both and no cuff limit applies to it |
+| `turnout.mjs` | `runnersDown`, and picks excluded because a leg extended behind reads as rotation nobody is doing | a boot on its side behind the body has the same problem and wants the same exclusion |
+| `freefoot.mjs` | skips anything `onIce` | skips it: correct, the foot is not free |
+| `underice.mjs` | free boots only | skips it — and **it is what confirmed the contact was right**: the drag does not appear in its output, so the solved height really does put the sole on the ice and nothing through it. Written this morning and load-bearing by the afternoon |
+| `contactAlongOf` | rocker / teeth / nothing | a fourth branch, zero, plus the lateral offset above |
+
+### What it buys, honestly
+
+**The lunge**, whose pose stopped being the blocker on 30/08/2026 — 8,064 legal poses were
+found, all at a `point` of 8° or less — and which has been waiting on this alone ever since.
+**The drag**, which is the same position; Martyn, 30/08/2026: *coaches call the lunge a drag*,
+recorded before either was drawable and now the reason they are one piece of work.
+
+It does **not** buy the Ina Bauer or the spread eagle, which were freed by two blades, nor the
+slip step, which needs a **flat** — a different missing thing, recorded below.
+
+### What building it actually cost
+
+**The renderer needed no change at all.** The strongest claim in the specification and the one
+most likely to be wrong. `boot.mjs` reports the worst disagreement between a drawn roll and the
+boot's own up-axis as **0.00°** with the roll in, across 25,668 glyphs — so rotating `up` in
+`ankleOf` really does rotate all three axes, and the glyph chooser really does follow on its
+own. The rear view now draws a boot lying over at 55° of projected roll, which is the first
+time this rig has drawn one legitimately.
+
+**`boot.mjs`'s roll limit needed an exemption, and the exemption needed somewhere to point.**
+Its own sentence — *a planted boot is a boot the ice is holding upright, whichever part of it
+is down* — stopped being true, because `onIce: 'boot'` is a boot the ice is holding OVER. The
+limit is excused for it and `blade.mjs` holds the pair instead, which is where it belongs:
+what that file is about is which part of the boot reaches the ice. Broken on purpose there,
+3 of 3 each way — the sole lifted off the ice, and the runner put back on it.
+
+**The height is a fixed point, not a linear solve**, and the first attempt was 0.8 cm out
+because it assumed otherwise. Raising the foot re-aims the shin, which re-aims the boot, which
+moves the sole's edge: the slope is about 1.23, not 1. Bisection, and the comment says so.
+
+**And it bought one element, not two.** The lunge and the drag are the same position — *coaches
+call the lunge a drag*, Martyn, 30/08/2026, recorded here three weeks before either could be
+drawn, with the instruction that the element carry the other name in its aliases when it could.
+It does. The page is `drag`, Learn to Skate USA's name, and `lunge` is the alias.
+
+### The two decisions it rests on
+
+1. **Is `roll` authored, or derived from the contact?** Authoring it is the cheap, consistent
+   answer and matches `pitch`, `point` and `yaw`. Deriving it — the roll is whatever puts the
+   sole's edge on the ice, given where the ankle is — is the house's preferred shape, *prefer
+   assertions on quantities the pose IMPLIES over ones it STATES*, and it is what made the
+   pick's hip height fall out rather than be typed. The hybrid is to author it and assert it
+   against `7cos θ = 8sin θ`, which makes the number falsifiable instead of a description
+   waiting to be believed.
+2. **Does `shin.mjs` widen to free and side-contact feet?** It deliberately does not, because a
+   free foot's shin-to-boot angle is `point` by construction and asserting it would assert an
+   identity. That reasoning does not hold for a boot on its side, whose shin angle is a
+   consequence of the roll — so this may be a third quantity the pose implies.
+
 ## Two blades, and the one fact that made them cheap — 30/08/2026
 
 A pose can hold two blades. `skate` did not become an array; it stayed single-valued and

@@ -19,10 +19,24 @@ rather than fail.
 
 **Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions, **twenty-two basics** and **five spins**. 270 of the 278 element
+jumps, three held positions, **twenty-two basics** and **five spins**. 271 of the 278 element
 pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**The boot's fourth rotation, 20/09/2026 — and the drag draws.** A boot had three rotational
+degrees of freedom and this model authored two: the roll was derived in `ankleOf` from the
+shin, which pinned the whole boot frame to the plane of the leg. `roll` on the foot, one
+rotation in `ankleOf`, and everything else followed — the renderer recovers the boot's axes
+from the ankle, so the glyph chooser picked up a boot lying over on its own and `boot.mjs`
+still reports the drawn roll matching the model's to 0.00° across 25,668 glyphs.
+
+`onIce: 'boot'` is the fifth contact: on the ice, bearing weight, no edge, the runner out of
+it. It is held by a pair in `blade.mjs` — the sole's edge on the ice, the runner clear of it —
+which is the pick's assertion one contact along, and `boot.mjs` excuses it from the roll limit
+and points there. **The lunge came with it**, because the lunge and the drag are the same
+position; the note saying so has been in `docs/model.md` since 30/08/2026. Sixteen of
+twenty-two basics draw now.
 
 **`tools/underice.mjs`, 20/09/2026 — a boot that is not on the ice is not drawn below it.**
 The class of fault nothing could see: `freefoot.mjs` limits the boot's ANGLE and the angle is

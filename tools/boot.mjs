@@ -9,6 +9,9 @@
       edge, so the dot and the weight have come apart. The roll limit follows the
       weight rather than the dot — a planted boot is a boot the ice is holding
       upright, whichever part of it is down, and only a free one may lie over.
+      SINCE 20/09/2026 THAT SENTENCE NEEDS ITS EXCEPTION: `onIce: 'boot'` is a boot the
+      ice is holding OVER, which is the whole of what it says, so the limit does not
+      apply to it and tools/blade.mjs holds it to the pair instead.
 
    2  A BOOT DRAWN END-ON ROLLS WITH ITS OWN BOOT, and a skating boot is never
       drawn past the roll a stiff boot allows.
@@ -121,7 +124,14 @@ for (const [key, m] of Object.entries(MOVES)) {
             `boot's own up-axis ${want.toFixed(1)}°  (off by ${off.toFixed(1)}°)`);
         }
 
-        if (planted && Math.abs(drawn) > ROLL_LIMIT) {
+        /* THE LIMIT IS FOR A BOOT THE ICE IS HOLDING UPRIGHT — and since 20/09/2026
+           that is no longer the same set as "planted". A boot declared on its SIDE is
+           on the ice and is over by 56 to 80 degrees deliberately; holding it to 30
+           would be asserting that the thing cannot exist. It is excused here and held
+           in tools/blade.mjs instead, by the pair that file owns: the sole's edge on
+           the ice and the runner clear of it. Naming the excuse rather than widening
+           the test is the difference between an exemption and a hole. */
+        if (planted && role !== 'boot' && Math.abs(drawn) > ROLL_LIMIT) {
           overBad++;
           if (overBad <= 8) say(`OVER  ${key} ${mode} f=${i} ${which}  ${role} boot drawn at ${drawn.toFixed(1)}° ` +
             `of roll, past the ${ROLL_LIMIT}° a boot allows`);

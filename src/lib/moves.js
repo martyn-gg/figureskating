@@ -22,7 +22,7 @@ import { anterior, lateral, ANKLE_POINT } from './rig-math.js';
    ignored on a skating foot, whose direction comes from the tracing. Leave it out
    and the foot takes ANKLE_POINT, which is what every pose written before
    30/08/2026 does — so those poses draw exactly as they always have. */
-const P = (t,n,z,pitch=0,point=ANKLE_POINT) => ({t,n,z,pitch,point});
+const P = (t,n,z,pitch=0,point=ANKLE_POINT,roll=0) => ({t,n,z,pitch,point,roll});
 
 /* AN EXTENDED FREE LEG IS POINTED — 20/09/2026, and tools/underice.mjs is what
    said so. A boot is built square to the shin, so a free leg sloping down and
@@ -70,6 +70,28 @@ const ON = (t,n,z,pitch=0,dir=null) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'bl
    which is exactly what the `pick: true` keyframe flag this replaces had become.
    freefoot.mjs asserts that nobody writes one. */
 const PICK = (t,n,z,pitch) => ({t,n,z,pitch,onIce:'pick'});
+
+/* A BOOT LYING ON ITS SIDE — 20/09/2026. The fifth kind of contact, and the one the
+   lunge has been waiting for since Session 14 and the drag since this morning. The
+   runner is out of the ice and pointing sideways out of it; what is down is the edge of
+   the sole. So: on the ice, bearing weight, no edge, no lean claim, and rolled far past
+   anything a blade could be at.
+
+   THE POSITION IS STILL THE BLADE'S, as it is for every other contact in this file. A
+   boot on its side does not touch there — it touches BOOT_HALF_W across and BLADE_PROUD
+   below — and making the authored point the touching point for this one contact alone
+   would put an offset perpendicular to the boot into `ank − contact`, which is the very
+   vector the renderer recovers the up-axis from. One meaning for the authored point is
+   worth more than that. `soleEdgeZ` is what carries the difference, and it is asserted
+   rather than assumed: the sole's edge on the ice, and the runner clear of it.
+
+   ROLL IS REQUIRED rather than defaulted, for the reason PICK() requires its pitch: a
+   boot at no roll is a boot on its blade, and calling that a side contact is a claim the
+   geometry does not make. And it is NOT AN ANKLE ANGLE — a legal lunge needs 56 to 80
+   degrees of it and no ankle everts 56. A skater gets almost all of it by turning the
+   leg, which this rig does not model separately, so `roll` carries both and no cuff
+   limit applies to it. docs/model.md. */
+const SIDE = (t,n,z,roll,point=0) => ({t,n,z,pitch:0,point,roll,onIce:'boot'});
 
 /* A BLADE ON THE ICE, TURNED OFF THE LINE OF TRAVEL — 19/09/2026. Its own helper
    rather than a sixth argument to ON(), for the reason PICK() has one: the yaw is
@@ -1035,6 +1057,59 @@ export const MOVES = {
        sh:P(-5,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
       {t:1.00, ph:'Held — the push complete, the glide running away behind', hipZ:94, hipYaw:180, shYaw:178,
        sh:P(-4,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
+    ]},
+
+  /* A DRAG, WHICH IS A LUNGE — the rig for `drag`, and the first pose in this file to
+     use the fifth contact. Three barriers stood in front of it on 29/08/2026. Two blades took one,
+     the authorable ankle took the second when the sweep found 8,064 legal poses at a
+     `point` of 8 degrees or less, and the roll takes the third.
+
+     THE TRAILING BOOT LIES ON ITS INSIDE. Martyn, on the drag, and a lunge is the same
+     position — he has said so before: coaches call the lunge a drag, recorded in
+     docs/model.md on 30/08/2026 before either could be drawn. The right foot's inside
+     is the skater's left, and a positive roll tips the up-axis that way, so the roll is
+     positive and the left edge of the sole is what comes down.
+
+     THE HEIGHT IS SOLVED, NOT AUTHORED. `z` is whatever puts the sole's edge on the
+     ice at this roll — 2.16 cm — with the runner sitting clear above it, which is the
+     other half of what makes this a side contact rather than a deep lean. Author the
+     roll, solve the height; writing both by hand would be two numbers that have to
+     agree, and `blade.mjs` now checks that they do.
+
+     AND IT IS SOLVED BY BISECTION, NOT BY ONE SUBTRACTION, which is worth the sentence
+     because the first attempt did the latter and was 0.8 cm out. The sole's edge does
+     not move one-for-one with the foot: raising the foot re-aims the shin, which
+     re-aims the boot, which moves the edge — the slope is about 1.23, not 1. A fixed
+     point wearing the clothes of a linear solve.
+
+     SEVENTY-FOUR DEGREES IS NOT A ROUND NUMBER either. The legal set runs 56 to 80 and
+     this is near its middle. What decides the ends is reach: 62 cm behind at a hip of
+     50 comes to 80.5 of the 86 the leg has, five and a half centimetres in hand rather
+     than posing at the wall, which is the lesson the first extended edge taught.
+
+     ONE POSITION, TWO NAMES, and the repository has had the note for three weeks:
+     *coaches call the lunge a drag* — Martyn, 30/08/2026, written into docs/model.md
+     before either could be drawn, with the instruction that the element carry the other
+     name in its aliases when it could. It can. The page is `drag`, because that is what
+     Learn to Skate USA calls it and the guide names elements their way; `lunge` is an
+     alias and reaches it through /elements/other-names/.
+
+     A HELD POSITION, and the entry is not drawn, for the reason toePick's is not: the
+     frames between a free foot and a boot on its side are a state the model has not
+     got, and inventing one to make a probe animate is authoring pose data to satisfy a
+     renderer. `twoFoot` does not draw stepping on either. */
+  drag: {
+    name:'Drag',
+    note:'forward outside edge, sunk deep · the trailing boot on its inside, the blade clear',
+    path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:40}],
+    radius:400, duration:3.6,
+    keys:[
+      {t:0.00, ph:'Sunk into the skating knee, the free leg reaching back', hipZ:50, hipYaw:0, shYaw:-5,
+       sh:P(4,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
+      {t:0.45, ph:'The boot settling onto its side, the blade out of the ice', hipZ:50, hipYaw:0, shYaw:-4,
+       sh:P(4,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
+      {t:1.00, ph:'Held — the glide running, the trailing boot dragging on its inside', hipZ:50, hipYaw:0, shYaw:-3,
+       sh:P(5,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
     ]},
 
   /* PROBE — a toe pick in the ice. Not an element page: it exists to hold the

@@ -2,7 +2,8 @@
 name: Drag
 kind: basic
 summary: A deep glide with the free leg trailed behind, the blade lifted clear and the side of the boot brushing the ice.
-aliases: ["forward drag", "toe drag"]
+aliases: ["forward drag", "toe drag", "lunge"]
+rig: drag
 prerequisites: [one-foot-glide]
 sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
