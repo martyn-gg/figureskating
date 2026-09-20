@@ -712,6 +712,122 @@ the two tracings are a boot's width apart on a four-metre lobe and resolve to on
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
 
+## A foot arriving on the ice — specified 20/09/2026, not yet built
+
+A foot in this rig is one of two things. It is the skating foot or a declared contact —
+`onIce`, in one of its five kinds — or it is free. `tools/twofoot.mjs` asserts the gap
+between them: a contact within 3 cm of the ice, a free foot at least 5 cm clear, with the
+note that the existing poses sit at 0–2 and 10–117 so there is a real gap and nothing had
+to be nudged to pass.
+
+**There is no third thing, and a foot being put down needs one.** This file records the
+diagnosis twice already, both on 30/08/2026, and `moves.js` writes it plainly against the
+pick: *the frames between "free" and "picked" are a state the model has not got — the foot
+is neither hanging nor planted*, followed immediately by *twoFoot does not draw stepping
+onto two feet either, and for the same reason*. This is that state, named and specified,
+after it turned up for the fourth time.
+
+### How it surfaced, which is the part worth keeping
+
+`tools/underice.mjs` reported a boot drawn through the ice on the waltz jump's landing and
+on the change of foot. Four of the five waltz runs were a coach's correction — an arriving
+foot is neutral, not pointed — and the fifth was an unwritten `point` on a *skating* key
+that does nothing where it sits and is interpolated toward by the free frames before it.
+Both are fixed, and what is left is one run of two frames at a millimetre.
+
+Then the reason showed itself. **`twofoot.mjs`'s clearance assertion runs on keyframes**, and
+the file labels that itself — `── 1, 2, 3: the keyframes ──`. Per frame, the two moves read:
+
+| move | per-key minimum | per-frame minimum | frames under 5 cm |
+|---|---|---|---|
+| waltz | 10.00 cm | 1.23 cm | 2 |
+| changeFootSpin | 14.00 cm | 0.01 cm | 17 |
+
+Every keyframe clears at twice the bound and the feet reach a millimetre between them. That
+is `freefoot.mjs`'s old fault in another file — *the waltz jump passes every keyframe at
+55.8° and reaches 88.6° between two of them* — and these are the only two moves in the guide
+where it happens, which is why they are exactly the two `underice` was reporting. **Two
+checkers were seeing one hole from opposite sides.**
+
+**And the obvious repair is wrong.** Making the assertion per frame would assert something
+false: a foot being put down HAS to cross that band, because a skater cannot step onto a
+foot that teleports from 5 cm to contact. So 5 cm is a claim about a foot that is *staying*
+free, and the rig cannot say which kind it is looking at. That is the missing thing, exactly.
+
+### The shape: derived, not authored
+
+Unlike the roll and the pick, this wants no new field. Whether a foot is arriving is already
+written down, in the keys either side of it:
+
+```
+arrivalOf(move, f, which) → 'arriving' | 'departing' | null
+```
+
+A free foot is **arriving** when the next key in which that foot takes a contact — becomes
+`skate`, or carries `onIce` — is the next key at all; **departing** when the previous key was
+one; and neither otherwise. Nothing is stated that the pose does not already imply, which is
+this repository's stated preference and the thing that made the pick's hip height fall out
+rather than be typed.
+
+The alternative is a flag on the keyframe. It is rejected for the reason `pick: true` was
+rejected on 30/08/2026: a flag exempts and holds nothing to account, where a derived answer
+can be asserted from both sides.
+
+### What it changes
+
+**One: the boot's orientation over the last few centimetres.** Today `bootDir` builds a free
+boot square to the shin plus `point`, so a boot whose blade is a millimetre off the ice still
+hangs at a leg-derived angle and the glyph goes through the surface. While a foot is arriving,
+its direction should blend from that construction toward the planted one the contact key uses —
+the heading from the tracing, the pitch from `pitch` — reaching it exactly at contact. The two
+agree at z = 0, so the seam is where nothing is happening.
+
+**In `bootDir`, not the renderer**, on the roll's precedent: one change in one function, and
+the renderer follows for free because it recovers all three axes from the ankle. If the roll's
+central claim held, this one should too, and `boot.mjs` should still report 0.00°.
+
+**Two: the clearance assertion becomes per frame and gains a second side.** A foot below the
+bound that is *not* arriving or departing fails, which is the assertion that does not exist
+today. And an arriving foot must descend monotonically and actually reach its contact, so the
+window cannot be used to excuse a foot that dips and comes back up. That is the pattern
+`blade.mjs` used for the pick: replace an exemption with a declaration and the same file gets
+a second assertion for free, pointing the other way.
+
+### The one constant that has to move
+
+The blend's window is a height, not a span of clock. It cannot be clock: the change of foot
+descends 16 cm over 0.14 of its duration, and at 16 cm the foot is plainly free — blending
+there would orient a boot to a contact it is nowhere near.
+
+So the window is the last **`CLEAR`** centimetres, which is 5, and which today lives in
+`tools/twofoot.mjs` as a checker's constant. **A checker's number cannot become load-bearing
+in the model**; that is two expressions of one fact, the failure this file keeps recording.
+It moves to `rig-math.js` beside `ANKLE_MAX` and `MAX_BLADE_PITCH`, and `twofoot.mjs` imports
+it. Like those two it is then a number the model imposes, and like those two it is **not
+verified against a coach** — it came from the spread of the existing poses, which is a
+description of what has been authored rather than a measurement of skating.
+
+### What it should buy, stated so it can be wrong
+
+- `underice.mjs`'s `arriving` declaration **empties entirely** and the file goes to zero
+  exemptions, because a boot blended to its contact sits on the ice rather than through it.
+- `boot.mjs` still reports the worst drawn-roll disagreement as **0.00°**.
+- The frames that move are **only** those in the arrival windows: 2 in the waltz, 17 in the
+  change of foot, and none anywhere else. Everything else hashes identical.
+- `continuity.mjs` stays green — it is the file that would catch a blend that jumps, and it
+  is the reason the blend is specified as continuous rather than as a switch.
+- `freefoot.mjs` may need arriving feet excluded from its 60° limit, the way `onIce` feet are,
+  because an arriving boot's angle is partly its contact's. **Unknown**, and the first thing
+  to measure.
+
+### What it does not buy
+
+It is not the whole of the handover. `twoFoot`, `pushOff` and `toePick` are held as positions
+for **two** reasons, and this is one of them: the other is that the rig carries one reference
+blade and drawing what those do means handing it over mid-move. Two blades exist since
+30/08/2026 and the arrival would exist after this, but the reference handover is a third thing
+and is not specified here. The slip step draws because nothing in it hands over.
+
 ## A step is three different things, and the guide now means one of them — 20/09/2026
 
 `kind: 'step'` opened the same day the flat went in, with the slip step in it and nine
