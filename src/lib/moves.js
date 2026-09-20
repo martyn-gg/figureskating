@@ -24,6 +24,23 @@ import { anterior, lateral, ANKLE_POINT } from './rig-math.js';
    30/08/2026 does — so those poses draw exactly as they always have. */
 const P = (t,n,z,pitch=0,point=ANKLE_POINT) => ({t,n,z,pitch,point});
 
+/* AN EXTENDED FREE LEG IS POINTED — 20/09/2026, and tools/underice.mjs is what
+   said so. A boot is built square to the shin, so a free leg sloping down and
+   forward carries a foot at a right angle to it: toe cocked up, HEEL DOWN. On a
+   sit spin that put 5.4 cm of heel through the ice for seventy-five consecutive
+   frames, and nothing in the repository could see it — freefoot.mjs judges the
+   boot's ANGLE, at 58.6 degrees comfortably inside its 60, and the angle is only
+   half of where a boot ends up. The other half is the height, and the two only
+   meet at the ends of the glyph.
+
+   Twenty-five degrees rather than a value that just clears: it is what a pointed
+   foot is, inside the boot's ANKLE_MAX of 30, and the clearance it happens to buy
+   is 2.7 cm rather than nothing. Authored on the keys where the leg is EXTENDED
+   and not on the entrance, wind-up and exit, where it is gathered and a pointed
+   foot would be a claim about a position the skater is not in. */
+const POINTED = 25;
+
+
 /* An AUTHORED hand. The flag is the whole of the LH/RH fix below: it is what the
    default-carriage loop refuses to overwrite, and it is what the renderer reads
    to decide whether the guide names which hand is which. One field, in place of
@@ -431,9 +448,9 @@ export const MOVES = {
       {t:0.00, ph:'Standing glide', hipZ:96, hipYaw:0, shYaw:-6,
        sh:P(-2,0,146), L:P(0,-8,0), R:P(-27,5,19), skate:'L', edge:'I', dir:'F'},
       {t:0.42, ph:'Sinking, free leg reaches forward', hipZ:62, hipYaw:0, shYaw:-4,
-       sh:P(8,0,110), L:P(30,-6,0), R:P(46,8,16), skate:'L', edge:'I', dir:'F'},
+       sh:P(8,0,110), L:P(30,-6,0), R:P(46,8,16,0,POINTED), skate:'L', edge:'I', dir:'F'},
       {t:1.00, ph:'Held low, free leg extended', hipZ:40, hipYaw:0, shYaw:-2,
-       sh:P(16,0,88), L:P(29,-5,0), R:P(80,8,10), skate:'L', edge:'I', dir:'F'},
+       sh:P(16,0,88), L:P(29,-5,0), R:P(80,8,10,0,POINTED), skate:'L', edge:'I', dir:'F'},
     ]},
 
   /* AN UPRIGHT SPIN, LBI, anticlockwise.
@@ -519,13 +536,13 @@ export const MOVES = {
       {arm:[62,10,18], t:0.2071, ph:'The circle tightening, beginning to sink', hipZ:88, hipYaw:180, shYaw:172,
        sh:P(-10,0,138), L:P(-24,14,0,1.9), R:P(-52,12,20), skate:'L', edge:'I', dir:'B'},
       {arm:[56,12,16], t:0.3748, ph:'Centred, and folding down', hipZ:66, hipYaw:180, shYaw:176,
-       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18), skate:'L', edge:'I', dir:'B'},
+       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[48,12,14], t:0.5040, ph:'Thigh reaches parallel - the sit', hipZ:44, hipYaw:180, shYaw:178,
-       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[42,12,13], t:0.6742, ph:'Held - thigh parallel, free leg forward', hipZ:41, hipYaw:180, shYaw:180,
-       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[34,10,12], t:0.8084, ph:'Still sitting, and gathering in', hipZ:40, hipYaw:180, shYaw:180,
-       sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-78,-6,10), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-78,-6,10,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[18,2,12], t:0.9071, ph:'Wind-up - rising to the axis, and it quickens', hipZ:82, hipYaw:180, shYaw:180,
        sh:P(-10,0,132), L:P(-28,12,0,2.2), R:P(-46,10,16), skate:'L', edge:'I', dir:'B'},
       {arm:[52,8,18], t:1.0000, ph:'Exit - standing up and out', hipZ:96, hipYaw:180, shYaw:176,
@@ -736,11 +753,11 @@ export const MOVES = {
       {arm:[62,10,18], t:0.1461, ph:'The circle tightening, beginning to sink', hipZ:88, hipYaw:180, shYaw:172,
        sh:P(-10,0,138), L:P(-24,14,0,1.9), R:P(-52,12,20), skate:'L', edge:'I', dir:'B'},
       {arm:[56,12,16], t:0.2648, ph:'Centred, and folding down', hipZ:66, hipYaw:180, shYaw:176,
-       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18), skate:'L', edge:'I', dir:'B'},
+       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[48,12,14], t:0.3628, ph:'Thigh reaches parallel - the sit', hipZ:44, hipYaw:180, shYaw:178,
-       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[42,12,13], t:0.6094, ph:'Sit held - free leg forward, well off the axis', hipZ:41, hipYaw:180, shYaw:180,
-       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10,0,POINTED), skate:'L', edge:'I', dir:'B'},
       {arm:[38,8,16], t:0.6719, ph:'Rising, the free leg drawing in', hipZ:92, hipYaw:180, shYaw:180,
        sh:P(-6,0,142), L:P(-18,12,0,2.2), R:P(-34,10,16), skate:'L', edge:'I', dir:'B'},
       {arm:[32,4,18], t:0.8596, ph:'Upright held - stacked over the blade, and quicker for it', hipZ:98, hipYaw:180, shYaw:180,

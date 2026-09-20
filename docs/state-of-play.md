@@ -14,7 +14,8 @@ exercises; an animated edge diagram on any element with an entry edge; the three
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
 worker; **twenty-two steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
-four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
+four sessions — plus `npm run ankle`, `npm run drift` and `npm run underice`, which report
+rather than fail.
 
 **Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
@@ -23,6 +24,22 @@ pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
 
+**`tools/underice.mjs`, 20/09/2026 — a boot that is not on the ice is not drawn below it.**
+The class of fault nothing could see: `freefoot.mjs` limits the boot's ANGLE and the angle is
+half of where a boot ends up, the other half being the height. It measures off the real render
+tree rather than off the pose, because Session 15's version of this fault was a plan glyph
+that failed to pivot about its contact and no correct pose data would have saved it. Where the
+ice is comes out of the markup, `data-ice`, added for it.
+
+It found nine runs and dictated the fix for three of them: a free leg sloping down and forward
+carries a foot at a right angle to it, heel down, and **an extended free leg is pointed**.
+`POINTED` at 25 on the sit spin, the combination spin and the teapot, on the keys where the
+leg is extended, moved 42 of 399 hashed frames and left the other sixteen moves
+byte-identical. **It stays out of the `check` chain for now**, beside `drift`, because two
+runs survive that nobody is ready to move: the waltz jump's landing, which pointing makes
+worse, and the change of foot, whose free foot is at z 0 at the moment it becomes the skating
+foot — the step-over this rig does not draw, after `twoFoot` and `toePick`.
+
 **Backward stroking got a rig on 20/09/2026, and the drag was found not to have one to
 get.** Both sat on the outstanding list as waiting on nothing but authoring. Backward
 stroking was: it is `pushOff` read off a base of 180, and the yaw of the pushing foot is the
@@ -30,12 +47,18 @@ same number in both, because flipping the direction of travel and flipping which
 track is the skater's right cancel out. That is the property `twoFootTurnBack` found in the
 yaws of a turn, arriving by the same route.
 
-The drag was not. A trailing foot flat on the ice needs the shin 30 to 44 degrees over the 28
-a boot allows, at every hip height below 96, and pitching the boot makes it worse rather than
-better. `docs/model.md`, *A trailing foot flat on the ice needs a shin the boot has not got*,
-holds the tables, and the two sign errors the measurement had to get past first: `t` is the
-direction of travel so behind is negative at hipYaw 0, and `ankle.mjs` and `freefoot.mjs` had
-disagreed about which way is up since `ankle.mjs` was written, hidden by an `abs()`.
+The drag was not, and took two corrections to say why. **A drag's free boot is turned in, the
+skating knee sinks until the free blade lifts clear, and what trails is the inside of the
+boot** — Martyn, correcting a first write-up that had measured a trailing blade flat on the
+ice because that is what the element page said. The contact is not a blade, so putting the
+boot's side down means rolling it, which is the axis the rig has never had and the one that
+has blocked the lunge since Session 14. The model was already saying the blade comes up: at
+every hip height a free foot at its furthest reach behind has its blade 9 to 12 cm into the
+ice, and lifting it buys reach. `docs/model.md`, *The drag's contact is the side of the boot,
+and the rig cannot roll one*, holds the tables, the footnote on the pose as the page described
+it, and the three conventions the measurement had to get right first — including `ankle.mjs`
+and `freefoot.mjs` having disagreed about which way is up since `ankle.mjs` was written,
+hidden by an `abs()`.
 
 **The spins went in on 19/09/2026** — upright, sit and camel, mounted on the three rigs that
 had been sitting in `moves.js` as probes since 30/08/2026.

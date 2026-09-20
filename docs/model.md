@@ -431,6 +431,46 @@ hip 96** — four of five landmarks within a degree. That is a pointed foot, not
 The surface is a function of the ankle as well as the leg, so a table read at another point is
 another table.
 
+### The checker this produced, and what it immediately found
+
+`tools/underice.mjs`, and it is worth saying what it is not. `freefoot.mjs` limits the boot's
+ANGLE at 60° from level, and the angle is half of where a boot ends up; the other half is the
+height, and the two only meet at the ends of a glyph 30 cm long. A boot pointed at the limit
+reaches some 14 cm below the marker it hangs from, which is fine at knee height and buried at
+ten centimetres.
+
+It measures off the real render tree rather than off the pose, because the class of fault it
+exists for is a DRAWING fault: Session 15's was a plan glyph that failed to pivot about its
+contact, which no amount of correct pose data would have saved and which a checker
+recomputing `bootDir` would have passed. Where the ice is comes out of the markup — `data-ice`
+was added to the ground line for it, on the same argument that put `data-boot` on the boots —
+so the views it judges are the ones that DRAW an ice line, found rather than named.
+
+**It found nine runs on the day it was written**, none of them the drag:
+
+| move | deepest | frames |
+|---|---|---|
+| sit spin | 5.4 cm | 75 |
+| combination spin | 5.4 cm | 48 |
+| teapot | 4.8 cm | 31 |
+| waltz jump | 2.0 cm | 25, plus four shorter runs |
+| change of foot | 1.2 cm | 7 |
+
+**And it dictated the fix rather than confirming one, which is the difference between a
+checker and a test.** The first three are one fault: a boot is built square to the shin, so a
+free leg sloping down and forward carries a foot at a right angle to it — toe cocked up, heel
+down — and it is the HEEL going through the ice. The sit spin's boot reads +58.6°,
+comfortably inside the 60 `freefoot.mjs` allows. **An extended free leg is pointed**, and
+`POINTED` at 25 (inside `ANKLE_MAX`'s 30) is what a pointed foot is; it clears all three, on
+the keys where the leg is extended and not on the entrance, wind-up and exit where it is
+gathered. 42 of 399 hashed frames moved, all of them in those three moves.
+
+The two that remain are not the same fault and neither is ready to be moved. The waltz jump's
+landing gets WORSE when pointed — `npm run ankle`'s own line is that plantarflexion lifts the
+toe on a spiral and drives it at the ice on a landing — and the change of foot is unmoved by
+the ankle entirely, because its free foot is at z 0 at the instant it is about to become the
+skating foot. That is the step-over this rig does not draw, after `twoFoot` and `toePick`.
+
 ### What it would take
 
 A boot that can **roll**. The lunge has wanted it since Session 14, the drag wants it now, and

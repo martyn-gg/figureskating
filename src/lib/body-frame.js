@@ -534,7 +534,10 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       : (n => originX + n * S);                            // across-track
 
     // ice + scale ticks
-    g.appendChild(el('line',{x1:0,y1:GROUND,x2:VW,y2:GROUND,stroke:'var(--ink)',opacity:.45,'stroke-width':1.6}));
+    /* data-ice, on the same argument that put data-boot on the boots: where the ice
+       is is a fact this renderer knows, and a checker that cannot read it would have
+       to keep its own copy of GROUND. tools/underice.mjs reads it. */
+    g.appendChild(el('line',{x1:0,y1:GROUND,x2:VW,y2:GROUND,stroke:'var(--ink)',opacity:.45,'stroke-width':1.6,'data-ice':''}));
     if(mode==='side'){
       const step=50, off=((dist%step)+step)%step;
       for(let k=-win;k<=win;k+=step){

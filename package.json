@@ -32,6 +32,7 @@
     "gen:derived": "node tools/gen-derived.mjs",
     "ankle": "node tools/ankle.mjs",
     "drift": "node tools/drift.mjs",
+    "underice": "node tools/underice.mjs",
     "check:drawn": "node tools/drawn.mjs",
     "check:turnout": "node tools/turnout.mjs",
     "check:house": "node tools/house.mjs",
