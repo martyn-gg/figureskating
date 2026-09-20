@@ -88,12 +88,34 @@ one of them a top view of those two moves. **The change of foot now draws two co
 drew one** — the left foot's and the right foot's, offset by the step-over, which is what a
 change of foot leaves on the ice.
 
-**Still open, and now measured on three moves rather than guessed at:** a centred spin's hip
-goes from nought to full speed between two frames at the boundary where the segment radius
-changes to the run-out's — 6.14 cm on `uprightSpin`, 6.84 on `camelSpin`, 10.46 on
-`changeFootSpin`. `buildPath` declares tangent continuity across a radius change and calls the
-curvature step intended, which it is for the tracing; nobody asked what it does to a body
-hanging off the curve at exactly that radius.
+**The path is a staircase and the body reads every step — measured 20/09/2026, not built.**
+What looked like a spin-exit problem is the whole path model. `buildPath` gives each segment
+one constant radius and `at(rate, seg)` gives it one constant revolutions-per-second, and
+segments are chained tangent-continuously: **position and heading are continuous and nothing
+else is.** All six multi-segment moves have their worst frame-to-frame change of hip speed at
+a segment boundary — 10.46 cm on `changeFootSpin`, 9.43 on `combinationSpin`, 6.84 camel, 6.14
+upright, 1.79 sit, 0.59 waltz — and the other fifteen moves, which have one segment each,
+read **0.00**.
+
+**Two staircases, not one.** The radius is 110 → 42 → 12 → … → 80 in every spin, and `R_SPIN`
+is by its own comment *equal to the blade's lateral offset from the hip*, which is why the
+exit's step is the largest: a centred hip sits at the centre of curvature, and changing the
+radius without changing the offset leaves it orbiting at the difference. **And the rate is a
+staircase too** — 0.7, 1.3, 1.8, 2.1, 2.9, 1.4 — so the skater's rotation rate roughly halves
+between two adjacent frames at every spin's exit.
+
+**Half the repair is worse than none.** A curvature transition at each boundary was measured
+at 30, 60 and 120 degrees of turn: it takes `changeFootSpin` from 10.46 to 2.92 and
+`uprightSpin` from 6.14 to 1.63, costs 3–10% of path length, and makes `sitSpin` (1.79 → 3.42)
+and the waltz (0.59 → 1.86) **worse**, because smoothing the curvature exposes the rate's step
+that the curvature's step had been partly cancelling.
+
+So the decision is one idea or none: **a segment's radius and rate are values it reaches, not
+constants it holds.** `sweep` does not move, which keeps the ISU revolution counts `spin.mjs`
+asserts safe. Full argument, tables and costs in `docs/model.md`, *The path is a staircase*.
+**Nothing is asserted meanwhile, deliberately** — a checker would be red on six moves the day
+it was written, and one honest red (`freefoot.mjs`, four sessions) is a pattern worth using
+once rather than twice. The assertion goes in with the ramp.
 
 **The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
 largest block of unlinked syllabus text the guide had left.** It rested on one decision, what

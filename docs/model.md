@@ -1354,6 +1354,118 @@ transfer key means re-authoring the step-over so the weight passes through two f
 is a question about how a change of foot is actually skated and wants a coach, not a floor.
 
 
+## The path is a staircase, and the body reads every step — measured 20/09/2026
+
+The section above fixed the rig's root and left a number behind: a centred spin's hip goes
+from nought to 10.46 cm a frame between two frames. This is what that turned out to be, and
+it is twice the size of the thing it was first taken for. **Measured, specified, and not
+built** — the repair changes the drawn shape and the timing of five shipped spins, and the
+shape of the ramp is a claim about how a spin is actually skated.
+
+### Every multi-segment move, and only those
+
+`buildPath` gives each path segment one constant radius, and `at(rate, seg)` gives it one
+constant revolutions-per-second. Segments are chained tangent-continuously — **position and
+heading are continuous and nothing else is**. The body hangs off the curve, so it reads the
+derivatives the curve does not have.
+
+The hip's worst change of speed between two adjacent frames:
+
+| move | worst | at frame | at a segment boundary? |
+|---|---|---|---|
+| changeFootSpin | **10.46 cm** | 303 | yes |
+| combinationSpin | **9.43 cm** | 301 | yes |
+| camelSpin | **6.84 cm** | 295 | yes |
+| uprightSpin | **6.14 cm** | 291 | yes |
+| sitSpin | 1.79 cm | 260 | yes |
+| waltz | 0.59 cm | 205 | yes |
+| the other fifteen moves | **0.00 cm** | — | they have one segment |
+
+Fifteen moves have a single path segment and a perfectly smooth body. All six with more than
+one have their worst step **at a boundary**. That is not a coincidence to be checked; it is
+the whole mechanism.
+
+### Two staircases, not one
+
+The first is the radius, and every spin in the guide has the same one: **110 → 42 → 12 → …
+→ 80**. `R_SPIN = 12` carries its own comment — *equal to the blade's lateral offset from the
+hip* — and that is exactly why the exit's step is the biggest. A centred hip sits at the
+centre of curvature because the offset cancels the radius; change the radius without changing
+the offset and the hip is suddenly orbiting at the difference. The hip's speed is
+`(R − offset) × ω`, so the exit multiplies 68 cm by the spin's rate.
+
+**The second is the rate, and it was not noticed until the first was measured.** Every spin
+is authored as a staircase in revolutions per second:
+
+```
+uprightSpin      0.7  1.3  1.8  2.1  2.9  1.4
+sitSpin          0.7  1.2  1.55 1.9  2.4  3.1  1.3
+changeFootSpin   0.7  1.3  1.9  1.5  1.7  2.7  1.4
+combinationSpin  0.7  1.1  1.45 1.75 2  2.3  3  1.4
+```
+
+so the skater's rotation rate changes **between two adjacent frames**, by 5.39° to 8.91° of
+turn per frame against medians of 5.95° to 10.89°. At every exit the rate roughly halves in
+one frame: 2.9 to 1.4, 3.1 to 1.3, 2.7 to 1.4, 3 to 1.4. A skater winding up and then opening
+out does neither instantly.
+
+### Half the repair is worse than none, and that is the measurement worth having
+
+The obvious fix is a curvature transition at each boundary — the shape `bootDir`'s arrival
+blend already uses, a window either side of the seam. Measured, with the window given as
+degrees of turn:
+
+| move | today | 30° | 60° | 120° | path length at 60° |
+|---|---|---|---|---|---|
+| changeFootSpin | 10.46 | 5.25 | **2.92** | 3.03 | −6% |
+| combinationSpin | 9.43 | 3.45 | **2.80** | 2.50 | −6% |
+| camelSpin | 6.84 | 2.21 | **1.57** | 1.39 | −7% |
+| uprightSpin | 6.14 | 1.87 | **1.63** | 1.68 | −7% |
+| sitSpin | 1.79 | 3.34 | **3.42** | 3.46 | −7% |
+| waltz | 0.59 | 1.83 | **1.86** | 1.86 | +11% |
+
+The length cost is small and would be acceptable. **But it makes two moves worse**, and the
+reason is the second staircase: smooth the curvature and what is left standing is the rate's
+step, which the curvature's step had been partly cancelling. A fix that improves four moves
+and damages two is not a fix, it is a redistribution.
+
+### So the decision is one idea or none
+
+> **A segment's radius and rate are values it reaches, not constants it holds.** Both ramp
+> across the segment so that adjacent segments agree at the boundary they share, and the
+> radius at a boundary is one number rather than two.
+
+`sweep` does not move, which is what keeps this safe: `sweep` is the turn, the turn is the
+revolution count, and the revolution counts are what `spin.mjs` asserts against the ISU
+handbook. What changes is how long the skater takes to make each turn and how far they travel
+doing it.
+
+### What it would cost, stated before anyone spends it
+
+- **The five spins' tracings change shape and size.** A tightening curve covers less ground
+  for the same turn, so the entrances draw more compactly. Ramping a whole segment rather than
+  a window nearly halves the first entrance arc — 180° at R 110 is 346 cm as an arc and 191 as
+  a ramp to 42 — which is why the window exists and why its width is a real number rather than
+  a detail.
+- **The sample distribution stops being uniform in turn.** `buildPath` spends `N` samples per
+  segment at a constant `dth`; a ramping rate means uniform in *time* and varying in turn.
+  Its comment that *time maps linearly to index* stays true and becomes load-bearing.
+- **Every frame of all six moves moves**, and the framing of five element pages with it.
+- **The window's width is a ninth coach number.** How much of a turn a skater takes to wind up
+  or open out is a fact about skating, and 30, 60 and 120 degrees are three guesses that
+  bracket it. `ANKLE_POINT` is what happens when a number of this kind is read off something
+  that is not a measurement of skating.
+
+### What is asserted meanwhile
+
+Nothing, deliberately. A checker for this would be red on six moves on the day it was written,
+and the repository already has one honest red — `freefoot.mjs` was red for four sessions —
+which is a pattern worth using once and not twice. The numbers are here, `_to_delete/`'s
+probes reproduce them, and the fault is named in `docs/state-of-play.md`. **When the ramp is
+built the assertion goes in with it**, bounding the frame-to-frame change in the hip's speed
+and in the turn per frame, broken on purpose against the staircase these tables describe.
+
+
 ## A step is three different things, and the guide now means one of them — 20/09/2026
 
 `kind: 'step'` opened the same day the flat went in, with the slip step in it and nine
