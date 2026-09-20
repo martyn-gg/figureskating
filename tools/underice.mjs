@@ -123,10 +123,9 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
  * foot is last unambiguously in the air to the key where it takes the weight, so a
  * boot dipping EARLIER than the handover is not covered by any of this. */
 const arriving = {
-  waltz:          { foot: 'R', from: 0.42, to: 0.45, cm: 0.3,
-                    why: 'the frame before the right foot becomes the skating foot at t=0.44' },
-  changeFootSpin: { foot: 'R', from: 0.47, to: 0.51, cm: 1.2,
-                    why: 'the frames before the right foot becomes the skating foot at t=0.50366' },
+  changeFootSpin: { foot: 'R', from: 0.49, to: 0.51, cm: 0.1,
+                    why: 'the two frames where the arriving right foot is at z 0 and has not '
+                       + 'yet taken the weight — the boot glyph sitting on the ice at contact' },
 };
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();

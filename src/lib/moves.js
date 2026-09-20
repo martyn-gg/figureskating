@@ -323,7 +323,7 @@ export const MOVES = {
       {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:114, hipYaw:158, shYaw:142,
        sh:P(-2,0,166), L:P(59,10,46,0,NEUTRAL), R:P(-2,0,26,0,NEUTRAL), skate:null},
       {arm:[34,14,14], t:0.44, ph:'Front of the blade touches down', hipZ:98, hipYaw:180, shYaw:162,
-       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3), skate:'R', edge:'O', dir:'B'},
+       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
       {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:178, shYaw:158,
        sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
       {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
@@ -707,13 +707,13 @@ export const MOVES = {
       {arm:[54,8,18], t:0.2201, ph:'Centred on the left - the hip stops travelling', hipZ:96, hipYaw:180, shYaw:174,
        sh:P(0,0,146), L:P(0,12,0,2.2), R:P(-22,18,18), skate:'L', edge:'I', dir:'B'},
       {arm:[44,6,18], t:0.3600, ph:'Three revolutions upright on the left', hipZ:97, hipYaw:180, shYaw:178,
-       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-16,14,16), skate:'L', edge:'I', dir:'B'},
+       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-16,14,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
       /* The weight goes across here and `skate` names the right foot from this
          key on. It is authored at the path's own segment boundary to five places
          so that the blade the pose rides and the blade the tracing is built from
          change on the same frame; spin.mjs asserts they agree, per frame. */
       {arm:[52,10,16], t:0.50366, ph:'Change of foot - stepping over onto the right', hipZ:95, hipYaw:180, shYaw:176,
-       sh:P(0,0,145), R:P(-6,12,0,2.2), L:P(-14,12,16), skate:'R', edge:'O', dir:'B'},
+       sh:P(0,0,145), R:P(-6,12,0,2.2,NEUTRAL), L:P(-14,12,16), skate:'R', edge:'O', dir:'B'},
       {arm:[50,8,18], t:0.5363, ph:'Centred on the right, back outside edge', hipZ:96, hipYaw:180, shYaw:176,
        sh:P(0,0,146), R:P(0,12,0,2.2), L:P(-20,-6,18), skate:'R', edge:'O', dir:'B'},
       {arm:[40,6,18], t:0.7000, ph:'Three revolutions upright on the right', hipZ:97, hipYaw:180, shYaw:178,
