@@ -512,9 +512,39 @@ export const turnoutAllowed = d => {
    rather than derived. This is the floor on the declaration, not a proof of it. */
 export const SKID_MIN_YAW = 15;                    // degrees off the line of travel
 
+
+/* HOW FAR A FOOT THAT IS STAYING FREE IS CLEAR OF THE ICE — moved here from
+   tools/twofoot.mjs on 20/09/2026, where it had lived as that checker's `CLEAR`.
+
+   It moved because the arrival below makes it load-bearing in the MODEL: it is the
+   height over which an arriving boot's direction blends toward its contact. A
+   checker's constant that the renderer depends on is two expressions of one fact,
+   which is this repository's recurring failure, so there is one and tools/twofoot.mjs
+   imports it.
+
+   The fourth constant of this shape, after ANKLE_MAX, ANKLE_POINT and
+   MAX_BLADE_PITCH — and unlike those it is not read off a study of anything. It came
+   from the spread of the poses already authored: contacts sat at 0-2 and free feet at
+   10-117, so five was the middle of a gap nobody had to be nudged across. That makes
+   it a description of what had been written rather than a measurement of skating.
+
+   Verified against a coach: NO. Worth saying plainly, because ANKLE_POINT carried the
+   same line and a coach turned out to disagree with it on the first move he was asked
+   about. */
+export const CLEAR = 5;                            // cm, a free foot's clearance
+
 export function bootDir(pose, which, knee, foot){
   const on = onIceOf(pose, which);
   const p = (foot.pitch || 0) * D2R;
+  /* THE PLANTED CONSTRUCTION, LIFTED OUT AS A FUNCTION OF THE DIRECTION IT RUNS —
+     20/09/2026. It was inline below and is now called twice: once by a foot that is
+     on the ice, with the direction the pose is going, and once by a foot that is
+     arriving at or leaving a contact, with the direction of the key it is arriving
+     at or left. One expression, two callers, which is the point of lifting it. */
+  const planted = dir => {
+    const y = ((dir === 'F' ? 0 : 180) + (foot.yaw || 0)) * D2R;
+    return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
+  };
   if(on === 'pick'){
     /* Along the reach. Foot coordinates are already relative to the hip, so the
        horizontal part of the foot vector IS the reach; a pick under the hip has no
@@ -545,8 +575,7 @@ export function bootDir(pose, which, knee, foot){
        because a pick is not travelling either and already had to solve this. And
        what limits the number is not the tracing but the hip — see HIP_OUT and
        HIP_IN, asserted per pose by tools/turnout.mjs. */
-    const y = ((dirOf(pose, which) === 'F' ? 0 : 180) + (foot.yaw || 0)) * D2R;
-    return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
+    return planted(dirOf(pose, which));
   }
   const s = [foot.t-knee.t, foot.n-knee.n, foot.z-knee.z];
   const sl = Math.hypot(...s) || 1, u = s.map(c => c/sl);
@@ -557,7 +586,42 @@ export function bootDir(pose, which, knee, foot){
   a = a.map(c => c/al);
   const af = Math.min(ANKLE_MAX, Math.max(0, foot.point ?? ANKLE_POINT)) * D2R;
   const c = Math.cos(af), sn = Math.sin(af);
-  return [a[0]*c + u[0]*sn, a[1]*c + u[1]*sn, a[2]*c + u[2]*sn];
+  const free = [a[0]*c + u[0]*sn, a[1]*c + u[1]*sn, a[2]*c + u[2]*sn];
+
+  /* A FOOT ARRIVING ON THE ICE, OR LEAVING IT — 20/09/2026. Specified in
+     docs/model.md before it was built.
+
+     A free boot is built square to the shin, so one whose blade is a millimetre off
+     the ice still hangs at a leg-derived angle and the glyph is drawn through the
+     surface. tools/underice.mjs found that on two moves; tools/twofoot.mjs could not,
+     because the assertion that a free foot is 5 cm clear runs on keyframes and both
+     moves clear at twice the bound on every key while reaching a millimetre between
+     them. The obvious repair — assert it per frame — would be FALSE: a foot being put
+     down has to cross that band, because nobody steps onto a foot that teleports from
+     five centimetres to contact.
+
+     So over the last CLEAR centimetres the direction blends from the free
+     construction to the planted one it is heading for, arriving exactly at it. The
+     two agree at z = 0, where `pitch` and `yaw` have finished interpolating toward
+     the target key, so the seam falls where nothing is happening.
+
+     THE WINDOW IS A HEIGHT AND NOT A SPAN OF CLOCK. The change of foot descends 16 cm
+     over 0.14 of its duration, and at 16 cm the foot is plainly free; blending there
+     would orient a boot at a contact it is nowhere near.
+
+     Lerp and renormalise rather than a slerp: it stays on the sphere, it is
+     continuous, and it is not constant-speed — which no checker asks for and
+     tools/continuity.mjs is the file that would object if it mattered. */
+  if (foot.arrival) {
+    const w = Math.min(1, Math.max(0, 1 - (foot.z / CLEAR)));
+    if (w > 0) {
+      const q = planted(foot.arrival.dir);
+      const v = [free[0] + (q[0]-free[0])*w, free[1] + (q[1]-free[1])*w, free[2] + (q[2]-free[2])*w];
+      const vl = Math.hypot(...v) || 1;
+      return [v[0]/vl, v[1]/vl, v[2]/vl];
+    }
+  }
+  return free;
 }
 
 /* ═══ path ════════════════════════════════════════════════════ */
@@ -641,6 +705,26 @@ const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(
                        ...(a.onIce ? {onIce:a.onIce} : {}), ...(a.dir ? {dir:a.dir} : {}),
                        ...(a.edge ? {edge:a.edge} : {})});
 
+/* A FOOT ARRIVING ON THE ICE, OR LEAVING IT — 20/09/2026, and it is DERIVED rather
+   than authored because the keys either side already say it. docs/model.md,
+   *A foot arriving on the ice*, has the argument; the short version is that a flag
+   exempts and holds nothing to account, which is why `pick: true` was taken out.
+
+   A free foot is ARRIVING when the next key is one where it takes a contact, and
+   DEPARTING when the previous key was. poseAt is holding exactly those two keys, so
+   this costs a comparison rather than a traversal.
+
+   What travels with it is the contact's DIRECTION and nothing else: `pitch` and `yaw`
+   are quantities and lpP is already interpolating them toward the target key, so by
+   the moment of contact the two constructions in bootDir are being handed the same
+   numbers. `dir` is a state and carries, so it has to be fetched. */
+const arrivalOf = (a, b, which) => {
+  const onA = onIceOf(a, which), onB = onIceOf(b, which);
+  if (!onA && onB) return { phase: 'arriving',  dir: (b[which] && b[which].dir) || b.dir };
+  if (onA && !onB) return { phase: 'departing', dir: (a[which] && a[which].dir) || a.dir };
+  return null;
+};
+
 export function poseAt(move, t){
   const K = move.keys;
   let i = 0; while(i < K.length-2 && K[i+1].t <= t) i++;
@@ -648,9 +732,15 @@ export function poseAt(move, t){
   const span = Math.max(1e-6, b.t-a.t);
   const raw = Math.min(1, Math.max(0, (t-a.t)/span));
   const u = raw*raw*(3-2*raw);
+  const foot = which => {
+    const f = lpP(a[which], b[which], u);
+    if (!f) return f;
+    const ar = arrivalOf(a, b, which);
+    return ar ? { ...f, arrival: ar } : f;
+  };
   return {
     hipZ: lp(a.hipZ,b.hipZ,u), hipYaw: lp(a.hipYaw,b.hipYaw,u), shYaw: lp(a.shYaw,b.shYaw,u),
-    sh: lpP(a.sh,b.sh,u), L: lpP(a.L,b.L,u), R: lpP(a.R,b.R,u),
+    sh: lpP(a.sh,b.sh,u), L: foot('L'), R: foot('R'),
     LH: lpP(a.LH,b.LH,u), RH: lpP(a.RH,b.RH,u),
     skate: a.skate, edge: a.edge, dir: a.dir, ph: a.ph,
   };

@@ -52,10 +52,15 @@ import { execFileSync } from 'node:child_process';
 import { ROOT } from './_rig.mjs';
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense, secondFoot, label } from '../src/lib/skating.js';
-import { onIceOf, edgeOf, dirOf, edgesDown, runnersDown, contactsDown, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { onIceOf, edgeOf, dirOf, edgesDown, runnersDown, contactsDown, buildPath, poseAt, CLEAR } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
-const ON_ICE = 3, CLEAR = 5, NEAR = 5, FAR = 70;
+/* CLEAR MOVED TO rig-math.js ON 20/09/2026 and is imported. It became load-bearing in
+   the model that day — it is the height over which an arriving boot's direction blends
+   toward its contact — and a checker's constant the renderer depends on is two
+   expressions of one fact. NEAR happens to be five as well and is a different claim,
+   about two blades a leg's width apart, so it stays here. */
+const ON_ICE = 3, NEAR = 5, FAR = 70;
 
 let bad = 0;
 const fail = m => { bad++; console.error(`  x ${m}`); };

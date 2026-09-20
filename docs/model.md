@@ -712,7 +712,7 @@ the two tracings are a boot's width apart on a four-metre lobe and resolve to on
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
 
-## A foot arriving on the ice — specified 20/09/2026, not yet built
+## A foot arriving on the ice — specified and built 20/09/2026
 
 A foot in this rig is one of two things. It is the skating foot or a declared contact —
 `onIce`, in one of its five kinds — or it is free. `tools/twofoot.mjs` asserts the gap
@@ -819,6 +819,56 @@ description of what has been authored rather than a measurement of skating.
 - `freefoot.mjs` may need arriving feet excluded from its 60° limit, the way `onIce` feet are,
   because an arriving boot's angle is partly its contact's. **Unknown**, and the first thing
   to measure.
+
+### What building it cost
+
+Four of the five held. The fifth was wrong in a way that found something bigger.
+
+| prediction | outcome |
+|---|---|
+| `underice`'s declaration empties | **nearly**: 0.1 cm over two frames became **0.027 cm over one** |
+| `boot.mjs` still 0.00° | **held**, across 26,952 glyphs, with no renderer change |
+| 19 frames move, nothing else | **wrong**: 37 foot-frames are inside the window |
+| `continuity.mjs` stays green | **held** |
+| `freefoot.mjs` may need arriving feet excluded | **not needed** — green without it |
+
+**The count was wrong because I counted arrivals and the specification says arriving OR
+departing.** Nineteen frames arrive; eighteen depart. And the eighteen led somewhere.
+
+> **THE DEPARTURE HALF IS BUILT AND INERT, AND THE REASON IS A THIRD INSTANCE OF THE SAME
+> HOLE.** A departing foot never reaches `bootDir`'s free branch, because `onIceOf` answers
+> *on the ice* for anything that is `pose.skate`, and `poseAt` carries `skate` from the LEFT
+> key — so a foot that stops being the skating blade at key *b* is still claimed to be on the
+> ice for every frame up to it. `onIceOf`'s own header warns about exactly this conflation:
+> *"which reads 'is this the skating foot' and silently means 'is this foot on the ice at
+> all'. Those were the same question until 30/08/2026 and are not any more."* They are still
+> not, and this is where they come apart.
+>
+> Measured per frame, a blade CLAIMED on the ice is drawn:
+>
+> | move | per-key max | per-frame max | frames over the 3 cm bound |
+> |---|---|---|---|
+> | waltz | 2.00 cm | **29.99 cm** | 6 |
+> | changeFootSpin | 0.00 cm | **15.99 cm** | 33 |
+>
+> Thirty centimetres in the air, with the tracing built from it, and every keyframe passing at
+> nought to two. That is the same keyframe blindness as the clearance assertion and the free
+> boot's angle before it, for the third time in one file, and it is a bigger fault than the
+> one this section set out to fix. **Not fixed here.** Fixing it means deciding whether
+> `skate` names the blade the tracing is built from or the blade that is touching, and those
+> stopped being the same question when a pose could hold two blades. That is its own piece of
+> work and wants its own specification.
+
+**What did change**: nineteen frames, in the two moves the arrival exists in, and nothing
+anywhere else. `CLEAR` now lives in `rig-math.js` and `tools/twofoot.mjs` imports it. The
+blend is nine lines in `bootDir` and the planted construction was lifted into a local function
+so there is one expression of it with two callers.
+
+**What is still not asserted.** `twofoot.mjs`'s clearance assertion is still per keyframe. The
+specification says it should go per frame with the arrival excusing the crossing and holding
+it to a monotonic descent, and that is the obvious next step — but it should wait for the
+`skate` question above, because the same file's assertion 1 is per keyframe for the same
+reason and both want settling together rather than one at a time.
 
 ### What it does not buy
 
