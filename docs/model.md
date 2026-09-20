@@ -699,6 +699,99 @@ the two tracings are a boot's width apart on a four-metre lobe and resolve to on
 is what they honestly look like. Neither is worth having. The two blades are carried by two
 boot glyphs in two edge colours, which is where that fact is legible anyway.
 
+## A flat is the absence of an edge — 20/09/2026
+
+The last of the three things *Two blades* said this rig could not hold. Two blades went in
+on 30/08, the boot's roll this afternoon, and this is the third.
+
+### It was already half built, and the halves disagreed
+
+`PathThumb.astro`, which draws the `trace` tracings under the basics, has had this in it
+since it was written: *"A straight segment has no edge to name and both blades take the
+neutral ink."* So `two-foot-glide` has been drawing an honest flat for weeks. Nothing else
+in the repository knew — which is one fact with two expressions and one of them wrong, this
+file's own recurring failure, found again.
+
+`edgeCol` was the other expression: `e === 'O' ? out : in`, a two-way test over a three-way
+question, which answers "inside edge" for anything that is not an outside one. Four call
+sites in the body-frame rig, and it would have coloured a flat as an inside edge in all of
+them. The same shape as the featured filter that absorbed twenty-four twizzles.
+
+**The derived tier was never at risk**, and that is worth recording because it narrows the
+job. `EdgeDiagram` is driven by an `entry` state through `exitState`, which only ever
+produces O and I, so its ternaries cannot meet a flat. The gap was the rig.
+
+### The absence of an edge, not a third letter
+
+`edge: null`, and `lobeSense` returns nought for anything that is not O or I — so a flat
+comes out straight from `buildPath`'s own `-lobeSense/R`, with no branch anywhere. Three
+reasons it is an absence:
+
+- **BIS name the slip step with no edge letter at all**, which is the sport's own answer.
+- `label` is foot-then-direction-then-edge, so a third letter would have spelled a left
+  forward flat **LFF**.
+- `PathThumb` had already reasoned it that way, and agreeing with the half that was right
+  costs nothing.
+
+`secondFoot` follows: both blades of a flat are flat, because the derivation reads a shared
+lobe and there is no lobe to share.
+
+### `lean.mjs` holds a flat rather than excusing it
+
+Both its routes are sign tests — the blade on the far side of the hip from the lobe's
+centre, the body fallen over the biting edge — and a flat has neither sign. The instinct is
+to skip it, and that is the hole this file's own comments keep warning about.
+
+**What is true instead is the opposite claim, and it is stronger than either route: a skater
+on a flat is not leaning.** So the blades must sit UNDER the skater rather than out from
+under them, measured as the centroid of the flat blades against the hip in the skater's own
+lateral direction — one rule covering a single flat blade and a pair straddling the hip,
+with no special case for either.
+
+**`BOOT_HALF_W` is the bound and it is not a tolerance.** It is read off the boot glyph's
+footprint and it is the edge of the sole: past it the hip is outside the foot it is standing
+on, which is not a lean, it is a fall. Broken on purpose: give every flat an edge's lean and
+it reports.
+
+### And no edge dot
+
+The dot marks which side of the blade is biting and a flat bites neither. That cannot be
+read off the contact kind — a flat is an ordinary blade, on the ice and gripping — so
+`boot.mjs` reads the edge letter from the pose instead, and asserts both ways: a blade on an
+edge must carry a dot, a blade on a flat must not. BIS define a flat as the **double tracing
+of a skate running straight**, both edges cutting, so the fact that both are down lives in
+the tracing's two lines, which is where it already did.
+
+### What it bought
+
+**The slip step**, and BIS's definition is geometry four times over: *"A step skated in a
+straight line with the blades of both skates being held flat on the ice. The weight is over
+the skating leg that may be well bent or straight while the free foot slides forward on the
+ice to full extension."* A straight line, both blades flat, the weight on the skating leg,
+the free foot sliding forward. None of those claims is ours.
+
+**It is the first two-foot MOVEMENT this rig has drawn.** `twoFoot`, `pushOff` and `toePick`
+are held positions for one reason — the rig carries one reference blade and drawing what
+they do means handing it over mid-move. Nothing here hands over: the weight stays on the
+skating leg by BIS's own sentence, the free foot is on the ice throughout, both blades stay
+flat and no contact changes kind.
+
+Inert where it should be: **0 of 420 hashed frames** moved across the twenty moves that
+existed before it.
+
+### The tripwire that had already fired
+
+Found on the way, and it is the same lesson one page along. `index.astro` kept a hand-written
+list of the kinds it can name and, for anything else, printed *"N of them in a category this
+page has not been taught to name"* — a tripwire wired into the PAGE rather than into the
+build. The spins shipped on 19/09/2026 and **the live front page has been saying "5 of them
+in a category this page has not been taught to name" ever since.** Visible, shipped, read by
+nobody.
+
+`element-groups.js` had already settled this argument for its own ordering — a section with
+no rank throws rather than sorting quietly to the bottom. So the front page now throws too. A
+notice nobody reads is a decoration.
+
 ## The pick is a third kind of contact — specified and built 30/08/2026
 
 Four of the seven jumps are toe-assisted, the jump pages say out loud that the pick is what

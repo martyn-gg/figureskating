@@ -39,9 +39,14 @@
 
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense } from '../src/lib/skating.js';
-import { lateral, poseAt, edgeOf, dirOf, edgesDown, onIceOf } from '../src/lib/rig-math.js';
+import { lateral, poseAt, edgeOf, dirOf, edgesDown, onIceOf, BOOT_HALF_W } from '../src/lib/rig-math.js';
 
-const BREAK = process.argv.includes('--break');
+/* TWO MUTATIONS NOW, SO THE FLAG TAKES A NAME — 20/09/2026. It was a bare
+   `--break` while there was one thing to break, and the flat's counter-assertion
+   needed a second. `--break` on its own still means the waltz landing, so the
+   line in this file's own header keeps working. */
+const BREAK = process.argv.includes('--break') ? 'waltz'
+            : (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const FRAMES = 320;
 
 /* Which side of the boot bites: the outside of the left foot is the left side of
@@ -51,10 +56,12 @@ const bitingSide = (foot, edge) => ((foot === 'L') === (edge === 'O')) ? -1 : +1
 let bad = 0, checked = 0, routes = 0, skids = 0;
 const fail = m => { bad++; console.error(`  x ${m}`); };
 
-console.log(`lean, ${BREAK ? 'with the old waltz landing put back' : 'as authored'}\n`);
+console.log(`lean, ${BREAK === 'waltz' ? 'with the old waltz landing put back'
+  : BREAK === 'lean' ? 'with every flat leaning like an edge' : 'as authored'}\n`);
 
+let flatTotal = 0;
 for (const [id, move] of Object.entries(MOVES)) {
-  let worstTrack = null, worstBody = null, n = 0;
+  let worstTrack = null, worstBody = null, worstFlat = null, n = 0, flatSeen = 0;
 
   for (let i = 0; i < FRAMES; i++) {
     const pose = poseAt(move, i / (FRAMES - 1));
@@ -65,11 +72,30 @@ for (const [id, move] of Object.entries(MOVES)) {
        skater has fallen over it — and a skidding blade has neither: it is flat,
        because a blade on a real edge grips and stops skidding. An exemption can
        only excuse a pose, so the counter-assertion is below: a skid must BE flat. */
+    /* A FLAT IS AN EDGE THAT IS NEITHER, and it is HELD rather than excused —
+       20/09/2026. Both routes below are sign tests and a flat has no sign to test:
+       lobeSense is nought, so there is no centre and no far side of the hip; and no
+       edge is biting, so there is no side for the body to have fallen over. The
+       instinct is to skip it, and that would be the hole this file's own comments
+       keep warning about.
+
+       What is true instead is the opposite claim, and it is stronger than either
+       route: a skater on a flat IS NOT LEANING. So the blades on the ice must sit
+       UNDER the skater rather than out from under them, which is measured as the
+       centroid of the flat blades against the hip, in the skater's own lateral
+       direction — one rule that covers a single flat blade and a pair straddling the
+       hip without a special case for either.
+
+       BOOT_HALF_W IS THE BOUND AND IT IS NOT A TOLERANCE. It is read off the boot
+       glyph's own footprint, and it is the edge of the sole: past it the hip is
+       outside the foot it is standing on, which is not a lean, it is a fall. */
+    const flats = [];
     for (const w of edgesDown(pose)) {
       const q = { ...pose[w] };
-      if (BREAK && id === 'waltz' && pose.dir === 'B') q.n = -q.n;
-      n++; checked++;
+      if (BREAK === 'waltz' && id === 'waltz' && pose.dir === 'B') q.n = -q.n;
       const edge = edgeOf(pose, w), dir = dirOf(pose, w);
+      if (edge !== 'O' && edge !== 'I') { flats.push(q); continue; }
+      n++; checked++;
 
       /* TRACK. k = -lobeSense/radius, and an arc of curvature k turns toward
          sign(k) x n — so the centre is on the sign(-lobeSense) side and the blade
@@ -91,6 +117,18 @@ for (const [id, move] of Object.entries(MOVES)) {
           : { t: i / (FRAMES - 1), lean: rightward, side, w, ph: pose.ph };
     }
 
+    if (flats.length) {
+      flatSeen++;
+      const ct = flats.reduce((a, q) => a + q.t, 0) / flats.length;
+      const cn = flats.reduce((a, q) => a + q.n, 0) / flats.length
+               + (BREAK === 'lean' ? 20 : 0);          // a flat leaning like an edge
+      const R = lateral(pose.hipYaw);
+      const off = Math.abs(-ct * R[0] + -cn * R[1]);
+      if (off > BOOT_HALF_W)
+        worstFlat = worstFlat && worstFlat.off > off ? worstFlat
+          : { t: i / (FRAMES - 1), off, w: flats.length, ph: pose.ph };
+    }
+
     /* SKIDS ARE COUNTED AND NOT JUDGED HERE, and where the judging went is the
        point. A skid rides an edge — a T-stop is unanimously on the trailing
        blade's outside edge — so the obvious exemption, "it has no edge", is wrong.
@@ -108,9 +146,11 @@ for (const [id, move] of Object.entries(MOVES)) {
     for (const w of ['L', 'R']) if (onIceOf(pose, w) === 'skid') skids++;
   }
 
-  routes += 2;
-  const tag = `${id.padEnd(13)} ${String(n).padStart(4)} blade-frames on an edge`;
-  if (!worstTrack && !worstBody) { console.log(`  ok   ${tag}`); continue; }
+  flatTotal += flatSeen;
+  routes += flatSeen ? 3 : 2;
+  const tag = `${id.padEnd(13)} ${String(n).padStart(4)} blade-frames on an edge` +
+    (flatSeen ? `, ${flatSeen} flat` : '');
+  if (!worstTrack && !worstBody && !worstFlat) { console.log(`  ok   ${tag}`); continue; }
   console.log(`  BAD  ${tag}`);
   if (worstTrack)
     fail(`${id} leans out of its own lobe: at t=${worstTrack.t.toFixed(2)} the ${worstTrack.w} blade is at ` +
@@ -120,10 +160,15 @@ for (const [id, move] of Object.entries(MOVES)) {
     fail(`${id} leans off its own edge: at t=${worstBody.t.toFixed(2)} the body is ` +
       `${worstBody.lean > 0 ? 'right' : 'left'} of the ${worstBody.w} blade by ${Math.abs(worstBody.lean).toFixed(1)} cm, ` +
       `but the biting edge is on the skater's ${worstBody.side > 0 ? 'right' : 'left'} — "${worstBody.ph}"`);
+  if (worstFlat)
+    fail(`${id} leans on a flat: at t=${worstFlat.t.toFixed(2)} the hip is ${worstFlat.off.toFixed(1)} cm ` +
+      `to one side of ${worstFlat.w === 1 ? 'the flat blade' : 'the flat blades'}, past the ${BOOT_HALF_W} cm ` +
+      `to the edge of the sole — a skater on a flat is not leaning — "${worstFlat.ph}"`);
 }
 
 console.log(bad
-  ? `\n${bad} of ${routes} claims failed over ${checked} blade-frames on an edge and ${skids} skidding`
+  ? `\n${bad} of ${routes} claims failed over ${checked} blade-frames on an edge, ${flatTotal} flat and ${skids} skidding`
   : `\n${checked} blade-frames on an edge, every blade leaning into its circle and over its edge` +
+    (flatTotal ? `,\nand ${flatTotal} frames on a flat, every one of them with the hip over the foot` : '') +
     (skids ? `,\nand ${skids} skidding frames left to turnout.mjs, which is where their claim is` : ''));
 process.exit(bad ? 1 : 0);

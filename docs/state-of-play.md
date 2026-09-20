@@ -19,10 +19,31 @@ rather than fail.
 
 **Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions, **twenty-two basics** and **five spins**. 271 of the 278 element
-pages drawing. Count kinds with
+jumps, three held positions, **twenty-two basics**, **five spins** and **one step**. 272 of the
+279 element pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**A flat is the absence of an edge, 20/09/2026 — the last of the three things *Two blades*
+said the rig could not hold.** It was already half built and the halves disagreed:
+`PathThumb` has drawn a straight segment in neutral ink since it was written, and `edgeCol`
+was a two-way test that would have coloured a flat as an inside edge in four places. The
+derived tier was never at risk — `EdgeDiagram` runs off `exitState`, which only makes O and
+I — so the gap was the rig.
+
+`edge: null` rather than a third letter: BIS name the slip step with no edge letter, and
+`label` would have spelled a left forward flat LFF. `lean.mjs` holds a flat instead of
+excusing it — a skater on a flat is not leaning, so the centroid of the flat blades sits
+under the hip, bounded by the edge of the sole. No edge dot, asserted both ways. It bought
+**the slip step**, the first two-foot MOVEMENT this rig has drawn, and opened `kind: 'step'`,
+which the enum had carried from the beginning with nothing in it. 0 of 420 hashed frames
+moved.
+
+**And it found a tripwire that had already fired.** `index.astro` printed "N of them in a
+category this page has not been taught to name" for any kind its hand-written list missed —
+and the live front page had been saying it about the five spins since 19/09/2026. Shipped,
+visible, read by nobody. It throws now, the way `element-groups.js` already did for an
+unranked section.
 
 **The boot's fourth rotation, 20/09/2026 — and the drag draws.** A boot had three rotational
 degrees of freedom and this model authored two: the roll was derived in `ankleOf` from the

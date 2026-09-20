@@ -17,7 +17,18 @@ const el=(n,a={})=>{const e=document.createElementNS(NS,n);for(const k in a)e.se
 const unit  = v => { const l = Math.hypot(...v) || 1; return v.map(c => c/l); };
 const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
 
-const edgeCol = e => e==='O' ? 'var(--edge-out)' : 'var(--edge-in)';
+/* A FLAT IS NEITHER, AND THIS TERNARY WAS THE WHOLE RISK — 20/09/2026. Written as a
+   two-way test it answered "inside" for anything that was not an outside edge, which
+   would have coloured a flat as an inside edge in four places at once: the same shape
+   as the featured filter that absorbed twenty-four twizzles and the loop that discarded
+   an authored hand. docs/model.md has had it on the list since 30/08.
+
+   The neutral ink is not a new token. `PathThumb` has drawn a straight segment in
+   `--ink-soft` since it was written, with the reason in its own comment — "a straight
+   segment has no edge to name and both blades take the neutral ink" — and one component
+   being right while the rest of the repository did not know is two copies of a fact
+   with one of them wrong. This is the other copy, corrected. */
+const edgeCol = e => e === 'O' ? 'var(--edge-out)' : e === 'I' ? 'var(--edge-in)' : 'var(--ink-soft)';
 
 /* Left and right keep their own colour in every view, so you can read which
    way round the skater is without waiting for the boot to turn. */
@@ -267,7 +278,14 @@ function bootEnd(edge, contact, foot, facing, dotSide){
      skating boot the two agree exactly, because a blade on the ice lies along
      its own tracing; on a free boot, whose direction is built from the shin,
      they part company — which is precisely where the wrong dot was appearing. */
-  if(skating){
+  /* AND NO DOT ON A FLAT — 20/09/2026. The dot marks which side of the blade is
+     biting, and on a flat neither is: BIS define it as the DOUBLE tracing of a skate
+     running straight, both edges cutting. A dot would have to pick a side and there
+     is not one, and `onLeft` above would have picked "not outside, therefore inside"
+     without being asked. The fact that both edges are down lives in the tracing,
+     which draws two lines — the same division of labour as everywhere else here.
+     tools/boot.mjs asserts it from both sides. */
+  if(skating && (edge === 'O' || edge === 'I')){
     const onLeft = (foot==='L') === (edge==='O');      // which side of the blade bites
     g.appendChild(el('circle',{cx:(onLeft?dotSide:-dotSide)*3.2, cy:2.2, r:3.2,
       fill:col,'data-edge-dot':onLeft?'skater-left':'skater-right'}));

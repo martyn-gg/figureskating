@@ -13,9 +13,28 @@ const byKind = k => elements.filter(e => e.data.kind === k);
    listed the exclusions, so the twenty-four twizzles added on 29/08/2026 fell
    through it and landed alphabetically in amongst the jumps — a new kind should
    not be able to appear here by not having been thought of. */
-const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position'];
+const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position',
+               'spin', 'step'];
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
-const unnamed = elements.filter(e => !KINDS.includes(e.data.kind)).length;
+
+/* AN UNNAMED KIND IS A BUILD FAILURE, NOT A SENTENCE — 20/09/2026.
+
+   This list used to degrade politely: anything it did not name was counted and the
+   page printed "N of them in a category this page has not been taught to name". That
+   is a tripwire wired into the page instead of into the build, and it did exactly what
+   such a thing does. The spins went in on 19/09/2026 and **the live front page has been
+   saying "5 of them in a category this page has not been taught to name" ever since** —
+   shipped, visible, and read by nobody. A notice nobody reads is a decoration.
+
+   `element-groups.js` already settled the argument for its own ordering: a section with
+   no rank throws rather than sorting quietly to the bottom, because a hand-written list
+   of what to show is how twenty-four twizzles fell through the featured filter. This is
+   the same list one page along, so it gets the same answer. */
+const unnamedKinds = [...new Set(elements.map(e => e.data.kind))].filter(k => !KINDS.includes(k));
+if (unnamedKinds.length) throw new Error(
+  `index.astro: the kind${unnamedKinds.length > 1 ? 's' : ''} ${unnamedKinds.map(k => `"${k}"`).join(', ')} ` +
+  `${unnamedKinds.length > 1 ? 'are' : 'is'} not in KINDS, so the front page cannot name ` +
+  `${unnamedKinds.length > 1 ? 'them' : 'it'}. Add to KINDS rather than letting the count absorb it.`);
 
 /* THE OVERVIEW. Forwards before backwards, outside before inside, left before
    right — so the grid reads as the model rather than as an alphabetical accident,
@@ -143,8 +162,7 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
   </p>
 
   <p style="margin-top:1.5rem;font-size:.9rem;color:var(--ink-soft)">
-    {elements.length} elements recorded across {tests.length} tests
-    {unnamed > 0 && <> — {unnamed} of them in a category this page has not been taught to name</>}.
+    {elements.length} elements recorded across {tests.length} tests.
   </p>
 </Base>
 

@@ -144,8 +144,12 @@ export function elementGroups(elements) {
      whether an element appears in a test the guide holds — which decides which
      TAB a section belongs on. That is orthogonal to this and still open. */
   const SECTION_RANK = {
-    basic: 1, edges: 2, transitions: 3, 'one-foot': 4, 'two-foot': 5,
-    twizzles: 6, clusters: 7, position: 8, jump: 9, spin: 10,
+    /* A STEP SITS BETWEEN THE TRANSITIONS AND THE TURNS — 20/09/2026, with the slip
+       step, the first element of a kind the enum has carried from the beginning with
+       nothing in it. A transition is how you get from one edge to the next; a step is
+       a way of moving that changes neither. Both come before a skater turns. */
+    basic: 1, edges: 2, transitions: 3, step: 4, 'one-foot': 5, 'two-foot': 6,
+    twizzles: 7, clusters: 8, position: 9, jump: 10, spin: 11,
   };
   const rankOf = id => {
     const r = SECTION_RANK[id];

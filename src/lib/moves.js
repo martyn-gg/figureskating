@@ -1059,6 +1059,66 @@ export const MOVES = {
        sh:P(-4,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
     ]},
 
+  /* A SLIP STEP — the rig for `slip-step`, the first pose in this file on a FLAT,
+     and the first two-foot MOVEMENT it has drawn.
+
+     BRITISH ICE SKATING'S OWN DEFINITION, and it is geometry four times over, which
+     is the cheapest kind of expectation there is: "A step skated in a straight line
+     with the blades of both skates being held flat on the ice. The weight is over the
+     skating leg that may be well bent or straight while the free foot slides forward
+     on the ice to full extension." A straight line, both blades flat, the weight on
+     the skating leg, the free foot sliding forward. Every one of those is a claim the
+     model can hold, and none of them is ours.
+
+     A FLAT IS THE ABSENCE OF AN EDGE, not a third letter. `edge: null`, and
+     `lobeSense` returns nought, so `buildPath` draws it straight from the same
+     expression that curves everything else. BIS name this step with no edge letter at
+     all, and `label` is foot-then-direction-then-edge, so a letter would have spelled
+     a left forward flat LFF.
+
+     IT IS A MOVEMENT AND THAT IS NOT A LAPSE. twoFoot, pushOff and toePick are all
+     held positions for one reason: the rig carries one reference blade, and drawing
+     what they do means handing it over mid-move. Nothing here hands over. The weight
+     stays on the skating leg by BIS's own sentence, the free foot is on the ice from
+     the first frame to the last, both blades stay flat, the path stays straight and no
+     contact changes kind. The difficulty that stopped the others does not reach this.
+
+     THE HIP GOES BACK AS IT GOES DOWN, and neither number was chosen. The skating
+     foot's authored t rises 12 to 25 because the hip hangs off the reference blade at
+     minus that — so a rising t is the hip travelling BACK over the skating foot, which
+     is what sinking does. And it has to: shin.mjs will not have a deep knee with the
+     blade under the hip, the same fact that shapes the teapot, the sit spin and the
+     pick. Swept before authoring, at a self-imposed ceiling of 22 degrees rather than
+     the 28 the cuff allows: the slide reaches 42 cm at a hip of 92 and 55 at 80, and
+     this takes the second with both shins at 21 and 22. The extended edge is why the
+     margin is deliberate.
+
+     THE FEET STRADDLE THE TRACK, seven centimetres each side, and that is what keeps
+     lean.mjs happy: a flat is held to the opposite claim from an edge — the skater is
+     NOT leaning — so it is the centroid of the flat blades that must sit under the
+     hip, and two feet either side of it average to nought.
+
+     THE FEET FINISH ABOUT THIRTY CENTIMETRES APART AND THAT LOOKS SHORT, so it is
+     worth saying why it is not. BIS ask for the free leg at full extension, and it is:
+     the sliding leg is at ninety-three per cent of its reach. What makes the gap modest
+     is that the skating foot has come forward too, because the hip goes back as the
+     knee bends. Swept over every hip height and both feet, the widest gap the model
+     allows is 39 cm and that sits on the cuff's 28-degree limit; with margin it is 30
+     to 33. So this is the picture, not a shortfall in the authoring. */
+  slipStep: {
+    name:'Slip step',
+    note:'both blades flat and straight · the free foot sliding forward to full extension',
+    path:[{kind:'line', len:300}],
+    radius:300, duration:3.6,
+    keys:[
+      {t:0.00, ph:'Both blades flat, the feet level', hipZ:92, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,144), L:P(12,-7,0), R:ON(12,7,0), skate:'L', edge:null, dir:'F'},
+      {t:0.50, ph:'Sinking onto the skating leg, the free foot starting out', hipZ:86, hipYaw:0, shYaw:-3,
+       sh:P(0,0,138), L:P(20,-7,0), R:ON(33,7,0), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held — the weight back over a bent knee, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
+       sh:P(2,0,132), L:P(25,-7,0), R:ON(55,7,0), skate:'L', edge:null, dir:'F'},
+    ]},
+
   /* A DRAG, WHICH IS A LUNGE — the rig for `drag`, and the first pose in this file to
      use the fifth contact. Three barriers stood in front of it on 29/08/2026. Two blades took one,
      the authorable ankle took the second when the sweep found 8,064 legal poses at a

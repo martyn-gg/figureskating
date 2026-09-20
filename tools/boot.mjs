@@ -13,6 +13,12 @@
       ice is holding OVER, which is the whole of what it says, so the limit does not
       apply to it and tools/blade.mjs holds it to the pair instead.
 
+      SINCE 20/09/2026 A THIRD CASE: a blade running FLAT is on the ice and
+      gripping, and bites on neither side, so it takes no dot either. That cannot be
+      read off the contact kind — a flat is an ordinary blade — so the edge LETTER is
+      read from the pose, and its absence is what a flat is. Asserted both ways: a
+      blade on an edge must carry a dot, and a blade on a flat must not.
+
    2  A BOOT DRAWN END-ON ROLLS WITH ITS OWN BOOT, and a skating boot is never
       drawn past the roll a stiff boot allows.
 
@@ -42,7 +48,7 @@
        node tools/boot.mjs
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, edgeOf } from '../src/lib/rig-math.js';
 import { rigFor, walk } from './_dom.mjs';
 
 /* A stiff boot allows about 28 deg of lean (tools/shin.mjs), and seen end-on the
@@ -80,7 +86,19 @@ for (const [key, m] of Object.entries(MOVES)) {
            not this one. So the dot follows the edge, the roll limit follows the
            weight, and the two were only ever the same question while every boot on
            the ice was gripping. */
-        const edged = role === 'skating' || role === 'skid';
+        /* AND A FLAT IS A BLADE WITH NO EDGE — 20/09/2026, which is the same
+           sentence one step further along. `role` says what KIND of contact the
+           boot is making and cannot say this, because a flat blade is on the ice
+           and gripping like any other; what it is not doing is biting on a side.
+           So the edge letter has to be read from the pose, and where there is none
+           there is no side for a dot to mark. BIS define a flat as the DOUBLE
+           tracing of a skate running straight — both edges cutting — so the fact
+           lives in the tracing's two lines rather than in a dot that would have to
+           pick one of them. Asserted from both sides below, which is why this is a
+           third value of `edged` and not an exclusion. */
+        const letter = edgeOf(pose, which);
+        const flat = (role === 'skating' || role === 'skid') && letter !== 'O' && letter !== 'I';
+        const edged = (role === 'skating' || role === 'skid') && !flat;
         const planted = role !== 'free';           // on the ice at all: held upright
 
         /* what the picture claims */
@@ -94,7 +112,8 @@ for (const [key, m] of Object.entries(MOVES)) {
         if (dot) dots++;
         if (!edged && dot) {
           dotBad++;
-          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a ${role} boot, which has no edge`);
+          if (dotBad <= 6) say(`DOT   ${key} ${mode} f=${i} ${which}  edge dot on a ` +
+            `${flat ? 'blade running flat, which bites on neither side' : role + ' boot, which has no edge'}`);
         }
         if (edged && drawn !== null && !dot) {
           dotBad++;

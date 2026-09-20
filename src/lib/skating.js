@@ -8,6 +8,18 @@
 
 /** +1 = anticlockwise seen from above the ice. */
 export function lobeSense(foot, edge, dir) {
+  /* A FLAT HAS NO LOBE, so it has no sense — 20/09/2026. A blade running flat is
+     straight, and a straight line has no centre to curve toward and no side to be
+     on. Nought rather than a guess, and nought is also what `buildPath` wants: its
+     curvature is -lobeSense/R, so a flat comes out straight from the same
+     expression that curves everything else, with no branch anywhere.
+
+     The absence of an edge is how a flat is said, not a third letter. British Ice
+     Skating name the slip step with no edge letter at all, `PathThumb` has drawn a
+     straight segment in neutral ink since it was written — "a straight segment has
+     no edge to name" — and `label` is foot-then-direction-then-edge, so a third
+     letter would have spelled a left forward flat LFF. */
+  if (edge !== 'O' && edge !== 'I') return 0;
   return (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * (dir === 'F' ? 1 : -1);
 }
 
@@ -46,6 +58,11 @@ export const mirror = s => ({ ...s, foot: flip(s.foot, 'L', 'R') });
 export function secondFoot(ref, dir2 = ref.dir) {
   const foot = ref.foot === 'L' ? 'R' : 'L';
   const want = lobeSense(ref.foot, ref.edge, ref.dir);
+  /* BOTH BLADES OF A FLAT ARE FLAT. The derivation below reads the shared lobe and
+     hands back the other letter; with no lobe there is no other letter to hand back,
+     and the honest answer is the same absence. BIS: a slip step is "a step skated in
+     a straight line with the blades of BOTH skates being held flat on the ice". */
+  if (!want) return { foot, edge: null, dir: dir2 };
   const rest = (foot === 'L' ? 1 : -1) * (dir2 === 'F' ? 1 : -1);
   return { foot, edge: want * rest === 1 ? 'O' : 'I', dir: dir2 };
 }
