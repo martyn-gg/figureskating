@@ -21,11 +21,20 @@ import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, D2R, ANKLE_MAX, ANKLE_POINT, anterior, twoBone, bootDir,
          ankleOf, poseAt } from '../src/lib/rig-math.js';
 
+/* SAME SIGN AS freefoot.mjs, WHICH OWNS THE LIMIT — 20/09/2026. This read
+   `-bd[2]` from the day it was written, which is the negative of what
+   freefoot.mjs calls elevation, and nothing could see it because every use here
+   takes the absolute value. Two expressions of one quantity with opposite signs,
+   hidden by an abs(): the fault this repository keeps a list of. It surfaced when
+   docs/model.md's camel table was read back against a fresh sweep and the numbers
+   came out mirrored. Every number this file prints is unchanged — the output was
+   diffed before and after — which is the point: it was latent, and the next reader
+   to want the sign rather than the magnitude would have got it backwards. */
 const elevOf = (pose, w) => {
   const q = pose[w], hip = { t:0, n:0, z:pose.hipZ };
   const k0 = twoBone(hip, q, THIGH, SHIN, anterior(pose.hipYaw));
   const bd = bootDir(pose, w, k0, q);
-  return Math.asin(Math.max(-1, Math.min(1, -bd[2]))) / D2R;
+  return Math.asin(Math.max(-1, Math.min(1, bd[2]))) / D2R;
 };
 const worstFree = (m, point) => {
   let w = 0;
@@ -85,7 +94,7 @@ const camels = (point) => {
        const kn = twoBone(hip, an, THIGH, SHIN, anterior(180));
        if (kn.z > hipZ
            && Math.hypot(an.t, an.n, an.z - hipZ) <= THIGH + SHIN
-           && Math.abs(Math.asin(Math.max(-1,Math.min(1,-bd[2]))) / D2R) <= 60) n++;
+           && Math.abs(Math.asin(Math.max(-1,Math.min(1,bd[2]))) / D2R) <= 60) n++;
      }
   return n;
 };

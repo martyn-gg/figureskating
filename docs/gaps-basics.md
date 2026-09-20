@@ -37,13 +37,13 @@ missing.
 | | element | the rig |
 |---|---|---|
 | **Getting moving** | forward stroking | yes — a rig |
-| | backward stroking | **no — has the yaw it needs, wants a rig of its own** |
+| | backward stroking | yes — a rig, 20/09/2026 |
 | | swizzle, backward swizzle | **no** |
 | | half-swizzle pumps, backward half-swizzle pumps | **no** |
 | **Gliding** | two-foot glide, backward two-foot glide | yes |
 | | one-foot glide, backward one-foot glide | yes |
 | | dip | yes, and the most worthwhile of them |
-| | drag | **no — the trailing foot is turned out** |
+| | drag | **no — the trailing shin is 30 to 44° over what the boot allows** |
 | **Stopping** | snowplough stop, backward snowplough stop | yes — a rig each |
 | | T-stop | yes — a rig |
 | | hockey stop | **no — counter-rotation and a free upper body** |
@@ -52,7 +52,7 @@ missing.
 | | two-foot change of edge | yes |
 | | pivot | **no — the pick has no anchor** |
 
-Eight of twenty-two, on the day this was written. **Fourteen of twenty-two now**, and the
+Eight of twenty-two, on the day this was written. **Fifteen of twenty-two now**, and the
 count and the reasons are held by `tools/drawn.mjs` rather than by this table — read them
 there if the two ever disagree. The fourteen that could not be drawn looked like one blocker
 and were three.
@@ -70,6 +70,24 @@ both two-foot turns have rigs**, and the reference blade may now declare a skid,
 what a two-foot stop and a two-foot turn both need. The hockey stop wants counter-rotation
 and a free upper body, the swizzles still need a second path, and the pivot still needs an
 anchor. Only the drag and backward stroking are waiting on nothing but authoring.
+
+**Backward stroking had a rig on 20/09/2026 and the drag did not** — `docs/model.md`,
+*A trailing foot flat on the ice needs a shin the boot has not got*. Backward stroking was
+the claim above being true: it is `pushOff` read off a base of 180, and the yaw is the same
+number in both because flipping the direction of travel and flipping which side is the
+skater's right cancel. The drag was the claim being wrong, and the sentence "waiting on
+nothing but authoring" is what it was wrong about. **Measured, a trailing foot flat on the
+ice needs the shin 30 to 44 degrees over the 28 a boot allows, at every hip height below 96
+and every reach past ten centimetres, and pitching the boot makes it worse monotonically.**
+Only a locked skating leg keeps both shins legal, and the bent knee is what the element is
+about. `turnout.mjs` blocks it a second time, reading a trailing toe as 150 degrees of hip
+rotation — the case its own header predicted and excluded picks for.
+
+That leaves seven, and `tools/drawn.mjs` holds the reason for each: both swizzles (the
+blades are turned out against the travel), both half-swizzle pumps (the pushing blade is
+angled across the circle), the hockey stop (counter-rotation and a spine), the pivot (the
+pick has no anchor), and the drag. The drag is the only one whose blocker is `shin.mjs`, and
+the only one waiting on the same thing as the camel change and the lunge.
 
 ## The turns, and what a sweeping yaw cost — 19/09/2026, later the same day
 

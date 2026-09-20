@@ -356,6 +356,92 @@ decides it: a pose that cannot be drawn honestly is not drawn.
 `point` field already rotates it about one axis, and what a reaching leg needs is the other.
 That is a model change and nobody has costed it. It would also buy the lunge.
 
+## A trailing foot flat on the ice needs a shin the boot has not got — 20/09/2026
+
+The drag was the last basic thought to be waiting on nothing but authoring. It is not.
+Session 18 flagged the right suspicion — a turned-out foot behind the body is where the rig
+was found to stop being honest — and the suspicion turned out to be pointing at the wrong
+wall. Three things had to be settled before any number here meant anything, and two of them
+were wrong on the first pass.
+
+**Which way is behind.** `t` is the direction of TRAVEL, so behind the skater is `-t` at
+hipYaw 0 and `+t` at hipYaw 180. A forward drag faces forward. Sweeping `+t` at hipYaw 0
+measures the region in FRONT of the skater, which is benign, and reports that a blocked pose
+is fine. The header of `moves.js` opens by warning about this and it still happened.
+
+**Which sign is up.** `freefoot.mjs`, which owns the 60° limit, reads elevation as
+`asin(bd[2])` — positive toe up. `ankle.mjs` reads `asin(-bd[2])` and takes the absolute
+value of it everywhere, so **the two files have disagreed about the sign since `ankle.mjs`
+was written and nothing could see it.** Two copies of a fact, one of them wrong, hidden by an
+`abs()`: the failure mode this file keeps a list of, found again.
+
+**What `point` the surface above was swept at.** The camel table reproduces at **point 25,
+n −8, hip 96** — four of its five landmarks within a degree and the fifth inside the range it
+was quoted as. That is a pointed foot, not the default 10. The elevation surface is a
+function of the ankle as well as the leg, so a table read at a different point is a different
+table.
+
+### What the measurement says
+
+**The elevation surface does not block the drag.** The camel's bad region is mid-height
+behind, `z` 30 to 70. A drag is on the ice. Swept properly, a pointed free foot at `z` 0 reads
+−31° ten centimetres behind and −54° at fifty, inside 60 at every hip height down to 88.
+
+**Two other things do, and the first is not in any checker.** As a free foot the boot's low
+end sits **7 to 11 cm below the ice** at those same angles, because a boot square to a shin
+that steep points into the ice and the glyph is 26 cm long. That is Session 15's fault
+exactly, and nothing in the repository sees it: `freefoot.mjs` judges the boot's angle and
+nothing judges where its ends finish up. **A checker for a boot below z 0 is owed.**
+
+Declaring the foot a contact removes that one — `bootDir` then takes the tracing plus the yaw
+and the shin has no say. What it does not remove is the shin itself.
+
+**`shin.mjs` is the wall, and the element's own content is what walks into it.** A boot allows
+28° of lean. Measured at yaw 210, foot flat on the ice:
+
+| hip | skating blade | trailing blade, 20 cm back | 30 cm | 40 cm |
+|---|---|---|---|---|
+| 96 | 23° | 26° | 25° | out of reach |
+| 94 | 26° | **31°** | **32°** | out of reach |
+| 92 | **30°** | **35°** | **37°** | **33°** |
+| 88 | **36°** | **41°** | **44°** | **44°** |
+
+Only a locked skating leg at a hip of 96 keeps both shins legal, and then the trail is capped
+at about 30 cm. Every hip from 94 down puts the **skating** blade alone over before the
+trailing foot is considered at all. The page's own sentence — the skating knee stays bent —
+is the thing that cannot be drawn.
+
+**And pitching the trailing boot makes it worse, monotonically.** The obvious move is to point
+the foot, since a real drag's ankle is plantarflexed and only part of the runner touches. It
+goes the wrong way at every hip and every reach: 44° at zero pitch becomes 52° at 8°, 64° at
+20°, 80° at 40°. Tilting the boot tilts its up-axis away from the shin, so the quantity being
+measured grows with the thing meant to relieve it. There is no pitch that rescues it.
+
+**`turnout.mjs` blocks it a second time, and says so in its own header.** A trailing foot's toe
+is the far end of the leg and points back down the ice — 180 — with the turnout on top of
+that. The checker reads the raw plan angle and calls it 150° of hip rotation. Its header
+already predicted the case: *extend the leg behind and a toe pointing away from the body is
+hip EXTENSION with a pointed ankle, and the plan angle reads as a hundred and fifty degrees of
+rotation that nobody is doing.* Picks are excluded for exactly that reason; a dragged blade
+does the same thing and is not. The yaws that satisfy both the skid floor and the hip run
+−33 to +49 — a boot pointing roughly forwards, which is not a trailing foot.
+
+### What it would take
+
+Both walls are the open question already on the books: **a boot whose direction comes from
+something other than the shin alone**, which is also what blocks the camel change and the
+lunge. A trailing foot needs a boot that can lie along the ice while the leg above it reaches
+away at an angle the ankle is not being asked to make up. `point` rotates the boot about one
+axis and this wants the other, which is the same sentence the camel write-up ends on. The
+drag is now the third element waiting behind it, and the first whose blocker is `shin.mjs`
+rather than the elevation surface.
+
+Until then the page says what is missing and why, and the contact question is settled in
+advance: **the trailing foot is a SKID and not a PUSH.** A push drives sideways and grips; a
+blade dragged along the line of travel while pointing off it is sliding across itself. The one
+word that will not fit is `SKID()`'s own "weight on it" — a drag is the first skid that is not
+a stop, and the comment is what should change rather than the kind.
+
 ## Two blades, and the one fact that made them cheap — 30/08/2026
 
 A pose can hold two blades. `skate` did not become an array; it stayed single-valued and

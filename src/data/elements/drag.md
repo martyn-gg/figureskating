@@ -14,8 +14,10 @@ trailing foot carries almost no weight.
 
 The word makes it sound like a brake and it is not one. The trailing foot touches the ice
 rather than pressing into it, and if it takes real weight the glide slows and the hips
-square up, which is the fault to watch for. What the position is actually training is turnout
-in the free hip while the skating side stays over its own blade — the same separation a
-spiral needs, at a height where a fall costs nothing.
+square up. It trains turnout in the free hip while the skating side stays over its own
+blade, the same separation a spiral needs, at a height where a fall costs
+nothing.
 
-It reads as a small thing next to a spiral and it teaches the harder half of one.
+There is no animation here. A trailing foot flat on the ice asks more of the shin inside the
+boot than a stiff boot allows, and asks more of it the lower the skating hip goes, so the
+bent knee that makes it a drag is what puts it out of reach.

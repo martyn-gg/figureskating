@@ -19,8 +19,13 @@
    were one fact (docs/gaps-basics.md): a blade on the ice took its heading from the
    tracing, so a stop, a push and a two-foot turn — every movement where the blade
    points somewhere other than where it is going — could not be drawn at all. The
-   yaw and the skid closed most of it; ten remain, and each names what the MODEL
-   lacks rather than what a skater cannot do.
+   yaw and the skid closed most of it, and each entry left names what the MODEL lacks
+   rather than what a skater cannot do.
+
+   HOW MANY REMAIN IS NOT WRITTEN HERE. It said ten while the list held nine, which is
+   the fifth time in this repository a count stated by hand has drifted from the thing
+   it counts — a description of something that changed. The run prints the number from
+   the list itself; read it there.
 
    Broken on purpose, both ways, because an exemption asserted from one side only is
    the shape this repository keeps finding in its own checkers:
@@ -55,7 +60,17 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  'drag':                        'has the yaw it needs; wants a rig of its own',
+  /* MEASURED, NOT GUESSED — 20/09/2026. The line here used to say the drag wanted
+     nothing but a rig, which was the same authoring-only claim backward stroking
+     carried, and backward stroking turned out to be true. This one is not. A
+     trailing foot flat on the ice needs the shin 30 to 44 degrees over inside a boot
+     that allows 28, at every hip height below 96 and every reach past 10 cm — and
+     pitching the boot makes it worse monotonically, because tilting the boot tilts
+     its up-axis away from the shin. Only a locked skating leg keeps both shins
+     legal, and the bent knee is the element. Full table in docs/model.md. */
+  'drag':                        'the trailing shin is 30 to 44 degrees over what the boot '
+                               + 'allows, and the bent skating knee the element is about is '
+                               + 'what puts it there',
   'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
 };
 
