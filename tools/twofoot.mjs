@@ -12,6 +12,10 @@
    1  THE REFERENCE BLADE AGREES WITH THE ICE. `skate` names a foot that is on
       the ice, and an airborne pose has no blade down at all. A second blade
       declared on a jump would otherwise draw a tracing under a skater in mid-air.
+      PER FRAME its other half, since 20/09/2026: `skate` names the blade the
+      TRACING is built from and no longer implies a contact at all, so the claim
+      worth making between two keys is that a reference blade which is off the ice
+      is one that is changing hands.
 
    2  A FOOT ON THE ICE IS ON THE ICE, AND A FREE FOOT IS NOT. Within 3 cm and
       at least 5 cm respectively. Blade or pick: a pick that is not touching is not
@@ -20,6 +24,23 @@
       This is the assertion model.md asked for: the lunge "would have passed
       every checker with the trailing foot lifted 30 cm", and authoring a second
       blade at free-foot height is the same cheat in the other direction.
+
+   PER KEYFRAME IS NOT PER FRAME, AND THIS FILE HAD BEEN BITTEN BY IT TWICE BEFORE
+   ANYONE COUNTED. 1 and 2 both read `move.keys`, and both were false between two of
+   them. The clearance bound: every keyframe cleared at twice the 5 cm and the feet
+   reached 1.23 cm on the waltz and 0.01 on the change of foot. The on-the-ice bound:
+   every keyframe passed at nought to two centimetres and a blade CLAIMED on the ice
+   was drawn 29.99 cm above it for six frames of the waltz and 15.99 for thirty-three
+   of the change of foot, with the tracing built from it. Same file, same shape,
+   `freefoot.mjs`'s old fault twice over.
+
+   THEY GO PER FRAME TOGETHER, and that is not tidiness. Both were per keyframe for
+   the same reason and settling one would have opened the same argument twice: a foot
+   being put down HAS to cross the 5 cm band, so the clearance bound cannot go per
+   frame until the model can say which feet are changing hands — and a foot changing
+   hands is exactly what assertion 1 had been calling on the ice. `arrivalOf` answers
+   both, and `poseAt` writes a declared absence of contact onto an arriving or
+   departing foot. docs/model.md, *What `skate` names*.
 
    3  TWO BLADES DOWN SIT A LEG'S WIDTH APART. Between 5 and 70 cm. A second
       blade left where the free foot was is the likeliest authoring slip and it
@@ -43,8 +64,15 @@
    absent from a clean clone, so it skips with a notice — the same call
    syllabus.mjs makes and for the same reason.
 
+   Mutation counts, per break: air 8, float 91, apart 85, sense 963, bis 4,
+   carry 39, dip 3192, stray 13294. `carry` is the one to read: thirty-nine is the
+   six waltz frames and the thirty-three of the change of foot that were drawn as a
+   blade on the ice while being up to 29.99 cm above it, and it is the count this
+   file could not produce until 20/09/2026 because it had no per-frame assertion to
+   produce it with.
+
        node tools/twofoot.mjs
-       node tools/twofoot.mjs --break=air|float|apart|sense|bis
+       node tools/twofoot.mjs --break=air|float|apart|sense|bis|carry|dip|stray
 */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -155,13 +183,64 @@ for (const [id, m] of Object.entries(MOVES))
       }
     }
 
-/* ── 4: one lobe, every frame, through poseAt ────────────────────────── */
-let frames = 0, twoFootFrames = 0;
+/* ── 4: the ice, and one lobe, every frame, through poseAt ───────────── */
+
+/* THE BREAKS FOR THE PER-FRAME HALVES OF 1 AND 2, and `carry` is the fault this file
+   was written against, restored. Before 20/09/2026 `onIceOf` answered "on the ice" for
+   anything the pose named `skate`, and the pose carries `skate` from the left key —
+   so deleting the declared absence `poseAt` now writes is the old reading exactly,
+   not an invented mutation. Its count is the historical record of the hole. */
+const brkPose = pose => {
+  if (BREAK === 'carry')
+    for (const w of ['L', 'R']) { const f = pose[w]; if (f && f.onIce === null) delete f.onIce; }
+  if (BREAK === 'dip')
+    for (const w of ['L', 'R']) { const f = pose[w]; if (f && !onIceOf(pose, w) && !f.arrival) f.z = Math.min(f.z, 1); }
+  if (BREAK === 'stray') {
+    const w = pose.skate;
+    if (w && onIceOf(pose, w) && !pose[w].arrival) pose[w] = { ...pose[w], onIce: null };
+  }
+  return pose;
+};
+
+let frames = 0, twoFootFrames = 0, handoverFrames = 0;
 for (const [id, m] of Object.entries(MOVES)) {
   const path = buildPath(m);
   for (let i = 0; i < path.length; i++) {
-    const pose = poseAt(m, i / (path.length - 1));
+    const pose = brkPose(poseAt(m, i / (path.length - 1)));
     frames++;
+    const at = `${id} f=${(i / (path.length - 1)).toFixed(3)}`;
+
+    /* 2, PER FRAME. The same two bounds as the keyframe pass above, with one
+       exception that had to be built before it could be written: a foot that is
+       changing hands is crossing the band on purpose. Nobody steps onto a foot that
+       teleports from five centimetres to contact, so asserting the clearance per
+       frame without the exception would assert something false. Above CLEAR the
+       exception does not bite, so a foot dropped thirty centimetres in one span is
+       excused by nothing. */
+    for (const w of ['L', 'R']) {
+      const f = pose[w];
+      if (!f) continue;
+      const on = onIceOf(pose, w);
+      if (f.arrival) handoverFrames++;
+      if (on) {
+        if (Math.abs(f.z) > ON_ICE)
+          fail(`${at}: ${w} is claimed ${on} at z=${f.z.toFixed(2)} — more than ${ON_ICE} cm above the ice`);
+      } else if (f.z < CLEAR && !f.arrival) {
+        fail(`${at}: ${w} is ${f.z.toFixed(2)} cm up, free, and not changing hands — ` +
+          `say it is touching, lift it, or let the keys either side say it is a handover`);
+      }
+    }
+
+    /* 1, PER FRAME. Not "the reference blade is on the ice" — since 20/09/2026 it is
+       not required to be, because `skate` names the blade the tracing is built from
+       and a tracing has to be rooted somewhere continuously while a contact does not.
+       What it may not be is off the ice for a stretch nobody declared: that is the
+       carry outliving the contact, which is what drew thirty centimetres of air as a
+       blade on the ice. */
+    if (pose.skate && !onIceOf(pose, pose.skate) && !pose[pose.skate].arrival)
+      fail(`${at}: the tracing is built from ${pose.skate}, which is off the ice ` +
+        `at z=${pose[pose.skate].z.toFixed(2)} and is not changing hands`);
+
     /* Edges: the assertion below is that two blades share a lobe sense, and a
        skid has no edge to take a sense from. */
     const down = edgesDown(pose);
@@ -209,10 +288,11 @@ if (!files.length) {
 /* ── report ──────────────────────────────────────────────────────────── */
 console.log(`  ${keys} keyframes, ${twoFoot} with two blades down`);
 console.log(`  ${carried} authored per-foot fields, every one of them surviving poseAt`);
-console.log(`  ${frames} frames, ${twoFootFrames} with two blades down`);
+console.log(`  ${frames} frames, ${twoFootFrames} with two blades down, ${handoverFrames} foot-frames changing hands`);
 console.log(`  ${pairs} two-foot pairs read out of British Ice Skating's Skills 1`);
 console.log(bad
   ? `\n${bad} failure${bad === 1 ? '' : 's'}`
-  : '\nevery contact claimed with the ice is touching it, every free foot is clear,\n' +
-    'and both blades of every two-foot pose are on one lobe');
+  : '\nevery contact claimed with the ice is touching it, every free foot is clear\n' +
+    'or changing hands, every tracing is drawn from a blade on the ice, and both\n' +
+    'blades of every two-foot pose are on one lobe');
 process.exit(bad ? 1 : 0);
