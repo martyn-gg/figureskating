@@ -18,10 +18,24 @@ four sessions — plus `npm run ankle` and `npm run drift`, which report rather 
 
 **Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions, **twenty-two basics** and **five spins**. 269 of the 278 element
+jumps, three held positions, **twenty-two basics** and **five spins**. 270 of the 278 element
 pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**Backward stroking got a rig on 20/09/2026, and the drag was found not to have one to
+get.** Both sat on the outstanding list as waiting on nothing but authoring. Backward
+stroking was: it is `pushOff` read off a base of 180, and the yaw of the pushing foot is the
+same number in both, because flipping the direction of travel and flipping which side of the
+track is the skater's right cancel out. That is the property `twoFootTurnBack` found in the
+yaws of a turn, arriving by the same route.
+
+The drag was not. A trailing foot flat on the ice needs the shin 30 to 44 degrees over the 28
+a boot allows, at every hip height below 96, and pitching the boot makes it worse rather than
+better. `docs/model.md`, *A trailing foot flat on the ice needs a shin the boot has not got*,
+holds the tables, and the two sign errors the measurement had to get past first: `t` is the
+direction of travel so behind is negative at hipYaw 0, and `ankle.mjs` and `freefoot.mjs` had
+disagreed about which way is up since `ankle.mjs` was written, hidden by an `abs()`.
 
 **The spins went in on 19/09/2026** — upright, sit and camel, mounted on the three rigs that
 had been sitting in `moves.js` as probes since 30/08/2026.
