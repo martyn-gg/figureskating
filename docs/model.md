@@ -878,6 +878,217 @@ blade and drawing what those do means handing it over mid-move. Two blades exist
 30/08/2026 and the arrival would exist after this, but the reference handover is a third thing
 and is not specified here. The slip step draws because nothing in it hands over.
 
+## What `skate` names — specified 20/09/2026
+
+The section above ends on a question it could not answer: *does `skate` name the blade the
+tracing is built from, or the blade that is touching?* This is that question, settled before
+anything is built, on the roll's and the pick's and the arrival's precedent.
+
+### `skate` is doing three jobs, and two of them are the same job
+
+Read off the call sites rather than off the name:
+
+- **The rig's spatial root.** `body-frame.js` places the hip at `at(-sk.t, -sk.n)` and every
+  joint at `rel(q)`, which multiplies out to `p + (q − sk)`. The reference foot is pinned to
+  the path point and the whole skater hangs off it.
+- **The blade the tracing is built from.** `pose.edge` and `pose.dir` attach to it, `edgeOf`
+  derives the second foot's edge from it through `secondFoot`, `refFirst` sorts it first, and
+  the ice mark is drawn wherever it goes.
+- **A claim that the foot is touching the ice.** `onIceOf` returns `'blade'` for it whatever
+  the foot says, and returns it whatever the foot's height.
+
+The first two are one job under two descriptions, and that job is **continuous by
+construction**: the picture is measured from the reference, so the reference exists at every
+frame of the move or the skater has nowhere to hang. The third is not continuous at all. A
+blade is on the ice and then it is not, and the moment it stops is the interesting one.
+
+### The decision
+
+**`skate` names the blade the tracing is built from.** It is the rig's frame of reference and
+it says nothing whatever about contact. Whether a foot is touching is `onIce`, declared on the
+foot, for every foot — the reference one included.
+
+It cannot be the other way round. A name that has to be continuous cannot mean a thing that is
+not. Reading `skate` as *the blade that is touching* would require it to change in the middle
+of a span, and at that instant the hip has nothing to hang from, `edge` and `dir` have no blade
+to attach to, and the tracing is being drawn from a foot the pose has just stopped naming.
+
+This also finishes a sentence started on 19/09/2026 and left half-written. `onIceOf`'s own
+comment says the contact *"is declared on the foot for every other foot in this model; now it
+is for this one as well, and 'blade' is what it means when nothing is said."* That let the
+reference blade say **which** contact it has. It did not let it say it has **none**, because
+the fallback was unconditional. A default that cannot be overridden is not a default; it is
+the answer with a comment about defaults above it.
+
+### Where it goes wrong, and it is three spans in the whole guide
+
+Every span in `MOVES` where a foot's contact differs between the two keys bounding it:
+
+| move | span | what happens | reference |
+|---|---|---|---|
+| waltz | 0.30 → 0.32 | L departs, z 2 → 30 | L → air |
+| waltz | 0.42 → 0.44 | R arrives, z 26 → 1 | air → R |
+| changeFootSpin | 0.36 → 0.50 | L departs z 0 → 16, R arrives z 16 → 0 | L → R |
+
+Three, and the pattern in them is the whole diagnosis: **the arrivals already work and the
+departures do not, and the reason is that in every departure the departing foot is the
+outgoing reference blade.** An arriving foot is not the reference at the key it starts from,
+so `onIceOf` finds nothing on it and reports it free, and the arrival blend built on
+20/09/2026 fires. A departing foot *is* the reference at the key it starts from, so `onIceOf`
+answers `'blade'` for the whole span and `bootDir` returns from the planted branch before the
+free one is reached. That is why half of a symmetrical piece of work was inert.
+
+The cost, per frame, of a blade claimed on the ice:
+
+| move | per-key max | per-frame max | frames over the 3 cm bound |
+|---|---|---|---|
+| waltz | 2.00 cm | **29.99 cm** | 6 |
+| changeFootSpin | 0.00 cm | **15.99 cm** | 33 |
+
+And the waltz's authoring says it out loud: the key named *"Blade leaves the ice"* is the one
+at 0.32, with the blade thirty centimetres above it. The blade left at 0.30.
+
+### A contact holds across a span only where both keys declare it
+
+The second half of the answer, and it is not about `skate` at all.
+
+`lpP` carries `onIce` from the left key, alongside `edge` and `dir`, under a comment calling
+all three states rather than quantities. `edge` and `dir` are states and the comment is right
+about them: they are labels that stay true while the foot moves. **`onIce` is not that kind of
+thing.** It is a geometric claim — this foot is within `ON_ICE` of the ice — and a span is the
+pose interpolating away from it. A claim the motion falsifies cannot be carried through the
+motion.
+
+So:
+
+> At the instant of a key, the key's declaration is the truth. **Between two keys, a contact
+> holds only if both ends declare it.** A foot with a contact at the left key and not at the
+> right is departing; at the right and not the left, arriving; and for the interior of that
+> span it is not on the ice.
+
+That is `arrivalOf` exactly, written on 20/09/2026 to describe a state. It now decides one as
+well, which is the second time in this file that a derived answer turned out to be load-bearing
+somewhere nobody had looked.
+
+### The shape: one predicate, one interpolation, no data change
+
+`onIceOf` reads the foot's own declaration first — **including a declared absence** — and falls
+back to the reference default only where the foot says nothing:
+
+```js
+const f = pose[which];
+if (f && 'onIce' in f) return f.onIce;
+return pose.skate && which === pose.skate ? 'blade' : null;
+```
+
+and `poseAt` writes `onIce: null` onto a foot that `arrivalOf` reports arriving or departing,
+for `u > 0`.
+
+`u > 0` and not `u >= 0` because the declaration is the truth at the instant of the key. A
+blade leaves the ice at a moment, and the last key that declares the contact is that moment.
+
+**No authored data moves.** Nothing in `moves.js` writes `onIce: null`, so every keyframe
+answers exactly as it does today and every checker that reads `move.keys` — `blade`, `shin`,
+`reach`, `turnout`, `twofoot`'s first three, `ankle`, `underice`'s declaration pass — is
+untouched by construction. Everything that reads `poseAt` gets the honest answer without being
+changed: the renderer, `lean`, `freefoot`, `continuity`, `twofoot`'s assertion 4. One change in
+one function and the callers follow, which is the roll's central claim being leaned on for the
+third time.
+
+The alternative was to delete the `|| 'blade'` fallback and write `onIce: 'blade'` into the 85
+keys that rely on it. Rejected: at a key the fallback is not a guess but a derivation, and
+`twofoot`'s assertion 1 is the thing that holds it honest. Writing it out 85 times would be a
+second expression of a fact the model already has, which is this repository's named recurring
+failure. The fallback was never wrong at a key. It was wrong at a frame, because `skate`
+carries and the contact it implies expires.
+
+### What it changes in the picture
+
+**One: the departure half of `bootDir`'s blend stops being inert.** It was built on 20/09/2026
+and never once reached. A departing boot now blends from the planted construction it is leaving
+toward the free one over the last `CLEAR` centimetres, which is the arrival run backwards and is
+the same nine lines.
+
+**Two: the ice mark stops where the blade does.** `stateOf` in `body-frame.js` asks `!po.skate`
+and calls that airborne, which reads *"is there a reference"* and is used to mean *"is anything
+on the ice"* — the same conflation one layer up. It becomes: the mark is drawn where the
+reference blade has a contact. On the waltz the mark today runs six frames past the takeoff.
+
+**Three: the change of foot loses its mark for thirty-three frames, and that is a gap rather
+than a fix.** The authoring has L down at 0.36 and R down at 0.50 and nothing in between, so
+the model's honest answer is that it does not know what is touching during the transfer. Today
+it draws a mark anyway, from a blade sixteen centimetres up. The repair is an authoring one — a
+transfer key with both blades down — and it is not made here, because the two blades in a
+change of foot sit about four centimetres apart and `twofoot`'s assertion 3 floors two blades
+down at five. That floor was read off two blades *a leg's width apart*; a spin's change of foot
+is the first pose in the guide that is neither that nor a mistake, and ruling on it is its own
+piece of work.
+
+### `twofoot.mjs`'s assertions 1 and 2, per frame
+
+They go per frame together, because they are per keyframe for the same reason, and settling
+one would open the same argument twice. Per frame they are three claims, not two:
+
+1. **A foot the model claims is on the ice is on the ice** — within `ON_ICE`. Today's
+   assertion 2, first half, at every frame rather than at every key.
+2. **A foot the model claims is free is clear of the ice** — at least `CLEAR` — *unless* it is
+   arriving or departing, and then it must cross the band **monotonically** and actually reach
+   or leave its contact. The window is a claim too: an arrival that dips and comes back up is
+   not an arrival, and neither is one that never lands.
+3. **The tracing is only drawn from a blade that is on it.** Assertion 1's replacement.
+   `skate` naming a foot that is on the ice was true per key and is not per frame, and the
+   claim worth keeping is not about `skate` at all: it is that the renderer's ice mark and the
+   reference blade's contact agree, frame by frame.
+
+Assertion 1's second half — *an airborne pose has nothing touching* — stays, and is now
+per frame and stronger: it was `!skate ⇒ nothing down`, which per frame would be false on the
+takeoff, and becomes *no foot claims a contact that both bounding keys do not declare*.
+
+### What it should buy, stated so it can be wrong
+
+- `probe-skate-z.mjs` reports **no move at all**: nothing claimed on the ice above 3 cm at any
+  frame, in place of 29.99 and 15.99.
+- `boot.mjs` still reports the worst drawn-roll disagreement as **0.00°**, with no renderer
+  change. Third time that claim is cashed.
+- The frames that move are the **departing feet inside the last `CLEAR` centimetres, and
+  nothing else**. Everything outside the three spans hashes identical.
+- `continuity.mjs` stays green. Its `landing` flag, which loosens the orientation bound where
+  the contact state flips, now fires at the departure key instead of at the far end of the
+  span — so the step it has to absorb moves, and it should be **smaller**, not larger.
+- `freefoot.mjs` may need departing feet excluding from its 60° free-boot limit, the way
+  arriving feet turned out not to. **Unknown**, and the first thing to measure. The arrival
+  needed no exclusion, which is weak evidence and not an argument.
+- `underice.mjs` stays at its one run of 0.027 cm or improves. A departing boot blended toward
+  the contact it is leaving sits on the ice rather than through it, which is the arrival's
+  claim in reverse.
+
+### What it does not fix, and what measuring it turned up
+
+**The rig's root jumps at every reference change, and no checker sees it.** Because every
+drawn point is `p + (q − sk)`, changing which foot `sk` is moves the entire skater by the old
+reference foot's offset, in one frame:
+
+| move | seam | frames | the skater moves |
+|---|---|---|---|
+| waltz | L → air, t = 0.32 | 102 → 103 | 11.3 cm, **0.027** of the top view |
+| waltz | air → R, t = 0.44 | 140 → 141 | 12.5 cm, **0.030** of the top view |
+| changeFootSpin | L → R, t = 0.50 | 160 → 161 | 8.2 cm |
+
+against a local rate of 0.003 to 0.006 of the view between neighbouring frames, and against
+`continuity.mjs`'s `SLIDE` bound of 0.06. It is a jump of five to eight times the surrounding
+motion sitting at half the bound, and it shows in the **top view only**, because the side and
+rear views are drawn from the hip and cannot see the skater move across the ice.
+
+This is the reference handover that the section above calls *a third thing*, and it is
+untouched by any of the above: `skate` still carries, so the root behaves byte for byte as it
+does today. Recorded here with its numbers so that the next person to reach for it has them,
+and because a fault that is known and unasserted is a fault with a delay on it. **The bound
+cannot simply be tightened onto it** — that turns the chain red on a fault nobody has fixed.
+What `continuity.mjs` can do now, and does, is **report** the seams and their slide alongside
+the branch flips it already reports, which is the treatment this file gives to anything that
+is a design question rather than a defect.
+
+
 ## A step is three different things, and the guide now means one of them — 20/09/2026
 
 `kind: 'step'` opened the same day the flat went in, with the slip step in it and nine
