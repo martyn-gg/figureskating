@@ -110,12 +110,37 @@ at 30, 60 and 120 degrees of turn: it takes `changeFootSpin` from 10.46 to 2.92 
 and the waltz (0.59 → 1.86) **worse**, because smoothing the curvature exposes the rate's step
 that the curvature's step had been partly cancelling.
 
-So the decision is one idea or none: **a segment's radius and rate are values it reaches, not
-constants it holds.** `sweep` does not move, which keeps the ISU revolution counts `spin.mjs`
-asserts safe. Full argument, tables and costs in `docs/model.md`, *The path is a staircase*.
-**Nothing is asserted meanwhile, deliberately** — a checker would be red on six moves the day
-it was written, and one honest red (`freefoot.mjs`, four sessions) is a pattern worth using
-once rather than twice. The assertion goes in with the ramp.
+So the decision was one idea, and it was built: **a segment's radius and rate are values it
+reaches, not constants it holds.** Each enters at the mean of its own and the previous
+segment's, leaves at the mean of its own and the next, and holds its value in between, over a
+window of **half a turn each side — Martyn, asked on the day**, and the ninth constant of this
+kind, the first with *Verified against a coach: YES* against it.
+
+Three rules keep it safe. **`sweep` does not move**, so the ISU revolution counts `spin.mjs`
+asserts are untouched. **The authored rate is the segment's MEAN rate**, so `span`, the
+duration, `spinMove`'s bounds and every keyframe's `t` are untouched — the plateau is solved
+by bisection so the segment still turns `sweep` in `span`. **A ramp is between two arcs**: a
+line does not take part, because a take-off is not an artefact — the blade stops steering at a
+definite instant.
+
+Results: the worst change of hip speed between two frames falls from 10.46 cm to 3.29 on the
+change of foot, 9.43 → 1.71, 6.84 → 1.44, 6.14 → 1.15, 1.79 → 0.72; the worst change in turn
+per frame falls from 0.8–1.2× the median to **0.1×**. No spin's worst sits at a segment
+boundary any more. 65 of 441 hashed frames moved, all five spins in top and side views; **the
+waltz did not move at all**, which is the line rule proving itself.
+
+**`continuity.mjs` grew a fourth assertion with it** — the body's own speed and rate of turn,
+13,392 comparisons, bounds 5 cm and 2° set from the data with room. `--break=uncentre` moves
+one held segment's radius to the move's widest, which fires 6 times here and 98 cm adrift in
+`spin.mjs`. The first draft of that mutation was a no-op and the second was silent under the
+bound; a break has to be the size of the fault.
+
+**A held segment holds its RADIUS and may still ramp its RATE.** The first draft ramped
+through the position segments and un-centred every spin — `uprightSpin`'s median hip speed
+went from 0.00 to 0.72 — which `spin.mjs` caught on the first run, from the ISU handbook.
+Centred means the blade's lateral offset equals the path radius; a rate that moves through a
+held position does not break that, and a skater drawing in while perfectly centred is what a
+wind-up is.
 
 **The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
 largest block of unlinked syllabus text the guide had left.** It rested on one decision, what

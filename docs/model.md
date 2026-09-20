@@ -1354,13 +1354,13 @@ transfer key means re-authoring the step-over so the weight passes through two f
 is a question about how a change of foot is actually skated and wants a coach, not a floor.
 
 
-## The path is a staircase, and the body reads every step — measured 20/09/2026
+## The path is a staircase, and the body reads every step — specified and built 20/09/2026
 
 The section above fixed the rig's root and left a number behind: a centred spin's hip goes
 from nought to 10.46 cm a frame between two frames. This is what that turned out to be, and
-it is twice the size of the thing it was first taken for. **Measured, specified, and not
-built** — the repair changes the drawn shape and the timing of five shipped spins, and the
-shape of the ramp is a claim about how a spin is actually skated.
+it is twice the size of the thing it was first taken for. **Measured, then specified, then
+built** — the repair changes the drawn shape of five shipped spins, and the width of the ramp
+is a claim about how a spin is actually skated, so it was asked rather than chosen.
 
 ### Every multi-segment move, and only those
 
@@ -1440,6 +1440,35 @@ revolution count, and the revolution counts are what `spin.mjs` asserts against 
 handbook. What changes is how long the skater takes to make each turn and how far they travel
 doing it.
 
+### The three things that settle it — 20/09/2026
+
+**The window is half a turn, 180 degrees, at each end of every boundary. Martyn.** Asked how
+much turn a skater takes to open from the wind-up onto the exit edge, and the same amount
+going in. It is the ninth constant of the kind this file keeps a list of, and the first to be
+answered on the day it was asked rather than read off something that is not a measurement of
+skating. Where a segment's whole turn is less than 360°, each half-window is capped at half of
+it, so the ramps meet in the middle and never cross.
+
+**A ramp is between two arcs, and a line does not take part.** You cannot be partly straight,
+and a take-off is not a modelling artefact: the blade stops steering at a definite instant and
+the body goes on with what it had. That is exactly why the measured table above made the waltz
+*worse* — its boundaries are arc-to-line and line-to-arc, and smoothing them invents a curve
+where the skater has left the ice. The waltz keeps its 0.59 cm and is right to.
+
+**The authored rate is the segment's MEAN rate, not its instantaneous one.** This is what
+keeps the change safe. `span` stays exactly what `at()` computed from `sweep` and `rate`, so
+the move's duration, `spinMove`'s segment bounds, the `t` of every authored keyframe and the
+ISU revolution counts `spin.mjs` asserts are all untouched. The ramp redistributes turn
+*within* the segment: the rate enters at the mean of this segment's and the previous one's,
+leaves at the mean of this one's and the next, and the plateau between is **solved** so the
+segment still turns `sweep` degrees in `span` seconds. One equation, monotone in the plateau,
+bisected.
+
+Nothing else moves. The sample count per segment is still `round(TOTAL × span / sum)` and time
+still maps linearly to index, which is the contract `buildPath` already states and which this
+makes load-bearing rather than incidental.
+
+
 ### What it would cost, stated before anyone spends it
 
 - **The five spins' tracings change shape and size.** A tightening curve covers less ground
@@ -1456,14 +1485,76 @@ doing it.
   bracket it. `ANKLE_POINT` is what happens when a number of this kind is read off something
   that is not a measurement of skating.
 
-### What is asserted meanwhile
+### What building it cost
 
-Nothing, deliberately. A checker for this would be red on six moves on the day it was written,
-and the repository already has one honest red — `freefoot.mjs` was red for four sessions —
-which is a pattern worth using once and not twice. The numbers are here, `_to_delete/`'s
-probes reproduce them, and the fault is named in `docs/state-of-play.md`. **When the ramp is
-built the assertion goes in with it**, bounding the frame-to-frame change in the hip's speed
-and in the turn per frame, broken on purpose against the staircase these tables describe.
+| | before | after |
+|---|---|---|
+| changeFootSpin, worst change of hip speed | 10.46 cm | **3.29 cm** |
+| combinationSpin | 9.43 | **1.71** |
+| camelSpin | 6.84 | **1.44** |
+| uprightSpin | 6.14 | **1.15** |
+| sitSpin | 1.79 | **0.72** |
+| waltz | 0.59 | 0.59, and right to be |
+| worst change in turn per frame | 0.8× to 1.2× the median | **0.1×** |
+
+`uprightSpin`'s rotation steps 0.40° between frames where it stepped 5.39°, and the change of
+foot 0.96° where it stepped 8.51°. **No spin's worst is at a segment boundary any more.**
+
+**Three of the four costs held and one was wrong.** The frames that moved are 65 of 441 — all
+five spins in the top and side views, seven and six apiece — and **the waltz did not move at
+all**, nor did any rear view. The specification said all six moves; it is five, because every
+one of the waltz's boundaries is an arc against the line or two arcs of the same radius, and a
+line does not take part. The rule wrote itself out of the measurement and then proved itself
+by leaving a move alone.
+
+### The first draft un-centred every spin, which is the ISU's own word for a fault
+
+Ramping symmetrically across each boundary put the transition half inside the segment on
+either side — including the segments that claim a **position**. `uprightSpin`'s median hip
+speed went from 0.00 cm a frame to **0.72**: the skater was still tightening through the first
+half-turn of an upright spin, so the hip was orbiting instead of sitting on the axis.
+`spin.mjs` exists to assert exactly that, from the ISU handbook, and it is the reason the
+first draft was caught in one run rather than looked at and passed.
+
+**So a held segment holds its RADIUS and may still ramp its RATE.** Centred means the blade's
+lateral offset equals the path radius; a radius that moves through a held position un-centres
+it by definition. A rate that moves through one does not — a skater drawing in accelerates
+while perfectly centred, which is what a wind-up *is*. The transition is taken entirely by
+whichever neighbour is free to move, and it ramps to the held segment's own value rather than
+to a mean.
+
+It costs something and the something is worth naming: with the exit carrying the whole
+transition alone, the change of foot's residual rose from 1.72 cm to **3.29**. Centred wins,
+because centred is asserted against an authority outside this repository and the residual is
+a third of the bound.
+
+### The mutation had to be the size of the fault
+
+Three drafts, and the first two were silent:
+
+- **tripling every held radius** left them agreeing with each other and the free neighbours
+  ramping to the new value, so nothing stepped at all — a mutation that is a no-op;
+- **tripling one** made two adjacent held segments disagree and reached 2.97 cm against a
+  bound of 5, still silent;
+- **the move's own widest radius** on one held segment — the realistic mis-author, an
+  entrance's number typed onto a position — fires **6 times**, and fires in `spin.mjs` too,
+  98 cm adrift of the blade's offset.
+
+A checker that has never failed is a decoration, and so is a break that cannot reach the
+bound it is aimed at. The rate half of the assertion has no mutation at all and the header
+says so: a rate staircase is smoothed by the ramp whatever the numbers, so that half can only
+catch the ramp being removed. The pre-fix numbers are recorded there instead, `boot.mjs`'s
+pattern, because reproducing the staircase means taking the ramp out of the model.
+
+
+### The assertion goes in with it
+
+A checker written before the ramp would have been red on six moves on the day it was written,
+and this repository already has one honest red on record — `freefoot.mjs`, four sessions —
+which is a pattern worth using once and not twice. So it goes in with the fix, bounding the
+frame-to-frame change in **both** things the body reads off the path: the hip's speed and the
+turn per frame. Broken on purpose against the staircase the tables above describe, which is a
+mutation that needs no invention at all — it is the code as it stood this morning.
 
 
 ## A step is three different things, and the guide now means one of them — 20/09/2026

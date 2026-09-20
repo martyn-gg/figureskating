@@ -56,8 +56,13 @@
    jump's free leg was fixed the top-down heading moved 155 degrees between two
    adjacent frames; the loosest bound here is 30.
 
+   Mutation count: uncentre 6. It fires in spin.mjs too, which reads the segment's own
+   radius and holds the blade's lateral offset within CENTRED_CM of it — 98 cm adrift
+   on the mutated segment — so the same mis-author is caught from two directions.
+
        node tools/continuity.mjs
        node tools/continuity.mjs --verbose
+       node tools/continuity.mjs --break=uncentre
 */
 import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, onIceOf } from '../src/lib/rig-math.js';
@@ -67,6 +72,29 @@ const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1
 import { rigFor, findAll } from './_dom.mjs';
 
 const VERBOSE = process.argv.includes('--verbose');
+const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
+
+/* A broken copy rather than an edit in place, twofoot.mjs's shape and for its reason:
+   the assertions must run against the same objects the renderer would get. `uncentre`
+   moves the radius of one segment that claims a position — the one kind of step the
+   ramp does not smooth, because a held segment holds its radius. */
+const brkMove = m => {
+  if (BREAK !== 'uncentre') return m;
+  /* ONE held segment, not all of them. Moving every held radius together leaves them
+     agreeing with each other and the free neighbours ramping to the new value, so
+     nothing steps and the break is a no-op — which is what the first draft of it did.
+     A mutation has to make two ADJACENT held segments disagree. */
+  let done = false;
+  return { ...m, path: m.path.map(g => {
+    if (done || !(g.position || g.windup)) return g;
+    done = true;
+    /* The move's own widest radius, which is the realistic mis-author: the entrance's
+       number typed onto a position segment. Tripling the held radius was the second
+       draft and it only reached 2.97 cm against a bound of 5 — a mutation has to be
+       the size of the fault, and the fault was a spin's exit. */
+    return { ...g, radius: Math.max(...m.path.map(h => h.radius ?? m.radius)) };
+  }) };
+};
 
 /* Degrees of orientation change allowed between adjacent frames. The body turns
    half a revolution in about a tenth of the waltz jump's clock, which is 6 degrees
@@ -76,6 +104,12 @@ const SPIN = 30;
 const SPIN_LANDING = 95;
 /* Fraction of the view a glyph may travel between adjacent frames. */
 const SLIDE = 0.06;
+/* The body's own motion, between adjacent frames. Set from the data with room, the way
+   every bound in this file is: the worst the guide now holds is 3.29 cm and 1.01°, and
+   the staircase these replaced reached 10.46 cm and 8.51°. */
+const LURCH = 5;              // cm, change in the skater's speed across the ice
+const WRENCH = 2;             // degrees, change in the turn taken per frame
+let bodyChecked = 0, worstLurch = 0, worstWrench = 0;
 /* Below these, a projection is not carrying a direction — it is carrying noise. */
 const FLAT_HORIZ = 0.15;      // top view: horizontal part of the boot direction
 const TIE = 0.08;             // profile: |in-plane − toward-camera|
@@ -88,7 +122,7 @@ const fail = m => { bad++; console.error(`  x ${m}`); };
 const flips = [], zones = [], seams = [];
 
 for (const [key, m] of Object.entries(MOVES)) {
-  const path = buildPath(m);
+  const path = buildPath(BREAK ? brkMove(m) : m);
 
   /* ── the three views, read off the markup the renderer actually produced ── */
   for (const view of ['top', 'side', 'rear']) {
@@ -216,9 +250,59 @@ for (const [key, m] of Object.entries(MOVES)) {
       p = { bd, down };
     }
   }
+
+  /* ── 4: THE BODY'S OWN MOTION, which nothing here had ever looked at ────
+     Sections 1 to 3 assert that what is DRAWN does not jump. This asserts that the
+     thing it is drawn from does not: the skater's speed across the ice and their rate
+     of turn, frame to frame. Both are derived from the path and neither is a glyph.
+
+     WHY IT EXISTS. buildPath gave every segment one constant radius and at(rate, seg)
+     one constant revolutions-per-second, and chained segments tangent-continuously —
+     so position and heading were continuous and nothing else was. The body hangs off
+     the curve and reads the derivatives the curve has not got. Fifteen moves have a
+     single path segment and were perfectly smooth; all six with more than one had
+     their worst step AT A BOUNDARY.
+
+     PRE-FIX COUNTS, boot.mjs's pattern, because reproducing the staircase means taking
+     the ramp out of buildPath and that is a second copy of the model. Worst change in
+     the hip's speed between two frames: changeFootSpin 10.46 cm, combinationSpin 9.43,
+     camelSpin 6.84, uprightSpin 6.14, sitSpin 1.79, waltz 0.59, and 0.00 for each of
+     the other fifteen. Worst change in turn per frame: 5.39° to 8.91° against medians
+     of 5.95° to 10.89° — at every spin's exit the rotation rate roughly HALVED between
+     two adjacent frames.
+
+     WHAT A BREAK CAN AND CANNOT REACH, said plainly. A rate staircase is smoothed by
+     the ramp whatever the numbers, so the rate half of this can only catch the ramp
+     being removed or broken — worth having, and not a mutation. A RADIUS staircase
+     between two HELD segments is not smoothed, deliberately: a segment claiming a
+     position holds its radius because that is what centred means. So --break=uncentre
+     moves the radius of one, which is a fault someone could really author, and it
+     fires here and in spin.mjs both. */
+  const hip = path.map(p => {
+    const T = { x: Math.cos(p.th), y: Math.sin(p.th) }, N = { x: -Math.sin(p.th), y: Math.cos(p.th) };
+    return { x: p.x - T.x * (p.ot || 0) - N.x * (p.on || 0), y: p.y - T.y * (p.ot || 0) - N.y * (p.on || 0) };
+  });
+  const speed = [], turn = [];
+  for (let i = 1; i < path.length; i++) {
+    speed.push(Math.hypot(hip[i].x - hip[i-1].x, hip[i].y - hip[i-1].y));
+    turn.push(Math.abs(path[i].th - path[i-1].th) * 180 / Math.PI);
+  }
+  for (let i = 1; i < speed.length; i++) {
+    bodyChecked += 2;
+    const ds = Math.abs(speed[i] - speed[i-1]), dt = Math.abs(turn[i] - turn[i-1]);
+    if (ds > LURCH)
+      fail(`${key}: the skater's speed changes by ${ds.toFixed(2)} cm between frames ${i} and ${i+1} ` +
+        `— the body reads the path's derivatives, and a step in them is a lurch nothing could skate`);
+    if (dt > WRENCH)
+      fail(`${key}: the rate of turn changes by ${dt.toFixed(2)}° between frames ${i} and ${i+1}`);
+    worstLurch = Math.max(worstLurch, ds);
+    worstWrench = Math.max(worstWrench, dt);
+  }
 }
 
 console.log(`\n${checked} adjacent-frame comparisons across ${Object.keys(MOVES).length} moves, three views`);
+console.log(`  ${bodyChecked} on the body's own motion: worst speed change ${worstLurch.toFixed(2)} cm ` +
+  `(bound ${LURCH}), worst change of turn ${worstWrench.toFixed(2)}° (bound ${WRENCH})`);
 if (flips.length) console.log(`  glyph switched between two of the three views: ${flips.join(', ')}`);
 if (seams.length) {
   /* Every seam, not the worst per move: the waltz has two and they are different
@@ -233,5 +317,5 @@ if (zones.length && VERBOSE) for (const z of zones) console.log(`  ${z}`);
 else if (zones.length) console.log(`  ${zones.length} view-move pairs spend frames in a degenerate zone (--verbose to list)`);
 console.log(bad
   ? `\n${bad} discontinuit${bad === 1 ? 'y' : 'ies'} — a glyph that jumps is a projection that has degenerated, or a pose nothing could skate`
-  : 'nothing drawn jumps: every glyph turns and travels smoothly between frames');
+  : 'nothing drawn jumps: every glyph turns and travels smoothly between frames,\nand the body they are drawn from neither lurches nor is wrenched round');
 process.exit(bad ? 1 : 0);
