@@ -71,8 +71,15 @@ await page.setContent(`<!doctype html><meta charset=utf-8>
 let failures = 0, checked = 0;
 const fail = m => { failures++; console.error(`  ✗ ${m}`); };
 
+/* The move count is read from the model rather than written here. It said
+   "3 rig moves" while the loop below iterated every move in the file — eighteen
+   of them by 20/09/2026 — which is this repository's named failure: a
+   description of something that changed. Nothing failed because of it; it just
+   quietly told six sessions of readers that the checker covered less than it
+   did, which is the more dangerous direction to be wrong in. */
+const { MOVES: ALL } = await import('../src/lib/moves.js');
 console.log(`framing (nothing drawn outside its panel) — ${cases.length} tracings, ` +
-            `3 rig moves x 3 views, ${NFRAMES} frames each\n`);
+            `${Object.keys(ALL).length} rig moves x 3 views, ${NFRAMES} frames each\n`);
 
 /* --- the tracings --- */
 const traceBad = await page.evaluate(async ([cases, n, tol, origin]) => {

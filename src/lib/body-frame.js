@@ -306,11 +306,33 @@ function viewTop(svg, move, path, frames, SHOW){
   let reach = 0;
   for(const fr of frames){
     const ps = fr.pose;
+    /* MEASURED FROM THE PATH, NOT FROM THE HIP — 20/09/2026.
+
+       This loop took each marker's offset from the hip and called that the
+       overhang. But the box is measured from the TRACING, and viewTop does not
+       put the hip on the tracing: it puts the SKATING BLADE there and hangs the
+       hip off it, at minus that blade's own offset. So every marker is actually
+       drawn at its hip offset PLUS the blade's, and the padding was short by the
+       blade's offset in each axis.
+
+       It went unseen because on an edge that offset is lean, a dozen centimetres,
+       and the padding had that much slack. A snowplough stop is two blades turned
+       forty degrees apart, which puts the skating blade a long way to one side of
+       the hip — and the foot marker landed 17 px outside the panel in every frame
+       of it, and 18 in its backward twin. Found by framing.mjs the day Playwright
+       first ran on this machine, having been wrong since the box was tightened.
+
+       The expression below is the renderer's own `hip = at(-sk.t,-sk.n)` and
+       `rel(q)` read back as a distance, rather than a guess at what they come to. */
+    const sk = ps.skate ? ps[ps.skate] : null;
+    const ot = sk ? (sk.t || 0) : 0, on = sk ? (sk.n || 0) : 0;
+    reach = Math.max(reach, Math.abs(ot), Math.abs(on));        // the hip itself
     for(const k of ['L','R','LH','RH','sh']){
       const q = ps[k]; if(!q) continue;
-      reach = Math.max(reach, Math.abs(q.t||0), Math.abs(q.n||0));
+      reach = Math.max(reach, Math.abs((q.t||0) - ot), Math.abs((q.n||0) - on));
     }
   }
+
   const JOINT = 14;
   const VBASE=440, pad = Math.max(55, reach * BS * 1.15 + JOINT);
   const wRaw=x1-x0+pad*2, hRaw=y1-y0+pad*2;
