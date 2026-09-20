@@ -138,7 +138,7 @@ export const SECTION_NOTE = {
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
   jump:        'The six singles and the waltz jump, by takeoff edge and whether a pick goes in.',
   position:    'Held shapes — the spiral, the teapot, the extended edge.',
-  spin:        'The three basic positions, each held for three revolutions on one edge.',
+  spin:        'The three basic positions, plus the two ways of joining them: a change of foot and a combination.',
 };
 
 /* THE ONE TAUGHT FIRST — 19/09/2026, Martyn: a link to "a three turn" should land

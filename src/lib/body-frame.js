@@ -332,7 +332,6 @@ function viewTop(svg, move, path, frames, SHOW){
       reach = Math.max(reach, Math.abs((q.t||0) - ot), Math.abs((q.n||0) - on));
     }
   }
-
   const JOINT = 14;
   const VBASE=440, pad = Math.max(55, reach * BS * 1.15 + JOINT);
   const wRaw=x1-x0+pad*2, hRaw=y1-y0+pad*2;
@@ -950,6 +949,22 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
    than wiring its own controls, so the same engine serves a single diagram on
    an element page and the full explorer. */
 
+/* THE PLAYBACK RATES THE CONTROL CYCLES THROUGH. Here rather than in the
+   component's script because BodyFrame.astro has to render the button's opening
+   label on the server, from the move's own `speed`, and a second copy of this
+   list in the markup would be a second answer to what "½×" means. Discrete
+   steps, not a slider — it gets used one-handed in gloves. */
+export const RATES = [[1, '1×', 'full speed'], [.5, '½×', 'half speed'],
+                      [.25, '¼×', 'quarter speed'], [.125, '⅛×', 'an eighth of full speed']];
+
+/* Which step a move opens on. An unlisted speed falls to full, rather than
+   throwing or silently picking the nearest — a move asking for a rate the
+   control cannot reach is a mistake worth seeing in the button. */
+export const rateIndex = move => {
+  const i = RATES.findIndex(r => r[0] === (move?.speed ?? 1));
+  return i === -1 ? 0 : i;
+};
+
 export function mount(host, {
   move = 'waltz', views = ['top', 'side', 'rear'], show = {}, onFrame, autoplay = true,
 } = {}) {
@@ -1002,8 +1017,15 @@ export function mount(host, {
 
   /* Real time is the wrong speed for learning a jump. A skater watching this
      wants it slowed down, not scrubbed — scrubbing gives you frames, slowing
-     gives you the movement. */
-  let i = 0, playing = autoplay, last = 0, raf = 0, speed = 1;
+     gives you the movement.
+
+     WHICH IS WHY A MOVE MAY OPEN SLOWER — 19/09/2026, Martyn: a spin is worth
+     running slower so a skater sees the movements rather than the results; they
+     can take it to full speed if they want, but that is not where it should
+     start. The control has said this in its own comment since it was written and
+     still opened every move at 1×. `speed` on the move is the rate it opens at
+     and nothing else — the button cycles from there exactly as before. */
+  let i = 0, playing = autoplay, last = 0, raf = 0, speed = m.speed ?? 1;
   const seek = n => {
     i = Math.min(frames.length - 1, Math.max(0, n));
     const f = frames[Math.round(i)];

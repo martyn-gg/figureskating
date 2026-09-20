@@ -83,6 +83,93 @@ const PUSH = (t,n,z,yaw,pitch=0) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'blade
    into a circle — a T-stop's trailing blade carries neither. */
 const SKID = (t,n,z,yaw,edge,pitch=0) => ({t,n,z,pitch,onIce:'skid',yaw,edge});
 
+/* -- SPINS: WHAT THE PATH SAYS THAT THE POSE CANNOT -------------------------
+   A spin is the one move in this file whose PATH does the talking. Everywhere
+   else a pose is held along a curve of one radius at one rate. A spin arrives
+   travelling, tightens onto a point, holds a position, gathers everything to
+   the axis and speeds up, then opens out again - and all four of those are
+   facts about the path, not about the pose.
+
+   Two things the path already carried made that nearly free:
+
+   RADIUS IS PER SEGMENT (rig-math.js, buildPath, 19/09/2026), so the entrance
+   genuinely spirals in rather than being captioned as doing so.
+
+   ROTATION RATE IS SWEEP DIVIDED BY SPAN, which buildPath has always used to
+   allocate samples. So a wind-up that turns faster is a real change of rate
+   that the animation plays, not a note under the picture.
+
+   WHAT IT MEANS FOR A SPIN TO BE CENTRED, exactly: the blade's lateral offset
+   from the hip EQUALS the path radius. Everywhere else in this file those are
+   two free numbers - the offset is lean, the radius is the lobe. In a spin they
+   are one number, and the hip stands still because it is sitting at the centre
+   of curvature. The entrance is therefore not a separate idea bolted on: it is
+   the radius coming down to meet the lean, and the spin begins where they meet.
+   tools/spin.mjs asserts it, and asserts the other side too - that the hip is
+   still travelling before then, because an exemption can only excuse a pose.
+
+   ONLY THE LATERAL HALF IS ASSERTED. The along-track offset is not zero on a
+   sit spin: the fold carries the hip a third of a metre behind the blade and
+   the free leg reaching forward is what balances it. That is a question about
+   mass, and this rig has markers and no mass, so spin.mjs reports it and
+   declines to judge it - as it already did before any of this.
+
+   THE FINAL WIND-UP IS NOT A POSITION. The ISU is explicit: the concluding
+   upright position at the end of the spin (final wind-up) is not considered to
+   be another position independent of the number of revolutions. So a wind-up
+   segment carries `windup: true` and no `position`, and a sit spin that rises
+   to upright to finish is still a sit spin rather than a combination.
+
+   A POSITION IS REACHED IN A SEGMENT THAT DOES NOT CLAIM IT. The pose
+   interpolates between keyframes, so the frames where a skater is folding into
+   a sit are neither upright nor sit. Those get their own short segment with no
+   `position`, which is also what the handbook does: revolutions in a non-basic
+   position count towards the total and not towards the two a position needs. */
+const R_WIDE  = 110;  // the entrance edge, hip still travelling
+const R_TIGHT =  42;  // half way in, the hip orbiting what is left of the gap
+const R_SPIN  =  12;  // centred - equal to the blade's lateral offset from the hip
+const R_OUT   =  80;  // the exit edge, opening out again
+
+/* A SEGMENT AT A NAMED ROTATION RATE, in revolutions per second - the number a
+   coach says out loud. buildPath wants a span, which is how long the segment
+   lasts, so the span is DERIVED from the rate rather than authored beside it:
+   revolutions divided by revolutions per second is seconds. Spans are
+   normalised downstream, so writing them in real seconds costs nothing and
+   earns something - the move's duration becomes the sum of them instead of a
+   second opinion about how long it takes. */
+const at = (rate, seg) => ({ ...seg, rate, span: seg.sweep / 360 / rate });
+
+/* Duration is the sum of the spans, because those are seconds. Stating it again
+   in the move would be the two-copies-of-a-fact fault this file keeps a list of.
+   `radius` is the fallback for a segment that omits one, and `speed` is the
+   playback rate the page opens at - Martyn: a spin is worth running slower, so
+   a skater sees the movement rather than the result. They can still take it to
+   full speed; it just is not where the control starts. */
+const spinMove = m => {
+  const spans = m.path.map(g => g.span);
+  const total = spans.reduce((a, b) => a + b, 0);
+  let c = 0;
+  const bounds = spans.map(g => (c += g) / total);
+
+  /* A KEY THAT MEANS TO SIT ON A SEGMENT BOUNDARY TAKES THE BOUNDARY EXACTLY.
+     Where the path changes foot, or starts claiming a position, is a fraction of
+     the clock derived from every span in the move. Authoring that fraction by
+     hand is copying a number the code already knows - and being one part in a
+     million short of it put the blade the pose rides and the blade the tracing
+     is drawn from on different frames for exactly one frame, which spin.mjs
+     duly reported. So any key within half a frame of a boundary is snapped to
+     it, and the boundary stays the only statement of where it is. Keys authored
+     deliberately short of one - to hold a value across the whole of a window -
+     are further off than that and are left alone. */
+  const SNAP = 0.5 / 320;                        // half a frame of buildPath's 320
+  const keys = m.keys.map(k => {
+    const b = bounds.find(g => Math.abs(g - k.t) < SNAP);
+    return b === undefined ? k : { ...k, t: b };
+  });
+
+  return { ...m, keys, radius: R_SPIN, speed: 0.5, duration: +total.toFixed(2) };
+};
+
 export const MOVES = {
   waltz: {
     name:'Waltz jump',
@@ -351,86 +438,318 @@ export const MOVES = {
 
   /* AN UPRIGHT SPIN, LBI, anticlockwise.
 
-     IT WAS A PROBE, and stopped being one on 19/09/2026 when the three spins got
-     element pages. It was written to test whether the rig could hold a spin at
-     all; what it turned out to hold was the ISU's own definition of the position,
-     which tools/spin.mjs tests it against per frame. The three notes below lost
-     the word PROBE with the pages, because a move a reader arrives at is not a
-     probe whatever it was built as.
+     lobeSense(L,I,B) = +1, anticlockwise, which is the direction an
+     anticlockwise skater actually spins - so the model picks the foot and the
+     edge without being told, here and in every spin below.
 
-     A spin is an arc of very small radius. lobeSense(L,I,B) = +1, anticlockwise,
-     which is the direction an anticlockwise skater actually spins, so the model
-     picks the foot and edge without being told.
+     REBUILT 19/09/2026 WITH AN ENTRANCE AND AN EXIT. Martyn: a spin needs an
+     entrance and an exit, and bringing the arms in increases the speed. Both
+     were missing. The move began at "Rotation established" and ended "Held",
+     turning at one rate throughout, which drew the RESULT of a spin and never
+     the doing of it - and the arms were wide and motionless while the thing
+     they most obviously control is how fast it goes.
 
-     THE HIP MUST SIT AT THE CENTRE OF CURVATURE. The pose is hip-relative in a
-     frame that rotates with the path, so the hip traces a circle about the path's
-     centre of whatever radius separates them. A spin's body axis is stationary,
-     so that radius has to be zero: the blade's lateral offset from the hip must
-     EQUAL the path radius, and its along-track offset must be zero. Everywhere
-     else in this file the lateral offset is lean and the radius is the lobe, two
-     free numbers. In a spin they are one number. */
-  uprightSpin: {
+     The rate is now authored per phase and the wind-up is a real acceleration
+     the animation plays: 1.8 revolutions per second when the position is first
+     held, 2.9 by the end of the wind-up. The ISU lists "clear increase of speed"
+     as a Level feature, and one of the six that can earn Level 4, so this is the
+     element's own vocabulary rather than a flourish. tools/gather.mjs asserts
+     that the rate and the gather agree. */
+  uprightSpin: spinMove({
     name:'Upright spin',
-    note:'back inside edge · three revolutions on the spot',
-    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
-    radius:12, duration:4.5,
-    /* The basic position this spin claims. tools/spin.mjs tests the claim
-       against the ISU's own definition of it. */
-    position:'upright',
+    note:'back inside edge - entered, centred, wound up and stepped out',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_TIGHT}),
+      at(1.80, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'upright'}),
+      at(2.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'upright'}),
+      at(2.90, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:560, radius:R_SPIN, windup:true}),
+      at(1.40, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:150, radius:R_OUT}),
+    ],
     keys:[
-      {t:0.00, ph:'Rotation established', hipZ:95, hipYaw:180, shYaw:176,
-       sh:P(0,0,145), L:P(0,12,0,2.2), R:P(-16,20,26), skate:'L', edge:'I', dir:'B'},
-      {t:0.35, ph:'Free leg closing', hipZ:97, hipYaw:180, shYaw:178,
-       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-10,17,22), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — free foot crossed, spinning upright', hipZ:98, hipYaw:180, shYaw:180,
-       sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-6,16,20), skate:'L', edge:'I', dir:'B'},
-    ]},
+      /* The blade's lateral offset comes down 16 -> 12 while the path radius
+         comes down 110 -> 12. They meet at the third key, and that meeting IS
+         the spin starting: from there the hip is on the axis and stops
+         travelling. Before it the hip orbits, which is what an entrance is. */
+      {arm:[70,10,16], t:0.0000, ph:'Back inside edge, still travelling', hipZ:96, hipYaw:180, shYaw:166,
+       sh:P(0,0,146), L:P(0,16,0,1.6), R:P(-30,24,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[64,9,17], t:0.2200, ph:'The circle tightening, rotation gathering', hipZ:96, hipYaw:180, shYaw:170,
+       sh:P(0,0,146), L:P(0,15,0,1.9), R:P(-26,22,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[54,8,18], t:0.3800, ph:'Centred - the hip stops travelling', hipZ:96, hipYaw:180, shYaw:174,
+       sh:P(0,0,146), L:P(0,12,0,2.2), R:P(-22,18,18), skate:'L', edge:'I', dir:'B'},
+      {arm:[44,6,18], t:0.5800, ph:'Upright, free foot drawing in', hipZ:97, hipYaw:180, shYaw:178,
+       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-16,14,16), skate:'L', edge:'I', dir:'B'},
+      {arm:[34,4,18], t:0.7400, ph:'Held - spinning upright', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-12,10,15), skate:'L', edge:'I', dir:'B'},
+      {arm:[18,2,12], t:0.9100, ph:'Wind-up - everything to the axis, and it quickens', hipZ:99, hipYaw:180, shYaw:180,
+       sh:P(0,0,149), L:P(0,12,0,2.2), R:P(-8,6,14), skate:'L', edge:'I', dir:'B'},
+      {arm:[52,8,18], t:1.0000, ph:'Exit - opening out and stepping off', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(0,0,146), L:P(0,15,0,1.6), R:P(-18,20,20), skate:'L', edge:'I', dir:'B'},
+    ]}),
 
-  /* A SIT SPIN. The teapot, spun: same fold, same free leg forward, on
-     a rotating path instead of a glide. hipYaw is 180 so the front of the body
-     is at NEGATIVE t, which is why the free leg's t is the teapot's negated. */
-  sitSpin: {
+  /* A SIT SPIN. The teapot, spun: same fold, same free leg forward, on a
+     rotating path instead of a glide. hipYaw is 180 so the front of the body is
+     at NEGATIVE t, which is why the free leg's t is the teapot's negated.
+
+     THE FOLD GETS ITS OWN SEGMENT, claiming no position. A skater on the way
+     down is neither upright nor sitting, and the pose interpolates, so a sit
+     asserted from the first frame of the fold would be asserting a position the
+     skater is still arriving at. The handbook does the same thing: revolutions
+     in a non-basic position count towards the total and not towards the two a
+     position needs.
+
+     AND THE RISE AT THE END IS NOT A SECOND POSITION. It is the final wind-up,
+     which the ISU exempts by name - otherwise every sit spin that stood up to
+     finish would be a combination. That is what `windup` marks. */
+  sitSpin: spinMove({
     name:'Sit spin',
-    note:'back inside edge · folded, the free leg forward',
-    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
-    radius:12, duration:4.5,
-    /* The basic position this spin claims. tools/spin.mjs tests the claim
-       against the ISU's own definition of it. */
-    position:'sit',
+    note:'back inside edge - entered, folded to parallel, wound up and stepped out',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.20, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_TIGHT}),
+      at(1.55, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_SPIN}),
+      at(1.90, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'sit'}),
+      at(2.40, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'sit'}),
+      at(3.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:380, radius:R_SPIN, windup:true}),
+      at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:150, radius:R_OUT}),
+    ],
     keys:[
-      {t:0.00, ph:'Upright, beginning to sink', hipZ:92, hipYaw:180, shYaw:176,
-       sh:P(-8,0,144), L:P(-18,12,0,2.2), R:P(-40,-6,24), skate:'L', edge:'I', dir:'B'},
-      {t:0.33, ph:'Thigh reaches parallel', hipZ:50, hipYaw:180, shYaw:178,
-       sh:P(-14,0,100), L:P(-38,12,0,2.2), R:P(-72,-6,14), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — thigh parallel, free leg forward', hipZ:40, hipYaw:180, shYaw:180,
-       sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
-    ]},
+      {arm:[68,10,16], t:0.0000, ph:'Back inside edge, still travelling', hipZ:96, hipYaw:180, shYaw:168,
+       sh:P(-4,0,146), L:P(-6,16,0,1.6), R:P(-34,22,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[62,10,18], t:0.2071, ph:'The circle tightening, beginning to sink', hipZ:88, hipYaw:180, shYaw:172,
+       sh:P(-10,0,138), L:P(-24,14,0,1.9), R:P(-52,12,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[56,12,16], t:0.3748, ph:'Centred, and folding down', hipZ:66, hipYaw:180, shYaw:176,
+       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18), skate:'L', edge:'I', dir:'B'},
+      {arm:[48,12,14], t:0.5040, ph:'Thigh reaches parallel - the sit', hipZ:44, hipYaw:180, shYaw:178,
+       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12), skate:'L', edge:'I', dir:'B'},
+      {arm:[42,12,13], t:0.6742, ph:'Held - thigh parallel, free leg forward', hipZ:41, hipYaw:180, shYaw:180,
+       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+      {arm:[34,10,12], t:0.8084, ph:'Still sitting, and gathering in', hipZ:40, hipYaw:180, shYaw:180,
+       sh:P(-16,0,88), L:P(-40,12,0,2.2), R:P(-78,-6,10), skate:'L', edge:'I', dir:'B'},
+      {arm:[18,2,12], t:0.9071, ph:'Wind-up - rising to the axis, and it quickens', hipZ:82, hipYaw:180, shYaw:180,
+       sh:P(-10,0,132), L:P(-28,12,0,2.2), R:P(-46,10,16), skate:'L', edge:'I', dir:'B'},
+      {arm:[52,8,18], t:1.0000, ph:'Exit - standing up and out', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(-2,0,146), L:P(-6,15,0,1.6), R:P(-24,18,26), skate:'L', edge:'I', dir:'B'},
+    ]}),
 
-  /* A CAMEL SPIN. The spiral, spun. Same claim as the sit: the position
-     already exists in this file and the only thing a spin adds is the path. */
-  camelSpin: {
+  /* A CAMEL SPIN. The spiral, spun. Same claim as the sit: the position already
+     exists in this file and the only thing a spin adds is the path.
+
+     THE SLOWEST OF THE THREE, AND THAT IS THE POINT. A camel holds the free leg
+     and the shoulders a long way off the axis, so it turns at 1.6 revolutions
+     per second where an upright holds 2.1, settles SLOWER still as the chest
+     drops and the leg reaches further back, and the rise out of it into the
+     wind-up is the largest speed change in the file, 1.55 to 2.6, because
+     nowhere else does so much mass come in at once. If one move in the guide
+     shows a skater why the arms matter, it is this one. */
+  /* A CAMEL SPIN. The spiral, spun.
+
+     THE SLOWEST OF THE THREE, AND THAT IS THE POINT. A camel holds the free leg
+     and the shoulders a long way off the axis, so it turns at 1.6 revolutions
+     per second where an upright holds 2.1, settles slower still as the chest
+     drops, and the wind-up is where the arms come in and it picks up again.
+
+     THE FREE LEG DOES NOT MOVE, AND THAT IS A MODEL LIMIT, NOT A CHOICE.
+     Measured 20/09/2026 across the whole plausible range - see docs/model.md,
+     *What the rig cannot hold*. bootDir builds a free boot square to the shin,
+     and for a leg reaching BACKWARDS at mid height that boot points at the ice:
+     -67 to -85 degrees everywhere in z 30-70, t 0-60, at every reach, so it is
+     not a fold that a longer leg would fix. The way round it - lifting the leg
+     near the body and sweeping it back high - crosses the free foot over the hip
+     at height, where the top view is looking straight into the boot's opening
+     and the glyph swings 100 degrees between neighbouring poses. Blocked going
+     up, blocked coming down.
+
+     So this rig starts and ends with the leg already at camel height, and what
+     the entrance and the wind-up draw is the path tightening and the arms
+     gathering, which is the rest of what they are. Same licence as `twoFoot`
+     not drawing the step-on and `toePick` not drawing its entry, and the same
+     honesty rule: a pose that cannot be drawn honestly is not drawn. The page
+     says so. */
+  camelSpin: spinMove({
     name:'Camel spin',
-    note:'back inside edge · the free leg extended behind at hip height',
-    path:[{kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1080}],
-    radius:12, duration:4.5,
-    /* The basic position this spin claims. tools/spin.mjs tests the claim
-       against the ISU's own definition of it. */
-    position:'camel',
+    note:'back inside edge - the free leg back at hip height, the arms gathering in',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:230, radius:R_TIGHT}),
+      at(1.45, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_SPIN}),
+      at(1.60, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'camel'}),
+      at(1.55, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:400, radius:R_SPIN, position:'camel'}),
+      at(2.60, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:480, radius:R_SPIN, windup:true}),
+      at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:150, radius:R_OUT}),
+    ],
     keys:[
-      {t:0.00, ph:'Free leg up, chest beginning to drop', hipZ:95, hipYaw:180, shYaw:174,
-       sh:P(-24,0,140), L:P(0,12,0,2.2), R:P(72,-14,114,0,24), skate:'L', edge:'I', dir:'B'},
-      /* The free leg is complete here and does not move again — only the torso
-         settles. Same shape as the extended edge, whose position is complete a
-         third of the way in so that the held part is the part the syllabus asks
-         for. Here the handbook asks for two revolutions and this is the start of
-         them. A leg that kept changing through the held part would be a position
-         the checker could watch being lost, which is the point of measuring it
-         per frame rather than at the keyframes. */
-      {t:0.33, ph:'Reaching back, torso lowering', hipZ:95, hipYaw:180, shYaw:171,
+      {arm:[68,10,16], t:0.0000, ph:'Back inside edge, travelling, the free leg already up', hipZ:96, hipYaw:180, shYaw:170,
+       sh:P(-14,0,146), L:P(0,16,0,1.6), R:P(72,-14,114,0,24), skate:'L', edge:'I', dir:'B'},
+      {arm:[64,11,14], t:0.1814, ph:'The circle tightening', hipZ:96, hipYaw:180, shYaw:172,
+       sh:P(-18,0,144), L:P(0,15,0,1.9), R:P(78,-16,117,0,24), skate:'L', edge:'I', dir:'B'},
+      {arm:[60,12,12], t:0.3290, ph:'Centred - the hip stops travelling', hipZ:95, hipYaw:180, shYaw:174,
+       sh:P(-22,0,142), L:P(0,12,0,2.2), R:P(86,-18,121,0,22), skate:'L', edge:'I', dir:'B'},
+      /* The free leg is complete here and does not move again - only the torso
+         settles and the arms come in. Same shape as the extended edge, whose
+         position is complete a third of the way in so that the held part is the
+         part the syllabus asks for. */
+      {arm:[58,14,10], t:0.4506, ph:'Camel - free knee above hip level', hipZ:95, hipYaw:180, shYaw:174,
+       sh:P(-30,0,136), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
+      {arm:[54,16,8], t:0.6270, ph:'Held - stretched along the line, turning slowly', hipZ:95, hipYaw:180, shYaw:171,
        sh:P(-42,0,120), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — free knee above hip level', hipZ:95, hipYaw:180, shYaw:168,
+      {arm:[50,16,8], t:0.7883, ph:'Still a camel, beginning to draw the arms in', hipZ:95, hipYaw:180, shYaw:168,
        sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
-    ]},
+      {arm:[18,2,12], t:0.9186, ph:'Wind-up - the arms to the axis, and it quickens', hipZ:95, hipYaw:180, shYaw:168,
+       sh:P(-48,0,112), L:P(0,12,0,2.2), R:P(94,-20,125,0,22), skate:'L', edge:'I', dir:'B'},
+      {arm:[24,4,14], t:1.0000, ph:'Exit - the circle opening out again', hipZ:95, hipYaw:180, shYaw:170,
+       sh:P(-44,0,116), L:P(0,15,0,1.6), R:P(92,-19,124,0,22), skate:'L', edge:'I', dir:'B'},
+    ]}),
+
+  /* A SPIN WITH A CHANGE OF FOOT - 19/09/2026, and it needed no new capability.
+
+     lobeSense(L,I,B) and lobeSense(R,O,B) are BOTH +1. So an arc on the left
+     back inside edge and an arc on the right back outside edge curve the same
+     way, and laid end to end at the same radius they continue THE SAME CIRCLE
+     about THE SAME CENTRE. The model picks the second foot and its edge for the
+     same reason it picked the first.
+
+     That is not a convenience, it is the element's own rule satisfied by
+     construction. The ISU: "if the spinning centers (before and after the change
+     of foot) are too far apart ... only the part before the change of foot will
+     be called". Here they cannot be far apart, because there is one centre.
+
+     HOW LONG EACH FOOT HOLDS IS THE DOCUMENT'S NUMBER, NOT A CHOICE: "the change
+     of foot in any spin must be preceded and followed by a spin position with at
+     least three (3) revolutions". 1100 degrees each side is 3.06, and
+     tools/spin.mjs asserts it rather than trusting this comment.
+
+     THE STEP-OVER COSTS SPEED, and the rate says so: 1.9 revolutions per second
+     on the left, 1.5 across the change, 1.7 recovered on the right. A skater
+     putting a foot down and taking the other up has briefly widened everything,
+     and gather.mjs reads that as consistent rather than as a fault. */
+  changeFootSpin: spinMove({
+    name:'Change of foot spin',
+    note:'left back inside to right back outside - one centre, three revolutions on each foot',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180,  radius:R_WIDE}),
+      at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250,  radius:R_TIGHT}),
+      at(1.90, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:1100, radius:R_SPIN, position:'upright'}),
+      at(1.50, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:100,  radius:R_SPIN}),
+      at(1.70, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:1100, radius:R_SPIN, position:'upright'}),
+      at(2.70, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:520,  radius:R_SPIN, windup:true}),
+      at(1.40, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:150,  radius:R_OUT}),
+    ],
+    keys:[
+      {arm:[70,10,16], t:0.0000, ph:'Back inside edge, still travelling', hipZ:96, hipYaw:180, shYaw:166,
+       sh:P(0,0,146), L:P(0,16,0,1.6), R:P(-30,24,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[64,9,17], t:0.1259, ph:'The circle tightening', hipZ:96, hipYaw:180, shYaw:170,
+       sh:P(0,0,146), L:P(0,15,0,1.9), R:P(-26,22,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[54,8,18], t:0.2201, ph:'Centred on the left - the hip stops travelling', hipZ:96, hipYaw:180, shYaw:174,
+       sh:P(0,0,146), L:P(0,12,0,2.2), R:P(-22,18,18), skate:'L', edge:'I', dir:'B'},
+      {arm:[44,6,18], t:0.3600, ph:'Three revolutions upright on the left', hipZ:97, hipYaw:180, shYaw:178,
+       sh:P(0,0,147), L:P(0,12,0,2.2), R:P(-16,14,16), skate:'L', edge:'I', dir:'B'},
+      /* The weight goes across here and `skate` names the right foot from this
+         key on. It is authored at the path's own segment boundary to five places
+         so that the blade the pose rides and the blade the tracing is built from
+         change on the same frame; spin.mjs asserts they agree, per frame. */
+      {arm:[52,10,16], t:0.50366, ph:'Change of foot - stepping over onto the right', hipZ:95, hipYaw:180, shYaw:176,
+       sh:P(0,0,145), R:P(-6,12,0,2.2), L:P(-14,12,16), skate:'R', edge:'O', dir:'B'},
+      {arm:[50,8,18], t:0.5363, ph:'Centred on the right, back outside edge', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(0,0,146), R:P(0,12,0,2.2), L:P(-20,-6,18), skate:'R', edge:'O', dir:'B'},
+      {arm:[40,6,18], t:0.7000, ph:'Three revolutions upright on the right', hipZ:97, hipYaw:180, shYaw:178,
+       sh:P(0,0,147), R:P(0,12,0,2.2), L:P(-14,-2,15), skate:'R', edge:'O', dir:'B'},
+      {arm:[32,4,18], t:0.8532, ph:'Still upright, drawing in', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(0,0,148), R:P(0,12,0,2.2), L:P(-10,0,14), skate:'R', edge:'O', dir:'B'},
+      {arm:[18,2,12], t:0.9475, ph:'Wind-up - everything to the axis, and it quickens', hipZ:99, hipYaw:180, shYaw:180,
+       sh:P(0,0,149), R:P(0,12,0,2.2), L:P(-8,2,14), skate:'R', edge:'O', dir:'B'},
+      {arm:[52,8,18], t:1.0000, ph:'Exit - opening out and stepping off', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(0,0,146), R:P(0,15,0,1.6), L:P(-18,-6,20), skate:'R', edge:'O', dir:'B'},
+    ]}),
+
+  /* A COMBINATION SPIN - camel, sit, upright, on one foot.
+
+     A JOINING RULE, NOT A NEW CAPABILITY. The three positions already existed
+     and already had checkers; what a combination adds is the requirement that
+     each be HELD. The ISU: "must include a minimum of two different basic
+     positions with 2 revolutions in each of these positions anywhere within the
+     spin". All three are here, which the handbook scores above two.
+
+     British Ice Skating's National Test Structure puts its floor on the whole
+     thing rather than on each position: a spin combination without a change of
+     foot needs a minimum of four revolutions, six with one. This is 9.2.
+
+     THE CHANGES BETWEEN POSITIONS GET THEIR OWN SEGMENTS, claiming nothing. A
+     skater half way out of a camel is not in a basic position, and saying so in
+     the path is what lets the checker assert each position over frames where it
+     is genuinely held. It also matches the rule: revolutions in a non-basic
+     position count towards the total and not towards the two.
+
+     THE RATE RISES THROUGH THE WHOLE THING, 1.55 to 1.9 to 2.3 to 3.0, and not
+     one of those numbers is decoration. A camel is stretched along a line at
+     right angles to the axis; a sit is folded low and near it; an upright is
+     stacked over it. Each change brings mass in, so each change speeds the spin
+     up, and a combination skated in that order accelerates all the way to the
+     wind-up. */
+  /* A COMBINATION SPIN - sit into upright, on one foot.
+
+     A JOINING RULE, NOT A NEW CAPABILITY. Both positions already existed and
+     already had a checker; what a combination adds is the requirement that each
+     be HELD. The ISU: "must include a minimum of two different basic positions
+     with 2 revolutions in each of these positions anywhere within the spin".
+
+     British Ice Skating's National Test Structure puts its floor on the whole
+     thing rather than on each position: a spin combination without a change of
+     foot needs a minimum of four revolutions, six with one. This is 8.3.
+
+     WHY NO CAMEL, WHICH IS THE USUAL THIRD. The ISU scores three basic positions
+     above two, and this rig can hold a camel - camelSpin does. What it cannot do
+     is CHANGE into or out of one: a free leg reaching backwards at mid height
+     draws a boot pointing at the ice at every reach, and the way round it puts
+     the free foot over the hip at height, where the top view looks straight into
+     the boot. Measured both ways; see camelSpin's note and docs/model.md. A
+     two-position combination is a real element rather than a consolation, and
+     drawing a three-position one would mean drawing a change nothing could
+     skate. The page says which is missing and why.
+
+     THE CHANGE BETWEEN POSITIONS GETS ITS OWN SEGMENT, claiming nothing. A
+     skater half way out of a sit is not in a basic position, and saying so in
+     the path is what lets the checker assert each position over frames where it
+     is genuinely held. It also matches the rule: revolutions in a non-basic
+     position count towards the total and not towards the two.
+
+     AND THE RATE RISES THROUGH IT, 1.75 to 2.3 to 3.0. A sit holds the free leg
+     stretched forward, well off the axis; an upright stacks everything over the
+     blade. So the change itself speeds the spin up, which is why a combination
+     is skated in this order and not the other. */
+  combinationSpin: spinMove({
+    name:'Combination spin',
+    note:'back inside edge - sit into upright, one foot, one centre, quickening throughout',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:230, radius:R_TIGHT}),
+      at(1.45, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_SPIN}),
+      at(1.75, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:760, radius:R_SPIN, position:'sit'}),
+      at(2.00, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:220, radius:R_SPIN}),
+      at(2.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:760, radius:R_SPIN, position:'upright'}),
+      at(3.00, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:420, radius:R_SPIN, windup:true}),
+      at(1.40, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:150, radius:R_OUT}),
+    ],
+    keys:[
+      {arm:[68,10,16], t:0.0000, ph:'Back inside edge, still travelling', hipZ:96, hipYaw:180, shYaw:168,
+       sh:P(-4,0,146), L:P(-6,16,0,1.6), R:P(-34,22,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[62,10,18], t:0.1461, ph:'The circle tightening, beginning to sink', hipZ:88, hipYaw:180, shYaw:172,
+       sh:P(-10,0,138), L:P(-24,14,0,1.9), R:P(-52,12,20), skate:'L', edge:'I', dir:'B'},
+      {arm:[56,12,16], t:0.2648, ph:'Centred, and folding down', hipZ:66, hipYaw:180, shYaw:176,
+       sh:P(-14,0,116), L:P(-38,12,0,2.2), R:P(-68,0,18), skate:'L', edge:'I', dir:'B'},
+      {arm:[48,12,14], t:0.3628, ph:'Thigh reaches parallel - the sit', hipZ:44, hipYaw:180, shYaw:178,
+       sh:P(-16,0,92), L:P(-38,12,0,2.2), R:P(-76,-6,12), skate:'L', edge:'I', dir:'B'},
+      {arm:[42,12,13], t:0.6094, ph:'Sit held - free leg forward, well off the axis', hipZ:41, hipYaw:180, shYaw:180,
+       sh:P(-16,0,89), L:P(-40,12,0,2.2), R:P(-80,-6,10), skate:'L', edge:'I', dir:'B'},
+      {arm:[38,8,16], t:0.6719, ph:'Rising, the free leg drawing in', hipZ:92, hipYaw:180, shYaw:180,
+       sh:P(-6,0,142), L:P(-18,12,0,2.2), R:P(-34,10,16), skate:'L', edge:'I', dir:'B'},
+      {arm:[32,4,18], t:0.8596, ph:'Upright held - stacked over the blade, and quicker for it', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(0,0,148), L:P(0,12,0,2.2), R:P(-14,12,15), skate:'L', edge:'I', dir:'B'},
+      {arm:[18,2,12], t:0.9391, ph:'Wind-up - everything to the axis, and it quickens again', hipZ:99, hipYaw:180, shYaw:180,
+       sh:P(0,0,149), L:P(0,12,0,2.2), R:P(-8,6,14), skate:'L', edge:'I', dir:'B'},
+      {arm:[52,8,18], t:1.0000, ph:'Exit - opening out and stepping off', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(-2,0,146), L:P(-6,15,0,1.6), R:P(-18,20,20), skate:'L', edge:'I', dir:'B'},
+    ]}),
 
   /* A SNOWPLOUGH STOP — the rig for snowplough-stop, and the first pose in which
      the REFERENCE blade skids. Both blades are sliding, so there is no gliding

@@ -10,14 +10,15 @@ sourceUrl: https://www.isu.org/figure-skating-rules
 verified: { checked: false }
 ---
 
-The skating leg stays straight, or close to it, and everything else gathers in over the
-blade. A spin is not a very tight circle. The blade stays on one small patch of ice and the
-body turns about a line through it, and the skater controls the speed by how far from that
-line they hold their arms and free leg.
+The skating leg stays straight, or close to it, and everything else gathers in
+over the blade. A spin is not a very tight circle. The blade stays on one small
+patch of ice and the body turns about a line through it, and how far from that
+line you hold your arms and free leg is what sets the speed.
 
-Which makes this the position with the least to go wrong. Everything is stacked near the
-axis, so there is little reaching out to pull the skater off it, and that is why it is the
-spin taught first and the one the others are built on. The rotation has to come from
-somewhere before the position can be held, which is the part a beginner spends longest on.
+Watch the entrance in the diagram rather than the held part. You arrive on a
+curve that is still carrying you across the ice, and the circle tightens until
+the blade sits directly under the line you are turning about. That is the moment
+the spin starts, and getting there is what a beginner spends longest on.
 
-Under three revolutions the ISU does not count it as a spin at all.
+Then the arms come in and it quickens sharply. Under three revolutions the ISU
+does not count it as a spin at all.

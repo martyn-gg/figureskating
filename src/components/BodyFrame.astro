@@ -1,7 +1,12 @@
 ---
 import { MOVES } from '../lib/moves.js';
+import { RATES, rateIndex } from '../lib/body-frame.js';
 const { move, views = 'top,side,rear', controls = true } = Astro.props;
 const m = MOVES[move];
+/* The button's opening label comes from the same list the script cycles, so the
+   server-rendered markup and the client cannot disagree about it. */
+const rate0 = rateIndex(m);
+const [, rateText, rateWords] = RATES[rate0];
 ---
 {m && (
 <figure class="bf" data-move={move} data-views={views}>
@@ -9,7 +14,8 @@ const m = MOVES[move];
   {controls && (
     <div class="bf-ctl">
       <button type="button" data-play aria-label="Play or pause">❚❚</button>
-      <button type="button" class="spd" data-speed aria-label="Playback speed, currently full speed">1×</button>
+      <button type="button" class="spd" data-speed data-rate={rate0} data-slow={rate0 ? '' : undefined}
+            aria-label={`Playback speed, currently ${rateWords}`}>{rateText}</button>
       <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
     </div>
     <p class="bf-phase" data-phase></p>
@@ -27,7 +33,7 @@ const m = MOVES[move];
 
 
 <script>
-  import { mount } from '../lib/body-frame.js';
+  import { mount, RATES } from '../lib/body-frame.js';
 
   for (const fig of document.querySelectorAll('.bf')) {
     const host = fig.querySelector('.bf-views');
@@ -63,12 +69,11 @@ const m = MOVES[move];
       rig.playing = false; play.textContent = '▶'; rig.seek(Number(scrub.value));
     });
 
-    /* The whole reason this rig exists is to be watched slowly. Discrete steps,
-       not a slider — it gets used one-handed in gloves. */
+    /* The whole reason this rig exists is to be watched slowly. The rate the
+       move opens at is rendered into the button server-side; the cycle picks up
+       from there. */
     const spd = fig.querySelector('[data-speed]');
-    const RATES = [[1, '1×', 'full speed'], [.5, '½×', 'half speed'],
-                   [.25, '¼×', 'quarter speed'], [.125, '⅛×', 'an eighth of full speed']];
-    let rate = 0;
+    let rate = Number(spd?.dataset.rate ?? 0);
     spd?.addEventListener('click', () => {
       rate = (rate + 1) % RATES.length;
       const [v, text, words] = RATES[rate];

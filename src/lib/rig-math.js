@@ -465,8 +465,21 @@ export function buildPath(move){
     // samples proportional to the segment's share of the clock, so time
     // maps linearly to index and phase boundaries land where they're authored
     const N = Math.max(2, Math.round(TOTAL * spans[si] / sum));
-    const k = seg.kind==='arc' ? -lobeSense(seg.foot,seg.edge,seg.dir)/move.radius : 0;
-    const len = seg.kind==='arc' ? move.radius*seg.sweep*D2R : seg.len;
+    /* RADIUS IS PER SEGMENT, falling back to the move's — 19/09/2026, for the
+       spins. A spin arrives on a wide edge and tightens onto a point, and until
+       now every arc of a move shared one radius, so an entrance could only have
+       been captioned rather than drawn. Optional and defaulted, which is the
+       same shape as `point` and `yaw`: every move written before it has no
+       seg.radius, takes move.radius, and draws byte-identically.
+
+       Segments stay tangent-continuous across a radius change — buildPath
+       carries x, y and th from the previous segment's end — so the tracing has
+       no step in position or heading, only in curvature. A run of arcs of
+       falling radius is therefore a spiral approximated in arcs, which is what
+       a spin entrance is. */
+    const R = seg.radius ?? move.radius;
+    const k = seg.kind==='arc' ? -lobeSense(seg.foot,seg.edge,seg.dir)/R : 0;
+    const len = seg.kind==='arc' ? R*seg.sweep*D2R : seg.len;
     for(let i=1;i<=N;i++){
       const t = len*i/N;
       let px,py;
