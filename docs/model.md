@@ -222,6 +222,14 @@ believing any sequence that turns.
   default-carriage assignment. `tools/arms.mjs`.
 - The free boot's angle from level is checked **per frame**, not per keyframe. The waltz
   jump passes every keyframe at 55.8° and reaches 88.6° between two of them.
+- **A free boot is not drawn below the ice**, measured off the real render tree in every
+  view that draws an ice line, with one declared exception: a free foot in the last frames
+  before it takes the weight, which is the step-over this rig does not draw. Held from both
+  sides — deeper fails, vanished fails. `tools/underice.mjs`, in the chain since 20/09/2026.
+- **A free foot's `point` is a pose's choice, not a constant.** `ANKLE_POINT`'s 10° is what
+  an unauthored foot does and it is not neutral; `NEUTRAL` is 0 and `POINTED` is 25, both
+  authored per key. Martyn, 20/09/2026: landing a waltz jump the free foot is pushed back
+  and neutral, and it is neutral through the move as well.
 - **A `rig:` names a move that exists, and every move is named by a page or declared.**
   `BodyFrame.astro` wraps its figure in `{m && (...)}`, so a name matching nothing draws
   nothing and the build stays green. Asserted from both sides, because an exemption that

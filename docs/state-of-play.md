@@ -12,10 +12,10 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **twenty-three steps in the `check` chain, build included, all green** — count them out of
+worker; **twenty-four steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
-four sessions — plus `npm run ankle`, `npm run drift` and `npm run underice`, which report
-rather than fail.
+four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
+`underice` left that pair on 20/09/2026 and is `npm run check:underice` now.
 
 **Content:** 284 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
 turns, thirty-two twizzles, **forty-two transitions**, **a hundred and sixteen clusters**, seven
@@ -23,6 +23,28 @@ jumps, three held positions, **twenty-two basics**, **five spins** and **one ste
 285 element pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**`underice.mjs` is in the chain, 20/09/2026, and the debt is paid.** It reported nine
+runs on the day it was written and was parked beside `drift` because two were thought to
+need a pose nobody was ready to move. Five were the waltz jump, and what they needed was
+a coach. Martyn: landing a waltz jump the free foot is not pointed, it is pushed back and
+**neutral**, which is what leaves the skater able to step forward onto it or spike the toe
+in for the next element, and through the move it is neutral too, where it provides the
+momentum. `ANKLE_POINT`'s 10° was never neutral, and `rig-math.js` records against it in
+as many words: *Verified against a coach: NO.* A `NEUTRAL` constant on this move's free
+feet closed four of the five outright, including 2.0 cm over 25 frames on the landing,
+and moved no foot a millimetre — only the ankle.
+
+The two that remain are **one fault with two instances**, which is what made a declared
+exemption worth writing rather than arguing over twice: a free foot in the last frames
+before it takes the weight, on the waltz at f=0.439 and on the change of foot at
+f=0.483–0.502. That is the step-over the rig does not draw, after `twoFoot` and `toePick`.
+`arriving` holds both from both sides — a run that goes deeper fails, a run that vanishes
+fails, and a run outside the window or on the other foot is not excused at all. Its depths
+are measured rather than chosen, because two attempts to deepen them by moving the pose
+found they cannot be moved: the last free frame is adjacent to a key at z 0 and the
+interpolation into it sets the number. `NEUTRAL` is authored per move and `ANKLE_POINT`
+is untouched, because that file's own finding is that the constant was never the lever.
 
 **The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
 largest block of unlinked syllabus text the guide had left.** It rested on one decision, what

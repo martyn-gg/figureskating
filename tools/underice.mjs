@@ -38,14 +38,21 @@
  *
  * Broken on purpose:
  *
- *   --break=sink   every free foot dropped 20 cm ......... 20 runs, deepest 14.4 cm
- *   --break=flat   every free foot set to z 0 ............ 30 runs, deepest 17.0 cm
- *   --break=blind  the on-ice exemption removed .......... 66 runs over 24,384 glyphs
+ *   --break=sink    every free foot dropped 20 cm ........ 18, deepest 12.5 cm
+ *   --break=flat    every free foot set to z 0 ........... 30, deepest 17.0 cm
+ *   --break=blind   the on-ice exemption removed ......... 67 over 26,952 glyphs
+ *   --break=deeper  both arrivals declared at nought ..... 2
+ *   --break=stale   a move declared that does not dip .... 1
  *
- * Against 9 runs over 6,490 glyphs clean, on 20/09/2026. The third is the exemption
- * asserted from the other side: an exemption that excuses a pose and holds nothing to
- * account is this repository's oldest hole, so `--break=blind` shows it is carrying
- * 17,894 glyphs and 57 further runs rather than hiding the file's whole job.
+ * Against 0 problems and 2 declared arrivals over 6,490 glyphs clean, on 20/09/2026.
+ * RE-MEASURED after the waltz jump's free feet were set to NEUTRAL that afternoon:
+ * sink was 20 and blind 66 when nine runs were outstanding.
+ *
+ * `--break=blind` is the on-ice exemption asserted from the other side: an exemption
+ * that excuses a pose and holds nothing to account is this repository's oldest hole,
+ * so it shows that exemption carrying 20,462 glyphs and 67 runs rather than hiding
+ * the file's whole job. `--break=deeper` and `--break=stale` do the same for the
+ * arrivals below, one in each direction.
  *
  * A FOURTH MUTATION WAS TRIED AND THROWN AWAY, because it is worth knowing why. Pointing
  * every free foot to ANKLE_MAX took the count DOWN, from 9 to 6. Plantarflexion drives
@@ -55,17 +62,24 @@
  * broken anything, and recording it as though it had would be the decoration this
  * repository keeps warning about.
  *
- *     npm run underice
+ *     npm run check:underice
  *     node tools/underice.mjs --break=sink|flat|blind
  *
- * OUT OF THE `check` CHAIN, BESIDE `drift`, AND THIS IS A DEBT RATHER THAN A DESIGN.
- * Two runs survive: the waltz jump's landing, where the boot is driven at the ice by
- * the shin and pointing the foot makes it worse rather than better, and the change of
- * foot, where the free foot is at z 0 at the instant it is about to become the skating
- * foot — the step-over this rig does not draw, arriving for the third time after
- * twoFoot and toePick. Neither is a pose anybody is ready to move. A report nobody
- * runs is a checker that quietly stops working, so this belongs in the chain the day
- * those two are settled, with an exemption list holding them from both sides the way
+ * IN THE `check` CHAIN SINCE 20/09/2026, and the debt it was parked beside `drift`
+ * for is paid. It reported nine runs on the day it was written. Five were the waltz
+ * jump, and they were not a pose nobody was ready to move — they were a pose nobody
+ * had asked a coach about. Martyn: landing a waltz jump the free foot is not pointed,
+ * it is pushed back and NEUTRAL, which is what leaves the skater able to step forward
+ * onto it or spike the toe in for the next element; and through the move it is neutral
+ * too, where it provides the momentum. `ANKLE_POINT`'s 10° was never neutral, and
+ * rig-math.js says against it in as many words: *Verified against a coach: NO.*
+ * `NEUTRAL` on this move's free feet closed four of the five outright, including 2.0 cm
+ * over 25 frames on the landing, and moved no foot a millimetre.
+ *
+ * The two that remain turned out to be ONE fault with two instances, which is what made
+ * an exemption list worth writing rather than arguing over twice. Both are a free foot
+ * in the last frames before it takes the weight — the step-over this rig does not draw,
+ * after twoFoot and toePick. `arriving` below declares them, from both sides, the way
  * drawn.mjs holds its undrawable pages.
  */
 import { MOVES } from '../src/lib/moves.js';
@@ -73,6 +87,49 @@ import { onIceOf } from '../src/lib/rig-math.js';
 import { rigFor, findAll } from './_dom.mjs';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
+
+/* THE ONE CASE A FREE BOOT MAY TOUCH THE ICE, DECLARED RATHER THAN SKIPPED.
+ *
+ * A free foot in the last frames before it takes the weight is arriving ON the ice,
+ * so the thing this file measures — a boot that is not on the ice drawn below it —
+ * is not quite what is happening. The pose is mid-handover, and the handover itself
+ * is the step-over this rig does not draw, after twoFoot and toePick.
+ *
+ * TWO INSTANCES, ONE FAULT, and that is what made this list worth writing rather
+ * than arguing over twice. The waltz jump's is one frame at f=0.439, on the right
+ * foot, which becomes the skating foot at the key t=0.44 — *Front of the blade
+ * touches down*. The change of foot's is seven frames at f=0.483 to 0.502, on the
+ * right foot, which becomes the skating foot at t=0.50366 — *Change of foot -
+ * stepping over onto the right*. Same shape, same reason, two moves.
+ *
+ * ASSERTED FROM BOTH SIDES, because an exemption that only excuses is this
+ * repository's oldest hole and this file's own header says so:
+ *
+ *   - a declared run that goes DEEPER than its recorded depth fails, so the pose
+ *     cannot quietly get worse under cover of being named;
+ *   - a declared run that DISAPPEARS fails, so when the step-over is modelled the
+ *     entry has to be deleted rather than left lying;
+ *   - a run outside the declared window, or on the other foot, is not excused at
+ *     all.
+ *
+ * THE DEPTHS ARE MEASURED, NOT CHOSEN. There is no principled tolerance available
+ * here — the header already explains why a contacting glyph's depth is a drawing
+ * choice rather than a physical claim, and inventing a number would be the clamp
+ * this repository keeps warning about. So each entry records what it actually is,
+ * to a tenth of a centimetre, with a tenth of room for interpolation jitter. That
+ * makes the entry falsifiable in both directions, which a round tolerance would not.
+ *
+ * THE WINDOWS ARE A CLAIM TOO — spin.mjs's lesson. Each runs from the key where the
+ * foot is last unambiguously in the air to the key where it takes the weight, so a
+ * boot dipping EARLIER than the handover is not covered by any of this. */
+const arriving = {
+  waltz:          { foot: 'R', from: 0.42, to: 0.45, cm: 0.3,
+                    why: 'the frame before the right foot becomes the skating foot at t=0.44' },
+  changeFootSpin: { foot: 'R', from: 0.47, to: 0.51, cm: 1.2,
+                    why: 'the frames before the right foot becomes the skating foot at t=0.50366' },
+};
+const JITTER = 0.1;                                  // cm, one tenth, for interpolation
+const declared = new Set();
 
 /* ─── the smallest transform algebra that reads this renderer's own strings ───
    Only the four functions body-frame.js emits. An unhandled one throws rather
@@ -127,6 +184,43 @@ function lowest(n, m) {
 }
 
 /* ─── the mutations ─────────────────────────────────────────────────────────── */
+/* The staleness side, broken drawn.mjs's way: declare a move that does not dip.
+   Lifting the declared feet was tried first and does NOT clear them — the dip comes
+   from interpolating INTO the on-ice key, so the last free frame is adjacent to a
+   foot at z 0 whatever height the key before it is authored at. That is the fault
+   these entries describe, restated: the handover is the thing the rig cannot draw,
+   and no free-foot height escapes it. So the mutation tests the ASSERTION, which is
+   what it is for, rather than moving a pose to see what happens. */
+/* The DEEPER side, and getting here took two failed attempts that are worth keeping,
+   because between them they say what these numbers actually are.
+
+   --break=sink does not reach the branch: dropping every free foot 20 cm pushes the
+   declared runs OUT of their windows, so they arrive as ordinary failures and the
+   comparison is never entered.
+
+   Dropping the declared moves' free feet by ONE centimetre keeps them in the window
+   and does not move the depths at all — 0.3 and 1.2, unchanged — while opening a new
+   ordinary run on the waltz landing. Pointing those same feet to ANKLE_MAX moves the
+   waltz's declared frame from 0.3 to 0.4, inside the tenth of jitter, and leaves the
+   change of foot at 1.2 while burying four other stretches of the waltz.
+
+   SO THE DECLARED DEPTH IS NOT AN AUTHORING CHOICE. It is a property of the handover:
+   the last free frame is adjacent to a key whose foot is at z 0, and the interpolation
+   into that key sets the number whatever the free foot is doing. That is the same
+   sentence these entries already carry — the step-over is the thing the rig cannot
+   draw — arriving from the other direction, and it means no pose mutation can deepen
+   them by much. A checker cannot be shown to work by a mutation that does not move it.
+
+   So the branch is broken drawn.mjs's way, like --break=stale below: the DECLARATION
+   is made wrong rather than the pose. Both entries claim a depth of nought, and both
+   runs must say so. */
+if (BREAK === 'deeper')
+  for (const ex of Object.values(arriving)) ex.cm = 0;
+
+if (BREAK === 'stale')
+  arriving.spiral = { foot: 'R', from: 0, to: 1, cm: 5,
+                      why: 'a deliberately stale declaration' };
+
 if (BREAK === 'sink' || BREAK === 'flat')
   for (const m of Object.values(MOVES))
     for (const k of m.keys)
@@ -147,10 +241,25 @@ for (const id of Object.keys(MOVES)) {
   const flush = key => {
     const r = runs.get(key);
     if (!r) return;
-    bad++;
-    console.log(`  UNDER ${id.padEnd(16)} ${r.view.padEnd(4)} ${r.w}  ${r.cm.toFixed(1).padStart(5)} cm below at f=${r.at.toFixed(3)}` +
-                `   (${r.n} frame${r.n === 1 ? '' : 's'} from f=${r.from.toFixed(3)} to f=${r.to.toFixed(3)})`);
     runs.delete(key);
+    const where = `${r.cm.toFixed(1).padStart(5)} cm below at f=${r.at.toFixed(3)}` +
+                  `   (${r.n} frame${r.n === 1 ? '' : 's'} from f=${r.from.toFixed(3)} to f=${r.to.toFixed(3)})`;
+    const ex = arriving[id];
+    /* The window and the foot decide whether this is the declared case at all. A run
+       outside either is an ordinary failure, which is the point of naming them. */
+    if (ex && r.w === ex.foot && r.from >= ex.from && r.to <= ex.to) {
+      declared.add(id);
+      if (r.cm > ex.cm + JITTER) {
+        bad++;
+        console.log(`  DEEPER ${id.padEnd(16)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
+        console.log(`         declared at ${ex.cm.toFixed(1)} cm — the pose got worse under cover of being named`);
+      } else {
+        console.log(`  arriving ${id.padEnd(15)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
+      }
+      return;
+    }
+    bad++;
+    console.log(`  UNDER ${id.padEnd(16)} ${r.view.padEnd(4)} ${r.w}  ${where}`);
   };
 
   for (let i = 0; i < rig.frames; i++) {
@@ -185,8 +294,18 @@ for (const id of Object.keys(MOVES)) {
   for (const key of [...runs.keys()]) flush(key);
 }
 
+/* The other side of the exemption. drawn.mjs's rule, word for word: an entry that
+   no longer describes anything is the list lying about the model. */
+for (const [id, ex] of Object.entries(arriving))
+  if (!declared.has(id)) {
+    bad++;
+    console.log(`  STALE  ${id.padEnd(16)} clears the ice now, and arriving still declares it`);
+    console.log(`         ("${ex.why}") — delete the entry`);
+  }
+
 console.log(`\n${glyphs} boot glyphs across ${views} views that draw an ice line`);
 if (worst) console.log(`deepest ${worst.cm.toFixed(1)} cm below, ${worst.id} ${worst.w} at f=${worst.f.toFixed(3)}`);
-console.log(bad ? `\n${bad} run${bad === 1 ? '' : 's'} of frames with a boot drawn into the ice`
-                : '\nno boot that is off the ice is drawn below it');
+console.log(bad ? `\n${bad} problem${bad === 1 ? '' : 's'}`
+                : `\nno boot that is off the ice is drawn below it, except the ` +
+                  `${Object.keys(arriving).length} declared arrivals, which are where and how deep they say`);
 process.exit(bad ? 1 : 0);
