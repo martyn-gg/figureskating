@@ -127,6 +127,50 @@ export const TRANSITIONS = {
      with both blades flat on the ice and is still outside this model. */
   crossbehind: { name: 'Crossed step behind', edgeChanges: false, changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
   slipchasse:  { name: 'Slip chassé',         edgeChanges: true,  changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
+
+  /* Added 20/09/2026, and between them they close eleven notCovered lines — the
+     largest block of unlinked syllabus text the guide had left.
+
+     THE NAMES ARE BRITISH ICE SKATING'S, FROM THE EXERCISE SHEETS RATHER THAN THE
+     DEFINITIONS DOCUMENT, which is the whole of the argument about whether they
+     should exist. Their *Definition of Steps, Turns & Movements* names neither, and
+     Session 19 declined to invent an element on exactly that ground for skills-8
+     section 2's push or touch down. The difference is use: BIS write `step wide`
+     nine times across Skills 1, 2, 3, 6, 7 and 8, and `push back` or `transfer your
+     weight back` beside it seven of those times, in the same slot in the numbered
+     notation where `cross roll`, `3-turn` and `XF-` appear. That is a name in
+     service, not a description, and the guide's rule is that the governing body's
+     word is the name of the element.
+
+     THE FLAGS WERE NOT CHOSEN, THEY WERE READ OFF THE SEQUENCES, and every one of
+     the nine agrees without exception:
+
+       1 ex 1  RFI -> LFI      2 ex 5  RBI -> LBI then LBI -> RBO
+       1 ex 3  RBI -> LBI      3 ex 2  LBI -> RBI then RBI -> LBO
+       2 ex 1  LBI -> RBI      6 ex 3  LBI -> RBI then RBI -> LBO
+       2 ex 4  RFI -> LFI      7 ex 1  LBI -> RBI then RBI -> LBO
+                               8 sec 2 LBI -> RBI then RBI -> LBO
+
+     A STEP WIDE IS INSIDE EDGE TO INSIDE EDGE, every time, which is the cross
+     roll's flag set. A PUSH BACK IS INSIDE TO OUTSIDE, every time, which is the
+     crossover's. Neither needed a new flag, and neither needed a new join.
+
+     So why were these eleven lines unlinked for eleven sessions? Because
+     gen-derived.mjs restricts the crossover, the chassé and the cross roll to
+     OUTSIDE entries, correctly, with the note that it is what the elements are
+     rather than a modelling limitation. That was true of those three and it left
+     the inside half of both flag sets empty, and the inside half is where the
+     syllabus does this. The restriction was right; nobody had generated its
+     complement.
+
+     PUSH BACK DRAWS WHAT A BACKWARD STROKE DRAWS, and it is a transition rather
+     than a basic for the reason forward-stroking is a basic while lfo-chasse is a
+     transition even though a chassé contains a push: a basic is how you push at
+     all, a transition is which edge you leave and which you arrive on. The element
+     pages say so rather than inventing a difference, which is the same answer this
+     file already gives for a crossover against a chassé. */
+  stepwide:  { name: 'Step wide', edgeChanges: false, changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
+  pushback:  { name: 'Push back', edgeChanges: true,  changesFoot: true, reversesDir: false, rotatesInto: null, join: 'step' },
 };
 
 /* Twizzles. The one element that does not fall out of the three flags, and the

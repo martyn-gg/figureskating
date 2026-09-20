@@ -39,6 +39,7 @@ const TURN_NOUN = { three: 'three turn', bracket: 'bracket', rocker: 'rocker', c
                     coe: 'change of edge', loop: 'loop', crossover: 'crossover',
                     chasse: 'chassé', crossroll: 'cross roll',
                     crossbehind: 'crossed step behind', slipchasse: 'slip chassé',
+                    stepwide: 'step wide', pushback: 'push back',
                     twizzle: 'twizzle', twizzle15: '1½ twizzle', twizzle2: 'double twizzle',
                     twizzle25: '2½ twizzle' };
 
@@ -48,16 +49,33 @@ const TWIZZLE_SLUG = { twizzle: 'twizzle', twizzle15: 'one-and-a-half-twizzle',
                        twizzle2: 'double-twizzle',
                        twizzle25: 'two-and-a-half-twizzle' };
 
-/* Which entry edges each transition is actually skated from. A crossover, a chassé
+/* Which entry states each transition is actually skated from. A crossover, a chassé
    and a cross roll all begin on an outside edge — that is not a modelling
    limitation, it is what the elements are. Changes of edge and loops are done on
-   all four. */
+   all four.
+
+   WIDENED FROM AN EDGE LETTER TO A DIRECTION AND AN EDGE ON 20/09/2026, because the
+   push back is skated backwards and never forwards. British Ice Skating write it
+   seven times and all seven are backward; a forward one is a thing a skater can do
+   and a thing their syllabus does not ask for, and this file's own rule is that the
+   list says what the elements ARE. An edge letter could not express that, so the
+   values are now `dir + edge` — the same FO/FI/BO/BI key `key()` builds below, and
+   the same key TRANSITION_TEXT is written against, so there is one spelling of an
+   entry state in this file rather than two. Both readers were updated with it.
+
+   The five that were `['O']` become `['FO', 'BO']` and the two that were
+   `['O', 'I']` become all four: the same sets, said in the wider alphabet, so no
+   generated page moves. */
 const TRANSITION_ENTRIES = {
-  coe: ['O', 'I'], loop: ['O', 'I'],
-  crossover: ['O'], chasse: ['O'], crossroll: ['O'],
+  coe: ['FO', 'FI', 'BO', 'BI'], loop: ['FO', 'FI', 'BO', 'BI'],
+  crossover: ['FO', 'BO'], chasse: ['FO', 'BO'], crossroll: ['FO', 'BO'],
   /* Both are crossing or placing steps and take the same outside entry as the
      three above them — that is what the elements are, not a limitation. */
-  crossbehind: ['O'], slipchasse: ['O'],
+  crossbehind: ['FO', 'BO'], slipchasse: ['FO', 'BO'],
+  /* Read off the sequences rather than chosen — see TRANSITIONS in skating.js for
+     the nine of them. Every step wide in the syllabus begins on an inside edge, two
+     forwards and seven backwards; every push back begins on a BACK inside one. */
+  stepwide: ['FI', 'BI'], pushback: ['BI'],
 };
 
 /* Other names the same movement goes by, keyed on the turn rather than the element,
@@ -72,6 +90,12 @@ const TRANSITION_ENTRIES = {
 const ALIASES = {
   chasse:     ['open chassé', 'simple chassé'],
   slipchasse: ['slide chassé'],
+  /* British Ice Skating write the same act two ways across the eight exercise
+     sheets that contain it — `push back to the (5)LBO` in Skills 3, 6 and 7,
+     `then transfer your weight back to the (14)RBO` in Skills 1, 2 and 8. Same
+     manoeuvre, same edges, two wordings, so the second is an alias and not a
+     second element. */
+  pushback:   ['transfer of weight back'],
 };
 
 const slug = s => `${s.foot}${s.dir}${s.edge}`.toLowerCase();
@@ -672,6 +696,51 @@ Watch the shoulders. The reversal wants to be led from the hips with the shoulde
 following; led from the shoulders it becomes a lurch, and the tracing shows two lobes with
 a straight line between them instead of one continuous roll.`,
   },
+
+  /* Written against the entries TRANSITION_ENTRIES allows and no others, which is
+     why there are three of these and not eight. */
+  stepwide: {
+    FI: `Forwards on an inside edge, and the free foot goes down wide: out to the side,
+clear of the skating foot, on an inside edge of its own. The weight crosses onto it and the
+old skating foot comes up. Because the foot changed and the edge did not, the lobe reverses
+under you.
+
+Nothing crosses and nothing passes, and that is the whole of the difference between this and
+the three transitions it sits beside. A crossover, a chassé and a cross roll each place the
+free foot in relation to the skating one. Here it lands away from it, and the width is the
+point rather than a by-product of it.
+
+British Ice Skating write it forwards twice, in Skills 1 and Skills 2, in the middle of an
+edge sequence where it gets you off one lobe and onto the next without a turn. Step too
+narrow and there is nothing left to push against.`,
+
+    BI: `Backwards on an inside edge, stepping wide onto the other foot's inside edge. The
+weight goes across, the first foot leaves the ice, and the lobe reverses because the foot
+changed and the edge did not.
+
+Backwards it is harder for the ordinary reason, that you cannot see where the foot is going,
+and for one particular to this. A back inside edge holds less than any of the other three,
+and you are asking one to take your whole weight at the moment it arrives. Most of the wobble
+here is an arriving foot put down late and flat instead of on its edge from the first instant.
+
+It runs through six of the eight Skills tests, usually between two backward lobes and usually
+followed by a push back onto an outside edge.`,
+  },
+
+  pushback: {
+    BI: `Backwards on an inside edge. The skating foot pushes against that edge and you arrive
+backwards on the other foot's outside edge, which is the strong one: checked, and able to hold
+its curve for as long as you ask.
+
+This draws the tracing a backward stroke draws, because it is the same push. What makes it an
+element here rather than a basic is that both ends are named. Backward stroking is how you
+push at all; this is that push taken from a back inside edge onto a back outside one, which is
+what the syllabus asks for and where it asks for it. The guide says so rather than inventing a
+difference, the same answer it gives for a crossover against a chassé.
+
+British Ice Skating write it both as a push back and as transferring the weight back. They are
+one movement.`,
+  },
 };
 
 /* ------------------------------------------------------------------- jumps */
@@ -1096,7 +1165,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
   }
 
   for (const [key_, tr] of Object.entries(TRANSITIONS)) {
-    if (!TRANSITION_ENTRIES[key_].includes(edge)) continue;
+    if (!TRANSITION_ENTRIES[key_].includes(key(s))) continue;
     const x = exitState(s, key_);
     const continues = lobeSense(s.foot, s.edge, s.dir) === lobeSense(x.foot, x.edge, x.dir);
     /* The join says what the TRACING does and three elements share `step`, which was fine
@@ -1110,7 +1179,13 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
        join's phrase, because nothing of theirs collides and rewriting settled pages to fix a
        problem they do not have is how a repository loses its history. */
     const how = { crossbehind: 'a step behind, with the legs crossed below the knee',
-                  slipchasse: 'a step in which the free foot slides away along the ice' }[key_]
+                  slipchasse: 'a step in which the free foot slides away along the ice',
+                  /* These two collide with each other's neighbours the same way, and
+                     for the same reason: a step wide produces the states a cross roll
+                     produces and a push back those of a crossover, so the join's
+                     phrase would not tell them apart either. */
+                  stepwide:   'a step onto the other foot placed wide, nothing crossing',
+                  pushback:   'a push off the inside edge onto the other foot\'s outside edge' }[key_]
       ?? { roll: 'the blade rolls across without turning',
            loop: 'a small circle traced on the same edge',
            step: 'a step onto the other foot' }[tr.join];
@@ -1137,6 +1212,11 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
           coe:        'two-foot-change-of-edge',
           chasse:     dir === 'F' ? 'forward-stroking' : 'backward-stroking',
           slipchasse: dir === 'F' ? 'forward-stroking' : 'backward-stroking',
+          /* Both are the push itself, aimed. A push back IS a stroke taken from a
+             named edge onto a named edge, which is why the basic is its prerequisite
+             rather than its replacement. */
+          stepwide:   dir === 'F' ? 'forward-stroking' : 'backward-stroking',
+          pushback:   'backward-stroking',
         }[key_]].filter(Boolean).join(', ')}]`,
       ],
       body: TRANSITION_TEXT[key_][key(s)],
@@ -1188,7 +1268,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
        surfaced only when the dev server was restarted. syllabus.mjs now asserts
        that every prerequisite resolves, because the build will not. */
     const impossible = combo.turns.findIndex((t, i) =>
-      TRANSITIONS[t] && !TRANSITION_ENTRIES[t].includes(states[i].edge));
+      TRANSITIONS[t] && !TRANSITION_ENTRIES[t].includes(key(states[i])));
     if (impossible >= 0) continue;
     const x = states.at(-1);
     const feet = new Set(states.map(st => st.foot)).size;

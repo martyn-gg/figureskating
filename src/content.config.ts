@@ -42,7 +42,7 @@ const elements = defineCollection({
     turn: z.enum(['three', 'bracket', 'rocker', 'counter',
                   'mohawk', 'choctaw',
                   'coe', 'loop', 'crossover', 'chasse', 'crossroll',
-                  'crossbehind', 'slipchasse',
+                  'crossbehind', 'slipchasse', 'stepwide', 'pushback',
                   'twizzle', 'twizzle15', 'twizzle2', 'twizzle25']).optional(),
     /* A cluster: an ordered chain in which each turn's exit is the next one's
        entry. Only the entry edge and the sequence are stored; every edge the
