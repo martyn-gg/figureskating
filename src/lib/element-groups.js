@@ -183,7 +183,7 @@ export const SECTION_NOTE = {
   'one-foot':  'Threes, brackets, rockers and counters — half a turn on one blade.',
   'two-foot':  'Mohawks and choctaws, which change foot as well as direction.',
   twizzles:    'Turns that travel, by rotation count.',
-  transitions: 'Getting from one edge to the next: crossovers, chassés, cross rolls and changes of edge.',
+  transitions: 'Getting from one edge to the next: crossovers, chassés, cross rolls, changes of edge, and the step wide and push back the Skills tests ask for.',
   clusters:    'Turns run together, where each one\'s exit is the next one\'s entry.',
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
   jump:        'The six singles and the waltz jump, by takeoff edge and whether a pick goes in.',

@@ -4,9 +4,8 @@ test: bis-skills-2
 order: 5
 summary: A full circuit of the rink built from an open mohawk into backward edges, a step wide and a crossover, on both sides.
 syllabus: both
-elements: [lfo, rfo, rfi-mohawk, lfi-mohawk, lbi, rbi, lbo, rbo, lbo-crossover, rbo-crossover]
-notCovered:
-  - The step wide and the transfer of weight between the two backward edges.
+elements: [lfo, rfo, rfi-mohawk, lfi-mohawk, lbi, rbi, lbo, rbo, lbo-crossover, rbo-crossover, lbi-stepwide, rbi-pushback, rbi-stepwide, lbi-pushback]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

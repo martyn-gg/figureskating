@@ -4,9 +4,8 @@ test: bis-skills-6
 order: 3
 summary: A forward outside 3-turn and, on the same foot, a backward inside loop — from a stationary start, on both feet.
 syllabus: both
-elements: [lfo-three, rfo-three, lbi-loop, rbi-loop, lbo, rbo, rbi, lbi]
-notCovered:
-  - The step wide and the push back between the loop and the next lobe.
+elements: [lfo-three, rfo-three, lbi-loop, rbi-loop, lbo, rbo, rbi, lbi, lbi-stepwide, rbi-pushback, rbi-stepwide, lbi-pushback]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

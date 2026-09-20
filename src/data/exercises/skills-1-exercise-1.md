@@ -4,10 +4,8 @@ test: bis-skills-1
 order: 1
 summary: The four forward edges, joined by chassés on one side and crossovers on the other.
 syllabus: both
-elements: [lfo, rfi, rfo, lfi, lfo-chasse, rfo-chasse, lfo-crossover, rfo-crossover]
-notCovered:
-  - A step wide onto the new edge, which is a step rather than a turn or a transition and
-    has no element of its own here.
+elements: [lfo, rfi, rfo, lfi, lfo-chasse, rfo-chasse, lfo-crossover, rfo-crossover, rfi-stepwide, lfi-stepwide]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

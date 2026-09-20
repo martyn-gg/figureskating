@@ -4,10 +4,8 @@ test: bis-skills-3
 order: 3
 summary: A forward 3-turn into a held back outside edge, rolled from there into backward cross rolls on both feet.
 syllabus: both
-elements: [lfo-three, rfo-three, extended-edge, rbo-crossroll, lbo-crossroll, rbo, lbo]
-notCovered:
-  - The change of foot from the turn's exit onto the held back outside edge, which is a step
-    and has no element of its own here.
+elements: [lfo-three, rfo-three, extended-edge, rbo-crossroll, lbo-crossroll, rbo, lbo, lbi-pushback, rbi-pushback]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

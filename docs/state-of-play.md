@@ -12,17 +12,44 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **twenty-two steps in the `check` chain, build included, all green** — count them out of
+worker; **twenty-three steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle`, `npm run drift` and `npm run underice`, which report
 rather than fail.
 
-**Content:** 277 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
-turns, thirty-two twizzles, thirty-six transitions, **a hundred and sixteen clusters**, seven
-jumps, three held positions, **twenty-two basics**, **five spins** and **one step**. 272 of the
-279 element pages drawing. Count kinds with
+**Content:** 284 elements — eight plain edges, thirty-two one-foot turns, sixteen two-foot
+turns, thirty-two twizzles, **forty-two transitions**, **a hundred and sixteen clusters**, seven
+jumps, three held positions, **twenty-two basics**, **five spins** and **one step**. 278 of the
+285 element pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**The step wide and the push back, 20/09/2026 — eleven `notCovered` lines closed, the
+largest block of unlinked syllabus text the guide had left.** It rested on one decision, what
+a step IS, and British Ice Skating answer it two incompatible ways while this repository had a
+third. The cut is geometric rather than lexical: a transition is how you get from one edge to
+the next, a step is a way of moving that changes neither, so the step wide and the push back
+are transitions and `kind: 'step'` keeps the slip step alone. Full argument in `docs/model.md`.
+
+What made it cheap is that nothing was chosen. Every step wide in the syllabus is inside edge
+to inside edge, which is the cross roll's flag set, and every push back is inside to outside,
+which is the crossover's — so the nine lines were the unwritten complement of a restriction
+`gen-derived.mjs` already documents as deliberate, namely that crossovers, chassés and cross
+rolls begin on an outside edge. `TRANSITION_ENTRIES` widened from an edge letter to a
+direction and an edge, because the push back is skated backwards and never forwards. Six
+generated pages, no model change, and **0 of 441 hashed frames moved**.
+
+**A `rig:` names a real move, 20/09/2026.** `rig:` was `z.string().optional()` with nothing
+checking it, and `BodyFrame.astro` wraps its figure in `{m && (...)}` — so a name that matched
+no move rendered nothing at all: no figure, no warning, a green build. `drawn.mjs` would have
+caught that only on a page whose one picture is the rig, which is its own recorded blind spot
+one field along. `tools/rig-names.mjs` asserts it from both sides: a page may not name a move
+that does not exist, and a move that exists must be named by a page or declared in
+`unpublished` with a reason that goes stale visibly. Three moves are declared — `twoFoot`,
+`toePick` and `spiralCheck` — and the second assertion is what would have said out loud that
+the teapot was rigged in Session 01 and had no page pointing at it until somebody noticed by
+hand. Eighteen pages name a rig; all eighteen were already right, so it began as a tripwire
+and is in the build rather than in a page, which is this repository's rule now.
 
 **A flat is the absence of an edge, 20/09/2026 — the last of the three things *Two blades*
 said the rig could not hold.** It was already half built and the halves disagreed:

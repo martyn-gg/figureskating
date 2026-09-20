@@ -12,13 +12,12 @@ changesInOctober: >-
   Both add a push, or touch down, before it. October also writes the middle of the three
   crossed steps as crossed behind, where the current document writes it crossed in front
   amongst two that are not. The announcement mentions none of this.
-elements: [rfo-three-coe-double-twizzle, lbi-three, lfi-double-three, rfi-bracket, rbo-crossbehind, lbo-crossbehind, lbo-crossroll, rbi-coe, lbi-coe, lbo-double-twizzle, rbo-crossover, lbo-crossover, rbo, lbo, rbi, lbi, lfo]
+elements: [rfo-three-coe-double-twizzle, lbi-three, lfi-double-three, rfi-bracket, rbo-crossbehind, lbo-crossbehind, lbo-crossroll, rbi-coe, lbi-coe, lbo-double-twizzle, rbo-crossover, lbo-crossover, rbo, lbo, rbi, lbi, lfo, rbi-stepwide, lbi-pushback, lbi-stepwide, rbi-pushback]
 notCovered:
   - The push, or touch down, before the double twizzle. The free foot goes to the ice, which
     the rig has been able to hold since 30/08/2026, but BIS's definitions document names no
     such step, so there is no element to link to and inventing one would be worse than
     leaving the gap named.
-  - The step wide and the transfer of weight, which happen twice.
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

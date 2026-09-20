@@ -8,10 +8,13 @@ changesInOctober: >-
   From 01/10/2026 the exercise carries a minimum of two lobes on each foot. The sequence is
   unchanged; what is added is how much of it has to be shown. The update announcement does
   not mention this.
-elements: [rfi-three, lfo-three, lfi-three, rfo-three, lfo-crossover, rfo-crossover]
+elements: [rfi-three, lfo-three, lfi-three, rfo-three, lfo-crossover, rfo-crossover, lbi-pushback, rbi-pushback]
 notCovered:
-  - The step from a turn's exit onto the next lobe, which changes foot without turning and
-    is a step rather than an element here.
+  - The step from a backward outside edge onto a forward outside one, which changes foot
+    and direction of travel without a turn in it. The other step in this exercise, from a
+    3-turn's exit onto the next lobe, is a push back and now has an element; this one has
+    none, because British Ice Skating's definitions name no step that arrives facing the
+    other way.
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

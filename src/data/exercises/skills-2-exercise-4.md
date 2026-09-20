@@ -7,10 +7,8 @@ syllabus: both
 changesInOctober: >-
   From 01/10/2026 the exercise carries a minimum of two lobes on each foot, as exercise 3
   does. The sequence is unchanged and the announcement does not mention the addition.
-elements: [lfo-crossroll, rfo-crossroll, lfo-crossover, rfo-crossover]
-notCovered:
-  - The step wide onto the inside edge, and the transfer of weight it needs — a step rather
-    than a turn or a transition, with no element of its own here.
+elements: [lfo-crossroll, rfo-crossroll, lfo-crossover, rfo-crossover, rfi-stepwide, lfi-stepwide]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

@@ -4,9 +4,8 @@ test: bis-skills-3
 order: 2
 summary: All four forward 3-turns and both backward inside ones on the first side, and 3-turns run into open mohawks on the second.
 syllabus: both
-elements: [rfi-three, lfo-three, lfi-three, rfo-three, lbi-three, rbi-three, rbo-three-mohawk, lbo-three-mohawk, lfo-crossover, rfo-crossover, rbo-crossover, lbo-crossover]
-notCovered:
-  - The step wide and the push back between the two backward edges on the second side.
+elements: [rfi-three, lfo-three, lfi-three, rfo-three, lbi-three, rbi-three, rbo-three-mohawk, lbo-three-mohawk, lfo-crossover, rfo-crossover, rbo-crossover, lbo-crossover, lbi-stepwide, rbi-pushback, rbi-stepwide, lbi-pushback]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

@@ -4,10 +4,8 @@ test: bis-skills-2
 order: 1
 summary: Backward edges held to the long axis on both outside and inside, joined by crossovers on one side and a step wide on the other.
 syllabus: both
-elements: [rbo, lbi, lbo, rbi, rbo-crossover, lbo-crossover]
-notCovered:
-  - The step wide and the transfer of weight on the second side, which is a step rather
-    than a turn or a transition and has no element of its own here.
+elements: [rbo, lbi, lbo, rbi, rbo-crossover, lbo-crossover, lbi-stepwide, rbi-pushback, rbi-stepwide]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

@@ -8,9 +8,8 @@ changesInOctober: >-
   From 01/10/2026 the exercise repeats rather than ending — "this completes the exercise"
   becomes "then repeat the sequence". The sequence itself is unchanged, and the announcement
   does not mention the difference.
-elements: [rfi-choctaw, lfi-choctaw, lbo-counter-three, rbo-counter-three, lbo-crossover, rbo-crossover, lfo, rfo]
-notCovered:
-  - The step wide and the push back after each counter-3-turn.
+elements: [rfi-choctaw, lfi-choctaw, lbo-counter-three, rbo-counter-three, lbo-crossover, rbo-crossover, lfo, rfo, lbi-stepwide, rbi-pushback, rbi-stepwide, lbi-pushback]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

@@ -4,9 +4,8 @@ test: bis-skills-1
 order: 3
 summary: Crossovers in both directions and both rotations, joined by an optional turn to backwards and a step back to forwards.
 syllabus: both
-elements: [lfo-crossover, rfo-crossover, lbo-crossover, rbo-crossover, lfo, rfo, lbo, rbo, lbi, rbi]
+elements: [lfo-crossover, rfo-crossover, lbo-crossover, rbo-crossover, lfo, rfo, lbo, rbo, lbi, rbi, rbi-stepwide, lbi-pushback]
 notCovered:
-  - The step wide and the weight transfer between the two backward circles.
   - The optional turn to backwards, which the document offers as a three turn or a mohawk,
     and the optional step to forwards. Both are the skater's choice and neither is
     specified, so neither is listed as a requirement here.
