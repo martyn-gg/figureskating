@@ -8,13 +8,16 @@ verified: { checked: false }
 ---
 
 Where Skills 1 asks whether the skater can hold a curve, Skills 2 asks whether they can
-leave one. Two of its five exercises are turns, and the rest are the edges those turns have
-to land on.
+leave one. In the current syllabus its forward three turns are the first compulsory turns
+in the tests. From 01/10/2026 Skills 1 has them too, and Skills 2 keeps its own with a
+minimum of two lobes on each foot.
 
-Most of the test happens backwards. The long axis arrives as an idea to be understood
-rather than a line to be crossed, the slalom loses the second foot it was allowed in
-Skills 1, and the first mohawk appears in a sequence that runs a full circuit of the rink.
+The rest is backward edges, a slalom that loses the second foot it was allowed in Skills 1,
+forward cross rolls, and the first mohawk the test names rather than allows. Skills 1 lets
+a skater use one to get backwards; Skills 2 asks for it, in a sequence that runs a full
+circuit of the rink.
 
-From 01/10/2026 there is a sixth exercise and it is the backward outside 3-turn, which
-makes this the level where turning stops being something done on the way to an edge and
-becomes the subject itself.
+From 01/10/2026 there is a sixth exercise: the backward outside 3-turn, followed at once by
+an open mohawk. It is the first turn in the syllabus from backwards to forwards, a level
+earlier than the current tests ask for one, and it makes this the level where turning
+becomes the subject rather than the way onto an edge.
