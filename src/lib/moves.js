@@ -307,9 +307,9 @@ export const MOVES = {
          direction of travel, at positive t. Getting that backwards is invisible frame
          by frame and obvious on a contact sheet. */
       {arm:[64,10,18], t:0.00, ph:'Set-up on the forward outside edge', hipZ:96, hipYaw:-8, shYaw:-24,
-       sh:P(-4,0,148), L:P(14,14,0,-0.5), R:P(-49,-6,27,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+       sh:P(-4,0,148), L:P(5,14,0,-0.5), R:P(-49,-6,27,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[60,-2,24], t:0.14, ph:'Knee bends, edge deepens', hipZ:86, hipYaw:-6, shYaw:-20,
-       sh:P(2,0,132), L:P(19,18,0,-1), R:P(-55,-5,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+       sh:P(10,0,132), L:P(10,18,0,-1), R:P(-55,-5,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:92, hipYaw:-2, shYaw:-10,
        sh:P(0,0,138), L:P(15,16,0,0.5), R:P(0,-4,10,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[50,26,6], t:0.30, ph:'Takeoff — leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
@@ -327,7 +327,7 @@ export const MOVES = {
       {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:178, shYaw:158,
        sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
       {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
-       sh:P(-8,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
+       sh:P(-10,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-15,17,0,-1), skate:'R', edge:'O', dir:'B'},
       {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:174, shYaw:150,
        sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:174, shYaw:154,
@@ -424,9 +424,9 @@ export const MOVES = {
       {t:0.00, ph:'Stepping onto the back outside edge', hipZ:96, hipYaw:178, shYaw:166,
        sh:P(-6,0,148), L:P(36,10,20), R:P(-14,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {t:0.33, ph:'Free leg extends, check holds', hipZ:92, hipYaw:176, shYaw:159,
-       sh:P(-9,0,142), L:P(56,12,19), R:P(-18,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
+       sh:P(-9,0,142), L:P(56,12,19), R:P(-13,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {t:1.00, ph:'Held — extended, free foot turned out', hipZ:90, hipYaw:175, shYaw:157,
-       sh:P(-11,0,140), L:P(68,12,18), R:P(-18,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
+       sh:P(-11,0,140), L:P(68,12,18), R:P(-13,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
 
   /* THE FIRST POSE IN THIS FILE WITH TWO BLADES ON THE ICE — 30/08/2026.
@@ -495,7 +495,7 @@ export const MOVES = {
       {t:0.00, ph:'Standing glide', hipZ:96, hipYaw:0, shYaw:-6,
        sh:P(-2,0,146), L:P(0,-8,0), R:P(-27,5,19), skate:'L', edge:'I', dir:'F'},
       {t:0.42, ph:'Sinking, free leg reaches forward', hipZ:62, hipYaw:0, shYaw:-4,
-       sh:P(8,0,110), L:P(30,-6,0), R:P(46,8,16,0,POINTED), skate:'L', edge:'I', dir:'F'},
+       sh:P(22,0,110), L:P(29,-6,0), R:P(46,8,16,0,POINTED), skate:'L', edge:'I', dir:'F'},
       {t:1.00, ph:'Held low, free leg extended', hipZ:40, hipYaw:0, shYaw:-2,
        sh:P(16,0,88), L:P(29,-5,0), R:P(80,8,10,0,POINTED), skate:'L', edge:'I', dir:'F'},
     ]},
@@ -1139,9 +1139,9 @@ export const MOVES = {
       {t:0.00, ph:'Both blades flat, the feet level', hipZ:92, hipYaw:0, shYaw:-4,
        sh:P(-2,0,144), L:P(12,-7,0), R:ON(12,7,0), skate:'L', edge:null, dir:'F'},
       {t:0.50, ph:'Sinking onto the skating leg, the free foot starting out', hipZ:86, hipYaw:0, shYaw:-3,
-       sh:P(0,0,138), L:P(20,-7,0), R:ON(33,7,0), skate:'L', edge:null, dir:'F'},
-      {t:1.00, ph:'Held — the weight back over a bent knee, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
-       sh:P(2,0,132), L:P(25,-7,0), R:ON(55,7,0), skate:'L', edge:null, dir:'F'},
+       sh:P(0,0,138), L:P(14,-7,0), R:ON(27,7,0), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held — the weight over the skating leg, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
+       sh:P(4,0,132), L:P(20,-7,0), R:ON(50,7,0), skate:'L', edge:null, dir:'F'},
     ]},
 
   /* A DRAG, WHICH IS A LUNGE — the rig for `drag`, and the first pose in this file to
