@@ -1118,6 +1118,17 @@ export const MOVES = {
      this takes the second with both shins at 21 and 22. The extended edge is why the
      margin is deliberate.
 
+     THE SHOULDERS COME FORWARD, 02/10/2026, because the pose above read as sitting
+     back (Martyn, and Session 23's review). BIS put the weight OVER the skating leg,
+     and with the hip behind the blade, which the boot forces for any real knee bend,
+     the only thing that can put the mass over the foot is the torso. Swept first: a
+     straight skating leg (BIS's other option) was tried at hips of 92 and 94 and lets
+     the free foot slide only 31 to 36 cm, because two nearly straight legs cannot
+     separate far along the ice; it read as standing with the feet apart. So the knee
+     stays bent, a little less (hip 86, skating ankle 13 cm ahead of it, shin 24
+     degrees), the slide is 48 cm at 97 per cent of reach, and the shoulders lean 18 cm
+     ahead of the hip. Verified against a coach: NO, pending video on 03/10/2026.
+
      THE FEET STRADDLE THE TRACK, seven centimetres each side, and that is what keeps
      lean.mjs happy: a flat is held to the opposite claim from an edge — the skater is
      NOT leaning — so it is the centroid of the flat blades that must sit under the
@@ -1138,10 +1149,10 @@ export const MOVES = {
     keys:[
       {t:0.00, ph:'Both blades flat, the feet level', hipZ:92, hipYaw:0, shYaw:-4,
        sh:P(-2,0,144), L:P(12,-7,0), R:ON(12,7,0), skate:'L', edge:null, dir:'F'},
-      {t:0.50, ph:'Sinking onto the skating leg, the free foot starting out', hipZ:86, hipYaw:0, shYaw:-3,
-       sh:P(0,0,138), L:P(20,-7,0), R:ON(33,7,0), skate:'L', edge:null, dir:'F'},
-      {t:1.00, ph:'Held: the weight back over a bent knee, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
-       sh:P(2,0,132), L:P(25,-7,0), R:ON(55,7,0), skate:'L', edge:null, dir:'F'},
+      {t:0.50, ph:'Sinking onto the skating leg, the free foot starting out', hipZ:89, hipYaw:0, shYaw:-3,
+       sh:P(8,0,140), L:P(15,-7,0), R:ON(30,7,0), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held: the shoulders over the skating foot, the free foot at full stretch', hipZ:86, hipYaw:0, shYaw:-2,
+       sh:P(18,0,135), L:P(18,-7,0), R:ON(48,7,0), skate:'L', edge:null, dir:'F'},
     ]},
 
   /* A DRAG, WHICH IS A LUNGE — the rig for `drag`, and the first pose in this file to
