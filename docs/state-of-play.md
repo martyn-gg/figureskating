@@ -12,7 +12,7 @@ forty elements arrived in an afternoon rather than over a winter.
 **Working:** a static Astro 7 site with content collections for elements, tests and
 exercises; an animated edge diagram on any element with an entry edge; the three-view
 body-frame rig on any element with a rig; a `/rig` explorer; offline via a service
-worker; **twenty-four steps in the `check` chain, build included, all green** — count them out of
+worker; **twenty-five steps in the `check` chain, build included, all green** — count them out of
 `package.json` rather than trusting a number in prose, which this line was wrong about for
 four sessions — plus `npm run ankle` and `npm run drift`, which report rather than fail.
 `underice` left that pair on 20/09/2026 and is `npm run check:underice` now.
@@ -23,6 +23,16 @@ jumps, three held positions, **twenty-two basics**, **five spins** and **one ste
 285 element pages drawing. Count kinds with
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
+
+**`sections.mjs` is the first checker that reads a page as a reader does, 02/10/2026.**
+Session 23's review found 23 element pages (all 22 basics and the slip step) printing a
+"Derived" heading over an empty bordered box: every paragraph in that block needs an entry
+edge or a jump, and those kinds have neither. It took five minutes of reading pages at
+phone width, after weeks of a green chain. The template now asks the paragraphs' own
+question before printing the heading, and `sections.mjs` asserts against `dist/` that every
+h2 to h6 has visible text or a picture or control under it. Broken on purpose: 23 sections
+on 23 pages with the old template, exactly the review's count, and no false alarms among
+the other 1,575 headings; `--break` fails all 1,598, so it reaches every heading.
 
 **`underice.mjs` is in the chain, 20/09/2026, and the debt is paid.** It reported nine
 runs on the day it was written and was parked beside `drift` because two were thought to

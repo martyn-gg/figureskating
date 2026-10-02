@@ -239,6 +239,11 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
 
   <Content />
 
+  {/* Every paragraph below is computed from an entry edge or a jump, and the basics
+      and the slip step have neither — so for 23 pages this printed a heading over an
+      empty box. Ask the same question the paragraphs ask before printing either.
+      tools/sections.mjs asserts it against the built page. */}
+  {(d.entry || d.jump) && (<>
   <h2>Derived</h2>
   <div class="derived">
     {(d.entry || d.jump) && (
@@ -283,6 +288,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
         {' '}<b>{label(mirrorJump.landing)}</b> — the same jump, mirrored, generated rather than written twice.</p>
     )}
   </div>
+  </>)}
 
   {prereqs.length > 0 && (
     <>
