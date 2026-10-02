@@ -1,7 +1,7 @@
 ---
 name: Right backward outside counter-three
 kind: combination
-summary: RBO → RFO → RBI — 2 turns on one foot.
+summary: "RBO → RFO → RBI: 2 turns on one foot."
 entry: { foot: R, edge: O, dir: B }
 turns: [counter, three]
 prerequisites: [rbo-counter, rfo-three]

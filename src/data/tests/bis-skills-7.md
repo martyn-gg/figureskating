@@ -12,9 +12,9 @@ kinds of turn and starts stacking the hard ones. A counter into a 3-turn, a coun
 two-and-a-half twizzle, a rocker into a counter into a cross roll: by Skills 7 most of the
 turns arrive attached to another one.
 
-Nothing here is new in the way the loop or the bracket were new. What is new is the demand
-that the difficult turn survives being entered from another difficult turn, with no glide in
-between to organise it on.
+What is new is the demand that the difficult turn survives being entered from another
+difficult turn, with no glide in between to organise it on. No element here is new in the
+way the loop or the bracket were new.
 
 October 2026 adds two more, and both take it as far as the level goes: a cluster of four
 counting the change of edge, which the guide lists as its parts, and the

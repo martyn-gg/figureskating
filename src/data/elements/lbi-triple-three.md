@@ -1,7 +1,7 @@
 ---
 name: Left backward inside triple three
 kind: combination
-summary: LBI → LFO → LBI → LFO — 3 turns on one foot.
+summary: "LBI → LFO → LBI → LFO: 3 turns on one foot."
 entry: { foot: L, edge: I, dir: B }
 turns: [three, three, three]
 prerequisites: [lbi-three, lfo-three]

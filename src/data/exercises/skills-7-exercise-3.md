@@ -22,5 +22,5 @@ unwinds.
 
 Controlling the exit is the third objective, and it decides whether the rotation ends where
 the skater meant it to. Two and a half rotations reverses the direction of travel, so the
-skater finishes facing the opposite way to where the counter left them — which is the point
-of the count, and why it is that count rather than two or three.
+skater finishes facing the opposite way to where the counter left them. That reversal is the
+point of the count, and two or three full rotations would not produce it.

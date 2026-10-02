@@ -1,7 +1,7 @@
 ---
 name: Left backward inside bracket
 kind: turn
-summary: LBI to LFO — half a turn against the circle, changing edge and staying on the same lobe.
+summary: "LBI to LFO: half a turn against the circle, changing edge and staying on the same lobe."
 entry: { foot: L, edge: I, dir: B }
 turn: bracket
 prerequisites: [lbi-three]

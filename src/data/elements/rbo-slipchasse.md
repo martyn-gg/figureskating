@@ -1,7 +1,7 @@
 ---
 name: Right backward outside slip chassé
 kind: transition
-summary: RBO to LBI — a step in which the free foot slides away along the ice, still travelling backwards, and the lobe continues.
+summary: "RBO to LBI: a step in which the free foot slides away along the ice, still travelling backwards, and the lobe continues."
 entry: { foot: R, edge: O, dir: B }
 turn: slipchasse
 aliases: [slide chassé]

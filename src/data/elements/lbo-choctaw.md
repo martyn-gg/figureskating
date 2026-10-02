@@ -1,7 +1,7 @@
 ---
 name: Left backward outside choctaw
 kind: turn
-summary: LBO to RFI — a step onto the other foot, changing edge and reversing onto a new one. No cusp.
+summary: "LBO to RFI: a step onto the other foot, changing edge and reversing onto a new one. No cusp."
 entry: { foot: L, edge: O, dir: B }
 turn: choctaw
 prerequisites: [lbo-mohawk]

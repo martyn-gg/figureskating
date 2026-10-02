@@ -13,17 +13,16 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-All four crossovers, in one continuous run: forwards one way, backwards the same way,
-across to the other rotation, and forwards again. The exercise is built so that neither
-side gets to be the good side, and the assessment says as much — equal quality is the
-outcome being looked for, not competence on the strong one.
+All four crossovers, in one continuous run: forwards one way, backwards the same way, across
+to the other rotation, and forwards again. The exercise is built so that neither side gets
+to be the good side, and the assessment says as much: the outcome being looked for is equal
+quality on both. Competence on the strong side alone does not meet it.
 
-The joins are left to the skater. Getting from forwards to backwards is an optional turn
-and getting back is an optional step, and both are described as choices rather than
-requirements. That is Skills 1 being careful about what it is testing: the crossovers are
-the subject, and a skater who has a mohawk they trust should not be penalised against one
-who has a three turn.
+The joins are left to the skater. Getting from forwards to backwards is an optional turn and
+getting back is an optional step, and the document describes both as choices. That is Skills
+1 being careful about what it is testing: the crossovers are the subject, and a skater who
+has a mohawk they trust should not be penalised against one who has a three turn.
 
-The middle of it — staying on one foot, stepping wide, and transferring weight to start
-rotating the other way — is the part that catches people. Nothing in it is difficult on its
+The middle of it (staying on one foot, stepping wide, and transferring weight to start
+rotating the other way) is the part that catches people. Nothing in it is difficult on its
 own, and it happens backwards, at speed, in the space of about two seconds.

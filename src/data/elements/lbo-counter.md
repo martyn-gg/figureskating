@@ -1,7 +1,7 @@
 ---
 name: Left backward outside counter
 kind: turn
-summary: LBO to LFO — half a turn against the circle, holding the edge and leaving on a new one.
+summary: "LBO to LFO: half a turn against the circle, holding the edge and leaving on a new one."
 entry: { foot: L, edge: O, dir: B }
 turn: counter
 prerequisites: [lbo-bracket, lbo-rocker]

@@ -22,5 +22,5 @@ exit edges, and that is what separates this from the Skills 3 version: the turn 
 allowed to be a quick pivot between two steps.
 
 Flow, glide and freedom of movement are what the outcome names, in that order. It is worth
-reading that as a warning about the second lobe — most skaters can produce one clean
+reading that as a warning about the second lobe: most skaters can produce one clean
 serpentine and then start rushing, and this exercise asks for two on each foot.

@@ -55,7 +55,7 @@ const firstEdge = edges.find(e => label(e.data.entry) === 'LFO');
    rotation, and the edge changes under you. Found the same way as the edges. */
 const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.entry) === 'LFO');
 ---
-<Base title={null} subtitle="Every edge, turn, jump and position — drawn from three views, on both feet, with the tests each one belongs to.">
+<Base title={null} subtitle="Every edge, turn, jump and position, drawn from three views on both feet, with the tests each one belongs to.">
   <h1>Field Guide to Figure Skating</h1>
   <p class="lede">
     What each element actually is, drawn from three views and on both feet, with the
@@ -65,8 +65,8 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
 
   <div class="unverified">
     <b>Not checked by a coach yet.</b> Every page here is written from public material
-    and derived from first principles, which is not the same thing as being right.{' '}
-    <a href={url('coaches/')}>Coaches, judges and technical officials can help verify it</a> —
+    and derived from first principles, and none of it has been checked yet.{' '}
+    <a href={url('coaches/')}>Coaches, judges and technical officials can help verify it</a>:
     a page only loses this notice once real people have signed off the passage on it.
   </div>
 
@@ -90,18 +90,16 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
 
   <p>
     Four shapes, twice over. Every cell above is the mirror of the one beside it,
-    because which way a lobe curves is a product of exactly those three facts — so the
-    guide stores the three and works the rest out. Nothing is drawn twice and nothing
-    is written twice, which is also why a skater who rotates the other way gets the
-    same detail as everyone else rather than being told to hold a diagram up to a
-    mirror.
+    because which way a lobe curves is a product of exactly those three facts, so the
+    guide stores the three and works the rest out. Each thing is drawn and written once,
+    and a skater who rotates the other way gets the same detail as everyone else.
   </p>
 
   {three && (
     <>
       <h2>And what a turn does to one</h2>
       <p>
-        It runs on its own. The foot does not change and neither does the circle — the
+        It runs on its own. The foot and the circle stay the same: the
         skater rotates half a turn towards its centre and comes out backwards on the
         other edge of the same blade. Pause it, scrub it, slow it to an eighth, or
         mirror it and watch the same element come out the other way round.
@@ -112,7 +110,7 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
         <a href={url('elements/')}>{counts.turn - 1} more turns</a> where it came from,
         plus {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
         {counts.combination} clusters, {counts.jump} jumps and {counts.position}{' '}
-        positions — each with the same tracing, the same three views of the body, and
+        positions, each with the same tracing, the same three views of the body, and
         the tests it belongs to.
       </p>
     </>
@@ -133,11 +131,11 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
     </li>
     <li>
       <a href={url('tests/')}>Tests</a>
-      <span>which syllabus each element belongs to — {tests.length} recorded so far</span>
+      <span>which syllabus each element belongs to, {tests.length} recorded so far</span>
     </li>
     <li>
       <a href={url('rig/')}>Body frame</a>
-      <span>one rig, three views, one clock — what the rest of the body is doing</span>
+      <span>one rig, three views, one clock: what the rest of the body is doing</span>
     </li>
     <li>
       <a href={url('search/')}>Search</a>

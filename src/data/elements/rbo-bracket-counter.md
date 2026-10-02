@@ -1,7 +1,7 @@
 ---
 name: Right backward outside bracket-counter
 kind: combination
-summary: RBO → RFI → RBI — 2 turns on one foot.
+summary: "RBO → RFI → RBI: 2 turns on one foot."
 entry: { foot: R, edge: O, dir: B }
 turns: [bracket, counter]
 prerequisites: [rbo-bracket, rfi-counter]

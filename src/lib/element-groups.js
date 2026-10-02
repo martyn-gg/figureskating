@@ -180,14 +180,14 @@ export function elementGroups(elements) {
    rather than no card — visible, and not silently missing. */
 export const SECTION_NOTE = {
   edges:       'The eight plain edges. Three letters each: foot, direction, edge.',
-  'one-foot':  'Threes, brackets, rockers and counters — half a turn on one blade.',
+  'one-foot':  'Threes, brackets, rockers and counters: half a turn on one blade.',
   'two-foot':  'Mohawks and choctaws, which change foot as well as direction.',
   twizzles:    'Turns that travel, by rotation count.',
   transitions: 'Getting from one edge to the next: crossovers, chassés, cross rolls, changes of edge, and the step wide and push back the Skills tests ask for.',
   clusters:    'Turns run together, where each one\'s exit is the next one\'s entry.',
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
   jump:        'The six singles and the waltz jump, by takeoff edge and whether a pick goes in.',
-  position:    'Held shapes — the spiral, the teapot, the extended edge.',
+  position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The three basic positions, plus the two ways of joining them: a change of foot and a combination.',
 };
 

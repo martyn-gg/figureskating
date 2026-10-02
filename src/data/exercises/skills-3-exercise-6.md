@@ -11,15 +11,14 @@ verified: { checked: false }
 ---
 
 New on 01/10/2026, and it sits directly on top of exercise 4. The same entry edge, half a
-rotation more, and an exit that faces the other way — which is why the extra half turn
-changes the element rather than extending it.
+rotation more, and an exit that faces the other way. That is why the extra half turn makes
+it a different element.
 
-That is the thing worth understanding here. Rotation count is not a difficulty setting on a
-twizzle; it decides where the skater ends up. A single leaves them travelling as they
-started, and adding half a turn reverses the direction of travel and takes the edge with it.
-The guide stores each rotation count as its own element for that reason, and each page
-derives its own exit.
+That is the thing worth understanding here: rotation count on a twizzle decides where the
+skater ends up. A single leaves them travelling as they started, and adding half a turn
+reverses the direction of travel and takes the edge with it. The guide stores each rotation
+count as its own element for that reason, and each page derives its own exit.
 
-It also starts from a moving start rather than standing, unlike its Skills 3 predecessor,
-so there is entry speed to control as well as rotation. More speed makes the rotation easier
+It also starts from a moving start, where its Skills 3 predecessor started from standing, so
+there is entry speed to control as well as rotation. More speed makes the rotation easier
 and the exit harder, and the exit is the part the exercise names.

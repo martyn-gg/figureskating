@@ -29,15 +29,15 @@ const visits = { O: states.some(s => s.edge === 'O'), I: states.some(s => s.edge
   {/* The two edges differ in lightness as well as hue, so the key can name the
       difference in words a greyscale print still supports. */}
   <div class="key">
-    {visits.O && <span><i class="sw out"></i>outside edge — the paler line</span>}
-    {visits.I && <span><i class="sw in"></i>inside edge — the darker line</span>}
+    {visits.O && <span><i class="sw out"></i>outside edge: the paler line</span>}
+    {visits.I && <span><i class="sw in"></i>inside edge: the darker line</span>}
   </div>
   <figcaption>
     {caption ?? <>
       {states.map((st, i) => (
         <>{i ? ' → ' : ''}<b data-lab data-a={label(st)} data-b={label(mirrored[i])}>{label(st)}</b></>
       ))}.{' '}
-      <span data-lab-note>A skater who rotates the other way traces <b>{label(m)}</b> — same element, generated not redrawn.</span>
+      <span data-lab-note>A skater who rotates the other way traces <b>{label(m)}</b>: the same element, generated from this one.</span>
     </>}
   </figcaption>
 </figure>

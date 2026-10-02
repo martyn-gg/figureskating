@@ -1,7 +1,7 @@
 ---
 name: Right backward outside edge
 kind: edge
-summary: RBO — the right foot travelling backwards on an outside edge, tracing an anticlockwise lobe.
+summary: "RBO: the right foot travelling backwards on an outside edge, tracing an anticlockwise lobe."
 entry: { foot: R, edge: O, dir: B }
 prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
@@ -12,7 +12,7 @@ it for its own sake. Travelling backwards on the outside of the blade, leaning i
 circle, with the difficulty that you cannot see where you are going and the instinct is to
 sit away from it.
 
-Weight belongs over the middle of the blade. Sit back and it skids; reach for the toe and
-it stops. What makes this edge hard is not the curve but the holding — keeping the
-shoulders and the free leg still against a rotation that wants to carry on. That is the
-run-out of a jump landing, practised on its own with the jump taken away.
+Weight belongs over the middle of the blade. Sit back and it skids; reach for the toe and it
+stops. What makes this edge hard is the holding: keeping the shoulders and the free leg
+still against a rotation that wants to carry on. That is the run-out of a jump landing,
+practised on its own with the jump taken away.

@@ -22,5 +22,5 @@ the commonest reason the rocker comes out flat.
 
 Between the clusters the exercise is nothing but crossovers and a step, which is how the
 speed is meant to be rebuilt. Four to six clusters down both lengths of the ice means the
-last one is skated tired, and that is deliberate — this is the exercise immediately before
+last one is skated tired, and that is deliberate: this is the exercise immediately before
 Skills 8, where all of it has to happen to music.

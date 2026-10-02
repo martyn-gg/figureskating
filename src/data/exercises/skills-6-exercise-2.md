@@ -15,10 +15,10 @@ changes everything about how it feels. A rocker goes round with the curve; a cou
 be turned against it. Put them in consecutive exercises and the difference is impossible to
 hide, which is presumably why they are consecutive.
 
-Body preparation is named in the learning objectives and it is the whole thing. A counter has
-to be wound before the turn because the lobe will not wind it, and it has to be wound without
-losing the edge — lean into the rotation early and the edge flattens, leave it late and the
-turn does not happen. The window is small and it does not get bigger with speed.
+Body preparation is named in the learning objectives and it is the whole thing. A counter
+has to be wound before the turn because the lobe will not wind it, and it has to be wound
+without losing the edge: lean into the rotation early and the edge flattens, leave it late
+and the turn does not happen. The window is small and it does not get bigger with speed.
 
 The mohawk is what follows. Coming out of a counter into a change of foot means the check
 has to be partial by design: enough to stop the rotation running on, not so much that the

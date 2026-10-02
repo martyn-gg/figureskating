@@ -1,7 +1,7 @@
 ---
 name: Right backward outside triple three
 kind: combination
-summary: RBO → RFI → RBO → RFI — 3 turns on one foot.
+summary: "RBO → RFI → RBO → RFI: 3 turns on one foot."
 entry: { foot: R, edge: O, dir: B }
 turns: [three, three, three]
 prerequisites: [rbo-three, rfi-three]

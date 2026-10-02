@@ -1,7 +1,7 @@
 ---
 name: Right backward outside 2½ twizzle
 kind: twizzle
-summary: RBO to RFI — 2½ rotations on one foot, travelling, 2 curls and no cusp.
+summary: "RBO to RFI: 2½ rotations on one foot, travelling, 2 curls and no cusp."
 entry: { foot: R, edge: O, dir: B }
 turn: twizzle25
 prerequisites: [rbo, rbo-twizzle]

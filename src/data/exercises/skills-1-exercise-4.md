@@ -13,17 +13,17 @@ notCovered:
   - Two-foot power changes of edge, where both blades are on the ice at once. The body-frame
     rig holds two blades as of 30/08/2026 and the two-foot position can be seen on the rig
     explorer, but the guide still has no element page for the change itself, so there is
-    nothing to link to here. That is why the backward side lists its four edges rather than
-    four changes of edge - backwards the exercise asks only for the two-foot version, and a
-    one-foot change of edge would be claiming more than it does.
+    nothing to link to here. That is why the backward side lists its four edges and no
+    changes of edge. Backwards the exercise asks only for the two-foot version, and listing
+    a one-foot change of edge would claim more than it does.
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
 A change of edge is the one element in this test with nothing to see. The blade does not
-pivot, the foot does not change, the tracing does not come to a point — it crosses
-from one side of the blade to the other and the curve goes the other way. That is the whole
-difficulty of it, and the reason this guide draws it as a roll rather than a join.
+pivot, the foot does not change, the tracing does not come to a point. The edge crosses from
+one side of the blade to the other and the curve goes the other way. That is the whole
+difficulty of it, and the reason this guide draws it as a roll with no join in it.
 
 What makes it a *power* change is the knee. The exercise is looking for rhythm and for
 speed that survives the length of the rink, and the only source of either is the rise and

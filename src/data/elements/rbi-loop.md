@@ -1,14 +1,14 @@
 ---
 name: Right backward inside loop
 kind: transition
-summary: RBI to RBI — a small circle traced on the same edge, still travelling backwards, and the lobe continues.
+summary: "RBI to RBI: a small circle traced on the same edge, still travelling backwards, and the lobe continues."
 entry: { foot: R, edge: I, dir: B }
 turn: loop
 prerequisites: [rbi]
 verified: { checked: false }
 ---
 
-A loop on a backward inside edge — the one the British syllabus asks for, and the
+A loop on a backward inside edge. It is the one the British syllabus asks for, and the
 hardest of the four for the reason every back inside element is hardest: the free leg sits
 inside the circle with nowhere to go.
 

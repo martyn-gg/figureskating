@@ -14,7 +14,7 @@ verified: { checked: false }
 ---
 
 From a two-foot glide you take one blade off the ice and keep going. The skating knee stays
-soft, the free foot stays close and low, and the glide holds its line rather than curving.
+soft, the free foot stays close and low, and the glide holds a straight line.
 
 Halving the base of support is a much bigger change than it sounds, because a two-foot glide
 lets you borrow from whichever foot is winning. On one foot there is nothing to borrow from,

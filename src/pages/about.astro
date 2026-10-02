@@ -23,7 +23,7 @@ const tests = await getCollection('tests');
   </p>
   <p>
     It covers {elements.length} elements across {tests.length} tests so far, and it
-    will keep growing — edges and turns first, then spins, then dance and the
+    will keep growing: edges and turns first, then spins, then dance and the
     competition-level material, kept on their own tabs so that a skater on their
     first test is not confronted with a triple.
   </p>
@@ -31,16 +31,16 @@ const tests = await getCollection('tests');
   <h2>How it is built</h2>
   <p>
     Almost nothing here is drawn or written one element at a time. Which way a lobe
-    curves follows from three facts about the foot — which foot, which edge, forwards
-    or backwards — so the guide records those three and derives the rest. The figures
-    are geometry rendered from a body-frame rig, not clip art, which is why the same
+    curves follows from three facts about the foot (which foot, which edge, forwards
+    or backwards), so the guide records those three and derives the rest. The figures
+    are geometry rendered from a body-frame rig, which is why the same
     move can be shown from above, from the side and from behind without anyone
     redrawing it, and why every element exists for both feet.
   </p>
   <p>
     The consequence a reader notices is that the guide mirrors for free. A skater who
-    rotates the other way gets the same detail as everyone else, rather than being
-    told to hold a diagram up to a mirror.
+    rotates the other way gets the same detail as everyone else, with no diagram to
+    hold up to a mirror.
   </p>
 
   <h2>What it is not</h2>
@@ -60,15 +60,14 @@ const tests = await getCollection('tests');
 
   <h2>Is it correct?</h2>
   <p>
-    Not yet verified, and the guide says so on every page rather than hoping you do
-    not ask. The mechanics are derived from first principles and cross-checked
+    Not yet verified, and the guide says so on every page. The mechanics are derived from first principles and cross-checked
     against the published syllabuses, which catches a great deal and cannot catch
     everything. The plan is to have the descriptions checked by people who teach
     this for a living: a passage carries a tick once several of them have signed it
     off, and a single objection pulls that tick straight back down.
   </p>
   <p>
-    If you coach, judge or officiate — currently, or you used to —{' '}
+    If you coach, judge or officiate, now or in the past,{' '}
     <a href={url('coaches/')}>please get in touch</a>. If you do not, and you have
     spotted something wrong, that is just as welcome: write to{' '}
     <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
@@ -77,15 +76,15 @@ const tests = await getCollection('tests');
   <h2>What it costs</h2>
   <div class="derived">
     <p>
-      Hosting is free — the site is static files on GitHub Pages. The only real bill
-      is the domain, at {money(COSTS.total)} a year. That is the whole of it.
+      Hosting is free: the site is static files on GitHub Pages. The only real bill
+      is the domain, at {money(COSTS.total)} a year.
     </p>
     <p>
       There will never be a subscription, an account wall or an advert, because the
       point is that a skater who cannot afford another lesson can still read it.{' '}
       {DONATE
         ? <>If you can afford to, <a href={DONATE}>buying a coffee</a> covers the domain
-          and the evenings. If you cannot, read it anyway — that is what it is for.</>
+          and the evenings. If you cannot, read it anyway. That is what it is for.</>
         : <>A donation link will appear here shortly, for anyone who would like to
           chip in towards the domain. Until then there is nothing to pay and nothing
           to click.</>}

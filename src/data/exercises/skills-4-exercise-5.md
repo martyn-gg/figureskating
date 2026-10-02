@@ -12,7 +12,7 @@ verified: { checked: false }
 
 The choctaw is the other half of the mohawk family and the harder half. Both change foot;
 the mohawk keeps the character of the edge and the curve carries on, while the choctaw
-changes it and the curve reverses. That reversal is the whole difficulty — the skater has to
+changes it and the curve reverses. That reversal is the whole difficulty: the skater has to
 put the new foot down on a lobe that bends the other way while their body is still leaning
 into the old one.
 

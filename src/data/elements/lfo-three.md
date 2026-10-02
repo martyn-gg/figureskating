@@ -1,7 +1,7 @@
 ---
 name: Left forward outside three turn
 kind: turn
-summary: LFO to LBI — half a turn into the circle, changing edge and staying on the same lobe.
+summary: "LFO to LBI: half a turn into the circle, changing edge and staying on the same lobe."
 entry: { foot: L, edge: O, dir: F }
 turn: three
 prerequisites: [lfo, two-foot-turn]
@@ -13,7 +13,7 @@ the circle you are already tracing, and come out backwards on the inside edge of
 foot. The tracing left on the ice makes the shape the turn is named for.
 
 The thing worth understanding is that the circle does not change. You start on it and you
-finish on it — only the edge and the direction you are facing change. That is what
+finish on it; the edge and the direction you are facing are all that change. That is what
 separates a three turn from a rocker, which looks similar and leaves you on a new circle
 curving the other way.
 

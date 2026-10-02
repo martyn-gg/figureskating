@@ -21,9 +21,8 @@ it. Nothing leaves the ice and nothing turns.
 
 Flat is the whole difficulty. A blade wants to be on an edge, and the moment you tip even
 slightly the sliding foot curves away from you and takes your balance with it. Holding two
-blades genuinely flat means standing over them rather than beside them, which is the
-opposite of everything an edge has taught you by the time you meet this.
+blades genuinely flat means standing directly over them, which is the opposite of everything
+an edge has taught you by the time you meet this.
 
-It is worth knowing that British Ice Skating define this separately from the slip chassé,
-which shares the sliding foot and almost nothing else: a chassé changes feet and rides an
-edge throughout.
+British Ice Skating define this separately from the slip chassé, which shares the sliding
+foot and almost nothing else: a chassé changes feet and rides an edge throughout.

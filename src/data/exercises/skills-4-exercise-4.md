@@ -12,13 +12,13 @@ verified: { checked: false }
 
 Two different demands sharing one exercise. The forward side takes the one and a half
 twizzle and adds a requirement to the end of it: the exit is held in an extended position,
-so the rotation has to be stopped rather than allowed to run out. That is the hardest part
+so the rotation has to be stopped and cannot be allowed to run out. That is the hardest part
 of any twizzle, and this is the first time it is asked for explicitly.
 
-The backward side is deliberately called a twizzle movement rather than a twizzle. A single
-rotation on a back outside edge, straight into a cross roll, with the free leg wherever the
-skater wants it — the document wants the shape of the thing and the body position going into
-it, not a finished element. Reading that wording carefully saves a lot of frustration,
+The backward side is deliberately called a twizzle movement. A single rotation on a back
+outside edge, straight into a cross roll, with the free leg wherever the skater wants it:
+the document wants the shape of the thing and the body position going into it, and it does
+not ask for a finished element. Reading that wording carefully saves a lot of frustration,
 because a skater who treats it as a full backward twizzle is being harder on themselves than
 the test is.
 

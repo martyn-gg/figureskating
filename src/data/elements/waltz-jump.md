@@ -13,15 +13,14 @@ prerequisites: [lfo-three]
 verified: { checked: false }
 ---
 
-Forward on a left outside edge, the free leg swings through, and you turn half a
-rotation in the air to land backwards on the right outside edge. No toe pick — the
-spring comes from the edge and the swing.
+Forward on a left outside edge, the free leg swings through, and you turn half a rotation in
+the air to land backwards on the right outside edge. No toe pick: the spring comes from the
+edge and the swing.
 
-It is the Axel with the rotation taken out, which is why it is worth getting right
-rather than getting past. The entry edge, the swing, the check on the landing and
-the run-out are all the same movements you will need later with another full turn
-added on top.
+It is the Axel with the rotation taken out, which is why it is worth the time it takes to
+get right. The entry edge, the swing, the check on the landing and the run-out are all the
+same movements you will need later with another full turn added on top.
 
-Watch the run-out rather than the jump. Landing is not the difficulty; holding a checked back
-outside edge afterwards, without the free leg swinging round, is the part that
-takes time.
+Watch the run-out. Holding a checked back outside edge after the landing, without the free
+leg swinging round, is the part that takes time. The landing itself is the smaller
+difficulty.

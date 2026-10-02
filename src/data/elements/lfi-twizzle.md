@@ -1,7 +1,7 @@
 ---
 name: Left forward inside twizzle
 kind: twizzle
-summary: LFI to LFI — 1 rotation on one foot, travelling, one curl and no cusp.
+summary: "LFI to LFI: 1 rotation on one foot, travelling, one curl and no cusp."
 entry: { foot: L, edge: I, dir: F }
 turn: twizzle
 prerequisites: [lfi]

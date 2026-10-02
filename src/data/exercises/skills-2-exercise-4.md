@@ -17,7 +17,7 @@ In a cross roll the free foot swings across the body and lands on a fresh outsid
 pushed off the outside edge that was already carrying you. The lean crosses with it, between
 one foot and the next. That is the whole element and it is why it looks like a crossover and
 is not one. A crossover keeps the lobe and changes the foot; a cross roll changes both, and
-the push comes off an edge rather than off the side of the blade.
+its push comes off an edge. A crossover pushes off the side of the blade.
 
 What that costs is a moment of commitment. There is a point in every cross roll where the
 old edge has been left and the new one has not yet taken, and the body is travelling on

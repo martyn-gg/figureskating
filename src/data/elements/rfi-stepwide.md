@@ -1,7 +1,7 @@
 ---
 name: Right forward inside step wide
 kind: transition
-summary: RFI to LFI — a step onto the other foot placed wide, nothing crossing, still travelling forwards, and the lobe reverses.
+summary: "RFI to LFI: a step onto the other foot placed wide, nothing crossing, still travelling forwards, and the lobe reverses."
 entry: { foot: R, edge: I, dir: F }
 turn: stepwide
 prerequisites: [rfi, forward-stroking]
@@ -16,7 +16,7 @@ under you.
 Nothing crosses and nothing passes, and that is the whole of the difference between this and
 the three transitions it sits beside. A crossover, a chassé and a cross roll each place the
 free foot in relation to the skating one. Here it lands away from it, and the width is the
-point rather than a by-product of it.
+point.
 
 British Ice Skating write it forwards twice, in Skills 1 and Skills 2, in the middle of an
 edge sequence where it gets you off one lobe and onto the next without a turn. Step too

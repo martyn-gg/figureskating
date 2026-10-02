@@ -21,6 +21,6 @@ both stop the first rotation and set up the second, and it is the one movement i
 that most clearly separates skaters who turn with their feet from skaters who turn with
 their body.
 
-A cross roll is added to the end on the second side, which sounds like a decoration and is a
-test of whether anything is left. It needs a free hip and a swing, and it comes
-immediately after two turns that both wanted the body held still.
+A cross roll is added to the end on the second side, and it tests whether anything is left.
+It needs a free hip and a swing, and it comes immediately after two turns that both wanted
+the body held still.

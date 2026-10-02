@@ -1,7 +1,7 @@
 ---
 name: Left backward inside counter-2½ twizzle
 kind: combination
-summary: LBI → LFI → LBO — 2 elements on one foot.
+summary: "LBI → LFI → LBO: 2 elements on one foot."
 entry: { foot: L, edge: I, dir: B }
 turns: [counter, twizzle25]
 prerequisites: [lbi-counter, lfi-two-and-a-half-twizzle]
@@ -14,5 +14,5 @@ objectives.
 
 The count matters here in a way it does not on a standing twizzle. Two and a half rotations
 leave the skater facing the way they did not start, so the counter's check has to be set
-against where the twizzle will finish rather than where it begins. Skaters who can do both
-separately and not together are almost always checking for the wrong exit.
+against where the twizzle will finish. Skaters who can do both separately and not together
+are almost always checking for the wrong exit.

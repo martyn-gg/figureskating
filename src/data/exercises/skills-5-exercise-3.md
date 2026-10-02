@@ -21,6 +21,6 @@ abandon, and then over the opposite one within a step. The rhythm requirement is
 this side in the document, which is a clue about how it is assessed: the shapes can all be
 right and the exercise still fail because the timing is not even.
 
-Between them sits the slip chassé, which is a step rather than a turn and is not something
-this guide can draw. It matters here because it is where the speed is meant to be maintained
-— it is a step that keeps the flow going while the skater is set up for the next choctaw.
+Between them sits the slip chassé, which is a step and is not something this guide can draw.
+It matters here because it is where the speed is meant to be maintained: it is a step that
+keeps the flow going while the skater is set up for the next choctaw.

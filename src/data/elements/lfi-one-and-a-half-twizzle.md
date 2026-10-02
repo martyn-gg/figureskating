@@ -1,7 +1,7 @@
 ---
 name: Left forward inside 1½ twizzle
 kind: twizzle
-summary: LFI to LBO — 1½ rotations on one foot, travelling, one curl and no cusp.
+summary: "LFI to LBO: 1½ rotations on one foot, travelling, one curl and no cusp."
 entry: { foot: L, edge: I, dir: F }
 turn: twizzle15
 prerequisites: [lfi, lfi-twizzle]
@@ -15,5 +15,5 @@ tested.
 
 Judge it at the exit. A back outside edge, held and checked, means the rotation finished
 where it was meant to; a back inside edge or a flat means it did not, and nothing done
-afterwards recovers that. Better still, judge it from the ice — a curl and then a clean
-edge is a twizzle, and a cusp anywhere in it is a three turn wearing the name.
+afterwards recovers that. Better still, judge it from the ice: a curl and then a clean edge
+is a twizzle, and a cusp anywhere in it is a three turn wearing the name.

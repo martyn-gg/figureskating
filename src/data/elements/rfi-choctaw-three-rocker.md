@@ -1,7 +1,7 @@
 ---
 name: Right forward inside choctaw-three-rocker
 kind: combination
-summary: RFI → LBO → LFI → LBI — 3 turns on two feet.
+summary: "RFI → LBO → LFI → LBI: 3 turns on two feet."
 entry: { foot: R, edge: I, dir: F }
 turns: [choctaw, three, rocker]
 prerequisites: [rfi-choctaw, lbo-three, lfi-rocker]

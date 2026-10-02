@@ -312,13 +312,13 @@ export const MOVES = {
        sh:P(2,0,132), L:P(19,18,0,-1), R:P(-55,-5,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:92, hipYaw:-2, shYaw:-10,
        sh:P(0,0,138), L:P(15,16,0,0.5), R:P(0,-4,10,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[50,26,6], t:0.30, ph:'Takeoff — leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
+      {arm:[50,26,6], t:0.30, ph:'Takeoff: leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
        sh:P(-4,0,154), L:P(2,8,2,3), R:P(46,0,62,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[36,22,6], t:0.32, ph:'Blade leaves the ice', hipZ:118, hipYaw:26, shYaw:18,
        sh:P(-4,0,170), L:P(-12,6,30,0,NEUTRAL), R:P(40,-2,70,0,NEUTRAL), skate:null},
       {arm:[26,16,10], t:0.36, ph:'Rising, rotation begins', hipZ:126, hipYaw:70, shYaw:56,
        sh:P(-2,0,178), L:P(-26,4,46,0,NEUTRAL), R:P(22,-4,74,0,NEUTRAL), skate:null},
-      {arm:[22,14,12], t:0.39, ph:'Peak — legs pass', hipZ:132, hipYaw:110, shYaw:98,
+      {arm:[22,14,12], t:0.39, ph:'Peak: legs pass', hipZ:132, hipYaw:110, shYaw:98,
        sh:P(0,0,184), L:P(-4,8,60,0,NEUTRAL), R:P(4,-8,64,0,NEUTRAL), skate:null},
       {arm:[26,14,12], t:0.42, ph:'Descending, reaching for the ice', hipZ:114, hipYaw:158, shYaw:142,
        sh:P(-2,0,166), L:P(59,10,46,0,NEUTRAL), R:P(-2,0,26,0,NEUTRAL), skate:null},
@@ -326,13 +326,13 @@ export const MOVES = {
        sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
       {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:178, shYaw:158,
        sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
-      {arm:[58,10,18], t:0.55, ph:'Knee absorbs — deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
+      {arm:[58,10,18], t:0.55, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:176, shYaw:152,
        sh:P(-8,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
       {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:174, shYaw:150,
        sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:174, shYaw:154,
        sh:P(-6,0,148), L:P(59,14,26,0,NEUTRAL), R:P(-6,17,0), skate:'R', edge:'O', dir:'B'},
-      {arm:[64,10,18], t:1.00, ph:'Run-out — still on the back outside edge', hipZ:98, hipYaw:172, shYaw:158,
+      {arm:[64,10,18], t:1.00, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:172, shYaw:158,
        sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
@@ -380,7 +380,7 @@ export const MOVES = {
        sh:P(16,0,139), L:P(0,10,0), R:P(-76,-2,76,0,30), skate:'L', edge:'O', dir:'F'},
       {t:0.34, ph:'Free leg rising, chest lifts', hipZ:94, hipYaw:-6, shYaw:-14,
        sh:P(28,0,130), L:P(0,13,0), R:P(-86,-2,116,0,30), skate:'L', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held — hips square, leg above the hip', hipZ:94, hipYaw:-6, shYaw:-14,
+      {t:1.00, ph:'Held: hips square, leg above the hip', hipZ:94, hipYaw:-6, shYaw:-14,
        sh:P(34,0,124), L:P(0,14,0), R:P(-93,-2,118,0,25), skate:'L', edge:'O', dir:'F'},
     ]},
 
@@ -425,7 +425,7 @@ export const MOVES = {
        sh:P(-6,0,148), L:P(36,10,20), R:P(-14,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {t:0.33, ph:'Free leg extends, check holds', hipZ:92, hipYaw:176, shYaw:159,
        sh:P(-9,0,142), L:P(56,12,19), R:P(-18,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:1.00, ph:'Held — extended, free foot turned out', hipZ:90, hipYaw:175, shYaw:157,
+      {t:1.00, ph:'Held: extended, free foot turned out', hipZ:90, hipYaw:175, shYaw:157,
        sh:P(-11,0,140), L:P(68,12,18), R:P(-18,16,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
 
@@ -481,7 +481,7 @@ export const MOVES = {
       {t:0.35, ph:'Both blades settle onto the lobe', hipZ:96, hipYaw:0, shYaw:-5,
        sh:P(0,0,148), L:ON(-3,8,0,-0.5), R:P(3,20,0,-0.5),
        skate:'R', edge:'I', dir:'F'},
-      {t:1.00, ph:'Held — the right blade inside, the left outside', hipZ:96, hipYaw:0, shYaw:-5,
+      {t:1.00, ph:'Held: the right blade inside, the left outside', hipZ:96, hipYaw:0, shYaw:-5,
        sh:P(1,0,148), L:ON(-3,9,0,-0.5), R:P(3,21,0,-0.5),
        skate:'R', edge:'I', dir:'F'},
     ]},
@@ -521,7 +521,7 @@ export const MOVES = {
      that the rate and the gather agree. */
   uprightSpin: spinMove({
     name:'Upright spin',
-    note:'back inside edge - entered, centred, wound up and stepped out',
+    note:'back inside edge: entered, centred, wound up and stepped out',
     path:[
       at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
       at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_TIGHT}),
@@ -567,7 +567,7 @@ export const MOVES = {
      finish would be a combination. That is what `windup` marks. */
   sitSpin: spinMove({
     name:'Sit spin',
-    note:'back inside edge - entered, folded to parallel, wound up and stepped out',
+    note:'back inside edge: entered, folded to parallel, wound up and stepped out',
     path:[
       at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
       at(1.20, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_TIGHT}),
@@ -632,7 +632,7 @@ export const MOVES = {
      says so. */
   camelSpin: spinMove({
     name:'Camel spin',
-    note:'back inside edge - the free leg back at hip height, the arms gathering in',
+    note:'back inside edge: the free leg back at hip height, the arms gathering in',
     path:[
       at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
       at(1.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:230, radius:R_TIGHT}),
@@ -689,7 +689,7 @@ export const MOVES = {
      and gather.mjs reads that as consistent rather than as a fault. */
   changeFootSpin: spinMove({
     name:'Change of foot spin',
-    note:'left back inside to right back outside - one centre, three revolutions on each foot',
+    note:'left back inside to right back outside: one centre, three revolutions on each foot',
     path:[
       at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180,  radius:R_WIDE}),
       at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250,  radius:R_TIGHT}),
@@ -783,7 +783,7 @@ export const MOVES = {
      is skated in this order and not the other. */
   combinationSpin: spinMove({
     name:'Combination spin',
-    note:'back inside edge - sit into upright, one foot, one centre, quickening throughout',
+    note:'back inside edge: sit into upright, one foot, one centre, quickening throughout',
     path:[
       at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
       at(1.10, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:230, radius:R_TIGHT}),
@@ -842,9 +842,9 @@ export const MOVES = {
     keys:[
       {t:0.00, ph:'Both blades turned in and pressed', hipZ:90, hipYaw:0, shYaw:0,
        sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:0.50, ph:'Scraping — the knees driving the blades down', hipZ:90, hipYaw:0, shYaw:0,
+      {t:0.50, ph:'Scraping: the knees driving the blades down', hipZ:90, hipYaw:0, shYaw:0,
        sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:1.00, ph:'Held — the scrape taking the speed off', hipZ:90, hipYaw:0, shYaw:0,
+      {t:1.00, ph:'Held: the scrape taking the speed off', hipZ:90, hipYaw:0, shYaw:0,
        sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
     ]},
 
@@ -863,9 +863,9 @@ export const MOVES = {
     keys:[
       {t:0.00, ph:'Both blades pressed out and flat', hipZ:90, hipYaw:180, shYaw:180,
        sh:P(0,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
-      {t:0.50, ph:'Scraping — the weight held forward against the stop', hipZ:90, hipYaw:180, shYaw:180,
+      {t:0.50, ph:'Scraping: the weight held forward against the stop', hipZ:90, hipYaw:180, shYaw:180,
        sh:P(2,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held — the feet finishing wider than they started', hipZ:90, hipYaw:180, shYaw:180,
+      {t:1.00, ph:'Held: the feet finishing wider than they started', hipZ:90, hipYaw:180, shYaw:180,
        sh:P(3,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
     ]},
 
@@ -898,7 +898,7 @@ export const MOVES = {
        sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
       {t:0.45, ph:'Weight easing onto it, the outside edge shaving', hipZ:94, hipYaw:35, shYaw:42,
        sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held — the glide holding its line, the trailing blade scraping', hipZ:94, hipYaw:35, shYaw:44,
+      {t:1.00, ph:'Held: the glide holding its line, the trailing blade scraping', hipZ:94, hipYaw:35, shYaw:44,
        sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
     ]},
 
@@ -964,9 +964,9 @@ export const MOVES = {
     keys:[
       {t:0.00, ph:'Shoulders wound, the blades letting go', hipZ:94, hipYaw:25, shYaw:50, arm:[46,6,20],
        sh:P(0,0,146), L:SKID(0,0,0,33,'O'), R:SKID(6,14,0,17,'I'), skate:'L', edge:'O', dir:'F'},
-      {t:0.25, ph:'Rising — the rise taking the weight off the blades', hipZ:96, hipYaw:60, shYaw:78, arm:[46,6,20],
+      {t:0.25, ph:'Rising: the rise taking the weight off the blades', hipZ:96, hipYaw:60, shYaw:78, arm:[46,6,20],
        sh:P(0,0,148), L:SKID(0,0,0,68,'O'), R:SKID(13,8,0,52,'I'), skate:'L', edge:'O', dir:'F'},
-      {t:0.50, ph:'Square across the travel — the scrape at its widest', hipZ:97, hipYaw:90, shYaw:105, arm:[46,6,20],
+      {t:0.50, ph:'Square across the travel: the scrape at its widest', hipZ:97, hipYaw:90, shYaw:105, arm:[46,6,20],
        sh:P(0,0,149), L:SKID(0,0,0,98,'O'), R:SKID(15,0,0,82,'I'), skate:'L', edge:'O', dir:'F'},
       {t:0.75, ph:'The hips catching the shoulders up', hipZ:96, hipYaw:120, shYaw:132, arm:[46,6,20],
        sh:P(0,0,148), L:SKID(0,0,0,128,'O'), R:SKID(13,-8,0,112,'I'), skate:'L', edge:'O', dir:'F'},
@@ -1003,7 +1003,7 @@ export const MOVES = {
        sh:P(0,0,146), L:SKID(0,0,0,33,'O'), R:SKID(-6,-14,0,17,'I'), skate:'L', edge:'O', dir:'B'},
       {t:0.25, ph:'The head turning first, the blades following', hipZ:96, hipYaw:240, shYaw:268, arm:[46,6,20],
        sh:P(0,0,148), L:SKID(0,0,0,68,'O'), R:SKID(-13,-8,0,52,'I'), skate:'L', edge:'O', dir:'B'},
-      {t:0.50, ph:'Square across the travel — the scrape at its widest', hipZ:97, hipYaw:270, shYaw:295, arm:[46,6,20],
+      {t:0.50, ph:'Square across the travel: the scrape at its widest', hipZ:97, hipYaw:270, shYaw:295, arm:[46,6,20],
        sh:P(0,0,149), L:SKID(0,0,0,98,'O'), R:SKID(-15,0,0,82,'I'), skate:'L', edge:'O', dir:'B'},
       {t:0.75, ph:'Coming round onto ice the skater can now see', hipZ:96, hipYaw:300, shYaw:318, arm:[46,6,20],
        sh:P(0,0,148), L:SKID(0,0,0,128,'O'), R:SKID(-13,8,0,112,'I'), skate:'L', edge:'O', dir:'B'},
@@ -1041,7 +1041,7 @@ export const MOVES = {
        sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
       {t:0.45, ph:'Still pushing, the shoulders squaring up', hipZ:94, hipYaw:0, shYaw:-4,
        sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held — the push complete, the glide running', hipZ:94, hipYaw:0, shYaw:-2,
+      {t:1.00, ph:'Held: the push complete, the glide running', hipZ:94, hipYaw:0, shYaw:-2,
        sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
     ]},
 
@@ -1080,7 +1080,7 @@ export const MOVES = {
        sh:P(-5,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
       {t:0.45, ph:'Still pushing, the shoulders squaring up', hipZ:94, hipYaw:180, shYaw:176,
        sh:P(-5,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
-      {t:1.00, ph:'Held — the push complete, the glide running away behind', hipZ:94, hipYaw:180, shYaw:178,
+      {t:1.00, ph:'Held: the push complete, the glide running away behind', hipZ:94, hipYaw:180, shYaw:178,
        sh:P(-4,0,147), L:P(0,-7,0,-0.5), R:PUSH(-14,-34,0,-35), skate:'L', edge:'O', dir:'B'},
     ]},
 
@@ -1140,7 +1140,7 @@ export const MOVES = {
        sh:P(-2,0,144), L:P(12,-7,0), R:ON(12,7,0), skate:'L', edge:null, dir:'F'},
       {t:0.50, ph:'Sinking onto the skating leg, the free foot starting out', hipZ:86, hipYaw:0, shYaw:-3,
        sh:P(0,0,138), L:P(20,-7,0), R:ON(33,7,0), skate:'L', edge:null, dir:'F'},
-      {t:1.00, ph:'Held — the weight back over a bent knee, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
+      {t:1.00, ph:'Held: the weight back over a bent knee, the free foot at full stretch', hipZ:80, hipYaw:0, shYaw:-2,
        sh:P(2,0,132), L:P(25,-7,0), R:ON(55,7,0), skate:'L', edge:null, dir:'F'},
     ]},
 
@@ -1193,7 +1193,7 @@ export const MOVES = {
        sh:P(4,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
       {t:0.45, ph:'The boot settling onto its side, the blade out of the ice', hipZ:50, hipYaw:0, shYaw:-4,
        sh:P(4,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held — the glide running, the trailing boot dragging on its inside', hipZ:50, hipYaw:0, shYaw:-3,
+      {t:1.00, ph:'Held: the glide running, the trailing boot dragging on its inside', hipZ:50, hipYaw:0, shYaw:-3,
        sh:P(5,0,102), L:P(33,6,0,-0.5), R:SIDE(-62,-10,2.16,74), skate:'L', edge:'O', dir:'F'},
     ]},
 
@@ -1254,7 +1254,7 @@ export const MOVES = {
        sh:P(0,0,104), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
       {t:0.35, ph:'Shoulders checking against the toe', hipZ:54, hipYaw:176, shYaw:157,
        sh:P(2,0,104), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:1.00, ph:'Held — loaded against the toe, ready to vault', hipZ:54, hipYaw:176, shYaw:154,
+      {t:1.00, ph:'Held: loaded against the toe, ready to vault', hipZ:54, hipYaw:176, shYaw:154,
        sh:P(3,0,103), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
 };
@@ -1279,7 +1279,7 @@ const sameLegs = m => ({ ...m, keys: m.keys.map(k => {
 }) });
 
 MOVES.spiralCheck = sameLegs(MOVES.spiral);
-MOVES.spiralCheck.name = 'Spiral — arms checked';
+MOVES.spiralCheck.name = 'Spiral, arms checked';
 MOVES.spiralCheck.note = 'held position · free leg at or above hip height · left arm across, right arm back';
 /* Hands authored absolutely, hip-relative, exactly as sh / L / R are. The held
    key is the one that matters; the two before it lead into it so the crossing is

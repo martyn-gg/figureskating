@@ -17,11 +17,10 @@ tidy the rotation was.
 
 It starts from standing, which is unusual here and deliberate. There is no entry speed to
 carry it, so the rotation has to come from the body being wound before the foot leaves the
-ice, and the travel has to come from the edge rather than from momentum the skater arrived
-with. Nothing is hidden.
+ice, and the travel has to come from the edge alone. Nothing is hidden.
 
 The exit matters more here than the turn does. A single twizzle from a forward inside edge
-leaves the skater on the other foot's business entirely — the guide's element page derives
-what it becomes — and controlling that means the free side stays quiet while the skating
+leaves the skater on the other foot's business entirely (the guide's element page derives
+what it becomes), and controlling that means the free side stays quiet while the skating
 side does the work. The axis is optional at this level, which is the one concession: the
-twizzles have to be good, not lined up.
+twizzles have to be good, and they do not have to be lined up.

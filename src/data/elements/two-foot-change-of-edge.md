@@ -22,8 +22,8 @@ It is the honest test of whether a skater is standing over their skates. Two bla
 change edge together unless the weight moves as one thing, so the fault it exposes is a
 skater steering with one foot and following with the other. The two tracings stay side by
 side and draw one long shallow S; what changes hands at the inflection is which of them is
-on an outside edge, since those are named against each foot rather than against the ice.
-Reach it at different moments and the feet are not working together.
+on an outside edge, since each foot's edges are named relative to that foot. Reach it at
+different moments and the feet are not working together.
 
 Skills 1 asks for it in the slalom, where the power changes of edge are this movement
 repeated.

@@ -18,8 +18,9 @@ there is nothing left to correct with.
 Rhythm is what holds a repeated turn together and it is the first thing to go. The turns
 should arrive evenly spaced along the lobe, and what usually happens instead is that the
 first is deliberate, the second is rushed to catch up, and the third is late. A judge does
-not need to see the edges to know that — the sound of it is enough.
+not need to see the edges to know that; the sound of it is enough.
 
 The second side stacks differently: two turns and then a change of foot, which asks the
-skater to leave a double 3-turn into a mohawk rather than into an edge. The check has to hold
-long enough to place the new foot and no longer, and that timing is the exercise.
+skater to leave a double 3-turn straight into a mohawk with no edge between them. The check
+has to hold long enough to place the new foot and no longer, and that timing is the
+exercise.

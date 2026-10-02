@@ -1,7 +1,7 @@
 ---
 name: Left backward inside counter-three
 kind: combination
-summary: LBI → LFI → LBO — 2 turns on one foot.
+summary: "LBI → LFI → LBO: 2 turns on one foot."
 entry: { foot: L, edge: I, dir: B }
 turns: [counter, three]
 prerequisites: [lbi-counter, lfi-three]

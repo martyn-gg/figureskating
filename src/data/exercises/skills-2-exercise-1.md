@@ -18,8 +18,9 @@ falling onto it.
 
 The free leg position is optional, which is worth reading carefully. Skills 1 wanted an
 extended position with the foot turned out; here what is being looked at is the curve, and
-the skater may hold whatever position lets them keep it. Nothing is being made easier — the
-edge has to run to the long axis either way — but the thing under assessment has moved.
+the skater may hold whatever position lets them keep it. Nothing is being made easier, since
+the edge has to run to the long axis either way. What has moved is the thing under
+assessment.
 
 The two sides are built differently on purpose. One joins its curves with crossovers, the
 other stays on the foot and steps wide, and stepping wide backwards is the half that finds

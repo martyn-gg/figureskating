@@ -19,10 +19,10 @@ it again, and the twizzle then has to rotate a rotation and a half on an edge th
 fought over twice.
 
 Edge control between the bracket and the counter is what the document names first, and it is
-where the cluster is won or lost. The edge joining them is short and it has to be a real edge — a
-skater who scrapes out of the bracket arrives at the counter on a flat, and a counter cannot
-be started from a flat at all.
+where the cluster is won or lost. The edge joining them is short and it has to be a real
+edge: a skater who scrapes out of the bracket arrives at the counter on a flat, and a
+counter cannot be started from a flat at all.
 
-That final change of edge is not a flourish. It is where the exercise finds out whether the
-twizzle finished or merely stopped — a rotation that has run out cannot be rolled cleanly
-onto the other edge, and the change is the first place that shows.
+That final change of edge is where the exercise finds out whether the twizzle finished or
+merely stopped. A rotation that has run out cannot be rolled cleanly onto the other edge,
+and the change is the first place that shows.

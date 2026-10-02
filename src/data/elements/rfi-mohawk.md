@@ -1,7 +1,7 @@
 ---
 name: Right forward inside mohawk
 kind: turn
-summary: RFI to LBI — a step onto the other foot, holding the edge and staying on the same lobe. No cusp.
+summary: "RFI to LBI: a step onto the other foot, holding the edge and staying on the same lobe. No cusp."
 entry: { foot: R, edge: I, dir: F }
 turn: mohawk
 prerequisites: [rfi, two-foot-turn]
@@ -14,5 +14,5 @@ when they say the word, and it is usually the first change of foot they learn.
 
 Where it goes wrong is in the placement. The free foot wants to arrive too far in front or
 too far away, and either produces a jolt as the weight transfers. Open and closed describe
-where it goes — heel to the inner side of the skating foot for open, instep to the heel
-for closed — and they feel like different moves even though the tracing is identical.
+where it goes (heel to the inner side of the skating foot for open, instep to the heel for
+closed), and they feel like different moves even though the tracing is identical.

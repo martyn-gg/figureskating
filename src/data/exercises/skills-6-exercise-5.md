@@ -22,6 +22,6 @@ is still being held. Do it early and the check breaks; do it late and the chocta
 off the lobe, which the second learning objective is pointing at when it asks for body
 position and edges in preparation for the choctaw.
 
-It then does the same thing on the other foot and ends with a plain 3-turn, which reads like
-a formality and is not: it is the last element after a full circuit of the rink, and a tired
-3-turn is where the flow the outcome asks about becomes visible.
+It then does the same thing on the other foot and ends with a plain 3-turn. That reads like
+a formality. It is the last element after a full circuit of the rink, and a tired 3-turn is
+where the flow the outcome asks about becomes visible.

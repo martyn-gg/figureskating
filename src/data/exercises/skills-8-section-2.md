@@ -3,7 +3,7 @@ name: Section 2
 test: bis-skills-8
 order: 2
 unit: section
-summary: The technical middle — a double 3-turn, a bracket, steps crossed behind, and a double twizzle reached through a change of edge.
+summary: "The technical middle: a double 3-turn, a bracket, steps crossed behind, and a double twizzle reached through a change of edge."
 syllabus: both
 changesInOctober: >-
   From 01/10/2026 this section is published as two versions, 2A and 2B, identical until the
@@ -28,9 +28,9 @@ crossed steps in a row, and a double twizzle arrived at through a change of edge
 
 The crossed-behind steps are the oddity. Everywhere else in Skills a crossed step means the
 free foot passing in front, and here three of them go behind in succession, which puts the
-skater's weight on the wrong side of the tracing to push from. They are not hard in
-themselves and they are hard to keep quiet — the shoulders want to rotate with the crossing
-foot, and the bracket immediately before has just been checked against exactly that.
+skater's weight on the wrong side of the tracing to push from. They are hard to keep quiet:
+the shoulders want to rotate with the crossing foot, and the bracket immediately before has
+just been checked against exactly that. Taken one at a time, they are not hard.
 
 Reaching the twizzle through a change of edge is the passage that decides the section. The
 edge has to be rolled and then rotated on, with a push or a touch down in between from

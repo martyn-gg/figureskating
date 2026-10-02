@@ -1,16 +1,16 @@
 ---
 name: Left forward outside edge
 kind: edge
-summary: LFO — the left foot travelling forwards on an outside edge, tracing an anticlockwise lobe.
+summary: "LFO: the left foot travelling forwards on an outside edge, tracing an anticlockwise lobe."
 entry: { foot: L, edge: O, dir: F }
 prerequisites: [forward-stroking, one-foot-glide]
 verified: { checked: false }
 ---
 
-Everything else is built on this one. You glide forwards with the skate rolling
-towards the little-toe side of the foot and the whole body leaning into the circle it is
-tracing. The lean *is* the edge — there is no separate act of steering. You commit over
-the blade and the ice does the rest.
+Everything else is built on this one. You glide forwards with the skate rolling towards the
+little-toe side of the foot and the whole body leaning into the circle it is tracing. The
+lean *is* the edge: there is no separate act of steering. You commit over the blade and the
+ice does the rest.
 
 The usual fault is leaning from the shoulders alone. Drop a shoulder while the hip stays
 outside the circle and the blade flattens, the lobe opens out, and what should be a curve

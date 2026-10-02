@@ -1,7 +1,7 @@
 ---
 name: Right forward outside 3-turn-change of edge-double twizzle
 kind: combination
-summary: RFO → RBI → RBO → RBO — 3 elements on one foot.
+summary: "RFO → RBI → RBO → RBO: 3 elements on one foot."
 entry: { foot: R, edge: O, dir: F }
 turns: [three, coe, twizzle2]
 prerequisites: [rfo-three, rbi-coe, rbo-double-twizzle]
@@ -12,7 +12,7 @@ Three different things on one foot with no step anywhere in them: a three turn, 
 the blade rolling to the other edge, then two rotations. The change of edge in the middle is
 the quiet part and the part that decides it.
 
-A change of edge has nothing to see — no cusp, no pivot, no break in the tracing — so it is
+A change of edge has nothing to see (no cusp, no pivot, no break in the tracing), so it is
 where a skater can arrive at the twizzle on the wrong edge without anything having looked
 wrong. The twizzle then unwinds, and the fault is two elements upstream. Skate the roll
-deliberately rather than letting the turn's exit drift into it.
+deliberately, and do not let the turn's exit drift into it.

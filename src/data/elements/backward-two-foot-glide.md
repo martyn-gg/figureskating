@@ -18,8 +18,8 @@ That shift is the whole difference and it is counter-intuitive: going backwards,
 back is what tips you over, because the heel of the blade is now the leading edge and there
 is nothing behind it. Keeping the shoulders slightly ahead of the hips feels like leaning
 into a fall and is what keeps you upright. The other half of it is that you cannot see the
-ice you are about to cross, so the head turns to look over one shoulder rather than the body
-twisting to face where you have come from.
+ice you are about to cross, so the head turns to look over one shoulder and the body stays
+facing where you have come from.
 
 Almost everything difficult in skating happens backwards. This is where a skater finds out
 whether that is going to be a problem.

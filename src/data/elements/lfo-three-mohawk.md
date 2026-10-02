@@ -1,7 +1,7 @@
 ---
 name: Left forward outside three-mohawk
 kind: combination
-summary: LFO → LBI → RFI — 2 turns on two feet.
+summary: "LFO → LBI → RFI: 2 turns on two feet."
 entry: { foot: L, edge: O, dir: F }
 turns: [three, mohawk]
 prerequisites: [lfo-three, lbi-mohawk]
@@ -12,7 +12,6 @@ A three turn, then straight onto the other foot. The three turn takes you from
 forwards to backwards on one blade; the mohawk takes you back to forwards on the other,
 and the lobe carries on through both.
 
-What makes it worth practising as one thing rather than two is that the mohawk has to be
-ready before the three turn is finished. The free foot cannot be found afterwards — a step
-is instantaneous, and if the foot is not there the cluster becomes a stumble with a good
-turn in front of it.
+It is worth practising as one thing because the mohawk has to be ready before the three turn
+is finished. The free foot cannot be found afterwards: a step is instantaneous, and if the
+foot is not there the cluster becomes a stumble with a good turn in front of it.

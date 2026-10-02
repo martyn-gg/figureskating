@@ -12,7 +12,7 @@ only be taken on a pad of 40 metres or more, which tells you what changes here: 
 need room, and several of them are assessed on whether they use it.
 
 The bracket arrives. It turns against the curve while changing edge, which makes it the turn
-with nothing helping — the rotation and the lobe disagree from beginning to end. In the
+with nothing helping: the rotation and the lobe disagree from beginning to end. In the
 current test the brackets are inside ones only, and the counter waits until Skills 6.
 
 From 01/10/2026 two exercises are added. One is a figure of eight of forward outside

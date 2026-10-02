@@ -196,7 +196,18 @@ Open short. One idea per sentence. Prefer the concrete number to the vague quant
 and a half degrees* rather than *very little*, because the number is checkable and the
 phrase is not.
 
-Em dashes are load-bearing here and easy to overuse. Two per paragraph is plenty.
+No em dashes in anything a reader sees (changed 02/10/2026; this used to allow two per
+paragraph). Use a comma, a colon, parentheses or a full stop. En dashes are for ranges.
+
+No setup-and-contrast shapes: *it's not X, it's Y*, *not X but Y*, *not only X but also Y*,
+*Y rather than X*, *instead of*, *no X, no Y, just Z*. State the positive claim; if the
+contrast carries information, give it a plain sentence of its own. A plain negative fact is
+fine: *the free foot does not leave the ice*.
+
+No puffery, no tacked-on significance (a closing clause about why something matters or how
+rare it is), no participle tails, no summing-up sentence, and no vague attribution. Say *is*
+and *has*, never *serves as* or *features*. The banned vocabulary is the list in
+`tools/house.mjs` (`AI_WORDS`), which asserts all of this against every page's source.
 
 Do not open a sentence with *It is worth noting that* or *Importantly*. If it were not
 worth noting it would not be in the paragraph.

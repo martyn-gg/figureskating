@@ -1,7 +1,7 @@
 ---
 name: Left backward outside rocker-choctaw
 kind: combination
-summary: LBO → LFO → RBI — 2 turns on two feet.
+summary: "LBO → LFO → RBI: 2 turns on two feet."
 entry: { foot: L, edge: O, dir: B }
 turns: [rocker, choctaw]
 prerequisites: [lbo-rocker, lfo-choctaw]

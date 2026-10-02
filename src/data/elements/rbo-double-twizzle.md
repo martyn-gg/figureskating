@@ -1,7 +1,7 @@
 ---
 name: Right backward outside double twizzle
 kind: twizzle
-summary: RBO to RBO — 2 rotations on one foot, travelling, 2 curls and no cusp.
+summary: "RBO to RBO: 2 rotations on one foot, travelling, 2 curls and no cusp."
 entry: { foot: R, edge: O, dir: B }
 turn: twizzle2
 prerequisites: [rbo, rbo-twizzle]

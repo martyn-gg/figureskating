@@ -2,7 +2,7 @@
 name: Forward outside & forward inside 3-turns
 test: bis-skills-1
 order: 5
-summary: The first turns in the syllabus — forward outside three turns onto a held back outside edge, then forward inside ones.
+summary: "The first turns in the syllabus: forward outside three turns onto a held back outside edge, then forward inside ones."
 syllabus: october2026
 elements: [lfo-three, rfo-three, rfi-three, lfi-three, rbo, lbo, extended-edge, lfo-crossover, rfo-crossover, lfo-crossroll, rfo-crossroll]
 sourceUrl: https://www.iceskating.org.uk/skills
@@ -12,11 +12,11 @@ verified: { checked: false }
 New on 01/10/2026, and it moves the first turn in the syllabus from Skills 2 down to
 Skills 1. Forward outside three turns on the first side, forward inside on the second.
 
-What is worth noticing is what the outside turns land on. Each one exits onto a back
-outside edge that is then *held* — the same extended edge the second exercise of this test
-spends its whole length on. The turn is not the end of the phrase; it is the way into an
-edge you already had to be able to hold. That ordering is the argument for putting the turn
-here rather than a level later.
+What is worth noticing is what the outside turns land on. Each one exits onto a back outside
+edge that is then *held*, the same extended edge the second exercise of this test spends its
+whole length on. The turn is the way into an edge you already had to be able to hold, and
+the phrase carries on past it. That ordering is the argument for putting the turn in Skills
+1 and not waiting a level.
 
 The inside side has no held edge after it and runs shorter, which is honest about the
 difference: a forward inside three turn puts you on a back outside edge travelling the

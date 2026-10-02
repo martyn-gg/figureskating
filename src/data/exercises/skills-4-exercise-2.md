@@ -17,8 +17,8 @@ be checked well enough to be turned out of again.
 
 Rhythm is named in the objectives and it is the right thing to watch. The two turns should
 sound and look evenly spaced, and the common version of it is a fast first turn followed by
-a scramble — the skater rotates hard, arrives over-turned, and the second turn happens late
-and flat because they are fighting the check rather than using it.
+a scramble: the skater rotates hard, arrives over-turned, and the second turn happens late
+and flat because they are fighting the check.
 
 Each pair then runs out into a cross roll, so the exit is not a resting place either. On the
 second side the entry is a crossover onto a backward inside edge, which is a less forgiving

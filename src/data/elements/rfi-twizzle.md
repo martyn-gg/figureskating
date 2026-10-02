@@ -1,7 +1,7 @@
 ---
 name: Right forward inside twizzle
 kind: twizzle
-summary: RFI to RFI — 1 rotation on one foot, travelling, one curl and no cusp.
+summary: "RFI to RFI: 1 rotation on one foot, travelling, one curl and no cusp."
 entry: { foot: R, edge: I, dir: F }
 turn: twizzle
 prerequisites: [rfi]

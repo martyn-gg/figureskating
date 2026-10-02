@@ -1,7 +1,7 @@
 ---
 name: Left backward outside double twizzle
 kind: twizzle
-summary: LBO to LBO — 2 rotations on one foot, travelling, 2 curls and no cusp.
+summary: "LBO to LBO: 2 rotations on one foot, travelling, 2 curls and no cusp."
 entry: { foot: L, edge: O, dir: B }
 turn: twizzle2
 prerequisites: [lbo, lbo-twizzle]

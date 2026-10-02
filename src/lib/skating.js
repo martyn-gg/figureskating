@@ -333,7 +333,7 @@ export function describeTurn(entry, turnKey) {
       ? ', and the half rotation turns the skater to face the other way, which is why the '
         + 'edge letter changes without the blade ever changing which way it curves'
       : ', because a curl cannot curve against itself';
-    return label(entry) + ' ' + t.name.toLowerCase() + ' to ' + label(x) + ' \u2014 ' + rot
+    return label(entry) + ' ' + t.name.toLowerCase() + ' to ' + label(x) + ': ' + rot
       + ' on one foot, travelling, leaving ' + curled + ' in the tracing and no cusp anywhere. '
       + 'The lobe continues' + tail + '.';
   }
@@ -341,15 +341,15 @@ export function describeTurn(entry, turnKey) {
     const how = { roll: 'the blade rolls from one edge to the other without pivoting',
                   loop: 'the blade traces a small circle and comes back to the edge it left',
                   step: 'the skater steps onto the other foot' }[t.join];
-    return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)} — ${how}, the direction ` +
+    return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)}: ${how}, the direction ` +
       `of travel does not change, and the lobe ${lobe}.`;
   }
   if (t.changesFoot) {
-    return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)} — the skater steps ` +
+    return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)}: the skater steps ` +
       `onto the other foot, the edge ${t.edgeChanges ? 'changes' : 'holds'}, and the ` +
       `lobe ${lobe}. There is no cusp, because nothing pivots.`;
   }
-  return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)} — the edge ` +
+  return `${label(entry)} ${t.name.toLowerCase()} to ${label(x)}: the edge ` +
     `${t.edgeChanges ? 'changes' : 'holds'}, the skater rotates ` +
     `${t.rotatesInto ? 'into the circle' : 'against it'}, and the lobe ${lobe}.`;
 }

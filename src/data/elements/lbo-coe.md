@@ -1,7 +1,7 @@
 ---
 name: Left backward outside change of edge
 kind: transition
-summary: LBO to LBI — the blade rolls across without turning, still travelling backwards, and the lobe reverses.
+summary: "LBO to LBI: the blade rolls across without turning, still travelling backwards, and the lobe reverses."
 entry: { foot: L, edge: O, dir: B }
 turn: coe
 prerequisites: [lbo, two-foot-change-of-edge]

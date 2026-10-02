@@ -17,9 +17,9 @@ produced entirely by the body, because the lobe is not going to supply any of it
 
 Neither counter here is allowed to stand alone. One runs into an open mohawk and the other
 into a 3-turn, so what is being assessed is a counter that can be left as well as entered.
-That is a real distinction — a counter checked hard enough to stop the rotation is checked too
-hard to turn out of, and finding the middle of that is most of the work.
+That is a real distinction: a counter checked hard enough to stop the rotation is checked
+too hard to turn out of, and finding the middle of that is most of the work.
 
 The changes of edge between the clusters are doing something specific. They put the skater
-onto the other side of the blade before the next counter, which means the entry edge for each
-turn has been made rather than inherited, and there is nowhere in the exercise to coast.
+onto the other side of the blade before the next counter, which means each turn starts from
+an edge the skater has just made, and there is nowhere in the exercise to coast.

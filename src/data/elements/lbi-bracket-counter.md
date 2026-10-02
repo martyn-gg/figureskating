@@ -1,7 +1,7 @@
 ---
 name: Left backward inside bracket-counter
 kind: combination
-summary: LBI → LFO → LBO — 2 turns on one foot.
+summary: "LBI → LFO → LBO: 2 turns on one foot."
 entry: { foot: L, edge: I, dir: B }
 turns: [bracket, counter]
 prerequisites: [lbi-bracket, lfo-counter]

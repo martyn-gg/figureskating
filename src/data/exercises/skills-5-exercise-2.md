@@ -11,9 +11,9 @@ verified: { checked: false }
 ---
 
 Skills 4 asked for inside rockers on their own; this asks for both, alternating, with
-crossovers between them and the whole thing measured on ice coverage. Deep edges is the first
-learning objective, and it is the honest one — a rocker skated on a shallow curve is barely a
-turn, because the lobe change that defines it has nowhere to happen.
+crossovers between them and the whole thing measured on ice coverage. Deep edges is the
+first learning objective, and it is the honest one: a rocker skated on a shallow curve is
+barely a turn, because the lobe change that defines it has nowhere to happen.
 
 The outside rocker is the one that catches skaters who have got comfortable with the inside
 version. Rotating in the direction the curve is already going feels like being pulled round,

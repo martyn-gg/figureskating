@@ -1,7 +1,7 @@
 ---
 name: Left backward outside 1½ twizzle
 kind: twizzle
-summary: LBO to LFI — 1½ rotations on one foot, travelling, one curl and no cusp.
+summary: "LBO to LFI: 1½ rotations on one foot, travelling, one curl and no cusp."
 entry: { foot: L, edge: O, dir: B }
 turn: twizzle15
 prerequisites: [lbo, lbo-twizzle]

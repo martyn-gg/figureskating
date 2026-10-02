@@ -12,13 +12,13 @@ verified: { checked: false }
 
 The extended edge comes back, and this time it has somewhere to go. In Skills 1 it was held
 and then the exercise moved on; here it is held and then rolled directly into a cross roll,
-so the position has to be given up in a controlled way rather than abandoned.
+so the position has to be given up under control.
 
 That transition is the whole exercise. A held back outside edge has the free leg behind and
 the weight settled, and a backward cross roll needs that leg to come through and land on the
-other side of the body on a new outside edge. Everything about the two is opposed — the
-first wants stillness, the second wants a swing — and the mark is in whether the speed
-survives the swap.
+other side of the body on a new outside edge. Everything about the two is opposed (the first
+wants stillness, the second wants a swing), and the mark is in whether the speed survives
+the swap.
 
 Backwards, a cross roll is also the step a skater cannot check. Forwards you can see the
 lobe you are leaving; going backwards the new edge is behind you and slightly across, and

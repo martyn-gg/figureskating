@@ -7,9 +7,9 @@ summary: Rockers on both feet, a one and a half twizzle in the direction the ska
 syllabus: both
 elements: [lfo-crossover, rfo-crossover, lfo-rocker, rfo-rocker, rbi-three, rfi-one-and-a-half-twizzle, lfi-one-and-a-half-twizzle, extended-edge, lbi-bracket-crossroll, rfo-three, rbo, lbo]
 notCovered:
-  - The pivot movement that closes the section. It is BIS's own name for it and the guide has
-    no element to link to — the rig holds a blade on an edge, and a pivot is a movement about
-    a point.
+  - "The pivot movement that closes the section. It is BIS's own name for it and the guide
+    has no element to link to: the rig holds a blade on an edge, and a pivot is a movement
+    about a point."
   - The start, the finish and the choreographic material between the sections, which are the
     skater's own and are not specified.
 sourceUrl: https://www.iceskating.org.uk/skills
@@ -28,6 +28,6 @@ the extended edge out of the twizzle itself. They are the same element with the 
 moved: the first asks for a clean entry, the second for a clean exit.
 
 The pivot movement closing the section is the one thing in Skills that is not a step, a turn
-or an edge, and it is the reason this page has a gap in it. Everything before it — two
-rockers, a 3-turn, a bracket rolled into a cross roll — has appeared at Skills 5 or above,
-and the section's own objective is about linking them rather than about any one of them.
+or an edge, and it is the reason this page has a gap in it. Everything before it (two
+rockers, a 3-turn, a bracket rolled into a cross roll) has appeared at Skills 5 or above,
+and the section's own objective is about linking them.

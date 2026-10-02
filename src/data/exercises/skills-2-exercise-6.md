@@ -17,10 +17,9 @@ symmetrical: turning to forwards means the rotation arrives before the skater ca
 it is going.
 
 The exercise never lets the turn finish on its own. Each one runs straight into an open
-mohawk, so the forward inside edge the turn produces is somewhere the skater passes through
-rather than a place to land. That is a real demand — a checked exit and an immediate change
-of foot are competing requirements — and it is why the cluster is one thing to learn rather
-than two things joined.
+mohawk, so the forward inside edge the turn produces is somewhere the skater passes through,
+with no moment to land on it. That is a real demand (a checked exit and an immediate change
+of foot are competing requirements), and it is why the cluster is learned as one thing.
 
 Backward cross rolls sit between the lobes on each side. They are the same crossing of the
 lean as the forward version in exercise 4, done where the skater cannot see the foot they

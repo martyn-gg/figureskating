@@ -1,17 +1,16 @@
 ---
 name: Left forward inside rocker
 kind: turn
-summary: LFI to LBI — half a turn into the circle, holding the edge and leaving on a new one.
+summary: "LFI to LBI: half a turn into the circle, holding the edge and leaving on a new one."
 entry: { foot: L, edge: I, dir: F }
 turn: rocker
 prerequisites: [lfi-three]
 verified: { checked: false }
 ---
 
-Forwards on the inside edge, rotating into the circle, holding the inside edge out
-the back. Because the edge holds and the direction reverses, the new lobe curves opposite
-to the old one — you have changed circles without changing edges.
+Forwards on the inside edge, rotating into the circle, holding the inside edge out the back.
+Because the edge holds and the direction reverses, the new lobe curves opposite to the old
+one: you have changed circles without changing edges.
 
-Watch the exit rather than the turn. Rotating, landing on a flat and picking the new
-lobe up a beat later is the common fault. The turn is only really finished when the new curve starts at
-the cusp and not after it.
+Watch the exit closely. Rotating, landing on a flat and picking the new lobe up a beat later
+is the common fault. The turn is only really finished when the new curve starts at the cusp.

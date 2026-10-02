@@ -1,7 +1,7 @@
 ---
 name: Right backward outside three-mohawk
 kind: combination
-summary: RBO → RFI → LBI — 2 turns on two feet.
+summary: "RBO → RFI → LBI: 2 turns on two feet."
 entry: { foot: R, edge: O, dir: B }
 turns: [three, mohawk]
 prerequisites: [rbo-three, rfi-mohawk]

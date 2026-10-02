@@ -7,10 +7,10 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-Not a set of exercises. Skills 8 is three sections skated in order and linked into a single
-programme to music of no more than two minutes thirty, with the start, the finish and the
-material between the sections left to the skater. It is the only test in the National Skills
-structure that is choreographed rather than set.
+Skills 8 is three sections skated in order and linked into a single programme to music of no
+more than two minutes thirty, with the start, the finish and the material between the
+sections left to the skater. It is the only test in the National Skills structure that is
+choreographed. Every other test is a set of exercises.
 
 The assessment changes with it. Musicality is a sixth pillar here and nowhere else, so
 a turn that is clean and lands off the beat is not the same as a turn that is clean. Apart from

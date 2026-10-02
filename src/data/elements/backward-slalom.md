@@ -22,8 +22,8 @@ wave down the ice and the same simultaneous change of edge.
 Backwards the swing has to come from lower down still. There is less room to correct a
 misplaced hip when you cannot see the ice ahead, and a slalom that is being steered from the
 upper body backwards tends to spiral off to one side without the skater noticing until they
-are somewhere else. Weight forward over the balls of the feet, as ever, and the eyes over one
-shoulder rather than the body turned.
+are somewhere else. Weight forward over the balls of the feet, as ever, and the eyes over
+one shoulder while the body stays square.
 
 It appears in the syllabus alongside the backward crossover, and the two are asking related
 questions: can you press a new edge going backwards without needing to look at it.

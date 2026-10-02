@@ -20,7 +20,7 @@ forwards and then immediately turns again without changing foot. The rocker is t
 suffers: it needs a deep lobe and it arrives with whatever lobe the 3-turn left, which is
 usually shallower than it should be and shorter than it feels.
 
-The crossovers are named as power crossovers, which is a specific ask rather than a
-description. They are where the speed for the whole exercise comes from, and a skater who
-treats them as joins rather than as the engine will meet the coverage requirement on the
-first pair of lobes and miss it on the last.
+The crossovers are named as power crossovers, and that phrase is a specific ask. They are
+where the speed for the whole exercise comes from, and a skater who treats them as joins
+between turns will meet the coverage requirement on the first pair of lobes and miss it on
+the last.

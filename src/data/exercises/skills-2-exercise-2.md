@@ -20,7 +20,7 @@ edge to an outside one puts the body over the top of the blade and it will get t
 its own if the knee allows it; coming back is a move you have to make, and it is the one
 that arrives late.
 
-Backwards on one foot is the hard end of Skills 2 and possibly of the first three tests.
-The knee has to keep its rhythm while the hip is behind the skater, and the usual failure
-is not a wrong edge but a slalom that quietly stops travelling — the curves get shallower,
+Backwards on one foot is the hard end of Skills 2 and possibly of the first three tests. The
+knee has to keep its rhythm while the hip is behind the skater, and the usual failure is a
+slalom that quietly stops travelling while the edges stay correct. The curves get shallower,
 the knee stops working, and the exercise turns into a straight line with a wobble in it.

@@ -20,5 +20,5 @@ turning about. Judges look for exactly that: two centres far enough apart and
 only the first half of the spin counts. The rule asking three revolutions each
 side is what stops it being a spin, a step, and another spin.
 
-Expect to be slower after the change than before it, and to make the speed back
-in the wind-up rather than during the transfer.
+Expect to be slower after the change than before it, and to make the speed back in the
+wind-up.

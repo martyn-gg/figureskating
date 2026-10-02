@@ -1,7 +1,7 @@
 ---
 name: Right backward outside counter
 kind: turn
-summary: RBO to RFO — half a turn against the circle, holding the edge and leaving on a new one.
+summary: "RBO to RFO: half a turn against the circle, holding the edge and leaving on a new one."
 entry: { foot: R, edge: O, dir: B }
 turn: counter
 prerequisites: [rbo-bracket, rbo-rocker]

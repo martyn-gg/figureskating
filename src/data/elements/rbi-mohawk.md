@@ -1,7 +1,7 @@
 ---
 name: Right backward inside mohawk
 kind: turn
-summary: RBI to LFI — a step onto the other foot, holding the edge and staying on the same lobe. No cusp.
+summary: "RBI to LFI: a step onto the other foot, holding the edge and staying on the same lobe. No cusp."
 entry: { foot: R, edge: I, dir: B }
 turn: mohawk
 prerequisites: [rbi, backward-two-foot-turn]

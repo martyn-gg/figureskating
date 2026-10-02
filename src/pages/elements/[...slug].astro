@@ -159,7 +159,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
         {variations.map(v => (
           <li>
             {v.id === entry.id
-              ? <b>{v.data.entry ? label(v.data.entry) : v.data.name} — this page</b>
+              ? <b>{v.data.entry ? label(v.data.entry) : v.data.name} (this page)</b>
               : <a href={url(`elements/${v.id}/`)}>{v.data.entry ? label(v.data.entry) : v.data.name}</a>}
             <span>{v.data.summary}</span>
           </li>
@@ -226,7 +226,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
           returns to <b>{label(d.jump.takeoff)}</b>.</>
         )}
         {sharesDetail.length > 0 && (
-          <> Each of these curves is drawn by more than one jump — what separates this
+          <> Each of these curves is drawn by more than one jump. What separates this
           one from the {sharesDetail.map(x => x.name).join(' and the ')} is{' '}
           {[...new Set(sharesDetail.map(x => x.differsBy))].join(' and ')}, and no curve
           can show either.</>
@@ -248,7 +248,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
   <div class="derived">
     {(d.entry || d.jump) && (
       <p class="notation">
-        <b>{label(d.entry ?? d.jump.takeoff)}</b> is three letters: foot, direction, edge —
+        <b>{label(d.entry ?? d.jump.takeoff)}</b> is three letters (foot, direction, edge):
         {' '}{describeEdge(d.entry ?? d.jump.takeoff)}. Every edge in the guide is written
         that way, so <b>RBI</b> is a right foot travelling backwards on an inside edge.
       </p>
@@ -258,7 +258,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
     {chainRoute && (
       <p>Nothing above is stored on this page. The cluster records its entry edge and the
         order of its turns; every edge in between is chained out of the same rule that
-        draws a single turn, which is why a cluster costs no more to add than a turn does.</p>
+        draws a single turn.</p>
     )}
     {d.entry && !d.turn && !d.turns && (
       <p>{label(d.entry)} traces {spin === 'anticlockwise' ? 'an' : 'a'} {spin} lobe seen from
@@ -269,13 +269,13 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
       <p>{[
         `Takes off ${label(d.jump.takeoff)} and lands ${label(d.jump.landing)}`,
         label(d.jump.landing) === label(LANDING)
-          ? ', the same edge every jump in this guide lands on — which is why the takeoff is the whole story.'
+          ? ', the same edge every jump in this guide lands on, so the takeoff is what tells them apart.'
           : '.',
         d.jump.assisted ? ' The toe pick provides the vault.' : ' The spring comes from the edge, with no pick.',
       ].join('')}</p>
     )}
     {d.jump && shares.length > 0 && (
-      <p>Shares its takeoff edge with the {shares.map(k => JUMPS[k].name.toLowerCase()).join(' and the ')} —
+      <p>Shares its takeoff edge with the {shares.map(k => JUMPS[k].name.toLowerCase()).join(' and the ')}:
         the pair that get mistaken for each other.</p>
     )}
     {d.jump && shares.length === 0 && (
@@ -285,7 +285,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
     {mirrored && <p>A skater who rotates the other way does the same thing from <b>{label(mirrored)}</b>. Same element, mirrored.</p>}
     {mirrorJump && (
       <p>A skater who rotates clockwise takes off <b>{label(mirrorJump.takeoff)}</b> and lands
-        {' '}<b>{label(mirrorJump.landing)}</b> — the same jump, mirrored, generated rather than written twice.</p>
+        {' '}<b>{label(mirrorJump.landing)}</b>: the same jump, mirrored.</p>
     )}
   </div>
   </>)}
@@ -354,7 +354,7 @@ family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.ind
   {exercisesHere.length > 0 && (
     <ul class="plain">{exercisesHere.map(x => (
       <li>
-        <a href={url(`exercises/${x.id}/`)}>{testName(x.data.test.id)}, exercise {x.data.order} — {x.data.name}</a>
+        <a href={url(`exercises/${x.id}/`)}>{testName(x.data.test.id)}, exercise {x.data.order}: {x.data.name}</a>
         <span>{x.data.summary}</span>
       </li>
     ))}</ul>

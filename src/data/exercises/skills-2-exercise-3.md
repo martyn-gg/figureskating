@@ -21,12 +21,12 @@ verified: { checked: false }
 
 Both forward 3-turns in the same run, and the pairing is the point. An inside turn and an
 outside turn leave on opposite edges, so putting them one after the other means neither can
-be skated by habit — the exit of one is the edge the other would be wrong to produce.
+be skated by habit: the exit of one is the edge the other would be wrong to produce.
 
 The rise and fall of the knee is what a judge watches here, and it is what separates a turn
 from a scrape. The blade has to come up towards the middle of the rocker as the body rotates
 and settle again on the new edge, and a skater who turns with a locked knee will get round
-on the flat every time, leaving a mark like a comma rather than a cusp.
+on the flat every time. The mark that leaves is shaped like a comma, with no cusp.
 
 The other thing to watch is what happens a second after the turn. Each one lands on a back
 edge that has to be held with the free leg where the skater chooses to put it, and holding

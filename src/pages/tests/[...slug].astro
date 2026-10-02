@@ -59,8 +59,7 @@ const WHEN = { current: 'current only', october2026: 'new 01/10/2026', both: nul
 
   <h2>Elements</h2>
   {exercises.length > 0 && (
-    <p class="note">Every element its {units.toLowerCase()} call for, gathered from them
-    rather than listed again here.</p>
+    <p class="note">Every element its {units.toLowerCase()} call for, gathered from them.</p>
   )}
   <ul class="plain">
     {items.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}

@@ -49,7 +49,7 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
   <h2 id="edges">Edges</h2>
   <p class="note">
     Three letters: foot, direction, edge. The two columns are the same edge on either
-    foot — mirror images, which is why the guide only has to describe them once.
+    foot. They are mirror images, so the guide describes each pair once.
   </p>
   <table class="grid">
     <thead>
@@ -127,8 +127,8 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
   {section === 'two-foot' && (<>
   <h2 id="two-foot">Two-foot turns</h2>
   <p class="note">
-    A mohawk and a choctaw step onto the other foot instead of turning on the blade, so
-    there is no cusp — the tracing stops and starts again beside itself. The same rule
+    A mohawk and a choctaw change foot with no pivot on the blade, so
+    there is no cusp: the tracing stops and starts again beside itself. The same rule
     governs them: the foot flips and the direction flips, so a mohawk stays on its lobe and
     a choctaw reverses.
   </p>
@@ -168,9 +168,9 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
     </table>
   </div>
   <p class="note">
-    Open and closed describe where the free foot is placed, not what the blade draws, so
-    each of these is one element rather than two. The tracing cannot tell them apart and
-    neither pretends to.
+    Open and closed describe where the free foot is placed, and the blade draws the same
+    tracing for both, so each of these is one element here. The tracing cannot tell them
+    apart and neither pretends to.
   </p>
 
   </>)}
@@ -181,8 +181,8 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
       <h2 id="twizzles">Twizzles</h2>
       <p class="note">
         The one element here that the three flags do not decide on their own. A twizzle
-        rotates continuously while it travels, so its tracing curls rather than coming to
-        a cusp — and the curls cannot curve against themselves, which is why the lobe
+        rotates continuously while it travels, so its tracing curls with no
+        cusp, and the curls cannot curve against themselves, which is why the lobe
         always continues. A half rotation turns the skater to face the other way, and the
         edge letter changes with them even though the blade never changes which way it is
         curving.
@@ -204,7 +204,7 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
           <p class="combo-links">
             {g.entries.filter(({ el }) => el).map(({ s, el }) => (
               <a href={url(`elements/${el.id}/`)}
-                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+                 title={`${el.data.name}: ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
             ))}
           </p>
         </div>
@@ -219,8 +219,8 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
     <>
       <h2 id="transitions">Transitions</h2>
       <p class="note">
-        The connecting material — what happens between turns. None of it reverses the
-        direction of travel, which is exactly what makes it not a turn. The same three
+        The connecting material: what happens between turns. None of it reverses the
+        direction of travel, and that is what separates it from a turn. The same three
         flags still decide the lobe.
       </p>
       {transitionGroups.map(g => (
@@ -241,7 +241,7 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
           <p class="combo-links">
             {g.entries.filter(({ el }) => el).map(({ s, el }) => (
               <a href={url(`elements/${el.id}/`)}
-                 title={`${el.data.name} — ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
+                 title={`${el.data.name}: ${label(s)} to ${label(exitState(s, g.key))}`}>{label(s)}</a>
             ))}
           </p>
         </div>
@@ -267,7 +267,7 @@ import { SECTION_NOTE } from '../../../lib/element-groups.js';
           <p class="combo-links">
             {g.entries.map(({ s, el }) => (el
               ? <a href={url(`elements/${el.id}/`)}
-                   title={`${el.data.name} — ${chainStates(s, g.turns).map(label).join(' → ')}`}>{label(s)}</a>
+                   title={`${el.data.name}: ${chainStates(s, g.turns).map(label).join(' → ')}`}>{label(s)}</a>
               : <span class="gap">{label(s)}</span>))}
           </p>
         </div>

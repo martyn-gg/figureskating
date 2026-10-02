@@ -21,10 +21,10 @@ to side so that the skater travels in a series of shallow curves. The blades cha
 together each time the direction of the swing reverses.
 
 It looks like a leg movement and is mostly an ankle one. The feet swing out and back under a
-body that stays going straight down the ice, and the power comes from pressing the new edges
-rather than from throwing the hips — a slalom driven from the shoulders becomes a series of
-lurches, and the tracing shows it as a wave with corners rather than curves. Keeping both
-blades on the same edge at the same moment is what keeps the two tracings parallel.
+body that stays going straight down the ice, and the power comes from pressing the new
+edges, with the hips kept quiet. A slalom driven from the shoulders becomes a series of
+lurches, and the tracing shows it as a wave with corners in it. Keeping both blades on the
+same edge at the same moment is what keeps the two tracings parallel.
 
 Skills 1 asks for it because it is a cheap, continuous way of proving a skater can change
 edge under control.

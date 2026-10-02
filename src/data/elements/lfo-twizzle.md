@@ -1,7 +1,7 @@
 ---
 name: Left forward outside twizzle
 kind: twizzle
-summary: LFO to LFO — 1 rotation on one foot, travelling, one curl and no cusp.
+summary: "LFO to LFO: 1 rotation on one foot, travelling, one curl and no cusp."
 entry: { foot: L, edge: O, dir: F }
 turn: twizzle
 prerequisites: [lfo]

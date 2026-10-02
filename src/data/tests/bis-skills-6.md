@@ -7,10 +7,10 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-Almost nothing in Skills 6 is a turn on its own. The exercises are written as clusters — a
-rocker into a mohawk, a rocker into a choctaw, a 3-turn into a loop, a counter into a mohawk
-— and the guide has a page for some of those pairings and not others. Where it does not, the
-exercise lists the elements the cluster is made of and says so.
+Almost nothing in Skills 6 is a turn on its own. The exercises are written as clusters (a
+rocker into a mohawk, a rocker into a choctaw, a 3-turn into a loop, a counter into a
+mohawk), and the guide has a page for some of those pairings and not others. Where it does
+not, the exercise lists the elements the cluster is made of and says so.
 
 In the current test two elements are new here, the backward inside counter and the loop.
 From 01/10/2026 the counter arrives a level earlier, in Skills 5, and the loop is the only

@@ -1,7 +1,7 @@
 ---
 name: Left backward outside slip chassé
 kind: transition
-summary: LBO to RBI — a step in which the free foot slides away along the ice, still travelling backwards, and the lobe continues.
+summary: "LBO to RBI: a step in which the free foot slides away along the ice, still travelling backwards, and the lobe continues."
 entry: { foot: L, edge: O, dir: B }
 turn: slipchasse
 aliases: [slide chassé]

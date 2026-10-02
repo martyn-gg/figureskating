@@ -35,7 +35,7 @@ const WHEN = {
   both: 'In both the current and the October 2026 syllabus',
 };
 ---
-<Base title={`${test?.data.name ?? ''} · ${named ? d.name : `${d.unit} ${d.order} — ${d.name}`}`} subtitle={d.summary}>
+<Base title={`${test?.data.name ?? ''} · ${named ? d.name : `${d.unit} ${d.order}: ${d.name}`}`} subtitle={d.summary}>
   <h1>{d.name}</h1>
   <p class="lede">{d.summary}</p>
 
@@ -69,7 +69,7 @@ const WHEN = {
 
   <p class="note">
     This page lists which elements the {d.unit} calls for and what it is working on. It does
-    not reproduce British Ice Skating's sequence, pattern or wording — for the {d.unit} as
+    not reproduce British Ice Skating's sequence, pattern or wording. For the {d.unit} as
     published, go to {d.sourceUrl
       ? <a href={d.sourceUrl}>their own document</a>
       : <span>their own document</span>}.

@@ -1,15 +1,15 @@
 ---
 name: Left forward outside crossed step behind
 kind: transition
-summary: LFO to RFO — a step behind, with the legs crossed below the knee, still travelling forwards, and the lobe reverses.
+summary: "LFO to RFO: a step behind, with the legs crossed below the knee, still travelling forwards, and the lobe reverses."
 entry: { foot: L, edge: O, dir: F }
 turn: crossbehind
 prerequisites: [lfo, half-swizzle-pumps]
 verified: { checked: false }
 ---
 
-Crossed behind rather than in front, and the difference is the whole element. The foot
-still goes down on the outer edge side of the skating foot and the legs still cross below the
+Crossed behind the skating foot, and that one detail is the whole element. The foot still
+goes down on the outer edge side of the skating foot and the legs still cross below the
 knee; what changes is that you are stepping past your own heel, onto a blade you cannot see.
 
 Turnout is what it costs. Crossing behind closes the hips towards the circle, so a skater who

@@ -18,8 +18,8 @@ with the shoulders still square and there is nothing to turn into, so the rotati
 halfway. Weight stays central, because a blade loaded on the toe or the heel grips and stops
 it.
 
-The blades scrape all the way round, and the scrape is the element rather than a fault in it:
-a blade pointing across its own travel has no groove to follow.
+The blades scrape all the way round, and that scrape belongs to the element: a blade
+pointing across its own travel has no groove to follow.
 
 It is the first change of direction, and every one-foot turn above it is this turn with a
 foot taken away.

@@ -10,11 +10,11 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-This is the first turn in the guide that keeps its edge. A 3-turn changes edge and stays on its
-lobe; a rocker does the opposite — the edge is held all the way through and the skater comes
-out on a new lobe, turning in the direction the entry curve was already going. Everything
-learned about checking a 3-turn has to be re-learned, because the body is now rotating the
-way the curve is taking it.
+This is the first turn in the guide that keeps its edge. A 3-turn changes edge and stays on
+its lobe; a rocker does the opposite: the edge is held all the way through and the skater
+comes out on a new lobe, turning in the direction the entry curve was already going.
+Everything learned about checking a 3-turn has to be re-learned, because the body is now
+rotating the way the curve is taking it.
 
 That is why the exercise gives the skater nothing else to do. Two rockers, repeated, for the
 length of the ice. It is the most exposed exercise in the first four tests: there is no

@@ -14,8 +14,9 @@ the forward version, drawn the other way along.
 
 It is harder than it looks because the push has to happen while the weight sits forward over
 the balls of the feet, and pressing outwards tends to send the hips back. Most of the fault
-in a stalled backward swizzle is there rather than in the feet. Bending the knees more than
-feels necessary keeps the weight where it needs to be and turns a shuffle into a push.
+in a stalled backward swizzle is there. The feet are seldom the cause. Bending the knees
+more than feels necessary keeps the weight where it needs to be and turns a shuffle into a
+push.
 
 Almost every skater can swizzle forwards long before they can do this, and the gap between
 the two is a fair measure of how comfortable backwards actually is.

@@ -1,7 +1,7 @@
 ---
 name: Right backward outside three turn
 kind: turn
-summary: RBO to RFI — half a turn into the circle, changing edge and staying on the same lobe.
+summary: "RBO to RFI: half a turn into the circle, changing edge and staying on the same lobe."
 entry: { foot: R, edge: O, dir: B }
 turn: three
 prerequisites: [rbo, backward-two-foot-turn]
@@ -12,6 +12,6 @@ Backwards on the outside edge, rotating into the circle, out forwards on the ins
 edge. Entering backwards changes the problem entirely: you cannot watch the turn coming,
 so the timing has to be felt.
 
-The rotation itself is small. What takes the practice is arriving at it on a real edge
-rather than a flat, and not letting the free leg wind up beforehand — if the free side
-leads, the turn happens where the free leg decides rather than where you meant it to.
+The rotation itself is small. What takes the practice is arriving at it on a real edge, with
+no flat before it, and not letting the free leg wind up beforehand. If the free side leads,
+the free leg decides where the turn happens, and you do not.

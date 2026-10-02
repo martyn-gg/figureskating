@@ -10,13 +10,13 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-Two ways of getting from one edge to the next, set side by side. On the first, the free
-foot comes down beside the skating foot — a chassé. On the second it crosses in front — a
-crossover. The blades draw the same tracing either way, which is why this guide gives them
-separate pages and says so on both: the difference is where the free foot goes, and that is
-something you watch rather than something you read off the ice.
+Two ways of getting from one edge to the next, set side by side. On the first, the free foot
+comes down beside the skating foot (a chassé). On the second it crosses in front (a
+crossover). The blades draw the same tracing either way, which is why this guide gives them
+separate pages and says so on both. The difference is where the free foot goes, and that is
+something you see by watching the skater, because the ice does not record it.
 
 In between them the edge is held on its own, without a push and without a change of foot,
-until the skater reaches the long axis. That hold is the point of the exercise. An edge
-that needs a push every second is not an edge, it is a series of pushes, and holding it
-means the weight is genuinely over the curve rather than being steered onto it.
+until the skater reaches the long axis. That hold is the point of the exercise. An edge that
+needs a push every second is only a series of pushes. Holding one means the weight is
+genuinely over the curve; an edge the skater has been steered onto does not hold.

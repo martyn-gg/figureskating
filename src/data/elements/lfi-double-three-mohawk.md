@@ -1,7 +1,7 @@
 ---
 name: Left forward inside double three-mohawk
 kind: combination
-summary: LFI → LBO → LFI → RBI — 3 turns on two feet.
+summary: "LFI → LBO → LFI → RBI: 3 turns on two feet."
 entry: { foot: L, edge: I, dir: F }
 turns: [three, three, mohawk]
 prerequisites: [lfi-three, lbo-three, lfi-mohawk]

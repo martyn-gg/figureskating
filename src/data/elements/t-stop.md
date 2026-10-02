@@ -21,4 +21,4 @@ putting the trailing foot down too far behind, which turns the stop into a lunge
 skater into a passenger.
 
 It stops in a controlled, quiet way where a snowplough stops abruptly, and it goes where a
-snowplough will not — into small spaces, at speed.
+snowplough will not: into small spaces, at speed.

@@ -18,6 +18,6 @@ has to finish out to the side and slightly forwards of where it started, so that
 actually leaves the push behind. Keeping the shoulders ahead of the hips is again what makes
 it possible, and again feels wrong.
 
-It is much later in every syllabus than the forward version, and reasonably so — but it is
+It is much later in every syllabus than the forward version, and reasonably so. It is still
 the same movement, and a skater who cannot make it work usually cannot make the forward one
 work either, only faster.

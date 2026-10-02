@@ -37,7 +37,7 @@ const rows = [...byAlias.entries()]
   <p class="lede">
     Your coach's word for something and the governing body's word are not always the same.
     This guide files a movement under British Ice Skating's name; here are the other names
-    it goes by, so a name you already know is a way in rather than a dead end.
+    it goes by, so a name you already know still leads somewhere.
   </p>
 
   <Unverified />
@@ -50,7 +50,7 @@ const rows = [...byAlias.entries()]
             <b>{r.alias}</b>
             <span>
               {r.es.length > 4
-                ? <>{r.es.length} elements — <a href={url(`elements/${r.es[0].id}/`)}>{r.es[0].data.name}</a> and the rest of the family</>
+                ? <>{r.es.length} elements: <a href={url(`elements/${r.es[0].id}/`)}>{r.es[0].data.name}</a> and the rest of the family</>
                 : r.es.map((e, i) => <>{i > 0 ? ', ' : ''}<a href={url(`elements/${e.id}/`)}>{e.data.name}</a></>)}
             </span>
           </li>)}
@@ -58,9 +58,9 @@ const rows = [...byAlias.entries()]
 
   <h2>What is not here</h2>
   <p>
-    A name only goes on this list once it can be pointed at a source — a governing body's
+    A name only goes on this list once it can be pointed at a source: a governing body's
     own document, or a dictionary. Names that are certainly in use but that nobody has
-    checked are left off rather than guessed at, which is the same rule the rest of the
+    checked are left off until someone checks them, which is the same rule the rest of the
     guide runs on. If a name you use is missing, that is worth telling us.
   </p>
   <p>

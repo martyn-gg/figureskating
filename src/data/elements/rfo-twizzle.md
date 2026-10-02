@@ -1,7 +1,7 @@
 ---
 name: Right forward outside twizzle
 kind: twizzle
-summary: RFO to RFO — 1 rotation on one foot, travelling, one curl and no cusp.
+summary: "RFO to RFO: 1 rotation on one foot, travelling, one curl and no cusp."
 entry: { foot: R, edge: O, dir: F }
 turn: twizzle
 prerequisites: [rfo]

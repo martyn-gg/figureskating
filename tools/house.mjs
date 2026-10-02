@@ -24,11 +24,13 @@
        --break=words   "You simply nail it." .............. 658 places (three words a page)
        --break=foot    "Push with the left foot." ......... 272 element paragraphs
        --break=us      "Travel counterclockwise." ......... 329 places
-       --break=dash    four em dashes in a paragraph ...... 329 places
+       --break=dash    any em dash at all ................. 341 places
+       --break=shape   "rather than" ...................... 341 places
+       --break=ai      a banned word ...................... 341 places
        --break=length  the floor raised past every page ... 272 element pages
 
        node tools/house.mjs
-       node tools/house.mjs --break=words|foot|us|dash|length
+       node tools/house.mjs --break=words|foot|us|dash|shape|ai|length
 */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -58,6 +60,20 @@ const WORDS = [
   [/\bnail(ed|ing|s)?\b/i,   'nail'],
   [/\bconquer(ed|ing|s)?\b/i,'conquer'],
 ];
+
+/* THE OWNER'S WRITING RULES, ASSERTED — 02/10/2026. A copy pass found 472 em dashes
+   and 202 "rather than"s in the prose a reader sees, and both read as generated. The
+   negative-parallelism forms below are the setup-and-contrast shape; a plain negative
+   fact ("the free foot does not leave the ice") is untouched. The word list bans the
+   figurative vocabulary that marks text as machine-written. See docs/style.md. */
+const SHAPES = [
+  [/\brather than\b/i,      'rather than'],
+  [/\binstead of\b/i,       'instead of'],
+  [/\bas opposed to\b/i,    'as opposed to'],
+  [/\bnot only\b/i,         'not only'],
+  [/\b(?:it|this|that)(?:'s| is) not \w+(?: \w+){0,4}[,;] (?:it|this|that)(?:'s| is)\b/i, "it's not X, it's Y"],
+];
+const AI_WORDS = /\b(?:delve|pivotal|crucial|underscor(?:e|es|ed|ing)|showcas(?:e|es|ed|ing)|leverag(?:e|es|ed|ing)|foster(?:s|ed|ing)?|landscape|tapestry|testament|seamless(?:ly)?|robust(?:ly)?|intricate(?:ly)?|enhanc(?:e|es|ed|ing)|realm|boast(?:s|ed|ing)?|unlock(?:s|ed|ing)?|empower(?:s|ed|ing)?|streamlin(?:e|es|ed|ing)|align(?:s|ed)? with|bolster(?:s|ed|ing)?|deep dive|emphasi[sz](?:e|es|ed|ing)|enduring|garner(?:s|ed|ing)?|highlight(?:s|ed|ing)?|interplay|meticulous(?:ly)?|valuable|vibrant|renowned|groundbreaking|nestled|in the heart of|diverse array|commitment to|serves? as|associated with)\b|^Additionally\b/i;
 const OPENERS = [/^it is worth noting that\b/i, /^importantly[,\s]/i];
 /* British English. Only spellings with no British sense at all. */
 const US = [
@@ -98,7 +114,9 @@ for (const doc of [...ELEMENTS, ...OTHERS]) {
     if (BREAK === 'words' && label === 'paragraph 1') text += ' You simply nail it.';
     if (BREAK === 'foot' && label === 'paragraph 1') text += ' Push with the left foot.';
     if (BREAK === 'us' && label === 'paragraph 1') text += ' Travel counterclockwise.';
-    if (BREAK === 'dash' && label === 'paragraph 1') text += ' one — two — three — four';
+    if (BREAK === 'dash' && label === 'paragraph 1') text += ' one — two';
+    if (BREAK === 'shape' && label === 'paragraph 1') text += ' The edge rather than the flat.';
+    if (BREAK === 'ai' && label === 'paragraph 1') text += ' A crucial edge.';
     paras++;
     for (const [re, name] of WORDS)
       if (re.test(text)) fail(`${where} · ${label}`, `uses "${name}" — style.md: every one of them tells a skater who is struggling that they should not be`);
@@ -107,7 +125,10 @@ for (const doc of [...ELEMENTS, ...OTHERS]) {
     for (const [re, want] of US)
       if (re.test(text)) fail(`${where} · ${label}`, `American spelling — the guide is British English, so "${want}"`);
     const dashes = (text.match(/—/g) || []).length;
-    if (dashes > 2) fail(`${where} · ${label}`, `${dashes} em dashes in one paragraph — style.md allows two`);
+    if (dashes > 0) fail(`${where} · ${label}`, `${dashes} em dash${dashes > 1 ? 'es' : ''}: use a comma, a colon, parentheses or a full stop`);
+    for (const [re, name] of SHAPES)
+      if (re.test(text)) fail(`${where} · ${label}`, `"${name}" is the setup-and-contrast shape: state the positive claim, and give a contrast its own plain sentence`);
+    if (AI_WORDS.test(text)) fail(`${where} · ${label}`, `"${AI_WORDS.exec(text)[0]}" is on the banned-word list in docs/style.md`);
     /* A PLAIN EDGE IS A FOOT, so its summary may name one. The rule exists because a
        left bracket and a right one are mirror images and one passage should serve
        both; the eight plain edges are the one family where the foot IS the subject

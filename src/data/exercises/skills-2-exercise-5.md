@@ -10,16 +10,17 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-The first exercise anywhere in Skills that asks for a circuit of the rink rather than a
-pattern down it. That changes what is being tested: nothing here is difficult in isolation,
-and the difficulty is that it has to keep going for a lap without a push to rescue it.
+The first exercise anywhere in Skills that asks for a circuit of the rink; the ones before
+it run in a pattern down the ice. That changes what is being tested: nothing here is
+difficult in isolation, and the difficulty is that it has to keep going for a lap without a
+push to rescue it.
 
 The mohawk is the new element. It changes foot from a forward inside edge to a backward
-inside edge with the curve continuing, which is the part skaters get wrong — a mohawk that
+inside edge with the curve continuing, which is the part skaters get wrong: a mohawk that
 breaks the lobe has become a step with a turn in it. Open or closed is where the free foot
 comes in, in front of the skating foot or behind it, and this guide treats the two as one
 element because the ice cannot tell them apart. The document asks for the open one.
 
-After it comes the half that goes wrong, and it is not the turn. Staying on the foot,
-stepping wide, and transferring the weight back all happen backwards with speed already on,
-and the exercise gives you no moment to set up for them.
+After the mohawk comes the half that goes wrong. Staying on the foot, stepping wide, and
+transferring the weight back all happen backwards with speed already on, and the exercise
+gives you no moment to set up for them.

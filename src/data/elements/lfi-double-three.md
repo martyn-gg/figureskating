@@ -1,7 +1,7 @@
 ---
 name: Left forward inside double three
 kind: combination
-summary: LFI → LBO → LFI, back where it started — 2 turns on one foot.
+summary: "LFI → LBO → LFI, back where it started: 2 turns on one foot."
 entry: { foot: L, edge: I, dir: F }
 turns: [three, three]
 prerequisites: [lfi-three, lbo-three]
@@ -14,4 +14,4 @@ the first one hard enough to stop the rotation, then release it again immediatel
 second, and there is no time to reset the edge in between.
 
 The tell is the second cusp. If it is shallower than the first, the check failed and the
-body carried the turn round rather than the blade cutting it.
+body carried the turn round. The blade did not cut it.

@@ -1,7 +1,7 @@
 ---
 name: Right backward outside change of edge
 kind: transition
-summary: RBO to RBI — the blade rolls across without turning, still travelling backwards, and the lobe reverses.
+summary: "RBO to RBI: the blade rolls across without turning, still travelling backwards, and the lobe reverses."
 entry: { foot: R, edge: O, dir: B }
 turn: coe
 prerequisites: [rbo, two-foot-change-of-edge]

@@ -1,16 +1,16 @@
 ---
 name: Left forward outside mohawk
 kind: turn
-summary: LFO to RBO — a step onto the other foot, holding the edge and staying on the same lobe. No cusp.
+summary: "LFO to RBO: a step onto the other foot, holding the edge and staying on the same lobe. No cusp."
 entry: { foot: L, edge: O, dir: F }
 turn: mohawk
 prerequisites: [lfo, two-foot-turn]
 verified: { checked: false }
 ---
 
-Forwards on the outside edge, and instead of turning on the blade you step onto
-the other foot and travel backwards on its outside edge. The circle does not change and
-neither does the character of the edge — only the foot and the direction you face.
+Forwards on the outside edge; then, without turning on the blade, you step onto the other
+foot and travel backwards on its outside edge. The circle and the character of the edge stay
+the same. The foot and the direction you face both change.
 
 The forward outside mohawk is the less common of the two, and it is the harder to make
 look calm, because the free foot has to arrive turned out and close in without the hips
