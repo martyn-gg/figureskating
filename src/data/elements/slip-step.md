@@ -14,9 +14,10 @@ sourceUrl: https://www.iceskating.org.uk/
 verified: { checked: false }
 ---
 
-You travel in a straight line with both blades flat on the ice, the weight settling back
-over a bending skating knee while the other foot slides away in front of you until the leg
-is straight. Nothing leaves the ice and nothing turns.
+You travel in a straight line with both blades flat on the ice, your weight over the
+skating leg while the other foot slides away in front of you until that leg is straight.
+The skating knee can be well bent or straight, and either way the weight stays on top of
+it. Nothing leaves the ice and nothing turns.
 
 Flat is the whole difficulty. A blade wants to be on an edge, and the moment you tip even
 slightly the sliding foot curves away from you and takes your balance with it. Holding two
