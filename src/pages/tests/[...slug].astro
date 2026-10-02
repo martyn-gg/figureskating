@@ -29,7 +29,7 @@ const refs = exercises.length
   : d.elements.map(r => r.id);
 const items = refs.map(id => all.find(e => e.id === id)).filter(Boolean);
 
-const WHEN = { current: 'current only', october2026: 'new 01/10/2026', both: null };
+const WHEN = { current: 'before 01/10/2026 only', october2026: 'new 01/10/2026', both: null };
 ---
 <Base title={d.name}>
   <h1>{d.name}</h1>

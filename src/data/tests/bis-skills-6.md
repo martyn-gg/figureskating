@@ -12,19 +12,21 @@ rocker into a mohawk, a rocker into a choctaw, a 3-turn into a loop, a counter i
 mohawk), and the guide has a page for some of those pairings and not others. Where it does
 not, the exercise lists the elements the cluster is made of and says so.
 
-In the current test two elements are new here, the backward inside counter and the loop.
-From 01/10/2026 the counter arrives a level earlier, in Skills 5, and the loop is the only
-new element. It is unlike everything around it. A loop stays on one foot
-and draws a small circle inside the lobe without changing edge or direction, so it is the
-only thing in the syllabus assessed almost entirely on what it leaves behind on the ice.
+Before 01/10/2026 two elements were new here, the backward inside counter and the loop.
+Since then the counter arrives a level earlier, in Skills 5, and the loop is the only new
+element. It is unlike everything around it. A loop stays on one foot and draws a small
+circle inside the lobe without changing edge or direction, so it is the only thing in the
+syllabus assessed almost entirely on what it leaves behind on the ice.
 
 October 2026 adds a bracket into a counter, and a second skating exercise carrying an
-ice-coverage requirement written as a percentage of the rink. That
-percentage is a fair summary of what separates Skills 6 from Skills 5: the turns were already
-there, and now they have to travel.
+ice-coverage requirement written as a percentage of the rink. That percentage is a fair
+summary of what separates Skills 6 from Skills 5: the turns were already there, and now they
+have to travel.
 
 It is also where the test starts gating something else. British Ice Skating's published
-[championship requirements](https://www.iceskating.org.uk/post/updates-to-championship-requirements-for-the-2026-27-season) for the 2026/27 season
-make Skills 6 the minimum for entering a national championship as a Basic Novice, alongside a
-National 4 in technical and components. The Skills tests and the National tests are two
-separate ladders and a skater climbing towards competition is on both.
+[championship
+requirements](https://www.iceskating.org.uk/post/updates-to-championship-requirements-for-the-2026-27-season)
+for the 2026/27 season make Skills 6 the minimum for entering a national championship as a
+Basic Novice, alongside a National 4 in technical and components. The Skills tests and the
+National tests are two separate ladders and a skater climbing towards competition is on
+both.

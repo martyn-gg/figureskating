@@ -8,10 +8,10 @@ syllabus: both
 changesInOctober: >-
   From 01/10/2026 this section is published as two versions, 2A and 2B, identical until the
   double twizzle. 2A changes edge on the foot it is already on and takes the twizzle from
-  there; 2B crosses to the other foot, changes edge again and takes the twizzle on that side.
-  Both add a push, or touch down, before it. October also writes the middle of the three
-  crossed steps as crossed behind, where the current document writes it crossed in front
-  amongst two that are not. The announcement mentions none of this.
+  there; 2B crosses to the other foot, changes edge again and takes the twizzle on that
+  side. Both add a push, or touch down, before it. October also writes the middle of the
+  three crossed steps as crossed behind, where the earlier document wrote it crossed in
+  front, between two that cross behind. The announcement mentions none of this.
 elements: [rfo-three-coe-double-twizzle, lbi-three, lfi-double-three, rfi-bracket, rbo-crossbehind, lbo-crossbehind, lbo-crossroll, rbi-coe, lbi-coe, lbo-double-twizzle, rbo-crossover, lbo-crossover, rbo, lbo, rbi, lbi, lfo, rbi-stepwide, lbi-pushback, lbi-stepwide, rbi-pushback]
 notCovered:
   - The push, or touch down, before the double twizzle. The free foot goes to the ice, which

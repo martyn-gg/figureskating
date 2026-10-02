@@ -28,6 +28,6 @@ closed mohawk turns the skater backwards, the crossover carries the lobe, and th
 thing runs as a serpentine so the exercise travels across the ice. A spiral entered slowly
 is a spiral held on a dying edge, and the position gets blamed for what the entry did.
 
-Until 01/10/2026 the way in is a toe-assisted hop, which is the one requirement in the first
-three tests that asks the skater to leave the ice. From that date it is a choice, and the
+Until 01/10/2026 the way in was a toe-assisted hop, which is the one requirement in the
+first three tests that asks the skater to leave the ice. Since then it is a choice, and the
 alternative reaches the same spiral off an inside edge with both blades staying down.

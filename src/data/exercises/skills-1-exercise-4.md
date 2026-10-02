@@ -6,16 +6,11 @@ summary: Power changes of edge down the length of the rink, forwards on two feet
 syllabus: both
 changesInOctober: >-
   From 01/10/2026 the forward side becomes a choice: the two-foot sequence on its own, or
-  the two-foot sequence with the one-foot section inside it as now. Until then the one-foot
-  section is required. This is a relaxation, and the update announcement does not mention it.
-elements: [rfi-coe, rfo-coe, lfi-coe, lfo-coe, lbi, rbo, lbo, rbi]
-notCovered:
-  - Two-foot power changes of edge, where both blades are on the ice at once. The body-frame
-    rig holds two blades as of 30/08/2026 and the two-foot position can be seen on the rig
-    explorer, but the guide still has no element page for the change itself, so there is
-    nothing to link to here. That is why the backward side lists its four edges and no
-    changes of edge. Backwards the exercise asks only for the two-foot version, and listing
-    a one-foot change of edge would claim more than it does.
+  the two-foot sequence with the one-foot section inside it as before. Until then the
+  one-foot section was required. This is a relaxation, and the update announcement does not
+  mention it.
+elements: [two-foot-change-of-edge, slalom, backward-slalom, rfi-coe, rfo-coe, lfi-coe, lfo-coe, lbi, rbo, lbo, rbi]
+notCovered: []
 sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---

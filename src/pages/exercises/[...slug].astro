@@ -30,9 +30,9 @@ const prev = siblings[at - 1], next = siblings[at + 1];
 const named = new RegExp(`^${d.unit}\\b`, 'i').test(d.name);
 
 const WHEN = {
-  current: 'In the current syllabus',
+  current: 'Only in the syllabus before 01/10/2026',
   october2026: 'New on 01/10/2026',
-  both: 'In both the current and the October 2026 syllabus',
+  both: 'In the syllabus both before and after 01/10/2026',
 };
 ---
 <Base title={`${test?.data.name ?? ''} · ${named ? d.name : `${d.unit} ${d.order}: ${d.name}`}`} subtitle={d.summary}>
