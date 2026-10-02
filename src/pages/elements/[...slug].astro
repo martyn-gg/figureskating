@@ -5,7 +5,7 @@ import Unverified from '../../components/Unverified.astro';
 import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import EdgeThumb from '../../components/EdgeThumb.astro';
 import PathThumb from '../../components/PathThumb.astro';
-import { familyOf, teachRank } from '../../lib/element-groups.js';
+import { familyOf, teachRank, syllabusRank } from '../../lib/element-groups.js';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
@@ -119,8 +119,12 @@ const family = d.entry ? allElements.filter(e =>
 const clusters = d.entry ? allElements.filter(e =>
   e.data.kind === 'combination' && e.data.entry && label(e.data.entry) === label(d.entry)
   && e.id !== entry.id).sort((a, b) => a.data.turns.length - b.data.turns.length) : [];
-const familyOrder = [null, ...Object.keys(ALL_TURNS)];
-family.sort((a, b) => familyOrder.indexOf(a.data.turn ?? null) - familyOrder.indexOf(b.data.turn ?? null));
+/* Learning order, from the syllabus, as on the section pages (element-groups.js):
+   the plain edge first, then each turn by the first exercise asking for it. */
+const SR = syllabusRank(allExercises);
+const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
+family.sort((a, b) => rankOf(a) - rankOf(b));
+clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
 ---
 <Base title={d.name} subtitle={d.summary}>
   <h1>{d.name}</h1>

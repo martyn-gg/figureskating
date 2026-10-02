@@ -11,9 +11,73 @@
    the collection as an argument instead of fetching it. Two pages computing their
    own groups would be two answers to "what is a twizzle family", and the second
    one would go stale. */
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from './skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, JUMPS } from './skating.js';
 
-export function elementGroups(elements) {
+/* LISTS ARE IN THE ORDER A SKATER LEARNS THEM — 02/10/2026, Martyn: review the list
+   orders and present in learning order anything that should be.
+
+   WHERE THE SYLLABUS CAN SAY, IT SAYS. An element's place is the first British Ice
+   Skating exercise that asks for it: the Skills level, then the exercise's number
+   within the level. A family (a turn, a transition, a cluster) takes its earliest
+   member's place. Nothing here is written by hand, so an exercise added tomorrow
+   reorders the lists by itself. Ties keep the model's own order; anything no exercise
+   asks for goes after everything that one does.
+
+   WHERE IT IS SILENT, THE ORDER IS A PEDAGOGICAL CLAIM AND IS WRITTEN DOWN, in LEARN,
+   with the same rule as SECTION_RANK below: an element of these kinds that LEARN does
+   not name throws, so a new basic is a build failure and not a quietly misplaced line.
+   - Jumps follow JUMPS in skating.js, which is already the usual teaching
+     progression: waltz, Salchow, toe loop, loop, flip, Lutz, Axel.
+   - Basics follow the Learn to Skate USA Basic 1 to 6 progression as closely as the
+     guide's 22 elements map onto it. Verified against a coach: NO.
+   - Spins: upright, sit, camel, then the two ways of joining positions. NO coach yet.
+   - Positions: the extended edge (Skills 1), the teapot (a Learn to Skate glide),
+     then the spiral (Skills 3). */
+export const LEARN = {
+  basic: ['two-foot-glide', 'dip', 'swizzle', 'snowplough-stop', 'one-foot-glide',
+    'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'forward-stroking',
+    'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
+    'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
+    'backward-two-foot-turn', 'backward-stroking', 't-stop', 'hockey-stop', 'pivot', 'drag'],
+  spin: ['upright-spin', 'sit-spin', 'camel-spin', 'change-of-foot-spin', 'combination-spin'],
+  position: ['extended-edge', 'teapot', 'spiral'],
+  step: ['slip-step'],
+};
+const JUMP_ORDER = Object.values(JUMPS).map(j => j.name.toLowerCase());
+const handRank = e => {
+  const k = e.data.kind;
+  if (k === 'jump') {
+    const i = JUMP_ORDER.indexOf(e.data.name.toLowerCase());
+    if (i < 0) throw new Error(`element-groups: the jump "${e.data.name}" is not in JUMPS`);
+    return i;
+  }
+  const list = LEARN[k];
+  if (!list) return null;
+  const i = list.indexOf(e.id);
+  if (i < 0) throw new Error(`element-groups: "${e.id}" has no place in LEARN.${k}. ` +
+    'Give it one in src/lib/element-groups.js so it is ordered deliberately.');
+  return i;
+};
+
+/* The first exercise asking for each element, as level * 100 + exercise number. */
+export function syllabusRank(exercises = []) {
+  const first = new Map();
+  for (const x of exercises) {
+    const m = /skills-(\d+)/.exec(x.data.test.id);
+    if (!m) continue;
+    const at = Number(m[1]) * 100 + x.data.order;
+    for (const r of x.data.elements) if (!first.has(r.id) || first.get(r.id) > at) first.set(r.id, at);
+  }
+  const NONE = 1e6;
+  const ofElement = id => first.get(id) ?? NONE;
+  const ofFamily = (els, pred) => Math.min(NONE, ...els.filter(pred).map(e => ofElement(e.id)));
+  return { ofElement, ofFamily, NONE };
+}
+
+export function elementGroups(elements, exercises = []) {
+  const R = syllabusRank(exercises);
+  const byLearn = (rank, keys) => keys.map((k, i) => [k, rank(k), i])
+    .sort((a, b) => a[1] - b[1] || a[2] - b[2]).map(x => x[0]);
 
 
   /* The eight entry edges in the order the notation reads: foot, then direction,
@@ -21,8 +85,9 @@ export function elementGroups(elements) {
   const STATES = ['L', 'R'].flatMap(foot =>
     ['F', 'B'].flatMap(dir => ['O', 'I'].map(edge => ({ foot, edge, dir }))));
 
-  const TURN_KEYS = Object.keys(TURNS);
-  const STEP_KEYS = Object.keys(STEPS);
+  const famRank = k => R.ofFamily(elements, e => e.data.kind === 'turn' && e.data.turn === k);
+  const TURN_KEYS = byLearn(famRank, Object.keys(TURNS));
+  const STEP_KEYS = byLearn(famRank, Object.keys(STEPS));
 
   /* Look an element up by what it *is*, not by a constructed slug — so a file
      renamed by hand does not silently drop out of the table. */
@@ -36,7 +101,7 @@ export function elementGroups(elements) {
   /* Transitions get the same treatment as clusters: grouped by what they are, with
      a chip for each edge they can begin on. Not all of them begin on all eight. */
   const transitions = elements.filter(e => e.data.kind === 'transition');
-  const transitionGroups = Object.keys(TRANSITIONS)
+  const transitionGroups = byLearn(k => R.ofFamily(transitions, e => e.data.turn === k), Object.keys(TRANSITIONS))
     .map(k => ({
       key: k,
       def: TRANSITIONS[k],
@@ -63,6 +128,8 @@ export function elementGroups(elements) {
   const combos = elements.filter(e => e.data.kind === 'combination');
   const comboGroups = [...new Map(combos.map(e => [e.data.turns.join('-'), e.data.turns])).values()]
     .sort((a, b) => a.length - b.length || a.join().localeCompare(b.join()))
+    .map((t, i) => [t, R.ofFamily(combos, e => e.data.turns.join('-') === t.join('-')), i])
+    .sort((a, b) => a[1] - b[1] || a[2] - b[2]).map(x => x[0])
     .map(turns => ({
       turns,
       key: clusterOf(turns)?.name ?? turns.join('-'),
@@ -73,7 +140,9 @@ export function elementGroups(elements) {
 
   const rest = elements
     .filter(e => !['edge', 'turn', 'twizzle', 'transition', 'combination'].includes(e.data.kind))
-    .sort((a, b) => a.data.name.localeCompare(b.data.name));
+    .map(e => [e, handRank(e), R.ofElement(e.id)])
+    .sort((a, b) => (a[1] ?? 1e6) - (b[1] ?? 1e6) || a[2] - b[2] || a[0].data.name.localeCompare(b[0].data.name))
+    .map(x => x[0]);
   /* ORDER THE REMAINING KINDS RATHER THAN LETTING THEM FALL OUT OF `rest`, which is
      sorted by element NAME and so orders its kinds by whichever happens to sort first.
      That was harmless while the remainder was jumps and positions. It stopped being
@@ -186,7 +255,7 @@ export const SECTION_NOTE = {
   transitions: 'Getting from one edge to the next: crossovers, chassés, cross rolls, changes of edge, and the step wide and push back the Skills tests ask for.',
   clusters:    'Turns run together, where each one\'s exit is the next one\'s entry.',
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
-  jump:        'The six singles and the waltz jump, by takeoff edge and whether a pick goes in.',
+  jump:        'The waltz jump and the six singles, in the order they are usually learned.',
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The three basic positions, plus the two ways of joining them: a change of foot and a combination.',
 };

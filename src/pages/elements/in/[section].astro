@@ -20,7 +20,7 @@ import { elementGroups, canonicalOf } from '../../../lib/element-groups.js';
 import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../lib/skating.js';
 
 const allElements = await getCollection('elements');
-const G = elementGroups(allElements);
+const G = elementGroups(allElements, await getCollection('exercises'));
 
 export async function getStaticPaths() {
   const { getCollection: gc } = await import('astro:content');
