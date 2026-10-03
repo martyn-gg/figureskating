@@ -14,6 +14,10 @@
      e  the edge code, LFO and the rest, because that is what gets typed
      s  the summary, so a description matches when a name does not
      k  the kind, so "jump" or "twizzle" narrows
+     n  an element's name in each country whose programme names it differently,
+        so a country copy of the search page can show it under that name
+     c  the country a programme, test or exercise belongs to, so a country copy
+        can sort the others after its own
 
    Nothing here is authored. It is read out of the collections, so a page cannot
    exist and be unsearchable, and tools/links.mjs asserts the count against the
@@ -43,6 +47,7 @@ export async function GET() {
     ...elements.map(e => ({
       u: `elements/${e.id}/`, t: e.data.name, s: e.data.summary, k: e.data.kind,
       a: e.data.aliases ?? [], e: e.data.entry ? label(e.data.entry) : '',
+      ...(Object.keys(e.data.names ?? {}).length ? { n: e.data.names } : {}),
     })),
     ...exercises.map(x => ({
       u: `exercises/${x.id}/`,
@@ -51,7 +56,7 @@ export async function GET() {
          would make search disagree with the page it links to. */
       t: `${testName(x.data.test.id)} · ${x.data.unit === 'section' ? 'Section ' : 'exercise '}${x.data.order}` +
          `${/^section/i.test(x.data.name) ? '' : ` — ${x.data.name}`}`,
-      s: x.data.summary, k: 'exercise', a: [], e: '',
+      s: x.data.summary, k: 'exercise', a: [], e: '', c: 'UK',
     })),
     /* GRADES BY COUNTRY — 03/10/2026. The level names are the aliases, because a
        skater looking for their grade types "Basic 3" or "Pre-Bronze", not the name
@@ -61,12 +66,12 @@ export async function GET() {
       k: 'grades', a: ['levels', 'badges', 'learn to skate'], e: '' },
     ...grades.map(g => ({
       u: `grades/${g.id}/`, t: g.data.name, s: g.data.summary, k: 'grades',
-      a: [...new Set(g.data.levels.map(l => `${g.data.body} ${l.name}`))], e: '',
+      a: [...new Set(g.data.levels.map(l => `${g.data.body} ${l.name}`))], e: '', c: g.data.country,
     })),
     ...tests.map(t => ({
       u: `tests/${t.id}/`, t: t.data.name,
       s: `${t.data.governingBody} · ${t.data.discipline}, level ${t.data.level}`,
-      k: 'test', a: [], e: '',
+      k: 'test', a: [], e: '', c: { BIS: 'UK', USFS: 'USA' }[t.data.governingBody],
     })),
   ];
 

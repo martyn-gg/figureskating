@@ -3,6 +3,7 @@ name: Swizzle
 kind: basic
 summary: Both blades on the ice throughout, drawing two mirrored curves that open and close.
 aliases: ["lemon", "sculling", "forward swizzle"]
+names: {"nz": "Sculling"}
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---

@@ -3,8 +3,8 @@ const { verified, what = 'mechanics' } = Astro.props;
 ---
 {!verified?.checked && (
   <p class="unverified">
-    <b>Unverified.</b> The {what} on this page are a first draft by a non-expert and have not
-    been checked by a coach. Read them as a starting point and check them with a coach.
+    <b>Not checked yet.</b> The {what} on this page are a first draft by a non-expert, and
+    no coach has seen them yet. Read them as a starting point and check them with a coach.
     Corrections are very welcome, and the repository is public.
   </p>
 )}

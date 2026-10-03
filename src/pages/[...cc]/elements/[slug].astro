@@ -1,21 +1,24 @@
 ---
 import { getCollection, render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import Unverified from '../../components/Unverified.astro';
-import EdgeDiagram from '../../components/EdgeDiagram.astro';
-import EdgeThumb from '../../components/EdgeThumb.astro';
-import PathThumb from '../../components/PathThumb.astro';
-import { familyOf, teachRank, syllabusRank } from '../../lib/element-groups.js';
-import { FOUNDATIONS, reasonFor } from '../../lib/foundations.js';
-import BodyFrame from '../../components/BodyFrame.astro';
-import Edge from '../../components/Edge.astro';
-import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
+import Base from '../../../layouts/Base.astro';
+import Unverified from '../../../components/Unverified.astro';
+import EdgeDiagram from '../../../components/EdgeDiagram.astro';
+import EdgeThumb from '../../../components/EdgeThumb.astro';
+import PathThumb from '../../../components/PathThumb.astro';
+import { familyOf, teachRank, syllabusRank } from '../../../lib/element-groups.js';
+import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
+import BodyFrame from '../../../components/BodyFrame.astro';
+import Edge from '../../../components/Edge.astro';
+import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
-  return elements.map(e => ({ params: { slug: e.id }, props: { entry: e } }));
+  /* Each element once at the root and once per country: src/lib/country.js. */
+  return COPIES.flatMap(cc => elements.map(e => ({ params: { cc, slug: e.id }, props: { entry: e } })));
 }
-import { url } from '../../lib/url.js';
+import { curl, COPIES, COUNTRIES, countryOf, nameIn } from '../../../lib/country.js';
+const { cc } = Astro.params;
+const url = p => curl(cc, p);
 const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
@@ -33,6 +36,28 @@ const tests = allTests.filter(t =>
   t.data.elements.some(r => r.id === entry.id) ||
   exercisesHere.some(x => x.data.test.id === t.id));
 const testName = id => allTests.find(t => t.id === id)?.data.name ?? id;
+
+/* THE COUNTRY'S OWN NAME AND GRADES — 03/10/2026. On a country copy the page is
+   headed with that country's word for the movement where its programme uses a
+   different one, and the guide's own name moves into "also called". */
+const here = countryOf(cc);
+const shown = nameIn(d, cc);
+const renamed = shown !== d.name;
+const aka = renamed
+  ? [d.name, ...d.aliases.filter(a => a.toLowerCase() !== shown.toLowerCase())]
+  : d.aliases;
+/* Where this element sits in the country's grades: every level of every programme
+   in that country whose list names it. Only on a country copy, and only that
+   country's, because Martyn's rule for the grades is that they lead into the
+   elements and do not bulk them out. */
+const slugOf = t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const myGrades = here
+  ? (await getCollection('grades'))
+      .filter(g => g.data.country === here.grades)
+      .sort((a, b) => a.data.order - b.data.order)
+      .map(g => ({ g, levels: g.data.levels.filter(l => l.items.some(i => i.elements.some(r => r.id === entry.id))) }))
+      .filter(x => x.levels.length > 0)
+  : [];
 
 /* Nothing below is stored on the element. */
 const turnLine = d.entry && d.turn ? describeTurn(d.entry, d.turn) : null;
@@ -142,15 +167,15 @@ const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
 family.sort((a, b) => rankOf(a) - rankOf(b));
 clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
 ---
-<Base title={d.name} subtitle={d.summary} kind={d.kind}>
-  <h1>{d.name}</h1>
+<Base title={shown} subtitle={d.summary} kind={d.kind}>
+  <h1>{shown}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
       This is not a translation — it is so a reader searching for what their coach
       calls it lands somewhere. src/content.config.ts has the rule. */}
-  {d.aliases.length > 0 &&
-    <p class="aka">Also called {d.aliases.map((a, i) =>
-      <>{i > 0 ? (i === d.aliases.length - 1 ? ' or ' : ', ') : ''}a <b>{a}</b></>)}.
+  {aka.length > 0 &&
+    <p class="aka">Also called {aka.map((a, i) =>
+      <>{i > 0 ? (i === aka.length - 1 ? ' or ' : ', ') : ''}a <b>{a}</b></>)}.
       {' '}<a href={url('elements/other-names/')}>Other names</a>.</p>}
 
   <div class="meta">
@@ -370,13 +395,33 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
   )}
 
   <h2>Appears in</h2>
-  {tests.length === 0
-    ? <p style="color:var(--ink-soft);font-size:.9rem">No test syllabus recorded yet.</p>
-    : <ul class="plain">{tests.map(t => (
-        <li><a href={url(`tests/${t.id}/`)}>{t.data.name}</a><span>{t.data.governingBody} · level {t.data.level}</span></li>
-      ))}</ul>}
+  {here && (
+    <div class="mygrades">
+      <p class="mg-head">In {here.name}'s grades</p>
+      {myGrades.length > 0
+        ? <ul>{myGrades.map(({ g, levels }) => (
+            <li><a href={url(`grades/${g.id}/`)}>{g.data.name}</a>:{' '}
+              {levels.map((l, i) => <>{i > 0 ? ', ' : ''}<a href={url(`grades/${g.id}/#${slugOf(l.name)}`)}>{l.name}</a></>)}</li>
+          ))}</ul>
+        : <p>None of the {here.adj} level lists in this guide name it{here.id === 'uk' ? ' outside the Skills tests below' : ''}.</p>}
+    </div>
+  )}
+  {(!here || here.id === 'uk')
+    ? (tests.length === 0
+      ? <p style="color:var(--ink-soft);font-size:.9rem">No test syllabus recorded yet.</p>
+      : <ul class="plain">{tests.map(t => (
+          <li><a href={url(`tests/${t.id}/`)}>{t.data.name}</a><span>{t.data.governingBody} · level {t.data.level}</span></li>
+        ))}</ul>)
+    : tests.length > 0 && (
+      <p class="also">In British Ice Skating's tests:{' '}
+        {tests.map((t, i) => <>{i > 0 ? ', ' : ''}<a href={url(`tests/${t.id}/`)}>{t.data.name}</a></>)}.</p>
+    )}
+  {!here && (
+    <p class="also">Where it sits in one country's grades is on that country's copy of this page:{' '}
+      {COUNTRIES.map((c, i) => <>{i > 0 ? (i === COUNTRIES.length - 1 ? ' or ' : ', ') : ''}<a href={curl(c.id, `elements/${entry.id}/`)} data-cc={c.id}>{c.short}</a></>)}.</p>
+  )}
 
-  {exercisesHere.length > 0 && (
+  {(!here || here.id === 'uk') && exercisesHere.length > 0 && (
     <ul class="plain">{exercisesHere.map(x => (
       <li>
         <a href={url(`exercises/${x.id}/`)}>{testName(x.data.test.id)}, exercise {x.data.order}: {x.data.name}</a>
@@ -385,3 +430,13 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     ))}</ul>
   )}
 </Base>
+
+<style>
+  /* The country's grades, in the dashed box from the notebook mockup. */
+  .mygrades{border:1.5px dashed var(--ice-line);border-radius:6px;padding:.7rem 1rem;margin:0 0 1rem}
+  .mygrades .mg-head{margin:0 0 .3rem;font-weight:600}
+  .mygrades ul{margin:0;padding:0 0 0 1.1rem}
+  .mygrades li{margin:.2rem 0}
+  .mygrades p{margin:0}
+  .also{color:var(--ink-soft);font-size:.95rem}
+</style>

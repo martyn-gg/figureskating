@@ -16,8 +16,13 @@
    No library. Three hundred records is a linear scan and it is imperceptible; a
    ranking function that can be read in one screen is worth more here than a better
    one that cannot. */
-import Base from '../layouts/Base.astro';
-import { url } from '../lib/url.js';
+import Base from '../../layouts/Base.astro';
+import { curl, COPIES } from '../../lib/country.js';
+
+/* One copy per country and one for the root: see src/lib/country.js. */
+export function getStaticPaths() { return COPIES.map(cc => ({ params: { cc } })); }
+const { cc } = Astro.params;
+const url = p => curl(cc, p);
 const indexUrl = url('search.json');
 ---
 <Base title="Search" subtitle="Find an element, an exercise or a test by name, by edge code, or by what your coach calls it.">
@@ -26,7 +31,7 @@ const indexUrl = url('search.json');
     By name, by edge code (<b>LFO</b>, <b>rbi</b>) or by another name for the same thing.
   </p>
 
-  <form id="sform" role="search" autocomplete="off" data-index={indexUrl}>
+  <form id="sform" role="search" autocomplete="off" data-index={indexUrl} data-cc={cc ?? ''}>
     <input id="q" type="search" name="q" placeholder="counter, lfo three, three jump…"
            aria-label="Search the guide" enterkeyhint="search" spellcheck="false" />
   </form>
@@ -52,7 +57,8 @@ const indexUrl = url('search.json');
      thing a reader depends on is the thing that is tested. An inline script cannot
      import, and a second copy of the ranking is exactly what this repository spends
      its time not having. */
-  import { rank } from '../lib/search.js';
+  import { rank } from '../../lib/search.js';
+  import { countryOf, localised } from '../../lib/country.js';
 
   const form = document.getElementById('sform');
   const indexUrl = form.dataset.index;
@@ -62,9 +68,29 @@ const indexUrl = url('search.json');
   const empty = document.getElementById('empty');
   let docs = null;
 
+  /* ON A COUNTRY COPY — 03/10/2026. Every record is still searched, under every
+     name it has, so a skater who has just moved or is following commentary from
+     abroad still finds the move. What changes: an element is shown under the
+     country's own name where it has one, with the guide's name moved into "also
+     called"; links go to the country's copy where there is one; and records that
+     belong to another country's programmes sort after the rest. */
+  const cc = form.dataset.cc;
+  const here = countryOf(cc);
+  const localise = d => {
+    const n = d.n && d.n[cc];
+    return {
+      ...d,
+      t: n || d.t,
+      a: n ? [d.t, ...(d.a || []).filter(x => x.toLowerCase() !== n.toLowerCase())] : d.a,
+      u: localised(d.u) ? `${cc}/${d.u}` : d.u,
+    };
+  };
+  const foreign = d => (here && d.c && d.c !== here.grades ? 1 : 0);
+
   function draw(q) {
     if (!docs || !q) { hits.textContent = ''; count.textContent = ''; empty.hidden = true; return; }
     const out = rank(docs, q);
+    if (here) out.sort((x, y) => foreign(x.doc) - foreign(y.doc));
     hits.textContent = '';
     for (const { doc: d } of out.slice(0, 60)) {
       const li = document.createElement('li');
@@ -101,7 +127,7 @@ const indexUrl = url('search.json');
   const q0 = new URLSearchParams(location.search).get('q');
   if (q0) input.value = q0;
 
-  fetch(indexUrl).then(r => r.json()).then(d => { docs = d; draw(input.value.trim()); })
+  fetch(indexUrl).then(r => r.json()).then(d => { docs = here ? d.map(localise) : d; draw(input.value.trim()); })
     .catch(() => { count.textContent =
       'The index could not be loaded. It is cached for offline use once the site has been visited with a signal.'; });
 

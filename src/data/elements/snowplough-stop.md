@@ -3,6 +3,7 @@ name: Snowplough stop
 kind: basic
 summary: Heels pressed outwards so that one or both blades skid, taking the speed off in a straight line.
 aliases: ["snowplow stop", "snowplough", "half snowplough"]
+names: {"us": "Snowplow stop", "au": "Snowplow stop"}
 rig: snowplough
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }

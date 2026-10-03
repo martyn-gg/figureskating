@@ -1,13 +1,25 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../layouts/Base.astro';
-import EdgeThumb from '../components/EdgeThumb.astro';
-import EdgeDiagram from '../components/EdgeDiagram.astro';
-import { url } from '../lib/url.js';
-import { label } from '../lib/skating.js';
+import Base from '../../layouts/Base.astro';
+import EdgeThumb from '../../components/EdgeThumb.astro';
+import EdgeDiagram from '../../components/EdgeDiagram.astro';
+import { curl, COPIES, COUNTRIES, countryOf } from '../../lib/country.js';
+import { label } from '../../lib/skating.js';
+
+/* One copy per country and one for the root: see src/lib/country.js. */
+export function getStaticPaths() { return COPIES.map(cc => ({ params: { cc } })); }
+const { cc } = Astro.params;
+const url = p => curl(cc, p);
 const elements = await getCollection('elements');
 const tests = await getCollection('tests');
 const byKind = k => elements.filter(e => e.data.kind === k);
+/* On a country copy the front page names that country's programmes and lists
+   them; the root names all four countries and offers the copies. */
+const here = countryOf(cc);
+const myGrades = here
+  ? (await getCollection('grades')).filter(g => g.data.country === here.grades)
+      .sort((a, b) => a.data.order - b.data.order)
+  : [];
 
 /* Name the kinds this page counts rather than the kinds it hides. The old line
    listed the exclusions, so the twenty-four twizzles added on 29/08/2026 fell
@@ -58,8 +70,8 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
 <Base title={null} subtitle="Every edge, turn, jump and position, drawn from three views on both feet, with the tests each one belongs to.">
   <h1>Field Guide to Figure Skating</h1>
   <p class="lede">
-    What each element actually is, drawn from three views and on both feet, with the
-    British Ice Skating tests it belongs to. Free to read, no account, and it keeps
+    What each element actually is, drawn from three views and on both feet, with the{' '}
+    {here && here.id !== 'uk' ? `${here.bodies} levels` : 'British Ice Skating tests'} it belongs to. Free to read, no account, and it keeps
     working at the rink when the signal does not.
   </p>
 
@@ -134,6 +146,10 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
       <span>which syllabus each element belongs to, {tests.length} recorded so far</span>
     </li>
     <li>
+      <a href={url('grades/')}>Grades</a>
+      <span>{here ? `${here.adj} levels first, then every other country's` : 'each country\'s levels, from the first glide up'}</span>
+    </li>
+    <li>
       <a href={url('rig/')}>Body frame</a>
       <span>one rig, three views, one clock: what the rest of the body is doing</span>
     </li>
@@ -149,6 +165,31 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
       <a href={url(`elements/${firstEdge.id}/`)}>left forward outside edge</a>. Everything
       else in the guide is that page with one or two things changed.
     </p>
+  )}
+
+  {here ? (
+    <>
+      <h2>{here.adj} grades</h2>
+      <ul class="plain">
+        {myGrades.map(g => <li><a href={url(`grades/${g.id}/`)}>{g.data.name}</a><span>{g.data.summary}</span></li>)}
+      </ul>
+      <p>
+        This is the copy of the guide for {here.name}: elements carry {here.adj} names where
+        a programme here uses its own, and each one says where it sits in these grades. The{' '}
+        <a href={curl(undefined, '')} data-cc="all">copy for every country</a> is still there.
+      </p>
+    </>
+  ) : (
+    <>
+      <h2>Where you skate</h2>
+      <p>
+        There is a copy of the guide for each of four countries. It puts that country's
+        levels first, uses its programmes' names for a move where they differ, and says
+        on each element where it sits in those grades:{' '}
+        {COUNTRIES.map((c, i) => <>{i > 0 ? (i === COUNTRIES.length - 1 ? ' and ' : ', ') : ''}<a href={curl(c.id, '')}>{c.short}</a></>)}.
+        The Country button at the top switches between them and remembers the choice.
+      </p>
+    </>
   )}
 
   <h2>What this is</h2>

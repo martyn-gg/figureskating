@@ -4,6 +4,7 @@ import { url } from '../lib/url.js';
 import { BUILD_ID } from '../lib/build-id.js';
 import { tokenCSS } from '../lib/tokens.js';
 import { notebookCSS, TABS, tabFor } from '../lib/notebook.js';
+import { COUNTRIES, countryOf, curl, localised, splitPath } from '../lib/country.js';
 import { CONTACT, DONATE } from '../lib/site.js';
 /* The version travels in the query string so the browser sees a byte-different
    worker on every deploy and reinstalls it, and so the worker can name its cache
@@ -27,6 +28,27 @@ const useSW = import.meta.env.PROD;
 /* The notebook's index tab for this page, if it has one. Element pages pass their
    kind; section, grade and test pages are worked out from the path. */
 const tab = tabFor(Astro.url.pathname, kind);
+/* THE COUNTRY THIS PAGE BELONGS TO, read off its path: /us/elements/lfo/ is the
+   USA's copy of /elements/lfo/. Links in the layout go through `curl`, so the nav
+   on a country page stays in that country. See src/lib/country.js. */
+const { cc, rest } = splitPath(Astro.url.pathname);
+const here = countryOf(cc);
+const hasCopies = localised(rest);
+const nav = p => curl(cc, p);
+/* Where each choice in the selector goes: this page's own copy in that country
+   where it has one, that country's front page where it does not. */
+const choices = [
+  /* The 404 page is built at /404.html but served at whatever path was missing,
+     so its own path is no place to send anyone. */
+  { id: 'all', label: 'All countries', href: /^404/.test(rest) ? url() : url(rest) },
+  ...COUNTRIES.map(c => ({ id: c.id, label: c.short, href: hasCopies ? url(`${c.id}/${rest}`) : url(`${c.id}/`) })),
+];
+/* The same page in the other copies, for search engines. The root is x-default,
+   because it is the guide for every country at once. */
+const alternates = hasCopies ? [
+  { lang: 'x-default', href: new URL(url(rest), Astro.site).href },
+  ...COUNTRIES.map(c => ({ lang: c.lang, href: new URL(url(`${c.id}/${rest}`), Astro.site).href })),
+] : [];
 ---
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -46,6 +68,7 @@ const tab = tabFor(Astro.url.pathname, kind);
   {/* Canonical, because the same page is reachable at the apex and at www until
       GitHub's redirect settles, and search engines should be in no doubt. */}
   <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+  {alternates.map(a => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
   {/* The palette comes out of src/lib/tokens.js, which tools/contrast.mjs also
       imports and measures. Colours are not written here any more — a hex code in
       this file would be a second source of truth and the checker would not see it. */}
@@ -62,6 +85,21 @@ const tab = tabFor(Astro.url.pathname, kind);
       if (localStorage.getItem('theme') === 'formal') document.documentElement.dataset.theme = 'formal';
     } catch (e) {}
   </script>
+  {/* A reader who chose a country and lands on the root copy of a page that has a
+      country copy is taken to theirs. Only on an explicit choice made in the
+      selector, never from having followed a link to a country page, and "All
+      countries" clears it. Replace, so the back button does not bounce. */}
+  {!cc && hasCopies && (
+    <script is:inline define:vars={{ countries: COUNTRIES.map(c => c.id), base: url() }}>
+      try {
+        var c = localStorage.getItem('country');
+        if (countries.indexOf(c) >= 0) {
+          var rest = location.pathname.slice(base.length);
+          location.replace(base + c + '/' + rest + location.search + location.hash);
+        }
+      } catch (e) {}
+    </script>
+  )}
   <style is:global>
     *{box-sizing:border-box} html,body{margin:0}
     /* A class that sets display must not undo the hidden attribute. */
@@ -87,6 +125,19 @@ const tab = tabFor(Astro.url.pathname, kind);
       border-radius:999px;background:none;color:var(--accent);cursor:pointer;font:inherit;
       display:flex;align-items:center;gap:.4rem}
     nav .scheme:hover{border-color:var(--accent)}
+    /* The country selector sits just before the scheme switch and pushes both to
+       the end of the row; the scheme switch then no longer needs its own margin. */
+    nav .country{margin-left:auto;position:relative}
+    nav .country+.scheme{margin-left:.5rem}
+    nav .country summary{list-style:none;min-height:44px;padding:.6rem .8rem;border:1px solid var(--rule);
+      border-radius:999px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:.35rem}
+    nav .country summary::-webkit-details-marker{display:none}
+    nav .country summary::after{content:"";width:.4rem;height:.4rem;border:solid currentColor;
+      border-width:0 1.5px 1.5px 0;transform:rotate(45deg) translateY(-2px)}
+    nav .country ul{position:absolute;right:0;top:calc(100% + .3rem);z-index:5;list-style:none;margin:0;
+      padding:.3rem .9rem;background:var(--paper);border:1px solid var(--ice-line);border-radius:10px;
+      box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:11rem}
+    nav .country a[aria-current]{font-weight:700;color:var(--ink)}
     .lede{color:var(--ink-soft);margin:0 0 1.5rem;font-size:1.05rem}
     /* Other names for the same movement. Sits under the lede rather than in the
        meta row, because it is prose a reader needs to see, not a chip. */
@@ -193,16 +244,26 @@ const tab = tabFor(Astro.url.pathname, kind);
 <body>
   <div class="wrap">
     <nav>
-      <a href={url()}>Field Guide</a>
-      <a href={url('elements/')}>Elements</a>
-      <a href={url('tests/')}>Tests</a>
-      <a href={url('grades/')}>Grades</a>
-      <a href={url('rig/')}>Body frame</a>
-      <a href={url('search/')}>Search</a>
+      <a href={nav('')}>Field Guide</a>
+      <a href={nav('elements/')}>Elements</a>
+      <a href={nav('tests/')}>Tests</a>
+      <a href={nav('grades/')}>Grades</a>
+      <a href={nav('rig/')}>Body frame</a>
+      <a href={nav('search/')}>Search</a>
+      {/* The country selector. Plain links in a disclosure, so it works with no
+          script; the script only remembers the choice. */}
+      <details class="country">
+        <summary aria-label={`Country: ${here ? here.short : 'all countries'}. Change`}>{here ? here.code : 'World'}</summary>
+        <ul>
+          {choices.map(c => (
+            <li><a href={c.href} data-cc={c.id} aria-current={(c.id === (cc ?? 'all')) ? 'true' : undefined}>{c.label}</a></li>
+          ))}
+        </ul>
+      </details>
       <button class="scheme" type="button" aria-live="polite">Dark</button>
     </nav>
     <aside class="tabs" aria-label="Sections">
-      {TABS.map(t => <a class={`t-${t.id}`} href={url(t.href)} aria-current={t.id === tab ? 'true' : undefined}>{t.label}</a>)}
+      {TABS.map(t => <a class={`t-${t.id}`} href={nav(t.href)} aria-current={t.id === tab ? 'true' : undefined}>{t.label}</a>)}
     </aside>
     <slot />
     <footer>
@@ -253,6 +314,11 @@ const tab = tabFor(Astro.url.pathname, kind);
     })();
   </script>
   <script is:inline>
+    /* The country choice is remembered only when a reader makes one: the
+       selector, or a link that names a country and is marked as a choice. */
+    document.querySelectorAll('a[data-cc]').forEach(a => a.addEventListener('click', () => {
+      try { a.dataset.cc === 'all' ? localStorage.removeItem('country') : localStorage.setItem('country', a.dataset.cc); } catch (e) {}
+    }));
     /* Notebook or textbook. The label names the look it switches TO. */
     (() => {
       const root = document.documentElement, btn = document.querySelector('footer .theme');

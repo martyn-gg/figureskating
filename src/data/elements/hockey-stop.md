@@ -2,7 +2,8 @@
 name: Hockey stop
 kind: basic
 summary: Both feet turned sideways together, parallel, and skidded to a stop.
-aliases: ["side stop", "parallel stop"]
+aliases: ["side stop", "parallel stop", "parallel side stop"]
+names: {"nz": "Parallel side stop"}
 prerequisites: [snowplough-stop]
 sourceUrl: https://www.nzifsa.org.nz/kiwiskate/
 verified: { checked: false }

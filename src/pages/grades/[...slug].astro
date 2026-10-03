@@ -28,7 +28,7 @@ const key = (l, k) => `grade:${entry.id}:${slug(l.name)}:${k}`;
 
   {d.levels.map(l => (
     <>
-      <h2>{l.name}</h2>
+      <h2 id={slug(l.name)}>{l.name}</h2>
       {l.note && <p class="note">{l.note}</p>}
       <ul class="grade">
         {l.items.map((i, k) => (

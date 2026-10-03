@@ -12,9 +12,14 @@
    remembering to add it — which is the property the old contents strip had and the
    reason it is kept rather than hand-written. */
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import { url } from '../../lib/url.js';
-import { elementGroups, SECTION_NOTE } from '../../lib/element-groups.js';
+import Base from '../../../layouts/Base.astro';
+import { curl, COPIES } from '../../../lib/country.js';
+import { elementGroups, SECTION_NOTE } from '../../../lib/element-groups.js';
+
+/* One copy per country and one for the root: see src/lib/country.js. */
+export function getStaticPaths() { return COPIES.map(cc => ({ params: { cc } })); }
+const { cc } = Astro.params;
+const url = p => curl(cc, p);
 
 const elements = await getCollection('elements');
 const { SECTIONS, nEdges, nTurns, transitions, combos } = elementGroups(elements);

@@ -3,6 +3,7 @@ name: Backward wiggles
 kind: basic
 summary: Both feet on the ice, the body twisting to zigzag backwards. The first way of travelling backwards.
 aliases: ["back wiggles", "wiggles", "back wiggle"]
+names: {"nz": "Back wiggles"}
 prerequisites: [two-foot-glide]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }

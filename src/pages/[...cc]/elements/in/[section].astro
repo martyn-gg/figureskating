@@ -12,20 +12,23 @@
    `rest` list at the bottom, which is why the guard there filters restKinds to
    this section rather than mapping all of them. */
 import { getCollection } from 'astro:content';
-import Base from '../../../layouts/Base.astro';
-import { url } from '../../../lib/url.js';
-import EdgeThumb from '../../../components/EdgeThumb.astro';
-import PathThumb from '../../../components/PathThumb.astro';
-import { elementGroups, canonicalOf } from '../../../lib/element-groups.js';
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../lib/skating.js';
+import Base from '../../../../layouts/Base.astro';
+import { curl, COPIES } from '../../../../lib/country.js';
+import EdgeThumb from '../../../../components/EdgeThumb.astro';
+import PathThumb from '../../../../components/PathThumb.astro';
+import { elementGroups, canonicalOf } from '../../../../lib/element-groups.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../../lib/skating.js';
+const { cc } = Astro.params;
+const url = p => curl(cc, p);
 
 const allElements = await getCollection('elements');
 const G = elementGroups(allElements, await getCollection('exercises'));
 
 export async function getStaticPaths() {
   const { getCollection: gc } = await import('astro:content');
-  const { elementGroups: eg } = await import('../../../lib/element-groups.js');
-  return eg(await gc('elements')).SECTIONS.map(s => ({ params: { section: s.id }, props: { label: s.label, n: s.n } }));
+  const { elementGroups: eg } = await import('../../../../lib/element-groups.js');
+  const secs = eg(await gc('elements')).SECTIONS;
+  return COPIES.flatMap(cc => secs.map(s => ({ params: { cc, section: s.id }, props: { label: s.label, n: s.n } })));
 }
 
 const { section } = Astro.params;
@@ -39,7 +42,7 @@ const {
 
 /* What each section is, in one line, so the page says what it is for before it
    starts listing. The hub prints the same lines — one source, as ever. */
-import { SECTION_NOTE } from '../../../lib/element-groups.js';
+import { SECTION_NOTE } from '../../../../lib/element-groups.js';
 ---
 <Base title={sectionLabel} subtitle={SECTION_NOTE[section]}>
   <p class="lede"><a href={url('elements/')}>Elements</a> · {n} {sectionLabel.toLowerCase()}</p>

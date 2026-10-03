@@ -55,9 +55,14 @@ const fail = m => { bad++; console.error(`  x ${m}`); };
 const NOT_RECORDS = new Set(['', 'elements/', 'tests/', 'rig/', 'search/',
                              'elements/other-names/', 'tests/older-names/',
                              'about/', 'coaches/']);
+/* The country copies (/uk/, /us/, /au/, /nz/) are not walked. Each is a copy of a
+   root page that is checked here, and a country's search page sends its results to
+   that country's copy; tools/countries.mjs asserts every copy exists. */
+const COPIES = new Set(['uk', 'us', 'au', 'nz']);
 const pages = [];
 (function walk(dir) {
   for (const f of readdirSync(dir)) {
+    if (dir === DIST && COPIES.has(f)) continue;
     const p = join(dir, f);
     if (statSync(p).isDirectory()) walk(p);
     else if (f === 'index.html') {

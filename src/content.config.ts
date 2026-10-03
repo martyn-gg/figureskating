@@ -77,6 +77,15 @@ const elements = defineCollection({
        element: "open chassé", not "left forward outside open chassé". Nothing goes
        in here that cannot be pointed at a source — the list is short on purpose. */
     aliases: z.array(z.string()).default([]),
+    /* WHAT ONE COUNTRY'S PROGRAMME CALLS IT — 03/10/2026. The country copies
+       (src/lib/country.js) head the page with this name. It is not a translation:
+       each value is the word a governing body's own level list uses for the same
+       movement, taken from the grade pages in src/data/grades, and
+       tools/countries.mjs holds every value to being one of `aliases` too, so the
+       root copy finds it in search as well. Absent for most elements, which go by
+       one name everywhere. */
+    names: z.object({ uk: z.string(), us: z.string(), au: z.string(), nz: z.string() })
+      .partial().default({}),
     /* Poses live in the body-frame rig, not here — this only names the move. */
     rig: z.string().optional(),
     /* A TRACING FOR AN ELEMENT THAT HAS NO ENTRY EDGE — added 19/09/2026.

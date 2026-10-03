@@ -99,8 +99,10 @@ export const notebookCSS = fontBase => {
     R('.aka b', 'font-weight:500'),
 
     /* The nav row, in handwriting, with the scheme switch drawn in pencil. */
-    R('nav', `font-family:${HAND};font-size:1.3rem;border-bottom:1px dashed var(--ice-line)`),
-    R('nav .scheme,.theme', `border:1.5px solid var(--ink);color:var(--ink);font-family:${HEAD};font-size:.95rem`),
+    R('nav', `font-family:${HAND};font-size:1.22rem;border-bottom:1px dashed var(--ice-line);gap:0 .85rem`),
+    R('nav .scheme,nav .country summary', 'padding:.5rem .7rem'),
+    R('nav .scheme,.theme,nav .country summary', `border:1.5px solid var(--ink);color:var(--ink);font-family:${HEAD};font-size:.95rem`),
+    R('nav .country ul', 'border-radius:2px;border-color:var(--rule);box-shadow:2px 3px 8px rgba(0,0,0,.14)'),
 
     /* Chips as little paper labels, tilted a degree or two either way. */
     R('.chip', `font-family:${HEAD};font-size:.92rem;background:var(--ice);border:1px solid var(--rule);
@@ -130,6 +132,15 @@ export const notebookCSS = fontBase => {
     R('.bf-ctl button', `background:none;border:1.5px solid var(--ink);font-family:${HEAD}`),
     R('.bf-phase,.bf figcaption,.jumptrace figcaption,.jt-pair span', `font-family:${HAND};font-size:1.15rem;line-height:1.3`),
     R('.derived', 'background:none;border:1.5px dashed var(--ice-line);border-radius:4px'),
+    /* The front page's eight edges: small cards, the code in Kalam and the name in
+       Caveat. Not rotated, like every card that holds a drawing. The page's own
+       scoped rules carry the same weight as these, so each selector here has one
+       part more to win. */
+    R('.edge-grid a[href]', 'border:1px solid var(--rule);border-radius:2px;box-shadow:1px 2px 4px rgba(0,0,0,.1)'),
+    R('.edge-grid a b', `font-family:${HEAD};font-weight:700;letter-spacing:.03em`),
+    R('.edge-grid a span', `font-family:${HAND};font-size:1.05rem;line-height:1.15`),
+    R('.mygrades', 'background:var(--paper)'),
+    R('.mygrades p.mg-head', `font-family:${HEAD};font-weight:700`),
 
     /* Lists of links read as a handwritten index. */
     R('ul.plain li', 'border-bottom:1px dashed var(--rule)'),
@@ -141,6 +152,7 @@ export const notebookCSS = fontBase => {
     R('.tabs', 'display:flex'),
     R('.tabs a', `position:relative;display:flex;align-items:center;justify-content:center;width:26px;min-height:64px;
       writing-mode:vertical-rl;color:var(--tab-ink);text-decoration:none;font-family:${HEAD};font-size:.85rem;
+      line-height:1.2;
       border-radius:6px 0 0 6px`),
     R('.tabs a::before', 'content:"";position:absolute;inset:0 0 0 -18px'),
     R('.tabs a[aria-current]', 'width:32px;font-weight:700;box-shadow:-1px 1px 3px rgba(0,0,0,.18)'),

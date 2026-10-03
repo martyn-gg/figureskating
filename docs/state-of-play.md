@@ -35,6 +35,19 @@ work offline. Cards holding a drawing are never rotated, because the pixel check
 them. The same session added a reader's own ticks: "I can do this" on element pages and a
 box per line on grade pages with a progress bar, all in `localStorage` under `tick:`.
 
+**Country copies, 03/10/2026.** `/uk/`, `/us/`, `/au/` and `/nz/` each hold a built copy of
+the front page, search, the grades hub and every element and section page; everything else
+has one copy. `src/lib/country.js` decides which paths are copied and `curl()` keeps a
+country page's links inside its country. A copy differs from the root in three ways: an
+element is headed with the country's own name for it where `names` in its frontmatter has
+one (five elements so far, each taken from that country's grade list and each also an
+alias), "Appears in" leads with the country's grade levels, and the front page, grades hub
+and search put that country first. Search still matches every name in every country. The
+root is the copy for all countries and links each element to its four copies; a choice made
+in the selector is remembered and sends the root copy of a page to the chosen country's.
+`check:countries` holds names to aliases, every copy to existing and every link to its
+country; `--break-alias` and `--break-links` show it firing. The build is now 1,600 pages.
+
 **`sections.mjs` is the first checker that reads a page as a reader does, 02/10/2026.**
 Session 23's review found 23 element pages (all 22 basics and the slip step) printing a
 "Derived" heading over an empty bordered box: every paragraph in that block needs an entry
