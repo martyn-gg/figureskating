@@ -6,8 +6,8 @@
    roll). The step lists here are read off the dance diagrams in US Figure Skating's
    2026-27 rulebook, which carries every pattern dance with its step numbers, edges and
    beats, and the words for the abbreviations come from the key printed before them. The
-   guide does not reproduce the diagrams; it records the steps as facts and says what each
-   one is.
+   step list is recorded as facts; the rink pattern is measured off the diagram and drawn
+   by components/DancePattern.astro, which says why.
 
    `how` is the abbreviation the diagram writes after or before the edge. Where the guide
    has an element for that kind of step, `turn` names it, and a step is linked to that
@@ -31,6 +31,16 @@ export const DANCE_KEY = {
 
 /** "RFOI" → the first edge as a state; a change of edge is written as both letters. */
 export const edgeOfStep = s => ({ foot: s.edge[0], dir: s.edge[1], edge: s.edge[2] });
+
+/** The one edge a step is skated on, from any spelling of it ("XB-LFI", "RFI-Pr",
+    "LFO-SwR"): 'O' or 'I', or null where the step holds two (a change of edge, or a
+    turn inside the step), which no single colour can name. */
+export function edgeOfCode(code) {
+  const m = /([LR])([FB])(OI|IO|O|I)/.exec(code || '');
+  if (!m || m[3].length > 1) return null;
+  if (/(^|[^A-Z])3|-?(Rk|Ctr|Br)\b|Tw/.test(code.slice(m.index + m[0].length))) return null;
+  return m[3];
+}
 
 /** The step a dance step follows, wrapping round: a pattern repeats. The step before
     a change of edge ends on its second letter. */

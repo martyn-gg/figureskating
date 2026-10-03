@@ -34,3 +34,10 @@ curve at Basic; slalom (Elementary idea); forward pumping round a circle (Elemen
 backward half snowplough (Basic); drag, backward two-foot snowplough and forward pivot with
 toe in ice (Novice 1 ideas); backward two-foot turn on a curve (Advanced idea); T-stops
 (Advanced). "Teaching Progression Ideas" are taught and not tested (rule 701.2).
+
+## Pattern dances (downloaded 03/10/2026)
+
+| ✓ | Document | Why |
+|---|---|---|
+| ☑ | `ID-2020-21-Handbook-Pattern-Dances.pdf`, the ISU Handbook for Ice Dance Officials, Pattern Dances 2020-21, as NZIFSA hosts it | Descriptions, charts and diagrams of the international pattern dances; for cross-checking the later ones |
+| ☑ | `2026-Ice-Dance-Pattern-Dances-Inc-Solo-v2.pdf` | Which pattern dances NZIFSA sets for 2026 |

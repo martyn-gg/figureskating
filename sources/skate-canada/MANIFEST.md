@@ -42,3 +42,10 @@ The Assessment Guide hub links its resources to `learning.skatecanada.ca` course
 meets `docs/style.md`'s public-material rule. The public CanSkate page
 (skatecanada.ca/learn-to-skate/canskate/) describes the programme (balance, control, agility)
 and gives no skills.
+
+## Pattern dance diagrams (downloaded 03/10/2026)
+
+| ✓ | Document | Where | Why |
+|---|---|---|---|
+| ☑ | Pattern Dance Competition Technical Requirements (12/06/2025), `Pattern-Dance-Competition-Technical-Requirements-2025.pdf` | <https://skateontario.org/wp-content/uploads/2018/04/Pattern-Dance-Competition-Technical-Requirements-2025-Updated-EN-p8fol6-1.pdf> | A diagram per pattern dance, 29 of them. The Canasta Tango and Fiesta Tango patterns are measured from it (tools/dance-pattern), since U.S. Figure Skating does not carry those two. Raster images, so traced from pixels |
+| ☑ | Skate Ontario Solo Dance Patterns 2025-26, `Skate-Ontario-Solo-Dance-Patterns-2025-2026.pdf` | <https://skateontario.org/wp-content/uploads/2025/09/Skate-Ontario-Solo-Dance-Patterns-2025-2026-2025-09-24-2.pdf> | The same diagrams for the solo events; a second copy |

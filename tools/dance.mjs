@@ -18,9 +18,22 @@
    change edge, where the guide's crossed step behind, taken from British Ice Skating's
    backward ones, holds it.
 
+   AND THE MEASURED PATTERNS (src/data/patterns, drawn by components/DancePattern.astro),
+   added the same day. A pattern is traced off a diagram stroke by stroke, and the
+   step each stroke is filed under is the thing most likely to slip by one. So each
+   pattern must have exactly the dance's steps, in order; consecutive steps must meet
+   (a gap of more than 1.5 m is a stroke filed under the wrong step); every point
+   must be on the ice; the edge each stroke's label names on the diagram must be the
+   edge the step list gives; and where the diagram prints a beat numeral beside a
+   step (U.S. Figure Skating's do), it must be that step's beats. The last two hold
+   the diagram against a step list typed separately from it.
+
    Broken on purpose:
-     --break=foot   step 2 of the first dance onto the wrong foot ...... 2 (both its neighbours)
-     --break=beat   one beat added to the first step of every dance ... 5 (one per dance)
+     --break=foot     step 2 of the first dance onto the wrong foot ...... 3 (both its neighbours,
+                      and the diagram's label for it)
+     --break=beat     one beat added to the first step of every dance ... the dances, and the
+                      patterns whose diagrams print beats
+     --break=pattern  the first pattern's step labels moved along by one . every edge that differs
 
        node tools/dance.mjs
 */
@@ -28,9 +41,17 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import { stepLink, totalBeats, patternBeats, expectedBeats } from '../src/lib/dance.js';
+import { stepLink, totalBeats, patternBeats, expectedBeats, rowBeats, edgeOfCode } from '../src/lib/dance.js';
 
 const DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
+const PAT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'patterns');
+const patterns = Object.fromEntries(readdirSync(PAT).filter(f => f.endsWith('.json'))
+  .map(f => [f.replace(/\.json$/, ''), JSON.parse(readFileSync(join(PAT, f), 'utf8'))]));
+let drawn = 0, firstPattern = true;
+/* The coordinates of an SVG path's "M x y" and every later point, in order. */
+const pathPoints = d => [...d.matchAll(/(-?\d+(?:\.\d+)?)[ ,](-?\d+(?:\.\d+)?)/g)].map(m => [+m[1], +m[2]]);
+/* "XB-LFI", "RFI-Pr", "RFOI" → "LFI", "RFI", "RFOI": foot, direction, edge or edges. */
+const bareEdge = c => (/[LR][FB](?:OI|IO|O|I)/.exec(c || '') || [''])[0];
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const PER_BAR = { '3/4': 3, '4/4': 4, '2/4': 2, '6/8': 6 };
 
@@ -90,6 +111,32 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
     if (Math.abs(beats - ex.beats) > ex.slack)
       fail(`${id}: ${beats} beats, where ${D.patternSeconds} s at ${D.bpm} a minute is ${ex.beats.toFixed(1)}`); }
   const S = d.dance.steps || d.dance.chart;
+  const P = patterns[id];
+  if (P) { drawn++;
+    let st = P.steps.map(x => ({ ...x }));
+    if (BREAK === 'pattern' && firstPattern) st = st.map((x, i) => ({ ...x, label: st[(i + 1) % st.length].label }));
+    firstPattern = false;
+    if (st.length !== S.length) fail(`${id}: the pattern has ${st.length} steps and the dance ${S.length}`);
+    st.forEach((x, i) => { if (S[i] && String(S[i].n) !== x.n) fail(`${id}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${S[i].n}`); });
+    const pts = st.map(x => pathPoints(x.d));
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = pts[i].at(-1), b = pts[i + 1][0], g = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      if (g > 1.5) fail(`${id}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
+    }
+    for (const [i, q] of pts.entries())
+      if (q.some(([x, y]) => Math.abs(x) > 30 || Math.abs(y) > 15)) fail(`${id}: step ${st[i].n} leaves the ice`);
+    st.forEach((x, i) => {
+      const row = S[i]; if (!row) return;
+      const mine = bareEdge(row.edge || row.lead || row.follow), theirs = bareEdge(x.label);
+      if (mine !== theirs) fail(`${id}: step ${x.n} is ${theirs} on the diagram and ${mine} in the step list`);
+    });
+    for (const [n, v] of (P.check && P.check.beats) || []) {
+      const i = S.findIndex(r => String(r.n) === n); if (i < 0) continue;
+      const r = S[i];
+      const b = D.chart ? rowBeats(r) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
+      if (b !== v) fail(`${id}: step ${n} has ${b} beats in the step list and ${v} printed beside it on the diagram`);
+    }
+  }
   console.log(`  ${bad ? '  ' : 'ok'} ${id.padEnd(20)} ${String(S.length).padStart(2)} steps, ${beats} beats in ${D.meter}${ex ? `, timing chart ${ex.beats.toFixed(1)}` : ''}`);
 }
 
@@ -99,5 +146,5 @@ if (notes.length) {
 }
 console.log(bad
   ? `\n${bad} problem${bad === 1 ? '' : 's'} in the step lists`
-  : `\n${dances} pattern dances, ${steps} steps: numbered in order, whole bars, ${timed} of them against the timing chart,\nand the step lists alternating feet`);
+  : `\n${dances} pattern dances, ${steps} steps: numbered in order, whole bars, ${timed} of them against the timing chart,\nand the step lists alternating feet. ${drawn} patterns measured onto the rink, each step joined to the next,\non the ice, on the edge its diagram names and, where the diagram prints them, on its beats`);
 process.exit(bad ? 1 : 0);

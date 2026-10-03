@@ -1,5 +1,5 @@
 ---
-const { title, subtitle, kind } = Astro.props;
+const { title, subtitle, kind, measured } = Astro.props;
 import { url } from '../lib/url.js';
 import { BUILD_ID } from '../lib/build-id.js';
 import { tokenCSS } from '../lib/tokens.js';
@@ -273,8 +273,13 @@ const alternates = hasCopies ? [
         on an inside edge.
         <br /><br />
       </>}
-      Written and drawn from scratch. No governing body's material is reproduced.
-      Mechanics are unverified unless a page says otherwise.
+      {/* `measured` names the diagram a page's rink pattern was redrawn from
+          (components/DancePattern.astro), so the claim below stays true page by page. */}
+      {measured
+        ? <>Written and drawn from scratch, except the rink pattern, which is redrawn from
+            measurements of the diagram in {measured}.</>
+        : <>Written and drawn from scratch. No governing body's material is reproduced.</>}
+      {' '}Mechanics are unverified unless a page says otherwise.
       <p class="foot-links">
         <a href={url('about/')}>About</a>
         <a href={url('coaches/')}>For coaches</a>

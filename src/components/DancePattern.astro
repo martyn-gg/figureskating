@@ -1,0 +1,95 @@
+---
+/* A PATTERN DANCE ON THE RINK — 03/10/2026, Martyn: draw the patterns, and put them
+   in the outline of a 60 x 30 metre rink.
+
+   MEASURED, NOT MODELLED. The first attempt drew each step as an arc turning in
+   proportion to its beats, and it failed: a four-beat edge down the side barely
+   bends while a two-beat edge round the end turns ninety degrees, so how far a step
+   turns is a fact of where it sits on the ice, not of its count. The step list does
+   not hold that fact; the governing body's diagram does. So each pattern is measured
+   off U.S. Figure Skating's diagram (tools/dance-pattern/gen.py), into metres on the
+   rink, and stored in src/data/patterns/<slug>.json with the page it came from. Where
+   Skate Canada draws the same dance, its diagram is traced too and the two compared
+   step by step, and the caption says how closely they agree. Martyn agreed on
+   03/10/2026 that this is a redraw of their diagram and that this is fine here.
+
+   THE FRAME. x runs along the long axis, -30 to 30, in the direction of travel along
+   the side the dance starts on; y runs across, -15 to 15, with +y that side, drawn at
+   the bottom. A pattern dance travels anticlockwise, so with the start side nearest
+   the reader the dance moves left to right along it.
+
+   HALF A CIRCUIT IS DRAWN TWICE. Where the step list covers one side and one end (the
+   Dutch Waltz), the second sequence is the first turned through 180 degrees about the
+   centre of the ice, which is how the rulebook draws it and how a skater repeats it.
+   It is drawn faint and unnumbered. tools/dance-pattern/gen.py measures how far the
+   diagram's own second half sits from that turn, and the file records it.
+
+   COLOUR FOLLOWS THE EDGE, the guide's rule everywhere else: outside and inside take
+   their two colours, and a step that changes edge (RFOI) takes neither, because one
+   colour on it would name one of its two edges wrongly. The edge comes from the
+   dance's own step list, not the diagram's label; tools/dance.mjs holds the two to
+   each other. */
+import { edgeOfCode } from '../lib/dance.js';
+
+const { slug, dance } = Astro.props;
+const files = import.meta.glob('../data/patterns/*.json', { eager: true });
+const P = files[`../data/patterns/${slug}.json`]?.default;
+
+const rows = P && (dance.steps
+  ? dance.steps.map(s => ({ n: String(s.n), code: s.edge }))
+  : dance.chart.map(r => ({ n: String(r.n), code: r.lead || r.follow })));
+const edgeOf = n => {
+  const r = rows.find(x => x.n === n);
+  return r ? edgeOfCode(r.code) : null;
+};
+const ink = e => e === 'O' ? 'var(--edge-out)' : e === 'I' ? 'var(--edge-in)' : 'var(--ink)';
+const X = P && P.check && P.check.crossCheck;
+const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
+---
+{P && (
+  <figure class="pattern">
+    <svg viewBox="-32 -17.5 64 38.5" role="img"
+      aria-label={`The ${dance.name || 'dance'} pattern on a 60 by 30 metre rink, ${P.steps.length} steps, numbered in order`}>
+      <rect x="-30" y="-15" width="60" height="30" rx="8.5" class="rink" />
+      <line x1="-30" y1="0" x2="30" y2="0" class="axis" />
+      <line x1="0" y1="-15" x2="0" y2="15" class="axis" />
+      {P.circuit === 'half' && (
+        <g transform="rotate(180)" class="repeat">
+          {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n))} />)}
+        </g>
+      )}
+      {P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
+      <g class="steps">
+        {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n))}><title>{`Step ${s.n}`}</title></path>)}
+      </g>
+      {start && <circle cx={start[1]} cy={start[2]} r="0.7" class="start" />}
+      <g class="nums">
+        {P.steps.map(s => <text x={s.at[0]} y={s.at[1]}>{s.n}</text>)}
+      </g>
+      <text x="0" y="19.6" class="side">start side</text>
+    </svg>
+    <figcaption>
+      One sequence, on a 60 x 30 metre rink, starting at the dot and travelling left
+      to right along the side nearest you.
+      {P.circuit === 'half' && ' The faint half is the same steps skated again.'}
+      {P.dashed && ` The dashed line is ${P.dashed.is}.`}
+      {' '}Rinks vary, and on a smaller one the pattern shrinks to fit.
+      Measured from the diagram in {P.source}.
+      {X && ` Skate Canada's diagram of the same dance is drawn at a different size; allowing for that, its steps sit on average ${X.meanApartAfterScaling.toFixed(1)} m from these.`}
+    </figcaption>
+  </figure>
+)}
+
+<style>
+  .pattern { margin: 1rem 0 1.25rem; }
+  .pattern svg { width: 100%; height: auto; display: block; }
+  .rink { fill: var(--ice); stroke: var(--ink-soft); stroke-width: 0.18; }
+  .axis { stroke: var(--ink-soft); stroke-width: 0.08; stroke-dasharray: 1.2 0.5 0.2 0.5; opacity: 0.6; }
+  path { fill: none; stroke-width: 0.38; stroke-linecap: round; stroke-linejoin: round; }
+  .repeat path { opacity: 0.28; }
+  .dashed { stroke: var(--ink-soft); stroke-dasharray: 0.6 0.45; stroke-width: 0.26; }
+  .start { fill: var(--ink); }
+  .nums text { font-size: 1.45px; text-anchor: middle; dominant-baseline: central; fill: var(--ink); font-weight: 600; }
+  .side { font-size: 1.3px; text-anchor: middle; fill: var(--ink-soft); }
+  figcaption { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.4rem; }
+</style>

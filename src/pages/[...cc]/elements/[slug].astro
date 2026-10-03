@@ -1,4 +1,5 @@
 ---
+import DancePattern from '../../../components/DancePattern.astro';
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import Unverified from '../../../components/Unverified.astro';
@@ -22,6 +23,10 @@ const { cc } = Astro.params;
 const url = p => curl(cc, p);
 const { entry } = Astro.props;
 const d = entry.data;
+/* The diagram this page's rink pattern was measured from, if it has one; the footer
+   says so in place of its usual "no governing body's material" line. */
+const patternFiles = import.meta.glob('../../../data/patterns/*.json', { eager: true });
+const patternSource = patternFiles[`../../../data/patterns/${entry.id}.json`]?.default?.source;
 const { Content } = await render(entry);
 
 /* Every test that references this element, in any country. Free, because tests
@@ -168,7 +173,7 @@ const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
 family.sort((a, b) => rankOf(a) - rankOf(b));
 clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
 ---
-<Base title={shown} subtitle={d.summary} kind={d.kind}>
+<Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource}>
   <h1>{shown}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
@@ -286,9 +291,9 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
 
   {d.rig && <BodyFrame move={d.rig} />}
 
-  {/* A PATTERN DANCE'S STEPS — 03/10/2026. A table rather than a drawing: the rink
-      pattern is not drawn yet. src/lib/dance.js says where the steps come from and when
-      a step links to an element. */}
+  {/* A PATTERN DANCE'S STEPS — 03/10/2026. The rink pattern where it has been measured
+      (components/DancePattern.astro), then the step table. src/lib/dance.js says where
+      the steps come from and when a step links to an element. */}
   {d.dance && (() => {
     const D = d.dance, ids = new Set(allElements.map(e => e.id));
     const used = D.steps ? [...new Set(D.steps.map(s => s.how).filter(Boolean))] : [];
@@ -297,6 +302,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       <p>{D.rhythm} in {D.meter}, {D.bpm} beats a minute. The hold is {D.hold}.
         {' '}{D.sameSteps ? 'Both partners skate the same steps.' : 'The partners skate different steps.'}
         {' '}{(D.steps || D.chart).length} steps and {patternBeats(D)} beats to one pattern.</p>
+      <DancePattern slug={entry.id} dance={{ ...D, name: d.name }} />
       {D.chart && (<>
         <table class="grid steps">
           <thead><tr><th>Step</th><th>Hold</th>

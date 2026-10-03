@@ -78,11 +78,6 @@ const cannotDraw = {
   'layback-spin':                'the arch is in the back, and the rig has a hip and shoulders and no spine between them',
   /* Pattern dances show their steps as a table. The rink pattern is a drawing of where
      each lobe goes, and the diagrams that hold it are US Figure Skating's to draw. */
-  'dutch-waltz':                 'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
-  'canasta-tango':               'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
-  'rhythm-blues':                'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
-  'fiesta-tango':                'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
-  'swing-dance':                 'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
   'american-waltz':              'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
   'argentine-tango':             'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
   'blues':                       'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
