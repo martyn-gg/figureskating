@@ -16,14 +16,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Both feet stay on the ice, parallel and close, and you swing them from side to side so that
-you travel down the ice in a series of shallow curves. The blades change edge together each
-time the swing reverses. Learn to Skate USA has the forward slalom at its third level. In
-British Ice Skating Skills 1 it is a repeated two-foot power change of edge, and the test
-lists its learning objectives as correct edges, rhythmic knee action and keeping the speed up.
+Both feet stay on the ice, parallel and close together, and you swing them from side to side
+so that you travel down the ice in short curves, as in skiing. The blades change edge together
+each time the swing reverses. Learn to Skate USA has the forward slalom at its third level. In
+British Ice Skating Skills 1 it is a repeated two-foot power change of edge, with correct
+edges, rhythmic knee action and keeping the speed up as its learning objectives.
 
-The power comes from the knees, rising through each change and bending into the new edge, and
-it should feel like a rhythm in the legs with the body travelling straight above them. The
-usual fault is steering from the shoulders, which turns the wave into a series of lurches
-with corners in it. Keep the hips quiet and change both edges at the same moment, so the two
-tracings stay parallel.
+The push comes from pressure on the outside edges, with both knees bent through each curve and
+rising at the change, and it should feel like a rhythm in the legs with the body travelling
+straight above them. The usual fault is steering from the shoulders, which turns the wave into
+a series of lurches with corners in it. Keep the hips quiet and change both edges at the same
+moment, so the two tracings stay parallel.

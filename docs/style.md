@@ -62,6 +62,14 @@ not caution for its own sake: the intention is to finish the guide from public s
 then go and ask the governing bodies what they think of it, and that conversation is a
 great deal easier if the answer to *where did you get this?* is *your website*.
 
+**One stance width, said one way.** Where both feet are on the ice and parallel, the page
+says *about hip width apart*. The two-foot glide is the defining page and adds *roughly a
+blade's length*, which is NZIFSA's 2008 KiwiSkate wording ("feet no further than a blade
+length apart") and, toe pick to heel, comes to the same width (Martyn, 03/10/2026). The
+swizzle's *shoulder width* is the widest point of a movement and is not a stance. The two
+slaloms say *close together*, because Ice Skating Australia's Aussie Skate manual asks for the
+feet "close together at all times" on the slalom specifically.
+
 ## Element pages
 
 Two or three paragraphs. **Ninety to a hundred and sixty words on a hand-written page,

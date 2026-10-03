@@ -13,8 +13,8 @@ verified: { checked: false }
 ---
 
 You push once, bring both feet under you, and let the skates run. The blades sit flat and
-parallel, a little under hip width apart, with the ankles and knees slightly bent and the arms
-out to the sides. Learn to Skate USA asks for it at its first level.
+parallel, about hip width apart (roughly a blade's length), with the ankles and knees slightly
+bent and the arms out to the sides. Learn to Skate USA asks for it at its first level.
 
 It feels like standing still while the rink moves. The weight sits over the middle of the
 blades: too far forward and the toe picks catch, too far back and the skates run out from under

@@ -11,8 +11,8 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Both blades flat and parallel, running backwards, knees bent, with the weight a shade further
-forward over the balls of the feet than it sits going forwards.
+Both blades flat, parallel and about hip width apart, running backwards, knees bent, with the
+weight a shade further forward over the balls of the feet than it sits going forwards.
 
 Keeping the shoulders slightly ahead of the hips feels like leaning into a fall, and it is what
 keeps you upright. Going backwards the heel of the blade leads and there is nothing behind it,

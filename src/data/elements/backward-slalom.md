@@ -16,10 +16,11 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Both blades parallel and swinging side to side while you travel backwards. It draws the same
-wave as the forward slalom, changing edge on both feet at once. British Ice Skating Skills 1
-asks for it as the second side of the slalom exercise, with the same objectives of correct
-edges, rhythmic knee action and speed throughout.
+Both blades parallel and close together, swinging side to side while you travel backwards. It
+draws the same wave as the forward slalom, changing edge on both feet at once. British Ice
+Skating Skills 1 asks for it as the second side of the slalom exercise, with the same
+objectives of correct edges, rhythmic knee action and speed throughout, and Ice Skating
+Australia's Aussie Skate manual puts the emphasis on knee bend, lean and posture.
 
 The weight sits forward, as it does for everything backwards, and the eyes look back over one
 shoulder while the body stays square to the line. It feels harder to hold straight than the

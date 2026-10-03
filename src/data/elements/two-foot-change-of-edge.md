@@ -14,10 +14,10 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-With both feet on the ice you roll the blades across the flat and onto the other pair of edges,
-so that the curve reverses. No foot leaves the ice and nothing pushes: the change is made by
-moving the body across the blades. The British Ice Skating Skills 1 slalom is built from it,
-repeated as a two-foot power change of edge.
+With both feet on the ice, about hip width apart, you roll the blades across the flat and onto
+the other pair of edges, so that the curve reverses. No foot leaves the ice and nothing pushes:
+the change is made by moving the body across the blades. The British Ice Skating Skills 1
+slalom is built from it, repeated as a two-foot power change of edge.
 
 Done well, the change feels like a sway of the knees and ankles that carries the whole body
 over. The usual fault is steering with one foot and following with the other. The two tracings

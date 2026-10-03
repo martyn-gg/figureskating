@@ -88,3 +88,10 @@ itself is served from `dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/usafs.
 which the session proxy refuses, so nothing is downloaded yet. The Moves in the Field link
 above (`/sites/default/files/media-files/...`) now answers "Invalid data detected in
 QueryString" and the test-requirements page no longer links it.
+
+## Held, downloaded 03/10/2026 from the cloudfront host
+
+| File | Pages | Use |
+|---|---|---|
+| Singles_Test_Requirements_2026-27.pdf | 8 | Free skating test chart. Contains no moves; "may include skating skills" only |
+| 2026-27_Rulebook.pdf | 451 | Includes the **Skating Skills** tests, the current name for Moves in the Field (from "Pre-Preliminary Skating Skills" up). This is the document the turns pass wants |

@@ -8,15 +8,13 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-One toe pick goes into the ice and stays there while the other foot skates a circle round it,
-so you rotate about a fixed point and do not travel. The tracing is a circle with a dot at its
-centre.
+One toe pick goes into the ice and stays there while the other foot travels a circle round it
+on a forward inside edge, so you rotate about a fixed point and do not travel. The tracing is a
+circle with a dot at its centre. Ice Skating Australia's Aussie Skate manual asks for one to two
+revolutions, with the heel of the pivoting foot aimed at the circling foot.
 
 The anchoring foot does more work than it appears to. The pick is set with real weight through
-it and the knee bent, and it should feel planted. The circling foot rides on an inside edge and
-keeps pushing without a break, which keeps the rotation smooth. The usual fault is a pick that
-only rests on the ice: it skips, the centre wanders, the circle comes out as a spiral and the
-movement stops being a pivot.
-
-Elsewhere in skating the pick leaves the ice. This is one of the few movements that use it to
-hold position.
+it and the knee bent, and it should feel planted. The circling foot glides round on its edge
+with no pumping, which the same manual rules out, so the speed has to be there before the pick
+goes in. The usual fault is a pick that only rests on the ice: it skips, the centre wanders,
+and the circle comes out as a spiral.
