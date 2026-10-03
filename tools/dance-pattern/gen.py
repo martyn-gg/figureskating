@@ -23,16 +23,22 @@ turned through 180 degrees, and the beat numeral printed beside each step.
 import json, re, os, numpy as np, sys
 sys.path.insert(0, 'tools/dance-pattern')
 import pymupdf
-from extract import extract, page_geometry, pts, bez
+from extract import extract, best, page_geometry, pts, bez
 from raster import digitise_labelled
 RB = 'sources/usfs/2026-27_Rulebook.pdf'
 f2 = lambda v: float(f'{v:.2f}')
 
 def bezpath(segs):
-    s = segs[0][0]; d = f'M{f2(s[0])} {f2(s[1])}'
+    """Cubic Beziers as an SVG path; a new subpath where one stroke ends short of the
+    next (a step the diagram draws in two pieces)."""
+    d = ''; cur = None
     for a, b, c, e in segs:
+        a = np.array(a)
+        if cur is None or np.linalg.norm(a - cur) > 0.02:
+            d += f' M{f2(a[0])} {f2(a[1])}'
         d += f' C{f2(b[0])} {f2(b[1])} {f2(c[0])} {f2(c[1])} {f2(e[0])} {f2(e[1])}'
-    return d
+        cur = np.array(e)
+    return d.strip()
 
 def smooth(P, w=3):
     if len(P) < 2*w+1: return P
@@ -94,14 +100,31 @@ def anchor(P, off=1.6):
     q = P[i] + n*off
     return [f2(q[0]), f2(q[1])]
 
-def usfs(slug, page, circuit, label, dashed=None):
-    R = extract(RB, page)
+def chart_of(slug):
+    fm = open(f'src/data/elements/{slug}.md').read().split('---')[1]
+    import yaml
+    D = yaml.safe_load(fm)['dance']
+    return D.get('chart')
+
+def same_steps(slug):
+    import yaml
+    return yaml.safe_load(open(f'src/data/elements/{slug}.md').read().split('---')[1])['dance'].get('sameSteps', False)
+
+def usfs(slug, page, label, dashed=None):
+    chart = chart_of(slug)
+    R, scores = best(RB, page, chart)
+    circuit = R['circuit']
     steps = [{'n': s['n'], 'label': s['text'], 'd': bezpath(s['segs']), 'at': anchor(pts(s['segs']))} for s in R['steps']]
     rec = {'source': f'U.S. Figure Skating 2026-27 Rulebook, {label}', 'measured': 'vector', 'circuit': circuit, 'steps': steps}
-    pp = partners(page, np.vstack([pts(s['segs']) for s in R['steps']]) if circuit == 'half' else None)
-    if pp: rec['dashed'] = {'is': dashed, 'd': pp}
-    rec['check'] = {'repeatMaxDev': R['repeat'] and circuit == 'half' and f2(R['repeat']['maxDev']) or None, 'maxGap': f2(max(R['gaps'])),
-                    'beats': [[n, v] for n, v, _ in R['beats']]}
+    if dashed:
+        pp = partners(page, np.vstack([pts(s['segs']) for s in R['steps']]) if circuit == 'half' else None)
+        if pp: rec['dashed'] = {'is': dashed, 'd': pp}
+    rec['check'] = {'method': R['method'], 'diagramFitsTurnedOrDrawn': f2(R['repeat']['maxDev']),
+                    'maxGap': f2(max(R['gaps'])), 'maxLabelDistance': f2(max(s['labelDist'] for s in R['steps'])),
+                    # where one diagram numbers both partners' steps, their beat numerals
+                    # crowd each other and cannot be told apart: none are recorded
+                    'beats': [] if (chart and not same_steps(slug) and circuit == 'half')
+                             else [[n, v] for n, v, _ in R['beats']]}
     return rec
 
 SC = 'sources/skate-canada/Pattern-Dance-Competition-Technical-Requirements-2025.pdf'
@@ -142,7 +165,7 @@ def cross_check(rec, page, img, sp, rp, splits):
     for i, P in enumerate(S):
         if i in splits: a, b, _ = kink(P); pieces += [a, b]
         else: pieces.append(P)
-    U = extract(RB, page)['steps']
+    U = best(RB, page, chart_of(rec['slug']))[0]['steps']
     assert len(pieces) == len(U), (img, len(pieces), len(U))
     A = [resample(pts(u['segs'])) for u in U]; B = [resample(P) for P in pieces]
     a, b = np.vstack(A), np.vstack(B); fit = []
@@ -156,13 +179,46 @@ def cross_check(rec, page, img, sp, rp, splits):
         'meanApartAfterScaling': f2(np.mean(per)), 'worstStep': [U[int(np.argmax(per))]['n'], f2(max(per))]}
     return rec
 
-out = {
- 'dutch-waltz': cross_check(usfs('dutch-waltz', 334, 'half', 'page Dance-6'), 334, 'dutch', [300,562], [58,120], []),
- 'canasta-tango': cross_check(usfs('canasta-tango', 336, 'half', 'page Dance-8', 'step 14 as a cross roll, which the rulebook allows'), 336, 'canasta', [228,538], [140,140], []),
- 'rhythm-blues': usfs('rhythm-blues', 338, 'half', 'page Dance-10', 'step 15 crossed behind, which the rulebook allows'),
- 'swing-dance': usfs('swing-dance', 340, 'full', 'page Dance-12', "the second partner's track where the two skate apart, hand in hand"),
- 'fiesta-tango': cross_check(usfs('fiesta-tango', 344, 'half', 'page Dance-16'), 344, 'fiesta', [320,578], [82,136], [1, 8]),
-}
+DANCES = [  # slug, rulebook page index (1-based in the PDF), the page's own label, dashed lines
+ ('dutch-waltz', 334, 'page Dance-6', None),
+ ('canasta-tango', 336, 'page Dance-8', 'step 14 as a cross roll, which the rulebook allows'),
+ ('rhythm-blues', 338, 'page Dance-10', 'step 15 crossed behind, which the rulebook allows'),
+ ('swing-dance', 340, 'page Dance-12', "the second partner's track where the two skate apart, hand in hand"),
+ ('fiesta-tango', 344, 'page Dance-16', None),
+ ('hickory-hoedown', 346, 'page Dance-18', None),
+ ('willow-waltz', 348, 'page Dance-20', None),
+ ('ten-fox', 350, 'page Dance-22', None),
+ ('fourteenstep', 353, 'page Dance-25', None),
+ ('european-waltz', 356, 'page Dance-28', None),
+ ('foxtrot', 359, 'page Dance-31', None),
+ ('american-waltz', 362, 'page Dance-34', None),
+ ('rocker-foxtrot', 368, 'page Dance-40', None),
+ ('kilian', 371, 'page Dance-43', None),
+ ('blues', 374, 'page Dance-46', None),
+ ('starlight-waltz', 381, 'page Dance-53, the lead\'s diagram', None),
+ ('viennese-waltz', 385, 'page Dance-57, the lead\'s diagram', None),
+ ('westminster-waltz', 389, 'page Dance-61, the lead\'s diagram', None),
+ ('quickstep', 393, 'page Dance-65', None),
+ ('argentine-tango', 396, 'page Dance-68, the lead\'s diagram', None),
+ ('ravensburger-waltz', 426, 'page Dance-98, the lead\'s diagram', None),
+ ('rhumba', 430, 'page Dance-102', None),
+ ('paso-doble', 377, "page Dance-49, the lead's diagram", None),
+ ('cha-cha-congelado', 406, 'page Dance-78', None),
+ ('silver-samba', 433, "page Dance-105, the lead's diagram", None),
+ ('yankee-polka', 450, "page Dance-122, the lead's diagram", None),
+]
+CROSS = {'dutch-waltz': ('dutch', [300,562], [58,120], []),
+         'canasta-tango': ('canasta', [228,538], [140,140], []),
+         'fiesta-tango': ('fiesta', [320,578], [82,136], [1, 8])}
+only = set(sys.argv[1:])
+out = {}
+for slug, page, label, dashed in DANCES:
+    if only and slug not in only: continue
+    rec = usfs(slug, page, label, dashed); rec['slug'] = slug
+    if slug in CROSS:
+        img, sp, rp, splits = CROSS[slug]; rec = cross_check(rec, page, img, sp, rp, splits)
+    del rec['slug']
+    out[slug] = rec
 os.makedirs('src/data/patterns', exist_ok=True)
 for k, v in out.items():
     json.dump(v, open(f'src/data/patterns/{k}.json', 'w'), indent=1)

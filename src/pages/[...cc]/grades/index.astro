@@ -11,16 +11,18 @@ const { cc } = Astro.params;
 const url = p => curl(cc, p);
 
 const grades = (await getCollection('grades')).sort((a, b) => a.data.order - b.data.order);
-/* On a country copy that country comes first, and the rest follow in the usual
-   order so a skater who has moved can still find their old programme. */
+/* The root copy lists every country's programmes. A country copy lists only its
+   own (Martyn, 03/10/2026: on the UK copy, British Ice Skating only), with one line
+   back to the full list for a skater who has moved or trains abroad. That link is a
+   choice of country, so it carries data-cc like the front page's (tools/countries.mjs). */
 const here = countryOf(cc);
-const COUNTRIES = ['UK', 'USA', 'New Zealand', 'Australia']
-  .sort((a, b) => (b === here?.grades) - (a === here?.grades));
+const COUNTRIES = here ? [here.grades] : ['UK', 'USA', 'New Zealand', 'Australia'];
+const rootUrl = p => curl(undefined, p);
 const pages = g => g.data.levels.flatMap(l => l.items.filter(i => i.page)).length;
 const linked = g => new Set(g.data.levels.flatMap(l => l.items.flatMap(i => i.elements.map(r => r.id)))).size;
 ---
-<Base title="Grades by country" subtitle="Start from your level and work in to the elements it asks for.">
-  <h1>Grades by country</h1>
+<Base title={here ? `Grades in ${here.name}` : 'Grades by country'} subtitle="Start from your level and work in to the elements it asks for.">
+  <h1>{here ? `Grades in ${here.name}` : 'Grades by country'}</h1>
   <p class="lede">
     Each page lays out one programme's levels in its own order and names, and links each
     skill to the element in this guide. Where the guide has no page for a skill, the line
@@ -29,7 +31,7 @@ const linked = g => new Set(g.data.levels.flatMap(l => l.items.flatMap(i => i.el
   {COUNTRIES.map(c => {
     const gs = grades.filter(g => g.data.country === c);
     return gs.length > 0 && (<>
-      <h2>{c}</h2>
+      {!here && <h2>{c}</h2>}
       <ul class="plain">
         {gs.map(g => (
           <li><a href={url(`grades/${g.id}/`)}>{g.data.name}</a>
@@ -39,9 +41,16 @@ const linked = g => new Set(g.data.levels.flatMap(l => l.items.flatMap(i => i.el
       </ul>
     </>);
   })}
-  <h2>Canada</h2>
-  <p>
-    Skate Canada's CanSkate and STAR programmes publish their skill requirements through
-    course enrolment and a shop, not on a public page, so the guide does not lay them out.
-  </p>
+  {here ? (
+    <p>
+      These are {here.bodies}'s programmes. Other countries' grades are on the
+      {' '}<a href={rootUrl('grades/')} data-cc="all">copy for every country</a>.
+    </p>
+  ) : (<>
+    <h2>Canada</h2>
+    <p>
+      Skate Canada's CanSkate and STAR programmes publish their skill requirements through
+      course enrolment and a shop, not on a public page, so the guide does not lay them out.
+    </p>
+  </>)}
 </Base>

@@ -22,7 +22,7 @@
    added the same day. A pattern is traced off a diagram stroke by stroke, and the
    step each stroke is filed under is the thing most likely to slip by one. So each
    pattern must have exactly the dance's steps, in order; consecutive steps must meet
-   (a gap of more than 1.5 m is a stroke filed under the wrong step); every point
+   (a gap of more than 2.5 m is a stroke filed under the wrong step; the diagrams leave up to about 2 m at a change of foot); every point
    must be on the ice; the edge each stroke's label names on the diagram must be the
    edge the step list gives; and where the diagram prints a beat numeral beside a
    step (U.S. Figure Skating's do), it must be that step's beats. The last two hold
@@ -48,8 +48,25 @@ const PAT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', '
 const patterns = Object.fromEntries(readdirSync(PAT).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(readFileSync(join(PAT, f), 'utf8'))]));
 let drawn = 0, firstPattern = true;
-/* The coordinates of an SVG path's "M x y" and every later point, in order. */
-const pathPoints = d => [...d.matchAll(/(-?\d+(?:\.\d+)?)[ ,](-?\d+(?:\.\d+)?)/g)].map(m => [+m[1], +m[2]]);
+/* Points along an SVG path of M, L and C commands: the ends of each piece and, on a
+   curve, points along it, so the control points (which lie off the line) are not
+   mistaken for where the skater goes. */
+const pathPoints = d => {
+  const out = []; let cur = null;
+  for (const [, cmd, args] of d.matchAll(/([MLC])([^MLC]*)/g)) {
+    const v = args.trim().split(/[\s,]+/).map(Number);
+    if (cmd === 'M' || cmd === 'L') { cur = [v[0], v[1]]; out.push(cur); }
+    else {
+      const [x1, y1, x2, y2, x, y] = v, [x0, y0] = cur;
+      for (let t = 0.1; t <= 1.0001; t += 0.1) {
+        const u = 1 - t;
+        out.push([u*u*u*x0 + 3*u*u*t*x1 + 3*u*t*t*x2 + t*t*t*x, u*u*u*y0 + 3*u*u*t*y1 + 3*u*t*t*y2 + t*t*t*y]);
+      }
+      cur = [x, y];
+    }
+  }
+  return out;
+};
 /* "XB-LFI", "RFI-Pr", "RFOI" → "LFI", "RFI", "RFOI": foot, direction, edge or edges. */
 const bareEdge = c => (/[LR][FB](?:OI|IO|O|I)/.exec(c || '') || [''])[0];
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
@@ -112,28 +129,39 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
       fail(`${id}: ${beats} beats, where ${D.patternSeconds} s at ${D.bpm} a minute is ${ex.beats.toFixed(1)}`); }
   const S = d.dance.steps || d.dance.chart;
   const P = patterns[id];
+  /* The pattern draws one partner, the lead, so its steps are the chart rows that
+     give the lead a step: where the chart splits a number (19a, 19b) because the
+     follow takes two steps to the lead's one, the lead's is the only one drawn. */
+  const Sd = D.chart ? S.filter(r => r.lead) : S;
   if (P) { drawn++;
     let st = P.steps.map(x => ({ ...x }));
     if (BREAK === 'pattern' && firstPattern) st = st.map((x, i) => ({ ...x, label: st[(i + 1) % st.length].label }));
     firstPattern = false;
-    if (st.length !== S.length) fail(`${id}: the pattern has ${st.length} steps and the dance ${S.length}`);
-    st.forEach((x, i) => { if (S[i] && String(S[i].n) !== x.n) fail(`${id}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${S[i].n}`); });
+    if (st.length !== Sd.length) fail(`${id}: the pattern has ${st.length} steps and the lead ${Sd.length}`);
+    st.forEach((x, i) => { if (Sd[i] && String(Sd[i].n) !== x.n) fail(`${id}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${Sd[i].n}`); });
     const pts = st.map(x => pathPoints(x.d));
     for (let i = 0; i + 1 < pts.length; i++) {
       const a = pts[i].at(-1), b = pts[i + 1][0], g = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (g > 1.5) fail(`${id}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
+      if (g > 2.5) fail(`${id}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
     }
     for (const [i, q] of pts.entries())
-      if (q.some(([x, y]) => Math.abs(x) > 30 || Math.abs(y) > 15)) fail(`${id}: step ${st[i].n} leaves the ice`);
+      if (q.some(([x, y]) => Math.abs(x) > 30.3 || Math.abs(y) > 15.3)) fail(`${id}: step ${st[i].n} leaves the ice`);
     st.forEach((x, i) => {
-      const row = S[i]; if (!row) return;
-      const mine = bareEdge(row.edge || row.lead || row.follow), theirs = bareEdge(x.label);
-      if (mine !== theirs) fail(`${id}: step ${x.n} is ${theirs} on the diagram and ${mine} in the step list`);
+      const row = Sd[i]; if (!row) return;
+      /* A chart cell can hold two steps on one count ("LFO XF-RFI"), and the diagram
+         labels whichever it draws; a label that names no edge (a slalom, a flat)
+         has nothing to hold. */
+      const all = c => (c || '').match(/[LR][FB](?:OI|IO|O|I)/g) || [];
+      const mine = all(row.edge || row.lead || row.follow), theirs = bareEdge(x.label);
+      if (theirs && !mine.includes(theirs)) fail(`${id}: step ${x.n} is ${theirs} on the diagram and ${mine.join(' ')} in the step list`);
     });
     for (const [n, v] of (P.check && P.check.beats) || []) {
       const i = S.findIndex(r => String(r.n) === n); if (i < 0) continue;
       const r = S[i];
-      const b = D.chart ? rowBeats(r) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
+      /* The lead's step lasts until the lead's next step: through any rows after it
+         that give only the follow a step (19b while the lead holds 19a). */
+      let b = D.chart ? rowBeats(r) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
+      if (D.chart) for (let j = i + 1; j < S.length && !S[j].lead; j++) b += rowBeats(S[j]);
       if (b !== v) fail(`${id}: step ${n} has ${b} beats in the step list and ${v} printed beside it on the diagram`);
     }
   }

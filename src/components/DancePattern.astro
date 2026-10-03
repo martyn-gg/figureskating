@@ -14,9 +14,12 @@
    03/10/2026 that this is a redraw of their diagram and that this is fine here.
 
    THE FRAME. x runs along the long axis, -30 to 30, in the direction of travel along
-   the side the dance starts on; y runs across, -15 to 15, with +y that side, drawn at
-   the bottom. A pattern dance travels anticlockwise, so with the start side nearest
-   the reader the dance moves left to right along it.
+   the side the dance starts on; y runs across, -15 to 15, with +y that side. It is
+   drawn upright, as U.S. Figure Skating and Skate Canada both draw their diagrams:
+   x up the page and +y to the right, so the dance starts low on the right and
+   travels up it, anticlockwise. Martyn, 03/10/2026: upright, so a skater holding
+   the guide beside a rulebook sees the same picture, and a phone gets twice the
+   scale.
 
    HALF A CIRCUIT IS DRAWN TWICE. Where the step list covers one side and one end (the
    Dutch Waltz), the second sequence is the first turned through 180 degrees about the
@@ -38,7 +41,12 @@ const P = files[`../data/patterns/${slug}.json`]?.default;
 const rows = P && (dance.steps
   ? dance.steps.map(s => ({ n: String(s.n), code: s.edge }))
   : dance.chart.map(r => ({ n: String(r.n), code: r.lead || r.follow })));
-const edgeOf = n => {
+/* The diagram's own label names the edge it draws; tools/dance.mjs holds it to the
+   step list, which matters where one chart cell holds two steps ("LFO XF-RFI") and
+   the diagram draws the one it labels. A label naming no edge falls back to the
+   step list. */
+const edgeOf = (n, label) => {
+  if (/[LR][FB](OI|IO|O|I)/.test(label || '')) return edgeOfCode(label);
   const r = rows.find(x => x.n === n);
   return r ? edgeOfCode(r.code) : null;
 };
@@ -48,29 +56,31 @@ const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
 ---
 {P && (
   <figure class="pattern">
-    <svg viewBox="-32 -17.5 64 38.5" role="img"
+    <svg viewBox="-17.5 -32 35 64" role="img"
       aria-label={`The ${dance.name || 'dance'} pattern on a 60 by 30 metre rink, ${P.steps.length} steps, numbered in order`}>
-      <rect x="-30" y="-15" width="60" height="30" rx="8.5" class="rink" />
-      <line x1="-30" y1="0" x2="30" y2="0" class="axis" />
-      <line x1="0" y1="-15" x2="0" y2="15" class="axis" />
-      {P.circuit === 'half' && (
-        <g transform="rotate(180)" class="repeat">
-          {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n))} />)}
+      <rect x="-15" y="-30" width="30" height="60" rx="8.5" class="rink" />
+      <line x1="0" y1="-30" x2="0" y2="30" class="axis" />
+      <line x1="-15" y1="0" x2="15" y2="0" class="axis" />
+      <g transform="matrix(0 -1 1 0 0 0)">
+        {P.circuit === 'half' && (
+          <g transform="rotate(180)" class="repeat">
+            {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n, s.label))} />)}
+          </g>
+        )}
+        {P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
+        <g class="steps">
+          {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n, s.label))}><title>{`Step ${s.n}`}</title></path>)}
         </g>
-      )}
-      {P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
-      <g class="steps">
-        {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n))}><title>{`Step ${s.n}`}</title></path>)}
+        {start && <circle cx={start[1]} cy={start[2]} r="0.7" class="start" />}
       </g>
-      {start && <circle cx={start[1]} cy={start[2]} r="0.7" class="start" />}
       <g class="nums">
-        {P.steps.map(s => <text x={s.at[0]} y={s.at[1]}>{s.n}</text>)}
+        {P.steps.map(s => <text x={s.at[1]} y={-s.at[0]}>{s.n}</text>)}
       </g>
-      <text x="0" y="19.6" class="side">start side</text>
     </svg>
     <figcaption>
-      One sequence, on a 60 x 30 metre rink, starting at the dot and travelling left
-      to right along the side nearest you.
+      One sequence on a 60 x 30 metre rink, drawn upright as the rulebooks draw it,
+      starting at the dot and travelling anticlockwise.
+      {!dance.sameSteps && ' These are the lead\'s steps.'}
       {P.circuit === 'half' && ' The faint half is the same steps skated again.'}
       {P.dashed && ` The dashed line is ${P.dashed.is}.`}
       {' '}Rinks vary, and on a smaller one the pattern shrinks to fit.
@@ -82,6 +92,12 @@ const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
 
 <style>
   .pattern { margin: 1rem 0 1.25rem; }
+  /* Upright, as both rulebooks draw it: on a phone the rink's 30 m width takes the
+     screen's width, twice the scale a sideways rink gets. On a wide screen it is
+     held to a column beside the step table rather than a tower above it. */
+  @media (min-width: 760px) {
+    .pattern { float: right; width: 340px; margin: 0.25rem 0 1rem 1.5rem; }
+  }
   .pattern svg { width: 100%; height: auto; display: block; }
   .rink { fill: var(--ice); stroke: var(--ink-soft); stroke-width: 0.18; }
   .axis { stroke: var(--ink-soft); stroke-width: 0.08; stroke-dasharray: 1.2 0.5 0.2 0.5; opacity: 0.6; }
@@ -90,6 +106,5 @@ const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
   .dashed { stroke: var(--ink-soft); stroke-dasharray: 0.6 0.45; stroke-width: 0.26; }
   .start { fill: var(--ink); }
   .nums text { font-size: 1.45px; text-anchor: middle; dominant-baseline: central; fill: var(--ink); font-weight: 600; }
-  .side { font-size: 1.3px; text-anchor: middle; fill: var(--ink-soft); }
   figcaption { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.4rem; }
 </style>
