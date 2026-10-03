@@ -376,7 +376,13 @@ committed.** It measured a trailing *blade*, flat on the ice, turned out — whi
 element page said and what I took from it — and concluded that `shin.mjs` was the blocker.
 That is an answer about a pose nobody skates.
 
-**What a drag actually is:** the free boot is turned IN, the skating knee sinks far enough
+**CORRECTED 03/10/2026, by Martyn:** the free foot is turned **OUT**, not in. "The inside
+of the boot is on the ice, so the foot is turned out." Ice Skating Australia's Aussie Skate
+manual says the same of its lunge: "the dragging leg extended and turned out", blade off the
+ice. Everything else in this section stands: the contact is the inside of the boot, reached by
+rolling it, and for an extended leg turning it out *is* that roll.
+
+**What a drag actually is:** ~~the free boot is turned IN~~ the free leg is turned out (see above), the skating knee sinks far enough
 that the free blade lifts clear of the ice, and what drags is the **inside of the boot**. So
 the contact is not a blade at all, and putting the boot's inner side on the ice means rolling
 it onto that side.

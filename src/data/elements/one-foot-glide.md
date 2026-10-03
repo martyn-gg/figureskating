@@ -9,20 +9,17 @@ trace:
   path:
     - { kind: line, len: 240 }
 prerequisites: [two-foot-glide]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-From a forward glide you lift one foot and keep going on the other in a straight line. The
-skating knee stays slightly bent and the free foot is carried beside the skating leg, toe
-pointing down; Ice Skating Australia's Aussie Skate manual places it at the inside of the knee.
-In Learn to Skate USA it is a second-level skill, on either foot.
+From a glide on two feet you lift one foot and keep going on the other in a straight line. The
+free foot is carried beside the skating leg with its toe pointing down; Ice Skating Australia
+places it at the inside of the knee and asks for about a metre on each foot. Learn to Skate USA
+has it at its second level, on either foot.
 
-It feels narrow. On two feet you could borrow from whichever foot was steady; on one there is
-nothing to borrow from, and every wobble has to be answered from the ankle up. The usual fault
-is letting the free foot drift away behind, which tips the shoulders forward to balance it.
-Carried at the knee, close to the skating leg, it costs nothing, and the body stays stacked
-over the blade.
-
-Tip the blade off flat and the glide curves. That is an edge, and the next tier of the
-guide.
+On two feet the weight was shared. On one it all sits over a single blade, and the glide runs
+straight only while that blade is flat: British Ice Skating defines a flat as a straight
+tracing on one foot. New Zealand's KiwiSkate teaches the straight glide and then assesses it on
+a curve, which is the blade tipped onto an edge and the next tier of this guide. Australia keeps
+the free foot at the knee for its backward one-foot glide and its first one-foot spin.

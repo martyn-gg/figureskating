@@ -7,16 +7,16 @@ trace:
   feet: 2
   path:
     - { kind: line, len: 240 }
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Both blades flat, parallel and about hip width apart, running backwards, knees bent, with the
-weight a shade further forward over the balls of the feet than it sits going forwards.
+Both blades flat on the ice, parallel and about hip width apart, running backwards. Ice Skating Australia measures it at about a metre; New Zealand's KiwiSkate teaches it on a straight
+line and then on a curve, the same progression as the forward glide.
 
-Keeping the shoulders slightly ahead of the hips feels like leaning into a fall, and it is what
-keeps you upright. Going backwards the heel of the blade leads and there is nothing behind it,
-so the usual fault, leaning back to see or to feel safe, is the one that puts you on the ice.
-The head turns to look over one shoulder while the body keeps facing where you have come from.
-
-Almost everything harder in skating happens backwards, and it starts here.
+Australia teaches it after backward wiggles and swizzles, which give the skater the backwards
+travel to glide on, and before the backward one-foot glide. None of the documents this guide
+holds says where the weight sits, or how the head and arms are carried, while a skater glides
+backwards. Those are the details a coach watches here, so this page does not guess at them.
+What the programmes agree on is the order: the forward glide, backward wiggles, this glide,
+then the backward glide on one foot.

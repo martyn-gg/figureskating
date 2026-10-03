@@ -17,80 +17,83 @@
    page shows the four as one line. Foot-neutral, like every passage here, and held to
    the house style by `tools/house.mjs`.
 
-   Every reason is a statement about how the two movements relate, or about the order a
-   governing body teaches them in, and says which. None of them is a coach's sign-off. */
+   Every reason rests on a document in sources/ (BIS, Learn to Skate USA, NZIFSA
+   KiwiSkate, Ice Skating Australia's Aussie Skate manual, the ISU) or on the guide's own
+   definitions, and says which body it is quoting where it matters. Re-read against those
+   documents on 03/10/2026 and cut where they did not support it. None of them is a
+   coach's sign-off. */
 
 export const FOUNDATIONS = {
   'swizzle': [
-    { to: /^backward-swizzle$/, why: 'The same press and draw, travelling backwards, with the weight moved forward so the heels can push.' },
-    { to: /^forward-stroking$/, why: 'A stroke is half a swizzle: one foot presses out against its inside edge while the other glides, and the pushing foot lifts.' },
-    { to: /^half-swizzle-pumps$/, why: 'The swizzle\'s press, kept on one foot while the other holds a curve.' },
+    { to: /^backward-swizzle$/, why: 'The same in-and-out movement on both feet, travelling backwards. Learn to Skate USA teaches it one level later.' },
+    { to: /^forward-stroking$/, why: 'Learn to Skate USA teaches the swizzle at its first level and stroking at its third. Ice Skating Australia teaches half swizzles, one foot at a time, in between.' },
+    { to: /^half-swizzle-pumps$/, why: 'Half a swizzle: one foot makes the in-and-out movement while the other glides. Ice Skating Australia teaches it in a straight line and then on a circle.' },
   ],
   'backward-swizzle': [
-    { to: /^backward-half-swizzle-pumps$/, why: 'The backward press, made by one foot while the other glides round a circle.' },
-    { to: /^backward-stroking$/, why: 'The backward press taken one foot at a time, with the pushing foot lifted at the end of each push.' },
+    { to: /^backward-half-swizzle-pumps$/, why: 'Half a backward swizzle, made by one foot while the other glides round a circle.' },
+    { to: /^backward-stroking$/, why: 'Ice Skating Australia teaches backward swizzles, then backward half swizzles, then backward stroking, and rules out the toe pick in all three.' },
   ],
   'two-foot-glide': [
-    { to: /^dip$/, why: 'The dip is this glide taken down into a deep bend and back up again.' },
-    { to: /^forward-stroking$/, why: 'Every stroke ends in a glide, and the glide has to be steady before the push can be.' },
-    { to: /^one-foot-glide$/, why: 'The same balance over the middle of the blade, on half the base.' },
-    { to: /^slip-step$/, why: 'Both blades stay flat on the ice, as they do here, while one foot slides away in front.' },
-    { to: /^two-foot-change-of-edge$/, why: 'A steady two-foot glide is where both blades roll off the flat together.' },
+    { to: /^dip$/, why: 'The dip is taken from a two-foot glide: Ice Skating Australia asks for about a metre of glide and then the squat.' },
+    { to: /^forward-stroking$/, why: 'Each stroke finishes in a glide, and every programme teaches the glide first.' },
+    { to: /^one-foot-glide$/, why: 'The same straight glide with one foot lifted and carried at the inside of the skating knee.' },
+    { to: /^slip-step$/, why: 'Both blades flat on the ice, as here. In the slip step the free foot then slides forward to full extension.' },
+    { to: /^two-foot-change-of-edge$/, why: 'Both feet stay on the ice as they do here, and the change rolls them together onto the other pair of edges.' },
   ],
   'backward-two-foot-glide': [
-    { to: /^backward-one-foot-glide$/, why: 'The same forward weight over the balls of the feet, on one blade.' },
-    { to: /^backward-slalom$/, why: 'The backward slalom swings this glide from one pair of edges to the other.' },
-    { to: /^backward-stroking$/, why: 'Each backward push finishes in this glide.' },
+    { to: /^backward-one-foot-glide$/, why: 'The same straight backward glide on one foot. New Zealand and Ice Skating Australia both teach the two-foot glide first.' },
+    { to: /^backward-slalom$/, why: 'Both feet stay on the ice while travelling backwards, as here, and swing from one pair of edges to the other.' },
+    { to: /^backward-stroking$/, why: 'Each backward stroke finishes in a backward glide.' },
   ],
   'one-foot-glide': [
-    { to: /^[lr]f[oi]$/, why: 'Tip the blade of a one-foot glide off the flat and it becomes an edge.' },
-    { to: /^drag$/, why: 'The drag is a one-foot glide with the skating knee sunk deep and the free leg reaching back.' },
-    { to: /^extended-edge$/, why: 'Holding one foot for a long time starts here, on a straight line.' },
-    { to: /^pivot$/, why: 'The pivot holds the weight over one leg while the other foot works, which is the balance this glide teaches.' },
-    { to: /^spiral$/, why: 'A spiral is a one-foot glide with the free leg lifted behind to hip height or above.' },
-    { to: /^t-stop$/, why: 'The T-stop brakes out of a one-foot glide, so the glide has to hold its line first.' },
+    { to: /^[lr]f[oi]$/, why: 'The one-foot glide runs on a flat. New Zealand teaches it straight and then on a curve, which is the blade on an edge.' },
+    { to: /^drag$/, why: 'The drag is a glide on one foot with the skating knee bent deep and the free leg extended behind, turned out.' },
+    { to: /^extended-edge$/, why: 'An extended edge holds one foot for a third of a circle. The one-foot glide is where holding one foot starts.' },
+    { to: /^pivot$/, why: 'Ice Skating Australia teaches pivots at its last level, long after the one-foot glide. The circling foot glides on an inside edge.' },
+    { to: /^spiral$/, why: 'A spiral is held on one foot, on an edge, with the free leg extended behind, turned out and at least as high as the hip.' },
+    { to: /^t-stop$/, why: 'The T-stop is made from a glide on one foot, with the other foot placed behind it.' },
   ],
   'backward-one-foot-glide': [
-    { to: /^[lr]b[oi]$/, why: 'Tip the blade of a backward one-foot glide off the flat and it becomes a backward edge.' },
-    { to: /^(upright-spin|change-of-foot-spin)$/, why: 'A spin turns on one backward edge, so balance over one backward blade comes first.' },
+    { to: /^[lr]b[oi]$/, why: 'New Zealand moves the backward glide onto a curve and round a circle, which is the backward edges. Ice Skating Australia keeps the free leg in front over the tracing on them.' },
+    { to: /^(upright-spin|change-of-foot-spin)$/, why: 'Ice Skating Australia\'s two-foot spin exits on a back outside edge, and its first one-foot spin carries the free foot at the side of the knee, as this glide does.' },
   ],
   'forward-stroking': [
-    { to: /^[lr]f[oi]$/, why: 'An edge is a stroke held longer on one foot.' },
-    { to: /^[lr]f[oi]-chasse$/, why: 'A chassé is the push with a step in it: the free foot goes down beside the skating foot and the old one lifts.' },
-    { to: /^[lr]f[oi]-slipchasse$/, why: 'A slip chassé is that same step, with the old foot sliding away along the ice as it leaves.' },
-    { to: /^[lr]f[oi]-crossroll$/, why: 'A cross roll is a push taken across the skating foot onto the outside edge of the other.' },
-    { to: /^[lr]f[oi]-stepwide$/, why: 'A wide step is a push placed onto the other foot, out to the side and clear of the skating foot.' },
-    { to: /^slip-step$/, why: 'Every stroke holds the weight over one leg while the other foot moves along the ice, and the slip step asks for the same.' },
+    { to: /^[lr]f[oi]$/, why: 'An edge is a stroke held on one foot round a curve. Ice Skating Australia already asks for each stroke to be held for the skater\'s height.' },
+    { to: /^[lr]f[oi]-chasse$/, why: 'British Ice Skating defines a chassé as two edges, the free foot set down beside the skating foot on the second and lifted again with the blade parallel to the ice.' },
+    { to: /^[lr]f[oi]-slipchasse$/, why: 'British Ice Skating\'s slip chassé is the chassé with the free foot sliding off the ice in front on the second step.' },
+    { to: /^[lr]f[oi]-crossroll$/, why: 'British Ice Skating\'s cross roll brings the free foot in from the side and past the skating foot onto the next outside curve, the weight rolling across with it.' },
+    { to: /^[lr]f[oi]-stepwide$/, why: 'A wide step changes feet as a stroke does, with the new foot placed out to the side and nothing crossing.' },
+    { to: /^slip-step$/, why: 'British Ice Skating\'s slip step keeps the weight over the skating leg while the free foot slides forward along the ice.' },
   ],
   'backward-stroking': [
-    { to: /^[lr]b[oi]$/, why: 'A backward edge is a backward stroke held longer on one foot.' },
+    { to: /^[lr]b[oi]$/, why: 'Ice Skating Australia holds each backward stroke for two to three seconds with the free foot in front over the tracing, and its backward edges keep the free leg in the same place.' },
     { to: /^[lr]b[oi]-pushback$/, why: 'A push back is a backward stroke taken from a named edge onto the outside edge of the other foot.' },
-    { to: /^[lr]b[oi]-chasse$/, why: 'A backward chassé is the backward push with a step in it: the free foot goes down beside the skating foot and the old one lifts.' },
-    { to: /^[lr]b[oi]-slipchasse$/, why: 'A backward slip chassé is that same step, with the old foot sliding away along the ice as it leaves.' },
-    { to: /^[lr]b[oi]-crossroll$/, why: 'A backward cross roll is a push taken across the skating foot onto the outside edge of the other.' },
-    { to: /^[lr]b[oi]-stepwide$/, why: 'A backward wide step is a push placed onto the other foot, out to the side and clear of the skating foot.' },
+    { to: /^[lr]b[oi]-chasse$/, why: 'British Ice Skating\'s chassé, skated backwards: two edges, the free foot set down beside the skating foot on the second and lifted again.' },
+    { to: /^[lr]b[oi]-slipchasse$/, why: 'British Ice Skating\'s slip chassé, skated backwards, slides the free foot off the ice to the back on the second step.' },
+    { to: /^[lr]b[oi]-crossroll$/, why: 'British Ice Skating\'s cross roll, skated backwards: the free foot passes the skating foot onto the next outside curve.' },
+    { to: /^[lr]b[oi]-stepwide$/, why: 'A backward wide step changes feet as a backward stroke does, with the new foot placed out to the side and nothing crossing.' },
   ],
   'half-swizzle-pumps': [
-    { to: /^[lr]f[oi]-crossover$/, why: 'A crossover keeps the pumps\' circle and push, and the free foot crosses in front where it would have closed. Learn to Skate USA teaches it the level after.' },
-    { to: /^[lr]f[oi]-crossbehind$/, why: 'The same pump on a circle, with the free foot crossing behind the skating foot.' },
+    { to: /^[lr]f[oi]-crossover$/, why: 'Learn to Skate USA teaches forward crossovers one level after the pumps, on the same circle. In Ice Skating Australia\'s description the outside leg crosses in front and each foot pushes to the outside of the circle.' },
+    { to: /^[lr]f[oi]-crossbehind$/, why: 'The same circle, with the free foot crossing behind the skating foot, which British Ice Skating defines as a crossed step behind.' },
   ],
   'backward-half-swizzle-pumps': [
-    { to: /^[lr]b[oi]-crossover$/, why: 'A backward crossover keeps the pumps\' circle and push, and the free foot crosses in front where it would have closed. Learn to Skate USA teaches it the level after.' },
-    { to: /^[lr]b[oi]-crossbehind$/, why: 'The same backward pump on a circle, with the free foot crossing behind the skating foot.' },
+    { to: /^[lr]b[oi]-crossover$/, why: 'Learn to Skate USA teaches backward crossovers one level after these pumps. Ice Skating Australia keeps the crossing foot on the ice and every push going to the outside of the circle.' },
+    { to: /^[lr]b[oi]-crossbehind$/, why: 'The same backward circle, with the free foot crossing behind the skating foot.' },
   ],
   'two-foot-turn': [
-    { to: /^backward-two-foot-turn$/, why: 'The same half turn the other way, from backwards to forwards, ending on ice you have not been watching.' },
-    { to: /^[lr]f[oi]-three$/, why: 'A forward three turn makes the same half turn from forwards to backwards on one foot, and the shoulders lead it in the same way.' },
-    { to: /^[lr]f[oi]-mohawk$/, why: 'A forward mohawk makes the same change from forwards to backwards with a step onto the other foot.' },
-    { to: /^upright-spin$/, why: 'The first rotation on the ice. Learn to Skate USA teaches the two-foot spin at its fourth level, after two-foot turns at its second and third.' },
+    { to: /^backward-two-foot-turn$/, why: 'The same half turn the other way, from backwards to forwards. Ice Skating Australia teaches it after the forward turn, on a curve.' },
+    { to: /^[lr]f[oi]-three$/, why: 'Both turn from forwards to backwards, and the three turn does it on one foot. Ice Skating Australia teaches the two-foot turn first.' },
+    { to: /^[lr]f[oi]-mohawk$/, why: 'Both turn from forwards to backwards, and the mohawk changes feet as it turns. Ice Skating Australia teaches its forward inside mohawk after the two-foot turns.' },
+    { to: /^upright-spin$/, why: 'Learn to Skate USA teaches the two-foot spin at its fourth level, after two-foot turns at its second and third.' },
   ],
   'backward-two-foot-turn': [
-    { to: /^[lr]b[oi]-three$/, why: 'A backward three turn makes the same half turn from backwards to forwards on one foot.' },
-    { to: /^[lr]b[oi]-mohawk$/, why: 'A backward mohawk makes the same change from backwards to forwards with a step onto the other foot.' },
+    { to: /^[lr]b[oi]-three$/, why: 'Both turn from backwards to forwards, and the three turn does it on one foot.' },
+    { to: /^[lr]b[oi]-mohawk$/, why: 'Both turn from backwards to forwards, and the mohawk changes feet as it turns.' },
   ],
   'two-foot-change-of-edge': [
-    { to: /^[lr][fb][oi]-coe$/, why: 'A one-foot change of edge is the same roll across the flat, with the other foot lifted.' },
-    { to: /^slalom$/, why: 'The slalom is this change repeated in rhythm down the ice.' },
+    { to: /^[lr][fb][oi]-coe$/, why: 'British Ice Skating defines a change of edge as one foot\'s tracing changing from one curve and edge to another. Here both feet do it together.' },
+    { to: /^slalom$/, why: 'British Ice Skating\'s Skills 1 slalom is this change, repeated as a two-foot power change of edge.' },
   ],
   'slalom': [
     { to: /^backward-slalom$/, why: 'The same wave drawn travelling backwards, which British Ice Skating Skills 1 asks for as the second side of its slalom.' },
@@ -99,15 +102,15 @@ export const FOUNDATIONS = {
     { to: /^[lr]b[oi]-coe$/, why: 'British Ice Skating Skills 1 builds its backward slalom from two-foot power changes of edge, the roll a backward change of edge makes on one blade.' },
   ],
   'dip': [
-    { to: /^teapot$/, why: 'The teapot holds the depth of the dip on one foot.' },
-    { to: /^sit-spin$/, why: 'A sit spin needs the skating thigh at least parallel to the ice, the depth the dip trains on two feet.' },
+    { to: /^teapot$/, why: 'The teapot holds a low knee bend on one foot with the free leg forward. The dip is a deep bend on two.' },
+    { to: /^sit-spin$/, why: 'The ISU defines a sit spin by the skating thigh being at least parallel to the ice. Ice Skating Australia\'s dip bends the knees to about ninety degrees.' },
   ],
   'drag': [
-    { to: /^spiral$/, why: 'Both trail the free leg behind one skating foot. The spiral lifts it clear to hip height and holds it there.' },
+    { to: /^spiral$/, why: 'Both extend the free leg behind, turned out. Ice Skating Australia\'s spiral lifts it to at least hip height, and its lunge lifts only the blade.' },
   ],
   'snowplough-stop': [
-    { to: /^backward-snowplough-stop$/, why: 'The same press and skid, made travelling backwards.' },
-    { to: /^hockey-stop$/, why: 'A hockey stop skids both blades at once, and the snowplough is where a skater first skids a blade on purpose.' },
+    { to: /^backward-snowplough-stop$/, why: 'The same skidding stop, travelling backwards. New Zealand teaches the backward half snowplough at its Basic badge.' },
+    { to: /^hockey-stop$/, why: 'Both stop by skidding the blades. New Zealand teaches the snowplough at its first badge and the parallel side stop at Novice 2.' },
   ],
 };
 

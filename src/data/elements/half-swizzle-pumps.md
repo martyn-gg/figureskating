@@ -4,18 +4,16 @@ kind: basic
 summary: One foot glides the circle while the other presses out and in to feed it speed.
 aliases: ["circle thrusts", "pumping", "half swizzle pumps on a circle"]
 prerequisites: [swizzle]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-On a circle, the inside foot glides and holds the curve while the outside foot presses out and
-draws back in, over and over, each press adding speed. Both blades stay on the ice. Learn to
-Skate USA asks for four to six in a row at its third level, round a circle in either direction.
+On a circle, the foot on the inside glides and holds the curve while the outside foot makes half
+a swizzle, out and back, over and over, each one adding speed. Ice Skating Australia asks for
+six to eight on a circle in each direction; Learn to Skate USA's third level wants four to six, in either direction. New Zealand calls it forward pumping.
 
-The press goes out to the side and slightly behind, against the inside edge of the pumping
-blade, and it should settle into a rhythm: press, draw in, press. The usual fault is pushing
-the pumping foot backwards off the toe pick, which scratches and gives no speed. The second is
-forgetting the gliding foot. It has to stay on its own edge and lean into the circle, or the
-circle opens out into a straight line.
-
-Forward crossovers follow at the next level, on the same circle.
+Australia teaches it first in a straight line: both knees bent in a semi-dip, both arms in
+front, one foot making the half swizzle while the other stays on the flat of its blade,
+finishing on two feet before the other foot takes a turn. On the circle the gliding foot stays
+on the circle throughout, and the manual asks for correct upper-body and arm positions. Learn
+to Skate USA teaches forward crossovers at the next level, on the same circle.

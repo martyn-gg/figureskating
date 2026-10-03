@@ -1237,7 +1237,11 @@ export const MOVES = {
      the authorable ankle took the second when the sweep found 8,064 legal poses at a
      `point` of 8 degrees or less, and the roll takes the third.
 
-     THE TRAILING BOOT LIES ON ITS INSIDE. Martyn, on the drag, and a lunge is the same
+     THE TRAILING BOOT LIES ON ITS INSIDE, BECAUSE THE LEG IS TURNED OUT — corrected
+     03/10/2026: Martyn, "the inside of the boot is on the ice, so the foot is turned out,
+     not in", which is also Ice Skating Australia's lunge ("extended and turned out").
+     The rig has no separate free-foot yaw: turning an extended leg out rotates the boot
+     about its own length, which is this roll, so nothing in the pose changes. Martyn, on the drag, and a lunge is the same
      position — he has said so before: coaches call the lunge a drag, recorded in
      docs/model.md on 30/08/2026 before either could be drawn. The right foot's inside
      is the skater's left, and a positive roll tips the up-axis that way, so the roll is
@@ -1273,7 +1277,7 @@ export const MOVES = {
      renderer. `twoFoot` does not draw stepping on either. */
   drag: {
     name:'Drag',
-    note:'forward outside edge, sunk deep · the trailing boot on its inside, the blade clear',
+    note:'forward outside edge, sunk deep · the free leg turned out, the boot on its inside, the blade clear',
     path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:40}],
     radius:400, duration:3.6,
     keys:[

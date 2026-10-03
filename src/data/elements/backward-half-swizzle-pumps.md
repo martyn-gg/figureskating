@@ -4,17 +4,17 @@ kind: basic
 summary: The same circle, the same pumping foot, travelling backwards.
 aliases: ["backward circle thrusts"]
 prerequisites: [backward-swizzle]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Round a circle backwards, one foot glides and holds the curve while the other presses out and
-draws back in to keep the speed up. They come at Learn to Skate USA's fourth level, round a
-circle in either direction, one level before backward crossovers.
+Round a circle backwards, one foot glides and holds the curve while the foot on the outside of
+the circle makes half a swizzle, out and back, to keep the speed up. At Learn to Skate USA's fourth level it is four to six, in either direction, one level before backward crossovers.
+The Australian programme wants six to eight each way round; New Zealand calls it backward
+pumping.
 
-The pumping is the forward version's, with the weight moved forward as it is for everything
-backwards. What changes is what you can see. Forwards you can watch the circle you are drawing;
-backwards you cannot, so it has to be held by feel, and it feels as if the circle is wider than
-it is. The usual fault is the shoulders swinging with each pump, which opens the circle
-outwards. Hold them still, look back along the circle over the inside shoulder, and let the
-legs do the work.
+Australia teaches it in a straight line first, alternating feet with both knees bent in a
+semi-dip, and names the same fault as on the backward swizzle: slowing down and pressing the
+toe picks into the ice, answered with knee bend and posture. On the circle the gliding foot
+stays on the circle throughout. New Zealand asks for it round both outside and inside circles
+before its skaters move on to backward crossovers.

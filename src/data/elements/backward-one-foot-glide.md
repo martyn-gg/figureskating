@@ -1,26 +1,23 @@
 ---
 name: Backward one-foot glide
 kind: basic
-summary: Backwards, on one blade, with the weight forward and nothing behind you.
+summary: Backwards on one blade in a straight line, the free foot carried at the skating knee.
 trace:
   radius: 200
   feet: 1
   path:
     - { kind: line, len: 240 }
 prerequisites: [backward-two-foot-glide]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-One blade running backwards on a straight line, the knee bent, the free foot carried beside the
-skating leg at the inside of the knee with its toe pointing down, as on the forward glide.
-Learn to Skate USA brings it in at its third level on either foot, and asks for it on each
-foot at its fourth.
+One blade running backwards on a straight line, the free foot carried beside the skating leg at
+the inside of the knee with its toe pointing down, as on the forward glide. Learn to Skate USA
+brings it in at its third level on either foot and asks for both at its fourth. Ice Skating Australia's measure is about a metre on each foot; New Zealand's 2008 KiwiSkate badges asked for a
+glide as long as the skater's body.
 
-Two corrections arrive at once. The base halves, as it does going forwards, and the weight has
-to sit further forward than instinct wants, over the ball of the foot and off the heel. The two
-pull in different directions and both have to be held. The usual fault is the free hip opening
-outwards, which turns the glide into a curve and disguises a balance problem as an edge. Keep
-the hips square to the line and the free foot at the knee.
-
-This is the starting position for backward edges and backward crossovers.
+After the straight line, New Zealand moves the glide onto a curve and then right round a circle,
+holding a back outside and a back inside edge with the free foot in front and then passing
+behind. That is where it becomes the backward edges. Australia's backward edges keep the free
+leg in front of the skating leg, over the tracing.

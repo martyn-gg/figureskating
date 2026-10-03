@@ -12,18 +12,17 @@ trace:
     - { kind: arc, foot: L, edge: O, dir: F, sweep: 110 }
     - { kind: arc, foot: L, edge: I, dir: F, sweep: 55 }
 prerequisites: [two-foot-change-of-edge]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Both feet stay on the ice, parallel and close together, and you swing them from side to side
-so that you travel down the ice in short curves, as in skiing. The blades change edge together
-each time the swing reverses. Learn to Skate USA has the forward slalom at its third level. In
-British Ice Skating Skills 1 it is a repeated two-foot power change of edge, with correct
-edges, rhythmic knee action and keeping the speed up as its learning objectives.
+Both feet stay on the ice, close together, and you skate short half-circle curves from side to
+side, as in skiing. The blades change edge together at each change of curve. Learn to Skate USA
+has the forward slalom at its third level. In British Ice Skating Skills 1 it is a repeated
+two-foot power change of edge, and the test lists its learning objectives as correct edges,
+rhythmic knee action and keeping the speed up.
 
-The push comes from pressure on the outside edges, with both knees bent through each curve and
-rising at the change, and it should feel like a rhythm in the legs with the body travelling
-straight above them. The usual fault is steering from the shoulders, which turns the wave into
-a series of lurches with corners in it. Keep the hips quiet and change both edges at the same
-moment, so the two tracings stay parallel.
+Ice Skating Australia says where the power comes from: pressure on the outside edges, with both
+knees bent through each curve and rising at the change, for six to eight curves. That rise and
+fall is the rhythmic knee action the British test names, and the feet stay close together the
+whole way. Skills 2 then asks for the same movement on one foot.

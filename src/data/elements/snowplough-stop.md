@@ -1,23 +1,20 @@
 ---
 name: Snowplough stop
 kind: basic
-summary: One or both blades turned in and pressed flat, scraping speed off in a straight line.
+summary: Heels pressed outwards so that one or both blades skid, taking the speed off in a straight line.
 aliases: ["snowplow stop", "snowplough", "half snowplough"]
 rig: snowplough
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Travelling forwards, you push one or both heels outwards so that the toes turn in, and press
-the blades flat against the ice so that they skid. The scrape takes the speed away. Learn to
-Skate USA starts it at the first level, on one foot or two, and wants it on the move at the
-second.
+Travelling forwards, you press the heels of your skates outwards so that the blades skid, and the
+skid takes the speed away. Ice Skating Australia teaches it standing still first and then from
+three to five steps, on both feet, with the knees slightly bent and the arms held in front for
+stability. Learn to Skate USA starts it at its first level, on one foot or two, and asks for it
+on the move at its second.
 
-It has to be a press. The knees bend and push the blades down and out into the ice, and a good
-stop feels like the skates shaving a layer of snow off the surface as you slow. The usual fault
-is turning the toes in with no weight behind them: the blades carve a curve, the feet cross or
-you turn, and the speed stays. Skaters who cannot stop usually have the shape right and no
-pressure in it.
-
-Leaning back is the other fault. Keep the shoulders over the knees and the stop stays under
-you.
+The one-foot version is the half snowplough: one blade presses out and skids while the other
+keeps gliding. New Zealand assesses it on each foot. Australia's description has three points to
+hold: the heels pressed outwards, the knees slightly bent, and the arms in front. It asks for a
+complete stop, so a skid that slows the skater and lets them carry on is not yet the element.

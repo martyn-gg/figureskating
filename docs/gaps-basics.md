@@ -76,7 +76,7 @@ anchor. Only the drag and backward stroking are waiting on nothing but authoring
 the claim above being true: it is `pushOff` read off a base of 180, and the yaw is the same
 number in both because flipping the direction of travel and flipping which side is the
 skater's right cancel. The drag was the claim being wrong, and the sentence "waiting on
-nothing but authoring" is what it was wrong about. **A drag's free boot is turned IN, the
+nothing but authoring" is what it was wrong about. **A drag's free boot is turned ~~IN~~ OUT (corrected by Martyn 03/10/2026; the inside of the boot is on the ice), the
 skating knee sinks until the free blade lifts clear of the ice, and what trails is the inside
 of the boot** — Martyn, correcting the first version of this paragraph, which had measured a
 trailing blade flat on the ice because that is what the element page said. So the contact is

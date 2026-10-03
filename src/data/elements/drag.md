@@ -1,21 +1,21 @@
 ---
 name: Drag
 kind: basic
-summary: A deep glide with the free leg trailed behind, the blade lifted clear and the side of the boot brushing the ice.
+summary: The free leg extended behind and turned out, the inside of the boot on the ice and the blade lifted clear.
 aliases: ["forward drag", "toe drag", "lunge"]
 rig: drag
 prerequisites: [one-foot-glide]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-You glide forwards on an outside edge with the skating knee sunk deep and the other leg
-extended behind. The trailing boot rolls onto its inside, so the blade lifts clear of the ice
-and what brushes the surface is the side of the boot, carrying almost no weight. Coaches use
-the name lunge for the same position.
+You glide forwards on one foot with the skating knee bent deep and the other leg extended
+behind, turned out so that the inside of the boot lies on the ice and the blade is lifted clear
+of it. Coaches use the names drag and lunge for the same position. Ice Skating Australia
+describes it as the lunge: the hip no higher than the skating knee, about ninety degrees, the
+dragging leg extended and turned out with its blade off the ice, and the back upright, held for
+about two metres on each foot. New Zealand teaches the drag at its Novice 1 badge.
 
-Despite the name, it does not slow you. It feels like a very deep lunge held on a moving blade,
-with the weight entirely over the skating foot. The usual fault is too little bend in the
-skating knee. Without it the free leg cannot reach back far enough for the blade to leave the
-ice, and the toe pick drags. If the boot presses and takes weight, the glide slows and the hips
-square up.
+The turn-out is what puts the boot on its side. With the leg turned out, the inside of the foot
+faces the ice, and the depth of the skating knee is what lets the leg reach back far enough for
+the blade to come up.

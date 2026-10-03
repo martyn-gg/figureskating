@@ -5,18 +5,16 @@ summary: The same half turn on two blades, backwards to forwards.
 aliases: ["backward to forward two-foot turn"]
 rig: twoFootTurnBack
 prerequisites: [two-foot-turn]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Gliding backwards on both feet, the body turns through a half turn and you finish gliding
-forwards.
+Gliding backwards on both feet, you turn through a half turn and finish gliding forwards, both
+blades on the ice throughout. Ice Skating Australia teaches it on a curve, clockwise and
+anticlockwise, with a glide of about a metre once the feet have come round to forwards. New
+Zealand's current rules place it later, as a teaching idea at the Advanced badge, although its
+2008 badges asked for both directions of the two-foot turn together, on a curve while skating.
 
-The feet do what they did in the forward turn and the shoulders lead it in the same way. The
-difference is what you can see: this turn ends facing ice you have not been looking at, so it
-gets rushed, and a rushed turn is one where the feet snap round ahead of the body. That is the
-usual fault. Turn the head first, then the shoulders, and let the feet follow. Done in that
-order it feels unhurried, with a moment where you are already looking forwards before the feet
-arrive.
-
-With both directions you can change direction on the ice when you choose to.
+Australia teaches it at the same level as backward crossovers and the backward edges, after the
+forward-to-backward turn. The manual does not repeat the forward turn's leading arm and check
+for this direction, so this page does not add them.

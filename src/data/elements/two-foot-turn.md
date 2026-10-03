@@ -4,18 +4,17 @@ kind: basic
 summary: Both blades on the ice, turning through a half circle from forwards to backwards.
 aliases: ["two foot turn", "forward to backward two-foot turn"]
 rig: twoFootTurn
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-Both feet stay down and the body turns through a half turn, so that gliding forwards you finish
-gliding backwards on the same two blades. Learn to Skate USA asks for it in place at its second
-level, and moving on a circle at its third.
+Both feet stay on the ice and the body turns through a half turn, so that facing forwards you
+finish facing backwards on the same two blades. All three programmes teach it in place first
+and then on the move. Learn to Skate USA asks for it in place at its second level and on a
+circle at its third; Ice Skating Australia standing still, then on a curve with about a metre
+of glide into and out of the turn; New Zealand in place, then on a curve.
 
-It comes from the upper body. The arm opposite the turning direction is in front as you turn,
-which winds the shoulders the way you are going, and the turn finishes with a check that stops
-the rotation. The feet stay about hip width apart with the weight central and follow round
-underneath, and it feels as if the shoulders pull the hips round and the feet arrive last. The
-usual fault is shoving the feet round with the shoulders still square: nothing above them is
-turning, and the rotation dies halfway. Weight on the toe picks catches them and stops the turn
-the same way.
+Ice Skating Australia's description gives the upper body the work. The arm opposite the
+turning direction is in front as you turn, and the turn finishes with a checking motion that
+stops the rotation. Both directions are asked for at every stage, so a skater learns it turning
+each way.

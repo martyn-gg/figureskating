@@ -8,17 +8,17 @@ trace:
   feet: 2
   path:
     - { kind: line, len: 240 }
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-You push once, bring both feet under you, and let the skates run. The blades sit flat and
-parallel, about hip width apart (roughly a blade's length), with the ankles and knees slightly
-bent and the arms out to the sides. Learn to Skate USA asks for it at its first level.
+You push off, bring both feet under you, and let the skates run, both blades flat on the ice
+and parallel. The feet are about hip width apart: Ice Skating Australia and New Zealand's
+KiwiSkate both set them no further apart than one blade length, which toe pick to heel comes to
+the same width. Learn to Skate USA teaches it at its first level.
 
-It feels like standing still while the rink moves. The weight sits over the middle of the
-blades: too far forward and the toe picks catch, too far back and the skates run out from under
-you. The usual fault is a locked knee. It feels steadier and is less steady, because a straight
-leg has nothing to give when the ice is uneven, and the ice is never perfectly flat.
-
-Every later glide is this one with something added to it.
+The programmes measure it by distance. Australia's youngest skaters glide about a metre after
+three to five steps, and KiwiSkate's 2008 badges asked for a glide as long as the skater is
+tall. Australia then puts the same glide on a curve, in both directions, and gets the curve by
+teaching the skater to lean into the circle. It introduces lean at this level, so the
+two-foot glide on a curve is where the edges in this guide begin.

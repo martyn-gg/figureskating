@@ -1,21 +1,20 @@
 ---
 name: Backward snowplough stop
 kind: basic
-summary: The same scrape travelling backwards, heels drawn out where the forward one draws the toes in.
+summary: The snowplough's skidding stop, made travelling backwards.
 aliases: ["backward snowplow stop"]
 rig: ploughBack
 prerequisites: [snowplough-stop]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://www.nzifsa.org.nz/kiwiskate/
 verified: { checked: false }
 ---
 
-Moving backwards, you bend the knees and press the heel of one blade, or both, outwards across
-the line of travel, with the blade flat so that it skids. The scrape takes the speed off and
-the feet finish wider apart than they started.
+The snowplough stop made travelling backwards: a skid that takes the speed off while you are
+moving the other way. New Zealand's KiwiSkate teaches it in two stages, the half snowplough
+first, one foot at a time and assessed on each foot at the Basic badge, then the two-foot
+backward snowplough as a teaching idea at Novice 1.
 
-The press feels like the start of a backward swizzle that refuses to glide. Braking backwards
-throws the body backwards, so the weight has to move forward as the press goes on, ending over
-the balls of the feet with the knees bent. The usual fault is bracing against the stop by
-sitting back, and that lands you on the hip.
-
-Have it before backward crossovers bring real speed going backwards.
+None of the documents this guide holds describes how the backward stop is done, and the forward
+stop's description does not transfer by itself. Which end of the blade presses out, and where
+the weight goes as a backward skater slows, are questions for a coach. So this page names the
+stop and its place in the programmes, and leaves the technique for a coach to set.

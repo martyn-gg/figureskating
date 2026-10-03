@@ -237,7 +237,7 @@ same number in both, because flipping the direction of travel and flipping which
 track is the skater's right cancel out. That is the property `twoFootTurnBack` found in the
 yaws of a turn, arriving by the same route.
 
-The drag was not, and took two corrections to say why. **A drag's free boot is turned in, the
+The drag was not, and took two corrections to say why. **A drag's free boot is turned ~~in~~ OUT (corrected by Martyn 03/10/2026; the inside of the boot is on the ice), the
 skating knee sinks until the free blade lifts clear, and what trails is the inside of the
 boot** — Martyn, correcting a first write-up that had measured a trailing blade flat on the
 ice because that is what the element page said. The contact is not a blade, so putting the

@@ -14,16 +14,13 @@ sourceUrl: https://www.iceskating.org.uk/
 verified: { checked: false }
 ---
 
-You travel in a straight line with both blades flat on the ice, the weight over the skating
-leg, while the other foot slides forward along the ice until that leg is straight. British Ice
-Skating's definition lets the skating knee be well bent or straight; either way the weight
-stays on top of it. Nothing leaves the ice and nothing turns.
+You travel in a straight line with both blades held flat on the ice and the weight over the
+skating leg, while the free foot slides forward along the ice to full extension. The skating
+knee can be well bent or straight. That is British Ice Skating's definition, and it is all a
+published source says about the step. Nothing leaves the ice and nothing turns.
 
-Flat is the difficulty. Tip either blade even slightly and it bites, and the sliding foot
-curves away and takes your balance with it. Two blades stay flat only when you stand directly
-over them, with the shoulders forward over the skating foot, and after months of edges it
-feels oddly still. The usual fault is letting the weight follow the sliding foot forward,
-which is the one thing the definition rules out.
-
-The slip chassé shares the sliding foot and little else: a chassé changes feet and rides an
-edge throughout.
+A flat, in the same document's terms, is a straight tracing made on one foot, so both blades
+here draw straight lines and neither is on an edge. The weight stays over the skating leg
+throughout. British Ice Skating defines the slip chassé separately, and it shares only the
+sliding foot: there the free foot slides off the ice in front on the second edge of a chassé,
+which is a change of feet from one edge to another.

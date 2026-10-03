@@ -5,17 +5,16 @@ summary: The trailing blade laid across behind the glide, braking on its outside
 aliases: ["T stop"]
 rig: tStop
 prerequisites: [one-foot-glide]
-sourceUrl: https://www.learntoskateusa.com/basic_skills
+sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
-You glide on one foot and set the other behind it at a right angle, in a T, then lower it onto
-the ice so that it drags across the line of travel and takes the speed off. The braking blade
-rides on its outside edge, and most of the weight stays on the gliding foot. It is one of Learn
-to Skate USA's sixth-level skills, on either foot.
+You glide on one foot, place the free foot behind it at right angles, in a T, and press it down
+so that the outside edge of the back blade stops you. That is Ice Skating Australia's
+description: the T behind the skating foot, the outside edge of the stopping blade, and
+downward pressure, with good posture of the upper body through to a complete stop. Learn to Skate USA has it at its sixth level, on either foot; New Zealand assesses it at its
+Advanced badge, after the backward edges and three turns.
 
-It should feel like a gentle, growing drag behind you while the glide holds its line. The usual
-fault is the wrong edge: put down flat or on its inside edge, the trailing blade grabs and
-swings you round it. The second is setting the foot down too far behind the heel of the skating
-foot, which pulls the hips open and the glide off line. Keep the hips and shoulders square to
-the direction of travel.
+The edge is the detail to hold. The stop is made on the outside edge of the back blade, the
+edge facing away from the skating foot. The T is the same position the forward stroke starts
+from, with the foot behind this time, and the pressure goes down into the ice.
