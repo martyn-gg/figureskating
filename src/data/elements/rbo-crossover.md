@@ -1,7 +1,7 @@
 ---
 name: Right backward outside crossover
 kind: transition
-summary: "RBO to LBI: a step onto the other foot, still travelling backwards, and the lobe continues."
+summary: "RBO to LBI: the free foot crosses in front of the skating foot onto the same lobe, still travelling backwards."
 entry: { foot: R, edge: O, dir: B }
 turn: crossover
 prerequisites: [rbo, backward-half-swizzle-pumps]

@@ -1027,7 +1027,10 @@ export function mount(host, {
   const card = (title, sub) => {
     const c = document.createElement('div');
     c.className = 'bf-card';
-    const h = document.createElement('h3');
+    /* A label, not a heading: as an h3 it sat under the page's h1 with no h2
+       between, which a screen reader announces as a skipped level. */
+    const h = document.createElement('p');
+    h.className = 'bf-h';
     h.innerHTML = `${title} <span>· ${sub}</span>`;
     const s = document.createElementNS(NS, 'svg');
     c.append(h, s);

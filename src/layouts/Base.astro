@@ -1,5 +1,5 @@
 ---
-const { title, subtitle, kind, measured } = Astro.props;
+const { title, subtitle, kind, measured, crumbs } = Astro.props;
 import { url } from '../lib/url.js';
 import { BUILD_ID } from '../lib/build-id.js';
 import { tokenCSS } from '../lib/tokens.js';
@@ -43,6 +43,38 @@ const choices = [
   { id: 'all', label: 'All countries', href: /^404/.test(rest) ? url() : url(rest) },
   ...COUNTRIES.map(c => ({ id: c.id, label: c.short, href: hasCopies ? url(`${c.id}/${rest}`) : url(`${c.id}/`) })),
 ];
+/* SEARCH ENGINES — 03/10/2026, Martyn: add the site to search engines and work on
+   SEO. What a result shows is the title and the description, so every page has
+   both: the description is the page's own subtitle (an element's summary), and the
+   guide's one-line description where a page has none. The language is the copy's
+   (en-US on /us/), so it agrees with the hreflang links below. A shared link shows
+   the same title and description, and the icon. tools/seo.mjs checks all of it
+   against the built pages. */
+const SITE = 'Field Guide to Figure Skating';
+const ABOUT = 'A field guide to figure skating: every edge, turn, jump, spin and pattern dance, drawn on both feet, with the tests and grades each belongs to.';
+/* A short summary is led by the page's name: "LBI rocker mohawk: ..." both says
+   which page the result is and keeps the two mirror pages a short summary is
+   sometimes shared by from showing one snippet. */
+const flat = s => String(s).replace(/\s+/g, ' ').trim();
+let description = subtitle ? flat(subtitle) : ABOUT;
+if (subtitle && title && description.length < 90) description = `${title}: ${description}`;
+if (description.length < 50) description += ' From the Field Guide to Figure Skating.';
+const lang = here ? here.lang : 'en-GB';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const noindex = /^404/.test(rest);
+const fullTitle = title ? `${title} · ${SITE}` : SITE;
+const og = new URL(url('icon-512.png'), Astro.site).href;
+/* Structured data: the site and its search box on the front page, and a trail of
+   where a page sits for any page that passes one. */
+const ld = [
+  ...(isHome && !cc ? [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE, url: new URL(url(), Astro.site).href,
+    inLanguage: 'en-GB', description: ABOUT,
+    potentialAction: { '@type': 'SearchAction', target: new URL(url('search/'), Astro.site).href + '?q={search_term_string}',
+      'query-input': 'required name=search_term_string' } }] : []),
+  ...(crumbs ? [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name,
+      ...(c.href ? { item: new URL(c.href, Astro.site).href } : {}) })) }] : []),
+];
 /* The same page in the other copies, for search engines. The root is x-default,
    because it is the guide for every country at once. */
 const alternates = hasCopies ? [
@@ -51,12 +83,22 @@ const alternates = hasCopies ? [
 ] : [];
 ---
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang={lang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title ? `${title} · Field Guide to Figure Skating` : 'Field Guide to Figure Skating'}</title>
-  <meta name="description" content={subtitle ?? 'A reference to figure skating elements and the national tests they appear in.'} />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex" />}
+  <meta property="og:site_name" content={SITE} />
+  <meta property="og:title" content={title || SITE} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content={kind ? 'article' : 'website'} />
+  <meta property="og:locale" content={lang.replace('-', '_')} />
+  <meta property="og:image" content={og} />
+  <meta name="twitter:card" content="summary" />
+  {ld.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(ld.length === 1 ? ld[0] : ld)} />}
   <link rel="manifest" href={url('manifest.webmanifest')} />
   <meta name="theme-color" content="#12303f" />
   {/* SVG first for browsers that take it, the 192 as the fallback, and the Apple
@@ -67,7 +109,7 @@ const alternates = hasCopies ? [
   <link rel="apple-touch-icon" href={url('apple-touch-icon.png')} />
   {/* Canonical, because the same page is reachable at the apex and at www until
       GitHub's redirect settles, and search engines should be in no doubt. */}
-  <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+  <link rel="canonical" href={canonical} />
   {alternates.map(a => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
   {/* The palette comes out of src/lib/tokens.js, which tools/contrast.mjs also
       imports and measures. Colours are not written here any more — a hex code in
@@ -193,10 +235,10 @@ const alternates = hasCopies ? [
   .bf-pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
   @media (max-width:34rem){.bf-pair{grid-template-columns:1fr}}
   .bf-card{background:var(--ice);border:1px solid var(--ice-line);border-radius:12px;overflow:hidden}
-  .bf-card h3{margin:0;padding:.5rem .8rem .45rem;font-size:.66rem;letter-spacing:.09em;
+  .bf-card .bf-h{margin:0;padding:.5rem .8rem .45rem;font-size:.66rem;letter-spacing:.09em;
     text-transform:uppercase;color:var(--ink-soft);font-weight:600;border-bottom:1px solid var(--ice-line);
     font-family:ui-sans-serif,-apple-system,sans-serif}
-  .bf-card h3 span{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
+  .bf-card .bf-h span{text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-soft)}
   .bf-card svg{display:block;width:100%;height:auto}
   .bf-ctl{display:flex;align-items:center;gap:.6rem;margin-top:.7rem;padding:.5rem .7rem;
     background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
@@ -238,6 +280,11 @@ const alternates = hasCopies ? [
     .theme{min-height:44px;padding:.6rem .9rem;margin:.6rem 0 0;border:1px solid var(--rule);border-radius:999px;
       background:none;color:var(--accent);cursor:pointer;font:inherit}
     /* The notebook's index tabs. Hidden here; src/lib/notebook.js shows them. */
+    /* The skip link: off screen until a keyboard reaches it, then the first thing
+       on the page. */
+    .skip{position:absolute;left:-999px;top:.5rem;z-index:10;padding:.6rem .9rem;background:var(--paper);
+      color:var(--accent);border:2px solid var(--accent);border-radius:6px}
+    .skip:focus{left:1rem}
     .tabs{display:none;position:absolute;right:0;top:7.5rem;flex-direction:column;gap:6px}
     @media print{.tabs{display:none!important}}
     /* A reader's own ticks, kept on their phone. Hidden until the script has
@@ -250,7 +297,12 @@ const alternates = hasCopies ? [
 </head>
 <body>
   <div class="wrap">
-    <nav>
+    {/* LANDMARKS — 03/10/2026, from an axe-core audit: the page had no main
+        landmark, so a screen reader could not jump past the nav, and every
+        paragraph sat outside any region. A skip link, a labelled nav, and the
+        page's own content in <main>. */}
+    <a class="skip" href="#main">Skip to content</a>
+    <nav aria-label="Site">
       <a href={nav('')}>Field Guide</a>
       <a href={nav('elements/')}>Elements</a>
       <a href={nav('tests/')}>Tests</a>
@@ -272,7 +324,7 @@ const alternates = hasCopies ? [
     <aside class="tabs" aria-label="Sections">
       {TABS.map(t => <a class={`t-${t.id}`} href={nav(t.href)} aria-current={t.id === tab ? 'true' : undefined}>{t.label}</a>)}
     </aside>
-    <slot />
+    <main id="main"><slot /></main>
     <footer>
       {!isHome && <>
         Edges are written as three letters: foot, direction, edge. <b>LFO</b> is a left

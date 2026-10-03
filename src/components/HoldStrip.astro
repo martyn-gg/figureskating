@@ -1,0 +1,41 @@
+---
+/* THE HOLDS, AS A ROW OF PICTURES — 03/10/2026, Martyn: emphasise the holds link
+   more, and link back to the holds from each hold page, since the holds are a list
+   without a tab of their own.
+
+   One small drawing of each hold from above, each a link to its page, in the
+   order src/lib/element-groups.js gives them. On the Dance tab it is the way in to
+   the holds; on a hold page it is the way across to the others, with the page's
+   own hold marked and not linked. */
+import HoldDiagram from './HoldDiagram.astro';
+import { LEARN } from '../lib/element-groups.js';
+import { getCollection } from 'astro:content';
+
+const { url, current, heading = 'The holds' } = Astro.props;
+const names = Object.fromEntries((await getCollection('elements'))
+  .filter(e => e.data.kind === 'hold').map(e => [e.id, e.data.name]));
+---
+<section class="holdstrip" aria-label={heading}>
+  <p class="hs-head"><a href={url('elements/in/hold/')}>{heading}</a></p>
+  <ul>
+    {LEARN.hold.map(slug => (
+      <li>
+        {slug === current
+          ? <span class="hs-item" aria-current="page"><HoldDiagram slug={slug} small /><span>{names[slug]}</span></span>
+          : <a class="hs-item" href={url(`elements/${slug}/`)}><HoldDiagram slug={slug} small /><span>{names[slug]}</span></a>}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .holdstrip { margin: 1.25rem 0 1.5rem; padding: 0.75rem; border: 1.5px solid var(--rule); border-radius: 8px; background: var(--ice); }
+  .hs-head { margin: 0 0 0.5rem; font-weight: 600; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .hs-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-decoration: none;
+    font-size: 0.85rem; line-height: 1.25; text-align: center; min-height: 44px; }
+  a.hs-item:hover span { text-decoration: underline; }
+  span.hs-item { color: var(--ink-soft); }
+  span.hs-item :global(svg) { opacity: 0.55; }
+  .hs-item :global(.hold.small) { max-width: 100%; width: 100%; }
+</style>

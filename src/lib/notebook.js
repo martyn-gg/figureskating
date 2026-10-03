@@ -128,9 +128,9 @@ export const notebookCSS = fontBase => {
     R('.bf-card::after,.jumptrace::after', `content:"";position:absolute;top:-9px;right:-10px;width:58px;height:17px;
       background:var(--tape);transform:rotate(24deg);pointer-events:none`),
     R('.bf-views', 'gap:1.4rem'),
-    R('.bf-card h3', `font-family:${HAND};font-size:1.15rem;font-weight:500;letter-spacing:0;text-transform:none;
+    R('.bf-card .bf-h', `font-family:${HAND};font-size:1.15rem;font-weight:500;letter-spacing:0;text-transform:none;
       border-bottom:1px dashed var(--rule)`),
-    R('.bf-card h3 span', 'opacity:1'),
+    R('.bf-card .bf-h span', 'color:var(--ink)'),
     R('.bf-ctl', 'background:none;border:0;padding:.5rem 0'),
     R('.bf-ctl button', `background:none;border:1.5px solid var(--ink);font-family:${HEAD}`),
     R('.bf-phase,.bf figcaption,.jumptrace figcaption,.jt-pair span', `font-family:${HAND};font-size:1.15rem;line-height:1.3`),

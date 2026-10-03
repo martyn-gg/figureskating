@@ -65,7 +65,7 @@ const L = { lead: labelAt(H.lead, H.follow), follow: labelAt(H.follow, H.lead) }
     ))}
     {joins.map(q => <circle class="join" cx={q[0]} cy={q[1]} r="0.05" />)}
   </svg>
-  <figcaption>From above, travelling up the page</figcaption>
+  {!small && <figcaption>From above, travelling up the page</figcaption>}
 </figure>
 
 <style>

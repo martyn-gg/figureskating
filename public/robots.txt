@@ -1,0 +1,6 @@
+# Every page is for reading, by anyone. The sitemap lists them all, with each
+# country's copy linked to the others; tools/sitemap.mjs writes it after the build.
+User-agent: *
+Allow: /
+
+Sitemap: https://figureskating.guide/sitemap.xml

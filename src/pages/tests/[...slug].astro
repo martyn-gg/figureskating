@@ -11,6 +11,11 @@ import { url } from '../../lib/url.js';
 const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
+/* The search-result description: the test page's own opening, cut at a sentence
+   (or a word) inside 160 characters. */
+const opening = (entry.body || '').trim().split(/\n\s*\n/)[0].replace(/\s+/g, ' ').replace(/[*_`]/g, '');
+const cut = s => s.length <= 160 ? s : (s.slice(0, 160).match(/^.*[.!?](?=\s)/)?.[0] || s.slice(0, 157).replace(/\s+\S*$/, '') + '…');
+const description = opening ? cut(opening) : undefined;
 const all = await getCollection('elements');
 
 /* A Skills test is a set of exercises and each one carries its own elements, so
@@ -31,7 +36,7 @@ const items = refs.map(id => all.find(e => e.id === id)).filter(Boolean);
 
 const WHEN = { current: 'before 01/10/2026 only', october2026: 'new 01/10/2026', both: null };
 ---
-<Base title={d.name}>
+<Base title={d.name} subtitle={description} crumbs={[{ name: 'Tests', href: url('tests/') }, { name: d.name }]}>
   <h1>{d.name}</h1>
   <div class="meta">
     <span class="chip">{d.governingBody}</span>

@@ -1,7 +1,7 @@
 ---
 name: Right forward outside chassé
 kind: transition
-summary: "RFO to LFI: a step onto the other foot, still travelling forwards, and the lobe continues."
+summary: "RFO to LFI: the free foot comes down beside the skating foot, nothing crossing, still travelling forwards on the same lobe."
 entry: { foot: R, edge: O, dir: F }
 turn: chasse
 aliases: [open chassé, simple chassé]

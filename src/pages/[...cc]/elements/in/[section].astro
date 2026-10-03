@@ -16,6 +16,7 @@ import Base from '../../../../layouts/Base.astro';
 import { curl, COPIES } from '../../../../lib/country.js';
 import EdgeThumb from '../../../../components/EdgeThumb.astro';
 import PathThumb from '../../../../components/PathThumb.astro';
+import HoldStrip from '../../../../components/HoldStrip.astro';
 import { elementGroups, canonicalOf } from '../../../../lib/element-groups.js';
 import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../../lib/skating.js';
 const { cc } = Astro.params;
@@ -47,14 +48,15 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
 <Base title={sectionLabel} subtitle={SECTION_NOTE[section]}>
   <p class="lede"><a href={url('elements/')}>Elements</a> · {n} {sectionLabel.toLowerCase()}</p>
   <h1>{sectionLabel}</h1>
+  {/* Each section used to repeat its own name as an h2 under the h1, carried over
+      from when all of them shared one page (Martyn, 03/10/2026: the heading is
+      followed by the same title beneath it). On its own page the h1 is the name. */}
   {/* The Dance tab holds two sections; each points at the other. */}
-  {section === 'dance' && <p class="note">Each dance names the holds it is skated in, and
-    the <a href={url('elements/in/hold/')}>holds</a> are drawn on a page of their own.</p>}
+  {section === 'dance' && <HoldStrip url={url} heading="The holds these dances are skated in" />}
   {section === 'hold' && <p class="note">The <a href={url('elements/in/dance/')}>pattern
     dances</a> name these holds step by step, and each name links back here.</p>}
 
   {section === 'edges' && (<>
-  <h2 id="edges">Edges</h2>
   <p class="note">
     Three letters: foot, direction, edge. The two columns are the same edge on either
     foot. They are mirror images, so the guide describes each pair once.
@@ -84,7 +86,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
   </>)}
 
   {section === 'one-foot' && (<>
-  <h2 id="one-foot">One-foot turns</h2>
   <p class="note">
     These keep the same foot and reverse the direction of travel. What is left to vary is
     the edge and the rotation, and that is the whole table. Each cell shows the edge you
@@ -133,7 +134,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
   </>)}
 
   {section === 'two-foot' && (<>
-  <h2 id="two-foot">Two-foot turns</h2>
   <p class="note">
     A mohawk and a choctaw change foot with no pivot on the blade, so
     there is no cusp: the tracing stops and starts again beside itself. The same rule
@@ -186,7 +186,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
   {section === 'twizzles' && (<>
   {twizzleGroups.length > 0 && (
     <>
-      <h2 id="twizzles">Twizzles</h2>
       <p class="note">
         The one element here that the three flags do not decide on their own. A twizzle
         rotates continuously while it travels, so its tracing curls with no
@@ -225,7 +224,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
   {section === 'transitions' && (<>
   {transitionGroups.length > 0 && (
     <>
-      <h2 id="transitions">Transitions</h2>
       <p class="note">
         The connecting material: what happens between turns. None of it reverses the
         direction of travel, and that is what separates it from a turn. The same three
@@ -262,7 +260,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
   {section === 'clusters' && (<>
   {comboGroups.length > 0 && (
     <>
-      <h2 id="clusters">Clusters</h2>
       <p class="note">
         Turns are done in runs as often as singly. A cluster stores its entry edge and the
         order of its turns; every edge in between is chained out of the same rule, so a run
@@ -291,7 +288,6 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
       begin on for nothing — same EdgeThumb, same buildTrace, no script. */}
   {restKinds.filter(k => k === section).map(k => (
     <>
-      <h2 id={k}>{KIND_LABEL(k)}</h2>
       <ul class="plain withthumb">
         {rest.filter(e => e.data.kind === k).map(e => {
           const begins = e.data.entry ?? e.data.jump?.takeoff ?? null;

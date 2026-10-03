@@ -1,7 +1,7 @@
 ---
 name: Right backward outside chassé
 kind: transition
-summary: "RBO to LBI: a step onto the other foot, still travelling backwards, and the lobe continues."
+summary: "RBO to LBI: the free foot comes down beside the skating foot, nothing crossing, still travelling backwards on the same lobe."
 entry: { foot: R, edge: O, dir: B }
 turn: chasse
 aliases: [open chassé, simple chassé]

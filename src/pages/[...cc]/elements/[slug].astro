@@ -2,6 +2,7 @@
 import DancePattern from '../../../components/DancePattern.astro';
 import HoldDiagram from '../../../components/HoldDiagram.astro';
 import HoldRear from '../../../components/HoldRear.astro';
+import HoldStrip from '../../../components/HoldStrip.astro';
 import { holdParts } from '../../../lib/holds.js';
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
@@ -176,7 +177,11 @@ const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
 family.sort((a, b) => rankOf(a) - rankOf(b));
 clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
 ---
-<Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource}>
+<Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource}
+  crumbs={[{ name: 'Elements', href: url('elements/') }, { name: shown }]}>
+  {/* The holds have no tab of their own, so a hold page says where it belongs, the
+      way a section page does. */}
+  {d.kind === 'hold' && <p class="lede"><a href={url('elements/')}>Elements</a> · <a href={url('elements/in/hold/')}>Holds</a></p>}
   <h1>{shown}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
@@ -295,6 +300,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
   {d.kind === 'hold' && (
     <div class="holdviews"><HoldDiagram slug={entry.id} /><HoldRear slug={entry.id} /></div>
   )}
+  {d.kind === 'hold' && <HoldStrip url={url} current={entry.id} heading="All the holds" />}
   {d.rig && <BodyFrame move={d.rig} />}
 
   {/* A PATTERN DANCE'S STEPS — 03/10/2026. The rink pattern where it has been measured

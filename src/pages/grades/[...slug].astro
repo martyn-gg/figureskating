@@ -16,7 +16,7 @@ const el = id => all.find(e => e.id === id);
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const key = (l, k) => `grade:${entry.id}:${slug(l.name)}:${k}`;
 ---
-<Base title={d.name} subtitle={d.summary}>
+<Base title={d.name} subtitle={d.summary} crumbs={[{ name: 'Grades', href: url('grades/') }, { name: d.name }]}>
   <p class="lede"><a href={url('grades/')}>Grades by country</a> · {d.country}</p>
   <h1>{d.name}</h1>
   <div class="meta"><span class="chip">{d.body}</span><span class="chip">{d.levels.length} level{d.levels.length === 1 ? '' : 's'}</span></div>

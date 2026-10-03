@@ -1,7 +1,7 @@
 ---
 name: Right forward outside crossover
 kind: transition
-summary: "RFO to LFI: a step onto the other foot, still travelling forwards, and the lobe continues."
+summary: "RFO to LFI: the free foot crosses in front of the skating foot onto the same lobe, still travelling forwards."
 entry: { foot: R, edge: O, dir: F }
 turn: crossover
 prerequisites: [rfo, half-swizzle-pumps]
