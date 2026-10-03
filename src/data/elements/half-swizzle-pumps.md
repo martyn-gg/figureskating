@@ -12,7 +12,7 @@ On a circle, the foot on the inside glides and holds the curve while the outside
 a swizzle, out and back, over and over, each one adding speed. Ice Skating Australia asks for
 six to eight on a circle in each direction; Learn to Skate USA's third level wants four to six, in either direction. New Zealand calls it forward pumping.
 
-Australia teaches it first in a straight line: both knees bent in a semi-dip, both arms in
+Australia teaches it along a straight line first, knees bent into a semi-dip, both arms in
 front, one foot making the half swizzle while the other stays on the flat of its blade,
 finishing on two feet before the other foot takes a turn. On the circle the gliding foot stays
 on the circle throughout, and the manual asks for correct upper-body and arm positions. Learn

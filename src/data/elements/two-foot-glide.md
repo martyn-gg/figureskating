@@ -14,7 +14,7 @@ verified: { checked: false }
 
 You push off, bring both feet under you, and let the skates run, both blades flat on the ice
 and parallel. The feet are about hip width apart: Ice Skating Australia and New Zealand's
-KiwiSkate both set them no further apart than one blade length, which toe pick to heel comes to
+KiwiSkate both cap the gap between them at a blade's length, which toe pick to heel comes to
 the same width. Learn to Skate USA teaches it at its first level.
 
 The programmes measure it by distance. Australia's youngest skaters glide about a metre after

@@ -14,10 +14,8 @@ sourceUrl: https://www.iceskating.org.uk/skills
 verified: { checked: false }
 ---
 
-With both feet on the ice, about hip width apart, you roll both blades from one pair of edges
-onto the other, so that the curve reverses. No foot leaves the ice. British Ice Skating defines
-a change of edge as a tracing that changes from one curve and edge to a different curve and
-edge; this is that, on two feet at once. Its Skills 1 slalom is built from it, repeated as a
+Feet down, about hip width apart, you roll both blades from one pair of edges
+onto the other, so that the curve reverses. No foot leaves the ice. British Ice Skating's definition of a change of edge is one foot's tracing leaving one curve and edge for another; this is that, made by both feet at once. Its Skills 1 slalom is built from it, repeated as a
 two-foot power change of edge, with correct edges, rhythmic knee action and speed as the
 learning objectives.
 

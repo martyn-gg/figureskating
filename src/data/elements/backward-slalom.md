@@ -22,7 +22,6 @@ British Ice Skating Skills 1 asks for it as the second side of its slalom exerci
 two-foot power changes of edge, with the same objectives as the forward side: correct edges,
 rhythmic knee action and speed throughout.
 
-Ice Skating Australia asks for at least six curves and puts the emphasis on knee bend, lean and
-posture. It teaches the backward slalom one level after the forward one, alongside backward
+Ice Skating Australia asks for at least six curves and stresses bent knees, lean and posture. It teaches the backward slalom one level after the forward one, alongside backward
 stroking. New Zealand teaches the forward and backward two-foot slaloms together, at its Novice
 2 badge.

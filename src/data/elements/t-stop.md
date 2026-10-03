@@ -11,7 +11,7 @@ verified: { checked: false }
 
 You glide on one foot, place the free foot behind it at right angles, in a T, and press it down
 so that the outside edge of the back blade stops you. That is Ice Skating Australia's
-description: the T behind the skating foot, the outside edge of the stopping blade, and
+description: the T behind the skating foot, the braking blade's outside edge, and
 downward pressure, with good posture of the upper body through to a complete stop. Learn to Skate USA has it at its sixth level, on either foot; New Zealand assesses it at its
 Advanced badge, after the backward edges and three turns.
 

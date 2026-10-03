@@ -18,6 +18,4 @@ brings it in at its third level on either foot and asks for both at its fourth. 
 glide as long as the skater's body.
 
 After the straight line, New Zealand moves the glide onto a curve and then right round a circle,
-holding a back outside and a back inside edge with the free foot in front and then passing
-behind. That is where it becomes the backward edges. Australia's backward edges keep the free
-leg in front of the skating leg, over the tracing.
+holding a back outside and a back inside edge the free foot first ahead and then passing behind. That is where it becomes the backward edges. On Australia's backward edges the free leg stays ahead of the skating leg, above its line.

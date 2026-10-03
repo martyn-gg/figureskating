@@ -8,8 +8,7 @@ sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instru
 verified: { checked: false }
 ---
 
-Round a circle backwards, one foot glides and holds the curve while the foot on the outside of
-the circle makes half a swizzle, out and back, to keep the speed up. At Learn to Skate USA's fourth level it is four to six, in either direction, one level before backward crossovers.
+Round a circle backwards, one foot glides and holds the curve while the outer foot makes half a swizzle, out and back, to keep the speed up. At Learn to Skate USA's fourth level it is four to six, in either direction, one level before backward crossovers.
 The Australian programme wants six to eight each way round; New Zealand calls it backward
 pumping.
 

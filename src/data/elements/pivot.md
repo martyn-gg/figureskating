@@ -8,10 +8,10 @@ sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instru
 verified: { checked: false }
 ---
 
-One toe pick goes into the ice and stays in one place while the other foot travels a circle round
+One toe pick goes into the ice and stays fixed while the other foot travels a circle round
 it on a forward inside edge, so you rotate about a fixed point and do not travel. The tracing is
 a circle with a dot at its centre. Ice Skating Australia's pivot is one to two revolutions on each
-foot, with no stopping and no pumping, the heel of the pivoting foot aimed at the circling foot,
+foot, with no stopping and no pumping, the anchored foot's heel pointing at the foot going round,
 and a proper exit.
 
 No pumping means the speed has to be there before the pick goes in, and the circling foot glides
