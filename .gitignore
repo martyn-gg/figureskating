@@ -20,3 +20,8 @@ _to_delete/
 sources/**
 !sources/**/
 !sources/**/*.md
+
+# The guide's own social-media artwork (profile picture, cover photo) and the files
+# used to make it. Uploaded by hand to Instagram and Facebook; not part of the site,
+# and not something a fork should inherit.
+social/
