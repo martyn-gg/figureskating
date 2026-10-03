@@ -1,0 +1,69 @@
+# Roadmap
+
+Agreed with Martyn on 04/10/2026. The order is his; the reasoning is recorded so a later
+session can tell when it no longer holds. `docs/gaps-competition.md` (30/08/2026) is the
+older backlog this grows out of; where they disagree, this file is newer.
+
+## Where the guide stands
+
+Singles from the first lesson to the Axel, skating skills to BIS Skills 8, all 30 pattern
+dances drawn on the rink, the six dance holds from above and behind, and the twizzles. The
+site has search, a sitemap, Search Console and Bing, visitor counts (Cloudflare Web
+Analytics) and Instagram and Facebook, all as `figureskatingguide`.
+
+**The aim now is feedback.** There is enough content to show people. Building continues, but
+the first measure of the next few weeks is whether skaters, coaches and judges find the
+guide and tell us what is wrong with it.
+
+## The order
+
+1. **Doubles and jump combinations.** Seven jumps are written: the waltz jump, the five
+   single jumps and the Axel. Every skater past the early levels needs the doubles next, and `JUMPS` already
+   carries a `rotations` field. Combinations follow, because a combination is two jumps and
+   the landing edge of the first is the take-off of the second.
+2. **The National tests.** British Ice Skating's free-skating ladder, the second of its two.
+   Only the Skills tests are written out. The championship entry table in
+   `gaps-competition.md` already names National 4, 6, 7 and 8; they need the syllabus
+   documents in `sources/` first.
+3. **The watcher's guide: pairs.** One page per element family, saying how to recognise it
+   from the stands and what makes it good, drawn from the holds model with nobody leaving
+   the ice:
+   - lifts, by the ISU's five groups (armpit, waist, hand-to-hip, hand-to-hand press,
+     hand-to-hand lasso) and their take-offs;
+   - the twist lift;
+   - throw jumps;
+   - the four death spirals, named by the follow's edge (back inside, back outside, forward
+     inside, forward outside), each an edge on a circle round the lead's pick;
+   - pair spins round a shared axis.
+   Side-by-side jumps and spins are singles content skated in unison and link to the
+   existing pages.
+4. **The watcher's guide: synchro.** The same shape. The formation elements (lines, blocks,
+   circles, wheels, intersections, pivoting shapes) are holds and paths on the 60 × 30 m
+   rink, which the pattern dances already draw; twizzle, spin and moves elements link to
+   singles pages. Group lifts are the one new family. **Write from the current ISU
+   guidelines, not from memory**: the ISU renames and merges synchro element types every
+   few seasons. Starting points: ISU Communication 38, Technical Guidelines SYS 2026/27, and
+   NZIFSA's 2026/27 well-balanced programme summary.
+5. **Fully drawn lifts and throws**, only if readers ask. The rig assumes both blades are
+   on the ice; a body in the air is new capability.
+
+## Also on the list, unordered
+
+- **Competition dance elements**: dance lifts, dance spins and the choreographic elements.
+  They belong with the watcher's guide.
+- **Scoring for watchers**: levels, grade of execution and what a technical panel looks for,
+  in a page or two.
+- **Pairs and dance tests**: BIS and US Figure Skating both run them. Read the syllabuses
+  before sizing the pairs section.
+- **Coach review.** The "not checked by a coach yet" notice is on every page. Closing it is
+  people, not pages; a fuller guide makes it easier to ask.
+
+## Small and ready
+
+- **Share images**: a 1200 × 630 card per page, built at build time like the tracings, in
+  place of the app icon that links currently show.
+- **IndexNow on deploy**, once content changes weekly. The key file is already published.
+- **The Facebook username**: swap the numeric Page address in `SOCIAL` (`src/lib/site.js`)
+  for `facebook.com/figureskatingguide` once Facebook grants it.
+- **A manual accessibility pass**: keyboard order and VoiceOver on a phone, which
+  `tools/a11y.mjs` cannot do.
