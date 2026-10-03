@@ -99,6 +99,11 @@ const alternates = hasCopies ? [
   <meta property="og:image" content={og} />
   <meta name="twitter:card" content="summary" />
   {ld.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(ld.length === 1 ? ld[0] : ld)} />}
+  {/* VISITOR COUNTS — 03/10/2026, Martyn. Cloudflare Web Analytics: no cookies and
+     nothing stored on the reader's device, so no consent banner. Built pages only,
+     never the dev server. The service worker ignores other origins, so the beacon
+     is never cached and never counted from a cached page. about/ says what it sees. */}
+  {useSW && <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4393055230eb44fab1297c80b2cefce8"}'></script>}
   <link rel="manifest" href={url('manifest.webmanifest')} />
   <meta name="theme-color" content="#12303f" />
   {/* SVG first for browsers that take it, the 192 as the fallback, and the Apple
