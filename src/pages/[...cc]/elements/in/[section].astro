@@ -47,6 +47,11 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
 <Base title={sectionLabel} subtitle={SECTION_NOTE[section]}>
   <p class="lede"><a href={url('elements/')}>Elements</a> · {n} {sectionLabel.toLowerCase()}</p>
   <h1>{sectionLabel}</h1>
+  {/* The Dance tab holds two sections; each points at the other. */}
+  {section === 'dance' && <p class="note">Each dance names the holds it is skated in, and
+    the <a href={url('elements/in/hold/')}>holds</a> are drawn on a page of their own.</p>}
+  {section === 'hold' && <p class="note">The <a href={url('elements/in/dance/')}>pattern
+    dances</a> name these holds step by step, and each name links back here.</p>}
 
   {section === 'edges' && (<>
   <h2 id="edges">Edges</h2>

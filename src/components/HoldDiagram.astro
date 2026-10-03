@@ -1,0 +1,88 @@
+---
+/* A DANCE HOLD FROM ABOVE — 03/10/2026. Draws one frame of src/lib/holds.js: two
+   partners as shoulders and a head, a nose for the way each faces, and every arm
+   from its shoulder to where the hand goes. Built from the data alone, so an
+   animation later is the same drawing at in-between numbers.
+
+   The lead is drawn in ink and the follow in the accent colour, each labelled, so
+   the picture does not lean on colour to say who is who. The arrow at the side is
+   the way the couple travels; a partner whose nose points the other way is skating
+   backwards. */
+import { HOLDS, shoulders, forward, SHOULDER } from '../lib/holds.js';
+
+const { slug, small = false } = Astro.props;
+const H = HOLDS[slug];
+const P = { lead: H.lead, follow: H.follow };
+const S = { lead: shoulders(H.lead), follow: shoulders(H.follow) };
+const f2 = v => Math.round(v * 1000) / 1000;
+/* The torso: an ellipse across the shoulders. */
+const torso = p => ({ cx: f2(p.x), cy: f2(p.y), rx: SHOULDER + 0.03, ry: 0.1, rot: p.facing });
+const nose = p => {
+  const [fx, fy] = forward(p), r = 0.13;
+  const tip = [p.x + fx * (r + 0.07), p.y + fy * (r + 0.07)];
+  const side = [-fy, fx];
+  const a = [p.x + fx * r + side[0] * 0.045, p.y + fy * r + side[1] * 0.045];
+  const b = [p.x + fx * r - side[0] * 0.045, p.y + fy * r - side[1] * 0.045];
+  return [tip, a, b].map(q => q.map(f2).join(',')).join(' ');
+};
+const joins = [...new Map(H.arms.filter(a => a.at === 'join').map(a => [a.to.join(','), a.to])).values()];
+/* Where to write each name: behind the partner, nudged away from the other one,
+   and kept inside the picture and clear of the travel arrow. */
+const labelAt = (p, o) => {
+  const [fx, fy] = forward(p);
+  const dx = p.x - o.x, dy = p.y - o.y, n = Math.hypot(dx, dy) || 1;
+  const x = p.x - fx * 0.3 + dx / n * 0.12, y = p.y - fy * 0.3 + dy / n * 0.12;
+  return [f2(Math.max(-0.88, Math.min(0.72, x))), f2(Math.max(-0.82, Math.min(0.85, y)))];
+};
+const L = { lead: labelAt(H.lead, H.follow), follow: labelAt(H.follow, H.lead) };
+---
+<figure class={`hold${small ? ' small' : ''}`}>
+  <svg viewBox="-1.1 -0.95 2.2 1.9" role="img" aria-label={`The partners' positions and hands in the ${slug.replace(/-/g, ' ')}, seen from above`}>
+    <g class="travel">
+      <line x1="0.98" y1="0.55" x2="0.98" y2="-0.6" />
+      <polygon points="0.98,-0.72 0.93,-0.58 1.03,-0.58" />
+    </g>
+    {/* Arms first, then the bodies over them, so an arm that goes round a partner's
+        back passes under that partner; hands, clasps and names on top. */}
+    {['lead', 'follow'].map(who => H.arms.filter(a => a.who === who).map(a => {
+      const s = S[who][a.side];
+      const pts = [s.map(f2), ...(a.via ? [a.via] : []), a.to].map(q => q.join(',')).join(' ');
+      return <polyline class={`arm ${who}`} points={pts} />;
+    }))}
+    {['lead', 'follow'].map(who => (
+      <g class={`partner ${who}`}>
+        <ellipse class="torso" cx={torso(P[who]).cx} cy={torso(P[who]).cy} rx={torso(P[who]).rx} ry={torso(P[who]).ry}
+          transform={`rotate(${P[who].facing} ${f2(P[who].x)} ${f2(P[who].y)})`} />
+        <circle class="head" cx={f2(P[who].x)} cy={f2(P[who].y)} r="0.1" />
+        <polygon class="nose" points={nose(P[who])} />
+      </g>
+    ))}
+    {['lead', 'follow'].map(who => (
+      <g class={`partner ${who}`}>
+        {H.arms.filter(a => a.who === who && a.at !== 'join').map(a => <circle class="hand" cx={a.to[0]} cy={a.to[1]} r="0.035" />)}
+        <text x={L[who][0]} y={L[who][1]}>{who === 'lead' ? 'Lead' : 'Follow'}</text>
+      </g>
+    ))}
+    {joins.map(q => <circle class="join" cx={q[0]} cy={q[1]} r="0.05" />)}
+  </svg>
+</figure>
+
+<style>
+  .hold { margin: 0.5rem 0 1rem; max-width: 22rem; }
+  .hold.small { max-width: 9rem; margin: 0; }
+  .hold svg { width: 100%; height: auto; display: block; background: var(--ice); border-radius: 6px; }
+  .travel line { stroke: var(--ink-soft); stroke-width: 0.015; }
+  .travel polygon { fill: var(--ink-soft); }
+  .torso { fill: var(--ice); stroke-width: 0.035; }
+  .head { stroke-width: 0.025; fill: var(--ice); }
+  .arm { fill: none; stroke-width: 0.035; stroke-linecap: round; stroke-linejoin: round; }
+  .lead .torso, .lead .head, .arm.lead { stroke: var(--ink); }
+  .follow .torso, .follow .head, .arm.follow { stroke: var(--accent); }
+  .lead .nose, .lead .hand { fill: var(--ink); }
+  .follow .nose, .follow .hand { fill: var(--accent); }
+  .join { fill: var(--ice); stroke: var(--ink); stroke-width: 0.025; }
+  text { font-size: 0.11px; text-anchor: middle; dominant-baseline: central; }
+  .lead text { fill: var(--ink); }
+  .follow text { fill: var(--accent); }
+  .small text { font-size: 0.14px; }
+</style>

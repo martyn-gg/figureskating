@@ -140,7 +140,11 @@ for (const doc of [...ELEMENTS, ...OTHERS, REASONS]) {
        both; the eight plain edges are the one family where the foot IS the subject
        and the summary is generated per foot, so nothing is duplicated by saying so. */
     const edgeSummary = isElement && label === 'summary' && /^kind:\s*edge\s*$/m.test(doc.fm);
-    if (isElement && !edgeSummary && FOOT.test(text))
+    /* A HOLD IS SIDED BY DEFINITION, and not a mirror pair of one passage: the Kilian
+       hold puts the follow at the lead's right, the reversed Kilian at the left, and
+       each is its own page. Which hand goes where is the whole content. */
+    const hold = isElement && /^kind:\s*hold\s*$/m.test(doc.fm);
+    if (isElement && !edgeSummary && !hold && FOOT.test(text))
       fail(`${where} · ${label}`, `names a foot — "${FOOT.exec(text)[0]}". A left element and a right one are mirror images, so one passage serves both`);
     if (/^#{1,6}\s/m.test(text) && isElement)
       fail(`${where} · ${label}`, 'has a heading inside an element body — if a page needs subheadings, the page is too long');

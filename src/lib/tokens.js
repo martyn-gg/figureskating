@@ -88,9 +88,19 @@ export const SCHEMES = { light: LIGHT, dark: DARK };
    highlighter, the index tabs) carry no information, apart from the sticky
    note, which carries the unverified warning; that pair and the tab labels are
    measured too. */
+/* THE TAB COLOURS, reviewed 03/10/2026 (Martyn: review them, some were added after
+   the first choice). Measured as CIEDE2000 differences, normal vision and simulated
+   deuteranomaly. The Dance tab's first peach (#f4b896) was the weakest choice: the
+   closest of any colour to the Basics amber (16), so the rail began and ended in the
+   same warm orange. Coral (#f0a091) stands 26 from Basics and 25 from both its
+   neighbours, Spins and Grades, at a contrast of 6.8 with the tab ink. The others
+   stay: the tabs carry their names, so colour only has to tell neighbours apart,
+   and every neighbouring pair is 13 or more apart. Two pairs that are not
+   neighbours meet under deuteranomaly (Edges and Spins, Turns and Grades); seven
+   pale colours cannot all stay apart for every eye, and the names carry it. */
 const NB_SHARED = {
   'tab-basic': '#f6c76b', 'tab-edge': '#a9d1e8', 'tab-turn': '#b9dcb4',
-  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-dance': '#f4b896', 'tab-grade': '#e6e0cf',
+  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-dance': '#f0a091', 'tab-grade': '#e6e0cf',
   'tab-ink': '#2b2b2e',
 };
 

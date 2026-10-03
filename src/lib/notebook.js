@@ -40,7 +40,7 @@ export const TABS = [
     kinds: ['spin', 'position'], sections: ['spin', 'position'] },
   /* DANCE — 03/10/2026, Martyn: a section for dance, to hold the pattern dances. */
   { id: 'dance', label: 'Dance', href: 'elements/in/dance/',
-    kinds: ['dance'], sections: ['dance'] },
+    kinds: ['hold', 'dance'], sections: ['hold', 'dance'] },
   { id: 'grade', label: 'Grades', href: 'grades/', kinds: [], sections: [] },
 ];
 

@@ -47,7 +47,7 @@ const DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', '
 const PAT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'patterns');
 const patterns = Object.fromEntries(readdirSync(PAT).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(readFileSync(join(PAT, f), 'utf8'))]));
-let drawn = 0, firstPattern = true;
+let drawn = 0, follows = 0, firstPattern = true;
 /* Points along an SVG path of M, L and C commands: the ends of each piece and, on a
    curve, points along it, so the control points (which lie off the line) are not
    mistaken for where the skater goes. */
@@ -129,41 +129,48 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
       fail(`${id}: ${beats} beats, where ${D.patternSeconds} s at ${D.bpm} a minute is ${ex.beats.toFixed(1)}`); }
   const S = d.dance.steps || d.dance.chart;
   const P = patterns[id];
-  /* The pattern draws one partner, the lead, so its steps are the chart rows that
-     give the lead a step: where the chart splits a number (19a, 19b) because the
-     follow takes two steps to the lead's one, the lead's is the only one drawn. */
-  const Sd = D.chart ? S.filter(r => r.lead) : S;
-  if (P) { drawn++;
-    let st = P.steps.map(x => ({ ...x }));
+  /* Each layer draws one partner: the lead always, and the follow where the follow's
+     steps were read too. A layer's steps are the chart rows that give its partner a
+     step: where the chart splits a number (19a, 19b) because one partner takes two
+     steps to the other's one, the other partner's layer has only the first. */
+  const layer = (who, steps, check) => {
+    const Sd = D.chart ? S.filter(r => r[who]) : S;
+    const tag = who === 'lead' ? '' : ` (${who})`;
+    let st = steps.map(x => ({ ...x }));
     if (BREAK === 'pattern' && firstPattern) st = st.map((x, i) => ({ ...x, label: st[(i + 1) % st.length].label }));
     firstPattern = false;
-    if (st.length !== Sd.length) fail(`${id}: the pattern has ${st.length} steps and the lead ${Sd.length}`);
-    st.forEach((x, i) => { if (Sd[i] && String(Sd[i].n) !== x.n) fail(`${id}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${Sd[i].n}`); });
+    if (st.length !== Sd.length) fail(`${id}${tag}: the pattern has ${st.length} steps and the step list ${Sd.length}`);
+    st.forEach((x, i) => { if (Sd[i] && String(Sd[i].n) !== x.n) fail(`${id}${tag}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${Sd[i].n}`); });
     const pts = st.map(x => pathPoints(x.d));
     for (let i = 0; i + 1 < pts.length; i++) {
       const a = pts[i].at(-1), b = pts[i + 1][0], g = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (g > 2.5) fail(`${id}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
+      if (g > 2.5) fail(`${id}${tag}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
     }
     for (const [i, q] of pts.entries())
-      if (q.some(([x, y]) => Math.abs(x) > 30.3 || Math.abs(y) > 15.3)) fail(`${id}: step ${st[i].n} leaves the ice`);
+      if (q.some(([x, y]) => Math.abs(x) > 30.3 || Math.abs(y) > 15.3)) fail(`${id}${tag}: step ${st[i].n} leaves the ice`);
     st.forEach((x, i) => {
       const row = Sd[i]; if (!row) return;
       /* A chart cell can hold two steps on one count ("LFO XF-RFI"), and the diagram
          labels whichever it draws; a label that names no edge (a slalom, a flat)
          has nothing to hold. */
       const all = c => (c || '').match(/[LR][FB](?:OI|IO|O|I)/g) || [];
-      const mine = all(row.edge || row.lead || row.follow), theirs = bareEdge(x.label);
-      if (theirs && !mine.includes(theirs)) fail(`${id}: step ${x.n} is ${theirs} on the diagram and ${mine.join(' ')} in the step list`);
+      const mine = all(row.edge || row[who] || row.lead), theirs = bareEdge(x.label);
+      if (theirs && !mine.includes(theirs)) fail(`${id}${tag}: step ${x.n} is ${theirs} on the diagram and ${mine.join(' ')} in the step list`);
     });
-    for (const [n, v] of (P.check && P.check.beats) || []) {
+    for (const [n, v] of (check && check.beats) || []) {
       const i = S.findIndex(r => String(r.n) === n); if (i < 0) continue;
       const r = S[i];
-      /* The lead's step lasts until the lead's next step: through any rows after it
-         that give only the follow a step (19b while the lead holds 19a). */
+      /* A partner's step lasts until that partner's next step: through any rows
+         after it that give only the other partner a step (19b while the lead holds
+         19a). */
       let b = D.chart ? rowBeats(r) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
-      if (D.chart) for (let j = i + 1; j < S.length && !S[j].lead; j++) b += rowBeats(S[j]);
-      if (b !== v) fail(`${id}: step ${n} has ${b} beats in the step list and ${v} printed beside it on the diagram`);
+      if (D.chart) for (let j = i + 1; j < S.length && !S[j][who]; j++) b += rowBeats(S[j]);
+      if (b !== v) fail(`${id}${tag}: step ${n} has ${b} beats in the step list and ${v} printed beside it on the diagram`);
     }
+  };
+  if (P) { drawn++;
+    layer('lead', P.steps, P.check);
+    if (P.follow) { follows++; layer('follow', P.follow.steps, P.follow.check); }
   }
   console.log(`  ${bad ? '  ' : 'ok'} ${id.padEnd(20)} ${String(S.length).padStart(2)} steps, ${beats} beats in ${D.meter}${ex ? `, timing chart ${ex.beats.toFixed(1)}` : ''}`);
 }
@@ -174,5 +181,5 @@ if (notes.length) {
 }
 console.log(bad
   ? `\n${bad} problem${bad === 1 ? '' : 's'} in the step lists`
-  : `\n${dances} pattern dances, ${steps} steps: numbered in order, whole bars, ${timed} of them against the timing chart,\nand the step lists alternating feet. ${drawn} patterns measured onto the rink, each step joined to the next,\non the ice, on the edge its diagram names and, where the diagram prints them, on its beats`);
+  : `\n${dances} pattern dances, ${steps} steps: numbered in order, whole bars, ${timed} of them against the timing chart,\nand the step lists alternating feet. ${drawn} patterns measured onto the rink (${follows} with the follow's steps too), each step joined to the next,\non the ice, on the edge its diagram names and, where the diagram prints them, on its beats`);
 process.exit(bad ? 1 : 0);

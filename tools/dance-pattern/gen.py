@@ -110,21 +110,55 @@ def same_steps(slug):
     import yaml
     return yaml.safe_load(open(f'src/data/elements/{slug}.md').read().split('---')[1])['dance'].get('sameSteps', False)
 
-def usfs(slug, page, label, dashed=None):
+def partners_differ(slug):
+    import yaml
+    D = yaml.safe_load(open(f'src/data/elements/{slug}.md').read().split('---')[1])['dance']
+    rows = D.get('chart') or []
+    return (not D.get('sameSteps')) and any(r.get('follow') and r.get('follow') != r.get('lead') for r in rows)
+
+def steps_of(R):
+    return [{'n': s['n'], 'label': s['text'], 'd': bezpath(s['segs']), 'at': anchor(pts(s['segs']))} for s in R['steps']]
+
+def checks(R, slug, chart, circuit, beats_ok):
+    return {'method': R['method'], 'diagramFitsTurnedOrDrawn': f2(R['repeat']['maxDev']),
+            'maxGap': f2(max(R['gaps'])), 'maxLabelDistance': f2(max(s['labelDist'] for s in R['steps'])),
+            # where one diagram numbers both partners' steps, their beat numerals
+            # crowd each other and cannot be told apart: none are recorded
+            'beats': [[n, v] for n, v, _ in R['beats']] if beats_ok else []}
+
+def usfs(slug, page, label, dashed=None, follow_page=None):
     chart = chart_of(slug)
     R, scores = best(RB, page, chart)
     circuit = R['circuit']
-    steps = [{'n': s['n'], 'label': s['text'], 'd': bezpath(s['segs']), 'at': anchor(pts(s['segs']))} for s in R['steps']]
-    rec = {'source': f'U.S. Figure Skating 2026-27 Rulebook, {label}', 'measured': 'vector', 'circuit': circuit, 'steps': steps}
+    rec = {'source': f'U.S. Figure Skating 2026-27 Rulebook, {label}', 'measured': 'vector', 'circuit': circuit,
+           'steps': steps_of(R)}
     if dashed:
         pp = partners(page, np.vstack([pts(s['segs']) for s in R['steps']]) if circuit == 'half' else None)
         if pp: rec['dashed'] = {'is': dashed, 'd': pp}
-    rec['check'] = {'method': R['method'], 'diagramFitsTurnedOrDrawn': f2(R['repeat']['maxDev']),
-                    'maxGap': f2(max(R['gaps'])), 'maxLabelDistance': f2(max(s['labelDist'] for s in R['steps'])),
-                    # where one diagram numbers both partners' steps, their beat numerals
-                    # crowd each other and cannot be told apart: none are recorded
-                    'beats': [] if (chart and not same_steps(slug) and circuit == 'half')
-                             else [[n, v] for n, v, _ in R['beats']]}
+    both_numbered = chart and not same_steps(slug) and circuit == 'half'
+    rec['check'] = checks(R, slug, chart, circuit, not both_numbered)
+    # THE FOLLOW. Where the partners skate different steps, the follow's are read
+    # too: off the follow's own diagram where the rulebook gives one, or off the
+    # half of a shared diagram that carries the follow's numbers. A follow skates
+    # beside the lead, so the follow's sequence is placed where the lead's is.
+    if partners_differ(slug):
+        fp = follow_page or page
+        try:
+            F, _ = best(RB, fp, chart, who='follow')
+        except Exception:
+            F = None
+        order = [str(r['n']) for r in chart if r.get('follow')]
+        good = F is not None and [s['n'] for s in F['steps']] == order and max(F['gaps']) <= 2.5 \
+            and max(s['labelDist'] for s in F['steps']) <= 2.0 and F['repeat']['maxDev'] <= 1.6
+        if good:
+            l0 = np.array(R['steps'][0]['segs'][0][0]); f0 = np.array(F['steps'][0]['segs'][0][0])
+            if F['circuit'] == 'half' and np.linalg.norm(-f0 - l0) < np.linalg.norm(f0 - l0):
+                for o in F['steps']: o['segs'] = [[-np.array(q) for q in sg] for sg in o['segs']]
+            flabel = f'page {pymupdf.open(RB)[fp-1].get_text().split(chr(10))[0]}' + (", the follow's diagram" if follow_page else '')
+            rec['follow'] = {'source': f'U.S. Figure Skating 2026-27 Rulebook, {flabel}', 'steps': steps_of(F),
+                             'check': checks(F, slug, chart, F['circuit'], not both_numbered)}
+        else:
+            print(f'  {slug}: the follow\'s steps do not read cleanly yet; lead only')
     return rec
 
 SC = 'sources/skate-canada/Pattern-Dance-Competition-Technical-Requirements-2025.pdf'
@@ -212,9 +246,11 @@ CROSS = {'dutch-waltz': ('dutch', [300,562], [58,120], []),
          'fiesta-tango': ('fiesta', [320,578], [82,136], [1, 8])}
 only = set(sys.argv[1:])
 out = {}
+FOLLOW_PAGE = {'paso-doble': 378, 'starlight-waltz': 382, 'viennese-waltz': 386, 'westminster-waltz': 390,
+               'argentine-tango': 397, 'ravensburger-waltz': 427, 'silver-samba': 434, 'yankee-polka': 451}
 for slug, page, label, dashed in DANCES:
     if only and slug not in only: continue
-    rec = usfs(slug, page, label, dashed); rec['slug'] = slug
+    rec = usfs(slug, page, label, dashed, FOLLOW_PAGE.get(slug)); rec['slug'] = slug
     if slug in CROSS:
         img, sp, rp, splits = CROSS[slug]; rec = cross_check(rec, page, img, sp, rp, splits)
     del rec['slug']
@@ -222,4 +258,4 @@ for slug, page, label, dashed in DANCES:
 os.makedirs('src/data/patterns', exist_ok=True)
 for k, v in out.items():
     json.dump(v, open(f'src/data/patterns/{k}.json', 'w'), indent=1)
-    print(k, len(v['steps']), v['check'].get('repeatMaxDev'), v['check']['maxGap'], len(v.get('dashed', {}).get('d', [])), v['check'].get('crossCheck'))
+    print(k, len(v['steps']), 'follow' if 'follow' in v else '')

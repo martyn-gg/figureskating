@@ -29,7 +29,7 @@ const elements = defineCollection({
        most of them are two-foot or straight, and the derived machinery keys off
        `entry` — so a basic is written rather than generated, and that is the point
        of it being its own kind rather than an edge with a missing field. */
-    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance', 'basic', 'sequence']),
+    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance', 'hold', 'basic', 'sequence']),
     summary: z.string(),
     entry: z.object({ foot, edge, dir }).optional(),
     /* One-foot turns first, then the two-foot ones. A mohawk and a choctaw change

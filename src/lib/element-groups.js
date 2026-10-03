@@ -45,6 +45,10 @@ export const LEARN = {
   position: ['extended-edge', 'teapot', 'spiral', 'spread-eagle', 'ina-bauer'],
   step: ['slip-step'],
   sequence: ['step-sequence', 'choreographic-sequence'],
+  /* The holds in the order U.S. Figure Skating's rule 8107 builds them: the Kilian
+     first because the first dances are skated in it, then its mirror, then the
+     closed hold and the two holds made from it, then hand in hand. */
+  hold: ['kilian-hold', 'reversed-kilian-hold', 'closed-hold', 'open-hold', 'outside-hold', 'hand-in-hand-hold'],
   /* In British Ice Skating's pattern dance order, National 1 to Gold Star, then the
      U.S. Figure Skating dances British Ice Skating does not test. */
   dance: [
@@ -237,8 +241,9 @@ export function elementGroups(elements, exercises = []) {
     sequence: 12,
     /* DANCE IS ITS OWN DISCIPLINE and its own tab, so its place here only decides
        where it sits on the all-elements page: after everything a singles skater
-       meets. */
-    dance: 13,
+       meets. The holds come first, because every dance names one. */
+    hold: 13,
+    dance: 14,
   };
   const rankOf = id => {
     const r = SECTION_RANK[id];
@@ -279,6 +284,7 @@ export const SECTION_NOTE = {
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The two-foot spin, the three basic positions, and the two ways of joining them: a change of foot and a combination.',
   sequence:    'Step sequences and choreographic sequences: runs of turns, steps and movements judged as one element.',
+  hold:        'How the two partners hold each other: where each stands, which way each faces, and where every hand goes.',
   dance:       'Pattern dances: set steps to set music, each step an edge held for a count of beats.',
 };
 

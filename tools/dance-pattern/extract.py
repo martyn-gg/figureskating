@@ -84,7 +84,7 @@ EDGE = re.compile(r'[LR][FB](?:OI|IO|O|I)')
 def bare(c): m = EDGE.search(c or ''); return m.group(0) if m else ''
 
 
-def lead_labels(labels, chart):
+def lead_labels(labels, chart, who='lead'):
     """Where a diagram labels both partners (U.S. Figure Skating often puts the
     lead's numbers on one half and the follow's on the other), keep the lead's, by
     the step chart: a label stays if an edge it names is one the lead's step of
@@ -95,12 +95,12 @@ def lead_labels(labels, chart):
     edges = lambda c: set(EDGE.findall(c or ''))
     def fits(L, r):
         e = edges(L['text'])
-        return (not e) or bool(e & edges(r.get('lead'))) or 'OPT' in L['text'].upper()
+        return (not e) or bool(e & edges(r.get(who))) or 'OPT' in L['text'].upper()
     out = []
     for L in labels:
         n = L['n']
-        if n not in rows or not rows[n].get('lead'):
-            leads = [k for k in (n + 'a', n + 'b', n + 'c') if k in rows and rows[k].get('lead')]
+        if n not in rows or not rows[n].get(who):
+            leads = [k for k in (n + 'a', n + 'b', n + 'c') if k in rows and rows[k].get(who)]
             hit = [k for k in leads if fits(L, rows[k])]
             if len(hit) == 1: L = {**L, 'n': hit[0]}
             else: continue
@@ -108,7 +108,7 @@ def lead_labels(labels, chart):
     return out
 
 
-def extract(pdf, pageno, circuit=None, chart=None):
+def extract(pdf, pageno, circuit=None, chart=None, who='lead'):
     """The steps of one diagram, in order, in metres.
 
     A half-circuit diagram (one side and one end, repeated) draws every stroke twice,
@@ -138,7 +138,7 @@ def extract(pdf, pageno, circuit=None, chart=None):
     # an optional variant drawn beside a step is labelled with the step's number too;
     # it never claims a stroke while a plain label for that number exists
     if chart:
-        labels = lead_labels(labels, chart)
+        labels = lead_labels(labels, chart, who)
     plainN = {L['n'] for L in labels if 'OPT' not in L['text'].upper()}
     plain = [L for L in labels if 'OPT' not in L['text'].upper() or L['n'] not in plainN]
     first_straight = STRAIGHT.get((pdf, pageno), len(strokes))
@@ -310,15 +310,15 @@ def align(pieces, steps_labels, rot_ok, endcost=0):
     return assign, D
 
 
-def extract_chain(pdf, pageno, chart=None, circuit=None):
+def extract_chain(pdf, pageno, chart=None, circuit=None, who='lead'):
     """Steps by following the drawn path, with the labels placing the boundaries
     between steps (see align). Robust where a label sits nearer a neighbouring
     stroke than its own, which nearest-label assignment is not."""
     strokes, labels, beats, ratio = page_geometry(pdf, pageno)
     for L in labels: L['text'] = L['text'].replace('C h', 'Ch').replace('RF I', 'RFI').replace('LF I', 'LFI')
-    if chart: labels = lead_labels(labels, chart)
+    if chart: labels = lead_labels(labels, chart, who)
     if chart:
-        order = [str(r['n']) for r in chart if r.get('lead')]
+        order = [str(r['n']) for r in chart if r.get(who)]
     else:
         key = lambda n: (int(re.match(r'\d+', n).group()), n)
         order = sorted({L['n'] for L in labels}, key=key)
@@ -391,14 +391,14 @@ def quality(R, order):
     return max(R['gaps'] or [0]) + max(s['labelDist'] for s in R['steps']) + 0.5 * R['repeat']['maxDev']
 
 
-def best(pdf, pageno, chart=None):
+def best(pdf, pageno, chart=None, who='lead'):
     """Both readings, the nearest-label one and the follow-the-path one; the one whose
     steps join up best, sit nearest their labels and leave no stroke unexplained."""
-    order = [str(r['n']) for r in chart if r.get('lead')] if chart else None
+    order = [str(r['n']) for r in chart if r.get(who)] if chart else None
     out = []
     for f in (extract, extract_chain):
         try:
-            R = f(pdf, pageno, chart=chart)
+            R = f(pdf, pageno, chart=chart, who=who)
             R['method'] = f.__name__
             out.append((quality(R, order or [s['n'] for s in R['steps']]), R))
         except Exception as e:

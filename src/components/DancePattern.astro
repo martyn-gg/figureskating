@@ -38,53 +38,72 @@ const { slug, dance } = Astro.props;
 const files = import.meta.glob('../data/patterns/*.json', { eager: true });
 const P = files[`../data/patterns/${slug}.json`]?.default;
 
-const rows = P && (dance.steps
+/* Each partner's step list: the follow's where the chart gives one. */
+const rowsOf = who => dance.steps
   ? dance.steps.map(s => ({ n: String(s.n), code: s.edge }))
-  : dance.chart.map(r => ({ n: String(r.n), code: r.lead || r.follow })));
+  : dance.chart.map(r => ({ n: String(r.n), code: (who === 'follow' ? r.follow : r.lead) || r.lead || r.follow }));
 /* The diagram's own label names the edge it draws; tools/dance.mjs holds it to the
    step list, which matters where one chart cell holds two steps ("LFO XF-RFI") and
    the diagram draws the one it labels. A label naming no edge falls back to the
    step list. */
-const edgeOf = (n, label) => {
+const edgeOf = (who, n, label) => {
   if (/[LR][FB](OI|IO|O|I)/.test(label || '')) return edgeOfCode(label);
-  const r = rows.find(x => x.n === n);
+  const r = rowsOf(who).find(x => x.n === n);
   return r ? edgeOfCode(r.code) : null;
 };
 const ink = e => e === 'O' ? 'var(--edge-out)' : e === 'I' ? 'var(--edge-in)' : 'var(--ink)';
 const X = P && P.check && P.check.crossCheck;
-const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
+const startOf = steps => /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(steps[0].d);
+/* THE PARTNERS, SWITCHABLE — 03/10/2026, Martyn. Where the partners skate different
+   steps and the follow's read cleanly, both are drawn and a switch shows one at a
+   time. They skate side by side on one track, so the line barely moves; what
+   changes is where each step begins and which edge it is on, and the colours show
+   it. A CSS switch (radio buttons and :has), so it works without script. */
+const layers = P ? [{ who: 'lead', steps: P.steps }, ...(P.follow ? [{ who: 'follow', steps: P.follow.steps }] : [])] : [];
 ---
 {P && (
   <figure class="pattern">
+    {P.follow && (
+      <fieldset class="who">
+        <legend>Steps for</legend>
+        <label><input type="radio" name="partner" value="lead" checked /> the lead</label>
+        <label><input type="radio" name="partner" value="follow" /> the follow</label>
+      </fieldset>
+    )}
     <svg viewBox="-17.5 -32 35 64" role="img"
       aria-label={`The ${dance.name || 'dance'} pattern on a 60 by 30 metre rink, ${P.steps.length} steps, numbered in order`}>
       <rect x="-15" y="-30" width="30" height="60" rx="8.5" class="rink" />
       <line x1="0" y1="-30" x2="0" y2="30" class="axis" />
       <line x1="-15" y1="0" x2="15" y2="0" class="axis" />
-      <g transform="matrix(0 -1 1 0 0 0)">
-        {P.circuit === 'half' && (
-          <g transform="rotate(180)" class="repeat">
-            {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n, s.label))} />)}
+      {layers.map(({ who, steps }) => { const st = startOf(steps); return (
+        <g class={`partner p-${who}`}>
+          <g transform="matrix(0 -1 1 0 0 0)">
+            {P.circuit === 'half' && (
+              <g transform="rotate(180)" class="repeat">
+                {steps.map(s => <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))} />)}
+              </g>
+            )}
+            {who === 'lead' && P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
+            <g class="steps">
+              {steps.map(s => <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))}><title>{`Step ${s.n}`}</title></path>)}
+            </g>
+            {st && <circle cx={st[1]} cy={st[2]} r="0.7" class="start" />}
           </g>
-        )}
-        {P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
-        <g class="steps">
-          {P.steps.map(s => <path d={s.d} stroke={ink(edgeOf(s.n, s.label))}><title>{`Step ${s.n}`}</title></path>)}
-        </g>
-        {start && <circle cx={start[1]} cy={start[2]} r="0.7" class="start" />}
-      </g>
-      <g class="nums">
-        {P.steps.map(s => <text x={s.at[1]} y={-s.at[0]}>{s.n}</text>)}
-      </g>
+          <g class="nums">
+            {steps.map(s => <text x={s.at[1]} y={-s.at[0]}>{s.n}</text>)}
+          </g>
+        </g>); })}
     </svg>
     <figcaption>
       One sequence on a 60 x 30 metre rink, drawn upright as the rulebooks draw it,
       starting at the dot and travelling anticlockwise.
-      {!dance.sameSteps && ' These are the lead\'s steps.'}
+      {!dance.sameSteps && (P.follow
+        ? ' The two partners skate side by side on one track; the switch shows where each one\'s steps fall and on which edge.'
+        : ' These are the lead\'s steps.')}
       {P.circuit === 'half' && ' The faint half is the same steps skated again.'}
       {P.dashed && ` The dashed line is ${P.dashed.is}.`}
       {' '}Rinks vary, and on a smaller one the pattern shrinks to fit.
-      Measured from the diagram in {P.source}.
+      Measured from the diagram in {P.source}{P.follow && P.follow.source !== P.source ? `, and the follow's from ${P.follow.source.replace(/^U\.S\. Figure Skating 2026-27 Rulebook, /, '')}` : ''}.
       {X && ` Skate Canada's diagram of the same dance is drawn at a different size; allowing for that, its steps sit on average ${X.meanApartAfterScaling.toFixed(1)} m from these.`}
     </figcaption>
   </figure>
@@ -99,6 +118,12 @@ const start = P && /^M\s*(-?[\d.]+)[ ,](-?[\d.]+)/.exec(P.steps[0].d);
     .pattern { float: right; width: 340px; margin: 0.25rem 0 1rem 1.5rem; }
   }
   .pattern svg { width: 100%; height: auto; display: block; }
+  .who { border: 0; padding: 0; margin: 0 0 0.4rem; display: flex; gap: 1rem; align-items: baseline; font-size: 0.9rem; }
+  .who legend { float: left; padding: 0; margin-right: 0.5rem; color: var(--ink-soft); }
+  .who label { cursor: pointer; }
+  .p-follow { display: none; }
+  .pattern:has(input[value="follow"]:checked) .p-follow { display: inline; }
+  .pattern:has(input[value="follow"]:checked) .p-lead { display: none; }
   .rink { fill: var(--ice); stroke: var(--ink-soft); stroke-width: 0.18; }
   .axis { stroke: var(--ink-soft); stroke-width: 0.08; stroke-dasharray: 1.2 0.5 0.2 0.5; opacity: 0.6; }
   path { fill: none; stroke-width: 0.38; stroke-linecap: round; stroke-linejoin: round; }
