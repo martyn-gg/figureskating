@@ -78,10 +78,6 @@ const cannotDraw = {
   'layback-spin':                'the arch is in the back, and the rig has a hip and shoulders and no spine between them',
   /* Pattern dances show their steps as a table. The rink pattern is a drawing of where
      each lobe goes, and the diagrams that hold it are US Figure Skating's to draw. */
-  'cha-cha':                     'a pattern dance whose diagram tools/dance-pattern cannot yet read step by step',
-  'tango-romantica':             'a pattern dance whose diagram tools/dance-pattern cannot yet read step by step',
-  'tango':                       'a pattern dance whose diagram tools/dance-pattern cannot yet read step by step',
-  'tea-time-foxtrot':            'a pattern dance whose diagram tools/dance-pattern cannot yet read step by step',
   'falling-and-getting-up':      'the body on the ice: the rig has hips over blades and no pose sitting or kneeling',
   'marching':                    'a walk: each step lifts a foot and puts it down, and the rig draws no stepping',
 };

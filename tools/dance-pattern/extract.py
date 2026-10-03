@@ -10,6 +10,7 @@ import pymupdf
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
+CHAIN_W = [1.0, 3.0]  # gap, turn: how the path follower weighs the next stroke
 STRAIGHT = {}  # (pdf, page) -> index of the first ruled line in the stroke list
 LABEL = re.compile(r'^(\d+[a-z]?)\s*([A-Z]\S.*)$')
 
@@ -100,7 +101,10 @@ def lead_labels(labels, chart, who='lead'):
     for L in labels:
         n = L['n']
         if n not in rows or not rows[n].get(who):
-            leads = [k for k in (n + 'a', n + 'b', n + 'c') if k in rows and rows[k].get(who)]
+            # a number the chart splits and the diagram does not (19 for 19a), or
+            # the other way round (the diagram's 15a for the chart's single 15)
+            base = re.sub(r'[a-z]$', '', n)
+            leads = [k for k in (n + 'a', n + 'b', n + 'c', base) if k != n and k in rows and rows[k].get(who)]
             hit = [k for k in leads if fits(L, rows[k])]
             if len(hit) == 1: L = {**L, 'n': hit[0]}
             else: continue
@@ -267,20 +271,25 @@ def chain_strokes(strokes, start_idx, flipped, maxgap=2.5):
                 if d > maxgap: continue
                 u = (a - e) / (d + 1e-9) if d > 0.05 else t
                 turn = (1 - np.dot(t, t0(c))) + 0.5 * (1 - np.dot(t, u))
-                score = d + 3.0 * turn
+                score = CHAIN_W[0] * d + CHAIN_W[1] * turn
                 if best is None or score < best[0]: best = (score, j, c)
         if best is None: break
         _, j, cur = best; used.add(j); out.append((j, cur))
     return out
 
 
-def align(pieces, steps_labels, rot_ok, endcost=0):
-    """Give consecutive pieces to consecutive steps, every step at least one piece,
-    trailing pieces left over, minimising how far each step's label sits from its
-    pieces. steps_labels: per step, a list of label boxes (any may be used)."""
+def align(pieces, steps_labels, rot_ok, endcost=0, optional=()):
+    """Give consecutive pieces to consecutive steps, trailing pieces left over,
+    minimising how far each step's label sits from its pieces. Every step takes at
+    least one piece, except the steps in `optional` (a hop, a toe pick, a step on
+    the "and" count), which the diagrams mark without a tracing of their own and
+    which may take none. steps_labels: per step, a list of label boxes."""
     M, N = len(pieces), len(steps_labels)
     PP = [pts(p) for p in pieces]
+    opt = set(optional)
     def dist(i, k):
+        # a step the diagram leaves unlabelled is placed by its neighbours alone
+        if not steps_labels[k]: return 1.5
         best = 1e9
         for box in steps_labels[k]:
             best = min(best, boxdist(PP[i], box))
@@ -288,24 +297,39 @@ def align(pieces, steps_labels, rot_ok, endcost=0):
         return best
     D = np.array([[dist(i, k) for k in range(N)] for i in range(M)])
     INF = 1e18
-    # f[i][k]: pieces 0..i used, piece i in step k, best cost; a step's cost is the
-    # smallest distance of any of its pieces, so extra pieces cost a small penalty
-    f = np.full((M, N), INF); arg = np.zeros((M, N), int)
+    # the steps that may come straight before step k: k-1, or further back across
+    # a run of optional steps in between
+    prevs = []
+    for k in range(N):
+        p = []; j = k - 1
+        while j >= 0:
+            p.append(j)
+            if j not in opt: break
+            j -= 1
+        prevs.append(p)
+    f = np.full((M, N), INF); arg = np.full((M, N), -2, int)
     f[0][0] = D[0][0]
+    for k in range(1, N):
+        if all(j in opt for j in range(0, k)) and 0 in opt:
+            pass
     for i in range(1, M):
         for k in range(N):
-            # piece i joins step k (continuing) or starts step k
             cont = f[i-1][k] + 0.3 + 0.2 * min(D[i][k], 3)
-            start = f[i-1][k-1] + D[i][k] if k > 0 else INF
-            if start <= cont: f[i][k], arg[i][k] = start, 1
-            else: f[i][k], arg[i][k] = cont, 0
-    # end: any i with step N-1; trailing pieces unassigned
-    iend = int(np.argmin(f[:, N-1] + endcost))
-    assign = [None] * M; i, k = iend, N - 1
+            best, bj = cont, k
+            for j in prevs[k]:
+                v = f[i-1][j] + D[i][k] + 0.2 * (k - j - 1)
+                if v < best: best, bj = v, j
+            f[i][k], arg[i][k] = best, bj
+    # end: the last step, or the last before a trailing run of optional ones
+    ends = [N - 1] + [j for j in range(N - 2, -1, -1) if all(x in opt for x in range(j + 1, N))]
+    cands = [(f[i][k] + (endcost[i] if hasattr(endcost, '__len__') else endcost), i, k) for k in ends for i in range(M)]
+    _, iend, kend = min(cands)
+    assign = [None] * M; i, k = iend, kend
     while i >= 0:
         assign[i] = k
-        if arg[i][k] == 1: k -= 1
+        j = arg[i][k]
         i -= 1
+        if j != k: k = j
         if k < 0: break
     return assign, D
 
@@ -331,6 +355,12 @@ def extract_chain(pdf, pageno, chart=None, circuit=None, who='lead'):
     for L in labels:
         if L['n'] in boxes and (L['n'] not in text or 'OPT' in text[L['n']].upper()): text[L['n']] = L['text']
     missing = [n for n in order if not boxes[n]]
+    # steps the diagrams mark without a tracing: a hop, a toe pick, a step on "and"
+    rowsby = {str(r['n']): r for r in chart} if chart else {}
+    def pointlike(n):
+        r = rowsby.get(n, {})
+        return bool(re.search(r'hop|pick', str(r.get(who) or ''), re.I)) or str(r.get('beats')) in ('0', 'and')
+    optional = [k for k, n in enumerate(order) if pointlike(n)]
     lab = [boxes[n] for n in order]
     SP = [pts(s) for s in strokes]
     def d1(i, bl):
@@ -341,10 +371,10 @@ def extract_chain(pdf, pageno, chart=None, circuit=None, who='lead'):
         for fl in (False, True):
             ch = chain_strokes(strokes, si, fl)
             pieces = [c for _, c in ch]
-            if len(pieces) < len(order): continue
+            if len(pieces) < len(order) - len(optional): continue
             st = np.array(pieces[0][0][0]); tgt = -st if half else st
             endc = np.array([np.linalg.norm(np.array(p[-1][3]) - tgt) for p in pieces]) * 1.0
-            assign, D = align(pieces, lab, half, endc)
+            assign, D = align(pieces, lab, half, endc, optional)
             if any(a is None for a in assign[:1]): continue
             cost = sum(D[i][a] for i, a in enumerate(assign) if a is not None and (i == 0 or assign[i-1] != a))
             if best is None or cost < best[0]: best = (cost, pieces, assign, D)
@@ -353,8 +383,15 @@ def extract_chain(pdf, pageno, chart=None, circuit=None, who='lead'):
     out = []
     for k, n in enumerate(order):
         segs = [sg for p, a in zip(pieces, assign) if a == k for sg in p]
-        first = next(i for i, a in enumerate(assign) if a == k)
-        out.append({'n': n, 'text': text.get(n, ''), 'segs': segs, 'labelDist': float(D[first][k])})
+        mine = [i for i, a in enumerate(assign) if a == k]
+        out.append({'n': n, 'text': text.get(n, ''), 'segs': segs,
+                    'labelDist': float(D[mine[0]][k]) if mine else 0.0})
+    # a step with no tracing is a point: where the step before it ends
+    for k, o in enumerate(out):
+        if not o['segs']:
+            prev = next((out[j] for j in range(k - 1, -1, -1) if out[j]['segs']), None)
+            q = np.array(prev['segs'][-1][3]) if prev else np.array(out[k+1]['segs'][0][0])
+            o['segs'] = [[q, q, q, q]]; o['point'] = True
     # draw the sequence on the half of the rink where the diagram labels it, so the
     # picture is the rulebook's own way round
     if half:
@@ -396,12 +433,17 @@ def best(pdf, pageno, chart=None, who='lead'):
     steps join up best, sit nearest their labels and leave no stroke unexplained."""
     order = [str(r['n']) for r in chart if r.get(who)] if chart else None
     out = []
-    for f in (extract, extract_chain):
+    # the path follower twice: once weighing a sharp turn over a gap (strokes that
+    # flow on round a lobe), once weighing a gap over a turn (where the pattern
+    # crosses itself and the nearest end is the right one, as in the Tango)
+    for f, w in ((extract, None), (extract_chain, [1.0, 3.0]), (extract_chain, [3.0, 1.5])):
         try:
+            if w: CHAIN_W[:] = w
             R = f(pdf, pageno, chart=chart, who=who)
-            R['method'] = f.__name__
+            R['method'] = f.__name__ + (f' {w[0]:g}:{w[1]:g}' if w else '')
             out.append((quality(R, order or [s['n'] for s in R['steps']]), R))
         except Exception as e:
             pass
+    CHAIN_W[:] = [1.0, 3.0]
     out.sort(key=lambda t: t[0])
     return out[0][1], [(R['method'], round(q, 2)) for q, R in out]

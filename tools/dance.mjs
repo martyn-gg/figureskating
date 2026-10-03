@@ -26,7 +26,15 @@
    must be on the ice; the edge each stroke's label names on the diagram must be the
    edge the step list gives; and where the diagram prints a beat numeral beside a
    step (U.S. Figure Skating's do), it must be that step's beats. The last two hold
-   the diagram against a step list typed separately from it.
+   the diagram against a step list typed separately from it. A hop or a toe pick,
+   which the diagrams mark without a tracing, may be a point and nothing else may.
+
+   AND THE TWO PARTNERS' TOTALS. Where the partners skate different steps, each
+   partner's steps, each lasting until that partner's next one, come to the
+   pattern's beats. The diagram's beat numerals found the case that needs it: the
+   Tango Romantica's 35a and 35b, where the chart gives the lead 2 and 4 beats and
+   the follow 1+3 and 1, and the step list had kept only the follow's. `leadBeats`
+   now carries the lead's, and this keeps it adding up with the rows round it.
 
    Broken on purpose:
      --break=foot     step 2 of the first dance onto the wrong foot ...... 3 (both its neighbours,
@@ -74,6 +82,16 @@ const PER_BAR = { '3/4': 3, '4/4': 4, '2/4': 2, '6/8': 6 };
 
 let bad = 0, dances = 0, steps = 0, timed = 0;
 const fail = m => { bad++; console.log(`  x ${m}`); };
+/* How long one partner's step under chart row i lasts: the lead's own count where
+   the chart gives one, else the row's count and every row after it that gives only
+   the other partner a step (19b while the lead holds 19a). */
+const partnerBeats = (S, i, who) => {
+  const r = S[i];
+  if (who === 'lead' && r.leadBeats) return rowBeats({ beats: r.leadBeats });
+  let b = rowBeats(r);
+  for (let j = i + 1; j < S.length && !S[j][who] && !(who === 'follow' && S[j].leadBeats); j++) b += rowBeats(S[j]);
+  return b;
+};
 const notes = [];
 let first = true;
 for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
@@ -128,6 +146,12 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
     if (Math.abs(beats - ex.beats) > ex.slack)
       fail(`${id}: ${beats} beats, where ${D.patternSeconds} s at ${D.bpm} a minute is ${ex.beats.toFixed(1)}`); }
   const S = d.dance.steps || d.dance.chart;
+  /* BOTH PARTNERS DANCE THE WHOLE PATTERN: the lead's steps and the follow's,
+     each lasting as partnerBeats says, come to the same number of beats. */
+  if (D.chart && !D.sameSteps) for (const who of ['lead', 'follow']) {
+    const t = S.reduce((a, r, i) => a + (r[who] ? partnerBeats(S, i, who) : 0), 0);
+    if (Math.abs(t - beats) > 1e-9) fail(`${id}: the ${who}'s steps come to ${t} beats and the pattern to ${beats}`);
+  }
   const P = patterns[id];
   /* Each layer draws one partner: the lead always, and the follow where the follow's
      steps were read too. A layer's steps are the chart rows that give its partner a
@@ -141,7 +165,14 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
     firstPattern = false;
     if (st.length !== Sd.length) fail(`${id}${tag}: the pattern has ${st.length} steps and the step list ${Sd.length}`);
     st.forEach((x, i) => { if (Sd[i] && String(Sd[i].n) !== x.n) fail(`${id}${tag}: pattern step ${i + 1} is numbered ${x.n}, the dance's ${Sd[i].n}`); });
-    const pts = st.map(x => pathPoints(x.d));
+    /* A hop or a toe pick has no tracing on the diagram, only a mark: the pattern
+       carries it as a point, and only a step that is one may be one. */
+    const pts = st.map(x => x.point ? [x.point] : pathPoints(x.d));
+    st.forEach((x, i) => {
+      const row = Sd[i];
+      if (x.point && row && !/hop|pick/i.test(row[who] || row.lead || '') && !['0', 'and'].includes(String(row.beats)))
+        fail(`${id}${tag}: step ${x.n} is drawn as a point, and ${row[who] || row.lead} is not a hop or a toe pick`);
+    });
     for (let i = 0; i + 1 < pts.length; i++) {
       const a = pts[i].at(-1), b = pts[i + 1][0], g = Math.hypot(a[0] - b[0], a[1] - b[1]);
       if (g > 2.5) fail(`${id}${tag}: steps ${st[i].n} and ${st[i + 1].n} are ${g.toFixed(1)} m apart on the drawing`);
@@ -163,8 +194,7 @@ for (const f of readdirSync(DIR).filter(f => f.endsWith('.md')).sort()) {
       /* A partner's step lasts until that partner's next step: through any rows
          after it that give only the other partner a step (19b while the lead holds
          19a). */
-      let b = D.chart ? rowBeats(r) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
-      if (D.chart) for (let j = i + 1; j < S.length && !S[j][who]; j++) b += rowBeats(S[j]);
+      const b = D.chart ? partnerBeats(S, i, who) : (Array.isArray(r.beats) ? r.beats.reduce((a, c) => a + c, 0) : r.beats);
       if (b !== v) fail(`${id}${tag}: step ${n} has ${b} beats in the step list and ${v} printed beside it on the diagram`);
     }
   };

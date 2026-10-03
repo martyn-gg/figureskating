@@ -117,7 +117,16 @@ def partners_differ(slug):
     return (not D.get('sameSteps')) and any(r.get('follow') and r.get('follow') != r.get('lead') for r in rows)
 
 def steps_of(R):
-    return [{'n': s['n'], 'label': s['text'], 'd': bezpath(s['segs']), 'at': anchor(pts(s['segs']))} for s in R['steps']]
+    out = []
+    for s in R['steps']:
+        if s.get('point'):
+            # a hop or a toe pick: no tracing, a mark where it happens
+            q = np.array(s['segs'][0][0]); n = q / (np.linalg.norm(q) + 1e-9)
+            out.append({'n': s['n'], 'label': s['text'], 'd': '', 'point': [f2(q[0]), f2(q[1])],
+                        'at': [f2(q[0] + n[0] * 1.6), f2(q[1] + n[1] * 1.6)]})
+        else:
+            out.append({'n': s['n'], 'label': s['text'], 'd': bezpath(s['segs']), 'at': anchor(pts(s['segs']))})
+    return out
 
 def checks(R, slug, chart, circuit, beats_ok):
     return {'method': R['method'], 'diagramFitsTurnedOrDrawn': f2(R['repeat']['maxDev']),
@@ -149,7 +158,9 @@ def usfs(slug, page, label, dashed=None, follow_page=None):
             F = None
         order = [str(r['n']) for r in chart if r.get('follow')]
         good = F is not None and [s['n'] for s in F['steps']] == order and max(F['gaps']) <= 2.5 \
-            and max(s['labelDist'] for s in F['steps']) <= 2.0 and F['repeat']['maxDev'] <= 1.6
+            and max(s['labelDist'] for s in F['steps']) <= 2.0 and F['repeat']['maxDev'] <= 2.5
+        # (the last test is looser than a lead's: a stroke only the lead skates sits
+        # off the follow's path, and that is the diagram, not a misreading)
         if good:
             l0 = np.array(R['steps'][0]['segs'][0][0]); f0 = np.array(F['steps'][0]['segs'][0][0])
             if F['circuit'] == 'half' and np.linalg.norm(-f0 - l0) < np.linalg.norm(f0 - l0):
@@ -185,6 +196,104 @@ def skate_canada(slug, img, sp, rp, labels, splits, circuit, label):
     gaps = [np.linalg.norm(pieces[i][-1] - pieces[i+1][0]) for i in range(len(pieces)-1)]
     return {'source': f'Skate Canada, Pattern Dance Competition Technical Requirements (12/06/2025), {label}',
             'measured': 'raster', 'circuit': circuit, 'steps': steps, 'check': {'maxGap': f2(max(gaps))}}
+
+def cha_cha(page, label):
+    """The Cha Cha by hand. Its step 7 is a slalom on both blades, which the diagram
+    draws as two tracks side by side, and the right track runs unbroken from step 6
+    through the slalom into step 8, so no reading that gives each step its own
+    stroke can find the boundaries. They are found here instead, from the drawing:
+    step 7 starts where the second track starts (where the other foot goes down),
+    and the slalom gives way to step 8 at its share of the track by beats, 4 to
+    1.5, because the rulebook draws each step's length in proportion to its beats
+    (DD 1.02). Steps 7 and 8 are drawn as both tracks; every other step is one
+    stroke, taken in the order the path runs."""
+    S, labels, beats, _ = page_geometry(RB, page)
+    P = {i: pts(s) for i, s in enumerate(S)}
+    def run(i, rev=False): return P[i][::-1] if rev else P[i]
+    def arclen(Q): return np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+    def cut_at(Q, k): return Q[:k+1], Q[k:]
+    right, left = P[20][::-1], P[13]          # both run up the rink from their start
+    # step 6 | step 7: where the second track begins
+    a = int(np.argmin(np.linalg.norm(right - left[0], axis=1)))
+    six, rest = cut_at(right, a)
+    # step 7 | step 8: by beats along what remains, 4 of 5.5
+    L = arclen(rest); b = int(np.searchsorted(L, L[-1] * 4 / 5.5))
+    r7, r8 = cut_at(rest, b)
+    bl = int(np.argmin(np.linalg.norm(left - rest[b], axis=1)))
+    l7, l8 = cut_at(left, bl)
+    order = [(15, True), (16, True), (17, True), (18, True), (19, True), None, None, None,
+             (21, True), (22, True), (23, True), (24, True), (12, True), (1, True)]
+    pieces = []
+    for k, o in enumerate(order):
+        if k == 5: pieces.append([six])
+        elif k == 6: pieces.append([r7, l7])
+        elif k == 7: pieces.append([l8, r8])
+        else: pieces.append([run(*o)])
+    texts = {l['n']: l['text'] for l in labels}
+    steps = []
+    for k, parts in enumerate(pieces):
+        n = str(k + 1)
+        d = ' '.join(linepath(Q) for Q in parts)
+        steps.append({'n': n, 'label': texts.get(n, ''), 'd': d, 'at': anchor(np.vstack(parts))})
+    ends = [(parts[0][0], parts[-1][-1]) for parts in pieces]
+    gaps = [float(np.linalg.norm(ends[i][1] - ends[i+1][0])) for i in range(len(ends) - 1)]
+    for i, g in enumerate(gaps):
+        assert g < 2.5, f'cha-cha: steps {i+1} and {i+2} are {g:.1f} m apart'
+    return {'source': f'U.S. Figure Skating 2026-27 Rulebook, {label}', 'measured': 'vector', 'circuit': 'half',
+            'steps': steps, 'check': {'method': 'by hand (see cha_cha)', 'maxGap': f2(max(gaps)), 'beats': []}}
+
+def place_labels(layers):
+    """Step numbers that do not sit on each other or on a line. For each step, in
+    order, candidate spots beside it: either side, at three distances, at three
+    points along the step. The first that keeps clear of every number already
+    placed (1.5 m, a number's height) and of every drawn line (0.7 m) wins; if
+    none does, the one that keeps clearest. Each partner's numbers are placed on
+    their own, since the switch never shows both. On a half circuit the faint
+    repeat is a line too, and the numbers keep off it."""
+    for steps, half in layers:
+        polys = [sample_d(s) for s in steps]
+        allpts = np.vstack([P for P in polys if len(P)])
+        allpts = np.vstack([allpts, -allpts]) if half and len(allpts) else allpts
+        placed = []
+        for s, P in zip(steps, polys):
+            if s.get('point'):
+                base = [(np.array(s['point']), None)]
+            else:
+                d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(P, axis=0), axis=1))]
+                base = []
+                for frac in (0.5, 0.3, 0.7, 0.15, 0.85):
+                    i = int(np.searchsorted(d, d[-1] * frac)); i = min(max(i, 1), len(P) - 2)
+                    t = P[i+1] - P[i-1]; t = t / (np.linalg.norm(t) + 1e-9)
+                    base.append((P[i], np.array([-t[1], t[0]])))
+            best = None
+            for q, nrm in base:
+                dirs = [nrm, -nrm] if nrm is not None else [q / (np.linalg.norm(q) + 1e-9), -q / (np.linalg.norm(q) + 1e-9)]
+                if nrm is not None and np.dot(nrm, q) < 0: dirs = [-nrm, nrm]
+                for off in (1.5, 2.2, 3.0):
+                    for dv in dirs:
+                        c = q + dv * off
+                        if abs(c[0]) > 31 or abs(c[1]) > 16.3: continue
+                        dl = min([np.linalg.norm(c - p) for p in placed] or [9])
+                        dp = np.sqrt(((allpts - c) ** 2).sum(1)).min() if len(allpts) else 9
+                        score = min(dl / 1.5, dp / 0.7)
+                        if best is None or score > best[0] + 1e-9: best = (score, c)
+                        if score >= 1: break
+                    if best and best[0] >= 1: break
+                if best and best[0] >= 1: break
+            s['at'] = [f2(best[1][0]), f2(best[1][1])]
+            placed.append(best[1])
+
+def sample_d(s):
+    out = []; cur = None
+    for cmd, args in re.findall(r'([MLC])([^MLC]*)', s.get('d') or ''):
+        v = list(map(float, args.split()))
+        if cmd in 'ML': cur = np.array(v[:2]); out.append(cur)
+        else:
+            p1, p2, p3 = np.array(v[0:2]), np.array(v[2:4]), np.array(v[4:6])
+            for t in np.linspace(0.1, 1, 8):
+                u = 1 - t; out.append(u*u*u*cur + 3*u*u*t*p1 + 3*u*t*t*p2 + t**3*p3)
+            cur = p3
+    return np.array(out) if out else np.zeros((0, 2))
 
 def resample(P, n=30):
     d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(P, axis=0), axis=1))]
@@ -240,6 +349,9 @@ DANCES = [  # slug, rulebook page index (1-based in the PDF), the page's own lab
  ('cha-cha-congelado', 406, 'page Dance-78', None),
  ('silver-samba', 433, "page Dance-105, the lead's diagram", None),
  ('yankee-polka', 450, "page Dance-122, the lead's diagram", None),
+ ('tango', 365, 'page Dance-37', None),
+ ('tango-romantica', 438, "page Dance-110, the lead's diagram", None),
+ ('tea-time-foxtrot', 445, "page Dance-117, the lead's diagram", None),
 ]
 CROSS = {'dutch-waltz': ('dutch', [300,562], [58,120], []),
          'canasta-tango': ('canasta', [228,538], [140,140], []),
@@ -247,7 +359,8 @@ CROSS = {'dutch-waltz': ('dutch', [300,562], [58,120], []),
 only = set(sys.argv[1:])
 out = {}
 FOLLOW_PAGE = {'paso-doble': 378, 'starlight-waltz': 382, 'viennese-waltz': 386, 'westminster-waltz': 390,
-               'argentine-tango': 397, 'ravensburger-waltz': 427, 'silver-samba': 434, 'yankee-polka': 451}
+               'argentine-tango': 397, 'ravensburger-waltz': 427, 'silver-samba': 434, 'yankee-polka': 451,
+               'tango-romantica': 439, 'tea-time-foxtrot': 446}
 for slug, page, label, dashed in DANCES:
     if only and slug not in only: continue
     rec = usfs(slug, page, label, dashed, FOLLOW_PAGE.get(slug)); rec['slug'] = slug
@@ -255,6 +368,11 @@ for slug, page, label, dashed in DANCES:
         img, sp, rp, splits = CROSS[slug]; rec = cross_check(rec, page, img, sp, rp, splits)
     del rec['slug']
     out[slug] = rec
+if not only or 'cha-cha' in only:
+    out['cha-cha'] = cha_cha(342, 'page Dance-14')
+for rec in out.values():
+    half = rec['circuit'] == 'half'
+    place_labels([(rec['steps'], half)] + ([(rec['follow']['steps'], half)] if 'follow' in rec else []))
 os.makedirs('src/data/patterns', exist_ok=True)
 for k, v in out.items():
     json.dump(v, open(f'src/data/patterns/{k}.json', 'w'), indent=1)

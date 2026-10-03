@@ -314,7 +314,9 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
             <th>Beats</th></tr></thead>
           <tbody>
             {D.chart.map(r => <tr><td>{r.n}</td><td>{r.hold}</td><td><b>{r.lead}</b></td>
-              {!D.sameSteps && <td><b>{r.follow}</b></td>}<td>{r.beats.replace(/\+/g, ' + ')}</td></tr>)}
+              {!D.sameSteps && <td><b>{r.follow}</b></td>}<td>{r.leadBeats
+                ? `${r.leadBeats.replace(/\+/g, ' + ')} lead, ${r.beats.replace(/\+/g, ' + ')} follow`
+                : r.beats.replace(/\+/g, ' + ')}</td></tr>)}
           </tbody>
         </table>
         <p class="small">The steps are in the rulebook's own notation: foot, direction and edge,

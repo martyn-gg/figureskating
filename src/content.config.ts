@@ -113,6 +113,12 @@ const elements = defineCollection({
         lead: z.string().optional(),
         follow: z.string().optional(),
         beats: z.string().regex(/^[0-9.]+(\+[0-9.]+)*$/),
+        /* Where the two partners' steps under one number last different times and
+           no follow-only row carries the difference (the Tango Romantica's 35a and
+           35b: the lead 2 and 4, the follow 1+3 and 1), the chart gives the lead its
+           own count. `beats` is then the follow's, and the bar total is the same
+           either way: tools/dance.mjs checks that it is. */
+        leadBeats: z.string().regex(/^[0-9.]+(\+[0-9.]+)*$/).optional(),
         note: z.string().optional(),
       })).min(1).optional(),
       steps: z.array(z.object({

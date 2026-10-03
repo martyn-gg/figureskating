@@ -48,8 +48,8 @@ dance:
     - { n: "32b", follow: "RFI-Ch", beats: "1" }
     - { n: "33", hold: "Open", lead: "LFO", follow: "LFO", beats: "1" }
     - { n: "34", lead: "RFI-Pr", follow: "RFI-Pr", beats: "1" }
-    - { n: "35a", lead: "LFO", follow: "LFO-Rk", beats: "1+3" }
-    - { n: "35b", hold: "Closed", lead: "RFO-Sw ClSSt", follow: "RBI-Sw", beats: "1" }
+    - { n: "35a", lead: "LFO", follow: "LFO-Rk", beats: "1+3", leadBeats: "2" }
+    - { n: "35b", hold: "Closed", lead: "RFO-Sw ClSSt", follow: "RBI-Sw", beats: "1", leadBeats: "4" }
     - { n: "35c", follow: "LFO3", beats: "0.5+0.5" }
     - { n: "36", hold: "Open", lead: "LBI", follow: "RBO3", beats: "2+2" }
     - { n: "37a", lead: "RBIO", follow: "LFI ClSSt", beats: "2" }

@@ -80,12 +80,14 @@ const layers = P ? [{ who: 'lead', steps: P.steps }, ...(P.follow ? [{ who: 'fol
           <g transform="matrix(0 -1 1 0 0 0)">
             {P.circuit === 'half' && (
               <g transform="rotate(180)" class="repeat">
-                {steps.map(s => <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))} />)}
+                {steps.filter(s => !s.point).map(s => <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))} />)}
               </g>
             )}
             {who === 'lead' && P.dashed && P.dashed.d.map(d => <path d={d} class="dashed" />)}
             <g class="steps">
-              {steps.map(s => <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))}><title>{`Step ${s.n}`}</title></path>)}
+              {steps.map(s => s.point
+                ? <circle cx={s.point[0]} cy={s.point[1]} r="0.55" class="hop"><title>{`Step ${s.n}, ${s.label || 'a hop'}`}</title></circle>
+                : <path d={s.d} stroke={ink(edgeOf(who, s.n, s.label))}><title>{`Step ${s.n}`}</title></path>)}
             </g>
             {st && <circle cx={st[1]} cy={st[2]} r="0.7" class="start" />}
           </g>
@@ -102,6 +104,7 @@ const layers = P ? [{ who: 'lead', steps: P.steps }, ...(P.follow ? [{ who: 'fol
         : ' These are the lead\'s steps.')}
       {P.circuit === 'half' && ' The faint half is the same steps skated again.'}
       {P.dashed && ` The dashed line is ${P.dashed.is}.`}
+      {layers.some(l => l.steps.some(s => s.point)) && ' A ring marks a hop or a toe pick, which leaves no tracing of its own.'}
       {' '}Rinks vary, and on a smaller one the pattern shrinks to fit.
       Measured from the diagram in {P.source}{P.follow && P.follow.source !== P.source ? `, and the follow's from ${P.follow.source.replace(/^U\.S\. Figure Skating 2026-27 Rulebook, /, '')}` : ''}.
       {X && ` Skate Canada's diagram of the same dance is drawn at a different size; allowing for that, its steps sit on average ${X.meanApartAfterScaling.toFixed(1)} m from these.`}
@@ -130,6 +133,7 @@ const layers = P ? [{ who: 'lead', steps: P.steps }, ...(P.follow ? [{ who: 'fol
   .repeat path { opacity: 0.28; }
   .dashed { stroke: var(--ink-soft); stroke-dasharray: 0.6 0.45; stroke-width: 0.26; }
   .start { fill: var(--ink); }
+  .hop { fill: var(--ice); stroke: var(--ink); stroke-width: 0.2; }
   .nums text { font-size: 1.45px; text-anchor: middle; dominant-baseline: central; fill: var(--ink); font-weight: 600; }
   figcaption { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.4rem; }
 </style>
