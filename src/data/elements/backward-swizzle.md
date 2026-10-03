@@ -3,7 +3,7 @@ name: Backward swizzle
 kind: basic
 summary: The same two mirrored curves, pressed out and drawn back while travelling backwards.
 aliases: ["backward lemon", "backward sculling"]
-prerequisites: [swizzle]
+prerequisites: [swizzle, backward-wiggles]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---

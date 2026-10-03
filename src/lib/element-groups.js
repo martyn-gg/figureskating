@@ -34,14 +34,15 @@ import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, T
    - Positions: the extended edge (Skills 1), the teapot (a Learn to Skate glide),
      then the spiral (Skills 3). */
 export const LEARN = {
-  basic: ['two-foot-glide', 'dip', 'swizzle', 'snowplough-stop', 'one-foot-glide',
+  basic: ['two-foot-glide', 'dip', 'swizzle', 'snowplough-stop', 'backward-wiggles', 'one-foot-glide', 'scooter-pushes',
     'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'forward-stroking',
     'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
     'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
     'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag'],
-  spin: ['upright-spin', 'sit-spin', 'camel-spin', 'change-of-foot-spin', 'combination-spin'],
+  spin: ['two-foot-spin', 'upright-spin', 'sit-spin', 'camel-spin', 'change-of-foot-spin', 'combination-spin'],
   position: ['extended-edge', 'teapot', 'spiral'],
   step: ['slip-step'],
+  sequence: ['step-sequence', 'choreographic-sequence'],
 };
 const JUMP_ORDER = Object.values(JUMPS).map(j => j.name.toLowerCase());
 const handRank = e => {
@@ -219,6 +220,9 @@ export function elementGroups(elements, exercises = []) {
        a way of moving that changes neither. Both come before a skater turns. */
     basic: 1, edges: 2, transitions: 3, step: 4, 'one-foot': 5, 'two-foot': 6,
     twizzles: 7, clusters: 8, position: 9, jump: 10, spin: 11,
+    /* SEQUENCES COME LAST — 03/10/2026. A step or choreographic sequence is a run of
+       everything above it, so it cannot be met before what it is made of. */
+    sequence: 12,
   };
   const rankOf = id => {
     const r = SECTION_RANK[id];
@@ -257,7 +261,8 @@ export const SECTION_NOTE = {
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
   jump:        'The waltz jump and the six singles, in the order they are usually learned.',
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
-  spin:        'The three basic positions, plus the two ways of joining them: a change of foot and a combination.',
+  spin:        'The two-foot spin, the three basic positions, and the two ways of joining them: a change of foot and a combination.',
+  sequence:    'Step sequences and choreographic sequences: runs of turns, steps and movements judged as one element.',
 };
 
 /* THE ONE TAUGHT FIRST — 19/09/2026, Martyn: a link to "a three turn" should land

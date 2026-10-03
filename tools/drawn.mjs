@@ -65,6 +65,11 @@ const cannotDraw = {
      (an edge, flight, a pick, as the waltz jump and toePick show), so this is a pose
      nobody has written, not a capability the rig lacks. It falls outside the rig
      freeze for that reason; take it off this list when the move is written. */
+  'two-foot-spin':               'not yet authored: both blades turning on the spot',
+  'backward-wiggles':            'the zigzag turns both blades across the travel, as the swizzles do',
+  'scooter-pushes':              'not yet authored: the push is pushOff repeated, never written as a move',
+  'step-sequence':               'a run of elements, each drawn on its own page',
+  'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
   'bunny-hop':                   'not yet authored: edge, flight and pick all exist in the rig',
 };
 

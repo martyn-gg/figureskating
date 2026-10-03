@@ -96,6 +96,11 @@ const ALIASES = {
      manoeuvre, same edges, two wordings, so the second is an alias and not a
      second element. */
   pushback:   ['transfer of weight back'],
+  /* U.S. FIGURE SKATING'S NAMES — 03/10/2026. Its 2026-27 rulebook calls a mohawk a C
+     step and a choctaw an S step, with definitions word for word the ones British Ice
+     Skating gives for the mohawk and choctaw. Same turns, so aliases, not new elements. */
+  mohawk:     ['C step', 'open C step', 'closed C step'],
+  choctaw:    ['S step', 'open S step', 'closed S step'],
 };
 
 const slug = s => `${s.foot}${s.dir}${s.edge}`.toLowerCase();
@@ -1158,6 +1163,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
         `summary: ${summary}`,
         `entry: { foot: ${foot}, edge: ${edge}, dir: ${dir} }`,
         `turn: ${turnKey}`,
+        ...(ALIASES[turnKey] ? [`aliases: [${ALIASES[turnKey].map(a => JSON.stringify(a)).join(', ')}]`] : []),
         `prerequisites: [${prereq.join(', ')}]`,
       ],
       body: TURN_TEXT[turnKey][key(s)],

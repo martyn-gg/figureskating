@@ -38,6 +38,8 @@ export const FOUNDATIONS = {
     { to: /^forward-stroking$/, why: 'Each stroke finishes in a glide, and every programme teaches the glide first.' },
     { to: /^one-foot-glide$/, why: 'The same straight glide with one foot lifted and carried at the inside of the skating knee.' },
     { to: /^slip-step$/, why: 'Both blades flat on the ice, as here. In the slip step the free foot then slides forward to full extension.' },
+    { to: /^backward-wiggles$/, why: 'Both feet stay on the ice, as here, and twist into a zigzag going backwards.' },
+    { to: /^scooter-pushes$/, why: 'A scooter push glides on one foot after each push; the two-foot glide comes first in every programme.' },
     { to: /^two-foot-change-of-edge$/, why: 'Both feet stay on the ice as they do here, and the change rolls them together onto the other pair of edges.' },
   ],
   'backward-two-foot-glide': [
@@ -86,7 +88,7 @@ export const FOUNDATIONS = {
     { to: /^backward-two-foot-turn$/, why: 'The same half turn the other way, from backwards to forwards. Ice Skating Australia teaches it after the forward turn, on a curve.' },
     { to: /^[lr]f[oi]-three$/, why: 'Both turn from forwards to backwards, and the three turn does it on one foot. Ice Skating Australia teaches the two-foot turn first.' },
     { to: /^[lr]f[oi]-mohawk$/, why: 'Both turn from forwards to backwards, and the mohawk changes feet as it turns. Ice Skating Australia teaches its forward inside mohawk after the two-foot turns.' },
-    { to: /^upright-spin$/, why: 'Learn to Skate USA teaches the two-foot spin at its fourth level, after two-foot turns at its second and third.' },
+    { to: /^two-foot-spin$/, why: 'Both turn on two blades. Learn to Skate USA teaches two-foot turns at its second and third levels and the two-foot spin at its fourth.' },
   ],
   'backward-two-foot-turn': [
     { to: /^[lr]b[oi]-three$/, why: 'Both turn from backwards to forwards, and the three turn does it on one foot.' },
@@ -108,6 +110,12 @@ export const FOUNDATIONS = {
   ],
   'drag': [
     { to: /^spiral$/, why: 'Both extend the free leg behind, turned out. Ice Skating Australia\'s spiral lifts it to at least hip height, and its lunge lifts only the blade.' },
+  ],
+  'backward-wiggles': [
+    { to: /^backward-swizzle$/, why: 'All three programmes teach wiggles first. The swizzle swaps the twist for the heels pressing out and drawing back in.' },
+  ],
+  'scooter-pushes': [
+    { to: /^forward-stroking$/, why: 'A scooter push repeats one push from a glide; forward stroking, a level later in Learn to Skate USA, alternates it between the feet.' },
   ],
   'bunny-hop': [
     { to: /^waltz-jump$/, why: 'Both leave the ice from a forward glide. New Zealand\'s KiwiSkate teaches them together, on its Free skating 1 badge.' },

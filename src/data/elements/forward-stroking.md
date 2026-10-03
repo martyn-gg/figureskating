@@ -4,7 +4,7 @@ kind: basic
 summary: "The push itself: one blade drives against its inside edge while the other glides away."
 aliases: ["stroking", "forward skating"]
 rig: pushOff
-prerequisites: [swizzle, two-foot-glide]
+prerequisites: [swizzle, two-foot-glide, scooter-pushes]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---

@@ -4,6 +4,7 @@ kind: turn
 summary: "LFI to RBI: a step onto the other foot, holding the edge and staying on the same lobe. No cusp."
 entry: { foot: L, edge: I, dir: F }
 turn: mohawk
+aliases: ["C step", "open C step", "closed C step"]
 prerequisites: [lfi, two-foot-turn]
 verified: { checked: false }
 ---

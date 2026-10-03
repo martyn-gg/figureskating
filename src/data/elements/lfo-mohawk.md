@@ -4,6 +4,7 @@ kind: turn
 summary: "LFO to RBO: a step onto the other foot, holding the edge and staying on the same lobe. No cusp."
 entry: { foot: L, edge: O, dir: F }
 turn: mohawk
+aliases: ["C step", "open C step", "closed C step"]
 prerequisites: [lfo, two-foot-turn]
 verified: { checked: false }
 ---

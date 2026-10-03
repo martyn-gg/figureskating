@@ -5,7 +5,7 @@ summary: Three or more revolutions on one back inside edge with the skating leg 
 aliases: ["scratch spin", "one-foot spin", "upright", "corkscrew"]
 entry: { foot: L, edge: I, dir: B }
 rig: uprightSpin
-prerequisites: [backward-one-foot-glide, two-foot-turn]
+prerequisites: [backward-one-foot-glide, two-foot-spin]
 sourceUrl: https://www.isu.org/figure-skating-rules
 verified: { checked: false }
 ---

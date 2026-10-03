@@ -4,6 +4,7 @@ kind: turn
 summary: "LBO to RFI: a step onto the other foot, changing edge and reversing onto a new one. No cusp."
 entry: { foot: L, edge: O, dir: B }
 turn: choctaw
+aliases: ["S step", "open S step", "closed S step"]
 prerequisites: [lbo-mohawk]
 verified: { checked: false }
 ---
