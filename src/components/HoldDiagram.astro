@@ -37,7 +37,7 @@ const labelAt = (p, o) => {
 const L = { lead: labelAt(H.lead, H.follow), follow: labelAt(H.follow, H.lead) };
 ---
 <figure class={`hold${small ? ' small' : ''}`}>
-  <svg viewBox="-1.1 -0.95 2.2 1.9" role="img" aria-label={`The partners' positions and hands in the ${slug.replace(/-/g, ' ')}, seen from above`}>
+  <svg viewBox={small ? "-1.1 -0.95 2.2 1.9" : "-1.275 -1.275 2.55 2.55"} role="img" aria-label={`The partners' positions and hands in the ${slug.replace(/-/g, ' ')}, seen from above`}>
     <g class="travel">
       <line x1="0.98" y1="0.55" x2="0.98" y2="-0.6" />
       <polygon points="0.98,-0.72 0.93,-0.58 1.03,-0.58" />
@@ -65,13 +65,14 @@ const L = { lead: labelAt(H.lead, H.follow), follow: labelAt(H.follow, H.lead) }
     ))}
     {joins.map(q => <circle class="join" cx={q[0]} cy={q[1]} r="0.05" />)}
   </svg>
-  {!small && <figcaption>From above, travelling up the page</figcaption>}
+  {!small && <figcaption>From above</figcaption>}
 </figure>
 
 <style>
   .hold { margin: 0; }
-  :global(.holdviews) { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 0.5rem 0 1.25rem; max-width: 34rem; align-items: start; }
+  :global(.holdviews) { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 0.5rem 0 1.25rem; max-width: 34rem; align-items: stretch; }
   :global(.holdviews figure) { margin: 0; width: 100%; max-width: none; }
+  /* Both views share one square frame, so the two cards are the same size. */
   :global(.holdviews figcaption) { font-size: 0.8rem; line-height: 1.3; color: var(--ink-soft); text-align: center; margin-top: 0.3rem; }
   .hold.small { max-width: 9rem; margin: 0; }
   .hold svg { width: 100%; height: auto; display: block; background: var(--ice); border-radius: 6px; }

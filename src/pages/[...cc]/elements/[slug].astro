@@ -2,7 +2,6 @@
 import DancePattern from '../../../components/DancePattern.astro';
 import HoldDiagram from '../../../components/HoldDiagram.astro';
 import HoldRear from '../../../components/HoldRear.astro';
-import HoldStrip from '../../../components/HoldStrip.astro';
 import { holdParts } from '../../../lib/holds.js';
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
@@ -179,9 +178,6 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
 ---
 <Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource}
   crumbs={[{ name: 'Elements', href: url('elements/') }, { name: shown }]}>
-  {/* The holds have no tab of their own, so a hold page says where it belongs, the
-      way a section page does. */}
-  {d.kind === 'hold' && <p class="lede"><a href={url('elements/')}>Elements</a> · <a href={url('elements/in/hold/')}>Holds</a></p>}
   <h1>{shown}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
@@ -297,10 +293,12 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     </figure>
   )}
 
+  {/* The holds have no tab of their own, so a hold page links back to the list of
+     them, in bold just above the drawings. */}
+  {d.kind === 'hold' && <p class="holdback"><a href={url('elements/in/hold/')}>All the holds</a></p>}
   {d.kind === 'hold' && (
     <div class="holdviews"><HoldDiagram slug={entry.id} /><HoldRear slug={entry.id} /></div>
   )}
-  {d.kind === 'hold' && <HoldStrip url={url} current={entry.id} heading="All the holds" />}
   {d.rig && <BodyFrame move={d.rig} />}
 
   {/* A PATTERN DANCE'S STEPS — 03/10/2026. The rink pattern where it has been measured
@@ -502,6 +500,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
 </Base>
 
 <style>
+  .holdback { margin: 0.75rem 0 0.4rem; font-weight: 700; font-size: 1.05rem; }
   /* The country's grades, in the dashed box from the notebook mockup. */
   .mygrades{border:1.5px dashed var(--ice-line);border-radius:6px;padding:.7rem 1rem;margin:0 0 1rem}
   .mygrades .mg-head{margin:0 0 .3rem;font-weight:600}

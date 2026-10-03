@@ -55,7 +55,7 @@ const names = ['lead', 'follow'].map(who => ({ who, x: PX(H[who].x, H[who].y),
   y: !level && who === far ? f2(PY(HEIGHT.head + 0.2, H[who].y)) : f2(PY(0, H[who].y) + 0.13) }));
 ---
 <figure class="hold rear">
-  <svg viewBox="-1.05 -2.2 2.1 2.55" role="img" aria-label={`The ${slug.replace(/-/g, ' ')} seen from behind the couple`}>
+  <svg viewBox="-1.275 -2.2 2.55 2.55" role="img" aria-label={`The ${slug.replace(/-/g, ' ')} seen from behind the couple`}>
     {items.map(it => it.kind === 'body' ? (
       <g class={`partner ${it.who}`}>
         <ellipse class="ground" cx={PX(it.x, it.y)} cy={PY(0, it.y)} rx="0.2" ry="0.04" />
@@ -77,7 +77,7 @@ const names = ['lead', 'follow'].map(who => ({ who, x: PX(H[who].x, H[who].y),
     {joins.map(q => <circle class="join" cx={q[0]} cy={q[1]} r="0.045" />)}
     {names.map(n => <text class={n.who} x={n.x} y={n.y}>{n.who === 'lead' ? 'Lead' : 'Follow'}</text>)}
   </svg>
-  <figcaption>From behind, a little to one side</figcaption>
+  <figcaption>From behind</figcaption>
 </figure>
 
 <style>
