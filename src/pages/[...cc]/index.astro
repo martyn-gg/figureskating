@@ -73,10 +73,14 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
 ---
 <Base title={null} subtitle="Every edge, turn, jump and position, drawn from three views on both feet, with the tests each one belongs to.">
   <h1>Field Guide to Figure Skating</h1>
+  {/* 04/10/2026, Martyn (after his brother suggested "Rink guide"): keep the title,
+     which says what kind of book this is, and say where it is used underneath. Set
+     in the same style as the "also called" line under an element's title. */}
+  <p class="aka">Made to be read at the rink.</p>
   <p class="lede">
     What each element actually is, drawn from three views and on both feet, with the{' '}
     {here && here.id !== 'uk' ? `${here.bodies} levels` : 'British Ice Skating tests'} it belongs to. Free to read, no account, and it keeps
-    working at the rink when the signal does not.
+    working when the signal does not.
   </p>
 
   <div class="unverified">
