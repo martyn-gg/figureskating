@@ -99,7 +99,7 @@ const read = dir => readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsW
   });
 
 const ELEMENTS = read('src/data/elements');
-const OTHERS = [...read('src/data/exercises'), ...read('src/data/tests')];
+const OTHERS = [...read('src/data/exercises'), ...read('src/data/tests'), ...read('src/data/grades')];
 /* THE REASONS ON THE BASICS' "LEADS TO" LISTS — 03/10/2026. Prose a reader sees, kept
    in src/lib/foundations.js, so held to the same rules as an element body: one
    synthetic document, one paragraph per reason, foot neutrality on, length off. */

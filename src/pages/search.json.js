@@ -23,8 +23,8 @@ import { label } from '../lib/skating.js';
 import { elementGroups, SECTION_NOTE } from '../lib/element-groups.js';
 
 export async function GET() {
-  const [elements, exercises, tests] = await Promise.all(
-    ['elements', 'exercises', 'tests'].map(c => getCollection(c)));
+  const [elements, exercises, tests, grades] = await Promise.all(
+    ['elements', 'exercises', 'tests', 'grades'].map(c => getCollection(c)));
 
   const testName = id => tests.find(t => t.id === id)?.data.name ?? id;
 
@@ -52,6 +52,16 @@ export async function GET() {
       t: `${testName(x.data.test.id)} · ${x.data.unit === 'section' ? 'Section ' : 'exercise '}${x.data.order}` +
          `${/^section/i.test(x.data.name) ? '' : ` — ${x.data.name}`}`,
       s: x.data.summary, k: 'exercise', a: [], e: '',
+    })),
+    /* GRADES BY COUNTRY — 03/10/2026. The level names are the aliases, because a
+       skater looking for their grade types "Basic 3" or "Pre-Bronze", not the name
+       of the programme. Each is prefixed with the body, because Basic 1 and Novice 2
+       are levels in more than one country and an alias has to land on one page. */
+    { u: 'grades/', t: 'Grades by country', s: 'Each country\'s levels, linked to the elements they ask for',
+      k: 'grades', a: ['levels', 'badges', 'learn to skate'], e: '' },
+    ...grades.map(g => ({
+      u: `grades/${g.id}/`, t: g.data.name, s: g.data.summary, k: 'grades',
+      a: [...new Set(g.data.levels.map(l => `${g.data.body} ${l.name}`))], e: '',
     })),
     ...tests.map(t => ({
       u: `tests/${t.id}/`, t: t.data.name,

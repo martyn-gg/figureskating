@@ -1,0 +1,38 @@
+---
+/* GRADES BY COUNTRY — 03/10/2026. A way into the guide for a skater who thinks in
+   their own country's levels. See the `grades` collection in content.config.ts. */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+
+const grades = (await getCollection('grades')).sort((a, b) => a.data.order - b.data.order);
+const COUNTRIES = ['UK', 'USA', 'New Zealand', 'Australia'];
+const pages = g => g.data.levels.flatMap(l => l.items.filter(i => i.page)).length;
+const linked = g => new Set(g.data.levels.flatMap(l => l.items.flatMap(i => i.elements.map(r => r.id)))).size;
+---
+<Base title="Grades by country" subtitle="Start from your level and work in to the elements it asks for.">
+  <h1>Grades by country</h1>
+  <p class="lede">
+    Each page lays out one programme's levels in its own order and names, and links each
+    skill to the element in this guide. Where the guide has no page for a skill, the line
+    says so.
+  </p>
+  {COUNTRIES.map(c => {
+    const gs = grades.filter(g => g.data.country === c);
+    return gs.length > 0 && (<>
+      <h2>{c}</h2>
+      <ul class="plain">
+        {gs.map(g => (
+          <li><a href={url(`grades/${g.id}/`)}>{g.data.name}</a>
+            <span>{g.data.body} · {g.data.levels.length} level{g.data.levels.length === 1 ? '' : 's'} · {linked(g) > 0
+              ? `${linked(g)} elements linked` : `${pages(g)} test pages linked`}</span></li>
+        ))}
+      </ul>
+    </>);
+  })}
+  <h2>Canada</h2>
+  <p>
+    Skate Canada's CanSkate and STAR programmes publish their skill requirements through
+    course enrolment and a shop, not on a public page, so the guide does not lay them out.
+  </p>
+</Base>

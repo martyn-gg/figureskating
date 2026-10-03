@@ -193,4 +193,38 @@ const conditioning = defineCollection({
   }),
 });
 
-export const collections = { elements, tests, exercises, conditioning };
+/* A COUNTRY'S GRADING SCHEME, LAID OUT AS A WAY IN — 03/10/2026, Martyn: "these don't
+   need to bulk out each element, but if a skater prefers to start at the grade and work
+   in". So a grade page links into the elements and nothing links back: an element page
+   lists British Ice Skating's tests and exercises, as it always has, and is not given a
+   line for every other country's ladder.
+
+   One file per programme (Learn to Skate USA, U.S. Figure Skating's skating skills, and
+   so on). Each level holds items in the programme's own words, because naming a skill
+   is citation; each item points at the guide's elements where they exist, or carries a
+   note saying the guide has no page. A gap the reader can see, as with notCovered. */
+const grades = defineCollection({
+  loader: md('./src/data/grades'),
+  schema: z.object({
+    name: z.string(),
+    body: z.string(),
+    country: z.enum(['UK', 'USA', 'New Zealand', 'Australia']),
+    order: z.number().int(),
+    summary: z.string(),
+    source: z.string(),
+    sourceUrl: z.string().url(),
+    levels: z.array(z.object({
+      name: z.string(),
+      note: z.string().optional(),
+      items: z.array(z.object({
+        label: z.string(),
+        elements: z.array(reference('elements')).default([]),
+        page: z.string().optional(),
+        note: z.string().optional(),
+      })).min(1),
+    })).min(1),
+    verified,
+  }),
+});
+
+export const collections = { elements, tests, exercises, conditioning, grades };

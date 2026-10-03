@@ -1,0 +1,54 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import { url } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const grades = await getCollection('grades');
+  return grades.map(g => ({ params: { slug: g.id }, props: { entry: g } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const all = await getCollection('elements');
+const el = id => all.find(e => e.id === id);
+---
+<Base title={d.name} subtitle={d.summary}>
+  <p class="lede"><a href={url('grades/')}>Grades by country</a> · {d.country}</p>
+  <h1>{d.name}</h1>
+  <div class="meta"><span class="chip">{d.body}</span><span class="chip">{d.levels.length} level{d.levels.length === 1 ? '' : 's'}</span></div>
+  <Unverified verified={d.verified} what="level lists" />
+  <Content />
+
+  {d.levels.map(l => (
+    <>
+      <h2>{l.name}</h2>
+      {l.note && <p class="note">{l.note}</p>}
+      <ul class="grade">
+        {l.items.map(i => (
+          <li>
+            <span class="label">{i.page ? <a href={url(i.page)}>{i.label}</a> : i.label}</span>
+            {i.elements.length > 0 && (
+              <span class="to">{i.elements.map((r, k) => <>{k > 0 ? ', ' : ''}<a href={url(`elements/${r.id}/`)}>{el(r.id)?.data.name ?? r.id}</a></>)}</span>
+            )}
+            {i.note && <span class="gap">{i.note}</span>}
+          </li>
+        ))}
+      </ul>
+    </>
+  ))}
+
+  <p class="src">Source: <a href={d.sourceUrl}>{d.source}</a></p>
+</Base>
+
+<style>
+  .note{color:var(--ink-soft);font-size:.9rem;margin:.2rem 0 .6rem}
+  .grade{list-style:none;padding:0;margin:0 0 1.4rem}
+  .grade li{padding:.5rem 0;border-bottom:1px solid var(--rule)}
+  .grade .label{display:block;font-weight:600}
+  .grade .to,.grade .gap{display:block;font-size:.9rem;font-family:ui-sans-serif,sans-serif}
+  .grade .to a{text-decoration:none}
+  .grade .gap{color:var(--ink-soft)}
+  .src{font-size:.85rem;margin-top:1.5rem;color:var(--ink-soft)}
+</style>
