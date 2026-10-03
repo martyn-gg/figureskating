@@ -336,6 +336,83 @@ export const MOVES = {
        sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
+  /* THE SALCHOW — 03/10/2026, Martyn: he is working towards it, so it is the first
+     single jump to get a rig after the waltz.
+
+     WHAT IT IS, in the model's own terms: takeoff LBI, no pick, one rotation, landing
+     RBO (skating.js JUMPS). Both edges have the same lobe sense, so the tracing is one
+     long curve broken only by the flight.
+
+     IT STARTS COMING OUT OF THE THREE TURN, NOT BEFORE IT. The usual way in is a
+     forward outside three turn, and the first build drew it. It failed four checkers
+     for one reason: a one-foot turn pivots a GRIPPING blade through half a circle at
+     the cusp, and this rig turns a blade off its line only in the air or in a skid.
+     `dir` is a carried state, so flipping it at the cusp swings the boot 179 degrees
+     between two frames (continuity.mjs), and turning the hip ahead of it asks for more
+     toe-in than the leg can give (turnout.mjs). Drawing three turns is the rig
+     capability the review said to freeze, and the three turn has its own page; so
+     this move begins checked on the back inside edge the turn leaves you on.
+
+     THE ROTATION IS COUNTED IN hipYaw AND NEVER WRAPPED. Backwards is 180. The swing
+     of the free leg turns the hips about 25 degrees on the ice before the blade
+     leaves (the shoulders lead further), which is as far as the skating hip can turn
+     against a blade still gripping its line; the air does the remaining 335 to 540,
+     which faces backwards again on the landing. 540 and not 180, because poseAt
+     interpolates the number: a key at 180 after one at 400 would unwind the skater
+     through the air the wrong way.
+
+     THE FREE LEG IS AUTHORED IN THE TRACK FRAME, like every foot in this file, so the
+     side it is on depends on which way the skater faces. On the back inside edge the
+     right leg extended behind is at +t, swung out to the skater's right it is at -n,
+     and through the front it is at -t. The air keys were placed body-relative
+     (forwards, to the right), turned into t and n through anterior() and lateral() at
+     each key's hipYaw, and written here as numbers, so the file stays authored.
+
+     THE LANDING IS THE WALTZ JUMP'S, 360 degrees further round: the same RBO edge, the
+     same toe-first touchdown, the same free leg held back and neutral (Martyn,
+     20/09/2026: a landing free foot is pushed back and neutral, not pointed).
+
+     Verified against a coach: NO. The timing of the swing against the rise is the
+     part most worth a coach's eye. */
+  salchow: {
+    name:'Salchow',
+    note:'LBI takeoff out of a three turn, no pick · one rotation · RBO landing',
+    path:[ {kind:'arc',  foot:'L', edge:'I', dir:'B', sweep:120, span:0.48},
+           {kind:'line', len:70,                                 span:0.10},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:56,  span:0.18},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.24} ],
+    radius:130, duration:5.4,
+    keys:[
+      {arm:[60,6,18], t:0.00, ph:'Out of the three turn, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:162,
+       sh:P(-2,0,144), L:P(-6,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[64,8,18], t:0.18, ph:'Free leg held back, the edge running', hipZ:90, hipYaw:176, shYaw:160,
+       sh:P(-4,0,140), L:P(-10,15,0,-0.5), R:P(50,-8,22,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[60,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching back', hipZ:82, hipYaw:174, shYaw:158,
+       sh:P(-6,0,132), L:P(-20,16,0,-1), R:P(54,-10,14,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[52,14,20], t:0.40, ph:'The free leg swings out wide', hipZ:84, hipYaw:186, shYaw:200,
+       sh:P(-6,0,134), L:P(-18,16,0,-1), R:P(10,-42,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[46,18,16], t:0.45, ph:'Free leg through in front, the shoulders leading', hipZ:92, hipYaw:196, shYaw:236,
+       sh:P(-2,0,142), L:P(-10,14,0,1), R:P(-36,-14,34,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[40,20,8], t:0.475, ph:'Takeoff: the skating knee drives up', hipZ:102, hipYaw:202, shYaw:256,
+       sh:P(-2,0,154), L:P(-4,8,2,3), R:P(-34,-4,52,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[30,16,10], t:0.49, ph:'Blade leaves the ice', hipZ:118, hipYaw:250, shYaw:290,
+       sh:P(-2,0,170), L:P(-6,-12,32,0,NEUTRAL), R:P(-10,26,56,0,NEUTRAL), skate:null},
+      {arm:[22,14,12], t:0.525, ph:'Peak: arms in, legs together', hipZ:130, hipYaw:390, shYaw:396,
+       sh:P(0,0,182), L:P(3,-5,64,0,NEUTRAL), R:P(7,5,62,0,NEUTRAL), skate:null},
+      {arm:[26,14,12], t:0.555, ph:'Descending, the landing leg reaching for the ice', hipZ:112, hipYaw:500, shYaw:492,
+       sh:P(-2,0,164), L:P(16,24,46,0,NEUTRAL), R:P(4,-7,28,0,NEUTRAL), skate:null},
+      {arm:[34,14,14], t:0.58, ph:'Toe of the blade touches down', hipZ:98, hipYaw:540, shYaw:522,
+       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[46,12,16], t:0.63, ph:'Rolling back along the blade', hipZ:96, hipYaw:538, shYaw:518,
+       sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,18], t:0.70, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:536, shYaw:512,
+       sh:P(-10,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-15,17,0,-1), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.84, ph:'Check holds, edge running', hipZ:90, hipYaw:534, shYaw:510,
+       sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {arm:[64,10,18], t:1.00, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:532, shYaw:518,
+       sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
+    ]},
+
   spiral: {
     name:'Spiral',
     note:'held position · free leg at or above hip height',

@@ -7,6 +7,7 @@ jump:
   landing: { foot: R, edge: O, dir: B }
   assisted: false
   rotations: 1
+rig: salchow
 verified: { checked: false }
 ---
 
