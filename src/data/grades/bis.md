@@ -1,5 +1,5 @@
 ---
-name: "British Ice Skating"
+name: "British Ice Skating: Skills"
 body: "British Ice Skating"
 country: "UK"
 order: 1
@@ -17,5 +17,6 @@ page, and every element page lists the British tests and exercises that call for
 Below Skills 1 sits Skate UK Fundamentals, British Ice Skating's learn-to-skate programme. It
 is published as a paid booklet and not on a public page, so the guide does not lay it out; the
 basics cover the same ground from other countries' public documents. Beside the Skills tests
-run the National free skating tests, Beginner and National 1 to 8, which this guide has not
-laid out yet.
+run the National free skating tests, Beginner and National 1 to 8, which have their own
+page, and the two ladders interlock: each National level needs the Skills test of the same
+number.

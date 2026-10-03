@@ -28,10 +28,10 @@ const el = id => all.find(e => e.id === id);
       <ul class="grade">
         {l.items.map(i => (
           <li>
-            <span class="label">{i.page ? <a href={url(i.page)}>{i.label}</a> : i.label}</span>
+            <span class="label">{i.page ? <a href={url(i.page)}>{i.label}</a> : i.label}</span>{' '}
             {i.elements.length > 0 && (
               <span class="to">{i.elements.map((r, k) => <>{k > 0 ? ', ' : ''}<a href={url(`elements/${r.id}/`)}>{el(r.id)?.data.name ?? r.id}</a></>)}</span>
-            )}
+            )}{' '}
             {i.note && <span class="gap">{i.note}</span>}
           </li>
         ))}
