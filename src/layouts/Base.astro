@@ -5,7 +5,7 @@ import { BUILD_ID } from '../lib/build-id.js';
 import { tokenCSS } from '../lib/tokens.js';
 import { notebookCSS, TABS, tabFor } from '../lib/notebook.js';
 import { COUNTRIES, countryOf, curl, localised, splitPath } from '../lib/country.js';
-import { CONTACT, DONATE } from '../lib/site.js';
+import { CONTACT, DONATE, SOCIAL } from '../lib/site.js';
 /* The version travels in the query string so the browser sees a byte-different
    worker on every deploy and reinstalls it, and so the worker can name its cache
    after the build it belongs to. */
@@ -68,7 +68,7 @@ const og = new URL(url('icon-512.png'), Astro.site).href;
    where a page sits for any page that passes one. */
 const ld = [
   ...(isHome && !cc ? [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE, url: new URL(url(), Astro.site).href,
-    inLanguage: 'en-GB', description: ABOUT,
+    inLanguage: 'en-GB', description: ABOUT, sameAs: SOCIAL.map(a => a.href),
     potentialAction: { '@type': 'SearchAction', target: new URL(url('search/'), Astro.site).href + '?q={search_term_string}',
       'query-input': 'required name=search_term_string' } }] : []),
   ...(crumbs ? [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList',
@@ -351,6 +351,7 @@ const alternates = hasCopies ? [
         {/* Rendered only once there is somewhere for it to go. A donate button
             that 404s asks for money and loses the reader in one click. */}
         {DONATE && <a href={DONATE}>Buy a coffee</a>}
+        {SOCIAL.map(a => <a href={a.href} rel="me">{a.name}</a>)}
       </p>
       <button class="theme" type="button" hidden>Show as a textbook</button>
     </footer>

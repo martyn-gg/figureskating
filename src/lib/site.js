@@ -19,6 +19,14 @@ export const COACHES = 'coaches@figureskating.guide';
    leaving it pointing at a page that has gone. */
 export const DONATE = 'https://ko-fi.com/figureskatingguide';
 
+/* The guide's own social accounts, as figureskatingguide, from 03/10/2026.
+   The footer links them and the home page's structured data lists them as the
+   site's other profiles. Remove an entry rather than leaving a dead link. */
+export const SOCIAL = [
+  { name: 'Instagram', href: 'https://www.instagram.com/figureskatingguide/' },
+  /* Facebook goes here once the Page exists: a Page, not a second personal profile. */
+];
+
 /* Renewed annually. The registrar bills registration and privacy separately, ex
    VAT, which is how 20i quotes them — and both of those are facts about the invoice
    rather than about the reader. A skater's parent wants one number: what it costs to
