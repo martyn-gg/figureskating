@@ -2097,6 +2097,74 @@ shins at the 28° limit at once. That is how a snowplough is taught, and nobody 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
 
+## A gripping blade turns at a cusp — specified and built 03/10/2026
+
+The rig could turn a blade off its own line in two ways: in the air, and in a skid. A one-foot
+turn is neither. The blade grips the whole way round, and Session 24's three turn failed four
+checkers because the only lever it had was `dir`, a state, which swung the boot 179° between
+two frames.
+
+### The cusp is what lets the blade turn
+
+A blade that grips moves along its own length. Turn it through 180° while the skater carries
+on along the circle and the point where it touches the ice has to leave the circle: inwards
+while the blade points inwards, stopped where the blade is square across the circle, and
+back out once the skater is going backwards. That stop is the point of the "3". So the cusp
+is derived from the turn and is not a mark drawn on afterwards.
+
+### The construction
+
+Across a window of the clock, `u` from 0 to 1, the blade's yaw off the circle is
+ψ = 180·S(u), S being poseAt's smoothstep. The contact moves along the blade at
+σ = cos ψ · (1 + c·sin²ψ) times the circle's own rate. `cos ψ` is the grip; the bracket is 1
+at both ends, so the contact leaves and rejoins the circle at the circle's speed, and `c`
+(3.61) is solved so that it rejoins it at the right place. The offsets are integrated once
+into a table in `rig-math.js`. The cusp's depth comes out at 0.34 of the window's length on
+the circle, and the along-track offset is zero at the apex.
+
+### Where it lives: a path segment, and both readers call one function
+
+A turn is an `arc` segment carrying `turn:` and the entry edge, between two ordinary arcs on
+the same lobe. `cuspAt(move, t)` returns the yaw and the offset. `poseAt` puts both on the
+reference blade, and changes the edge and direction at the apex, re-reading the yaw against
+the new direction so the heading does not move. `buildPath` puts the same offset on the path
+point. The hip is the path point less the held offset, and the held offset now includes the
+cusp, so the hip stays on the circle while the tracing and the blade leave it together.
+
+Nothing inside the window is keyed. The keys at its two ends carry the entry and exit states
+at yaw 0, and `turnMove` snaps them to the window's bounds. If the hips at those keys add to
+180, the smoothstep that interpolates them is the one the blade turns on, so the hip is square
+across the circle at the same instant as the blade, which is where the edge changes. `lean.mjs`
+then holds per frame without being told anything: the body is over the outside edge until the
+apex and over the inside edge after it.
+
+### What holds it
+
+`turnout.mjs` has a per-frame section. Inside a window the blade must point along the tracing
+it is cutting, read off the drawn path by central difference, to within 3°. The two frames
+whose neighbours straddle the apex are skipped, because a cusp has no tangent at its point.
+The hip allowance applies as it does to a keyed blade. Outside every window the reference
+blade's yaw must be nought on every frame. `--break=cusp` draws the tracing without the cusp
+and fails 16 frames.
+
+The worst reading is 2.8°, on the Salchow, whose turn has twelve frames. That is the drawn
+polyline being coarse, and it says a faster turn needs more frames before it can be drawn.
+
+### What building it cost
+
+Every move but the Salchow renders byte for byte as it did: 441 frame files, seven times in
+three views for 21 moves, hashed before and after. The Salchow changed on purpose, since its entry went back in.
+
+### What it does not do
+
+Only `turn:'three'` is used. `cuspAt` reads `rotatesInto` and `edgeChanges` from `TURNS`, so a
+bracket would put its cusp outwards on the same construction, but a rocker or counter changes
+lobe and the window's arc continues the entry lobe. Those need the exit arc's curvature in the
+window and are not built.
+
+Verified against a coach: NO. The shape is forced once the blade grips. How fast the blade
+comes round, set by the window's span, is a choice.
+
 ## A spin is an arc — 30/08/2026
 
 A spin was written up in this file as a second rig, rooted in the skater rather than the

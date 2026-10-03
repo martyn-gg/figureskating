@@ -6,7 +6,7 @@
    z height above the ice, centimetres throughout. Yaw is degrees from the
    direction of travel, + anticlockwise seen from above. */
 
-import { lobeSense, secondFoot } from './skating.js';
+import { lobeSense, secondFoot, TURNS } from './skating.js';
 
 export const D2R = Math.PI / 180;
 export const anterior = yawDeg => [Math.cos(yawDeg*D2R), -Math.sin(yawDeg*D2R), 0];
@@ -644,6 +644,90 @@ export function bootDir(pose, which, knee, foot){
   return free;
 }
 
+/* ═══ the cusp of a one-foot turn ════════════════════════════════
+   03/10/2026, Session 26. The rig turned a blade off its own line only in the air or
+   in a skid, so a three turn could not be drawn: a gripping blade has to come round
+   half a circle while it is still cutting a line. Session 24 tried it with `dir` and
+   failed four checkers. This is the piece that was missing.
+
+   WHAT A CUSP IS, as geometry. A blade that grips moves along its own length. If it
+   also turns through 180 degrees while the skater goes on along the circle, the
+   point where it touches the ice cannot stay on the circle: it is carried inwards
+   while the blade points inwards, stops dead where the blade is square across the
+   circle, and is carried back out once the skater is going backwards. That stop is
+   the point of the "3". The cusp is what lets a gripping blade turn, so it is
+   derived here from the turn and is not drawn on afterwards.
+
+   THE CONSTRUCTION. Over a window of the clock, u from 0 to 1, the blade turns
+   ψ = 180·S(u) with S the same smoothstep poseAt uses, so a hip interpolated between
+   two keys at the window's ends turns in step with it. The contact moves along the
+   blade at σ = cosψ·(1 + c·sin²ψ) of the circle's own rate. cosψ is the grip: it
+   is forwards before the apex, nothing at it and backwards after it. The second
+   factor is 1 at both ends, so the contact leaves and rejoins the circle at the
+   circle's speed, and c is solved so that it rejoins it at the right place. The
+   offsets are integrated once into a table.
+
+   DEPTH IS NOT AUTHORED, it falls out at 0.34 of the window's length on the circle.
+   Write a shorter window for a tighter cusp.
+
+   Verified against a coach: NO. The shape is forced once the blade grips. The speed
+   of the turn, carried by the window's length on the clock, is a choice. */
+const CUSP_N = 400;
+const S3 = x => x * x * (3 - 2 * x);
+const CUSP = (() => {
+  const at = i => Math.PI * S3((i + 0.5) / CUSP_N);
+  let i1 = 0, i2 = 0;
+  for (let i = 0; i < CUSP_N; i++) {
+    const p = at(i); i1 += Math.cos(p) ** 2; i2 += (Math.cos(p) * Math.sin(p)) ** 2;
+  }
+  const c = (1 - i1 / CUSP_N) / (i2 / CUSP_N);
+  const dt = [0], dn = [0];
+  for (let i = 0; i < CUSP_N; i++) {
+    const p = at(i), m = 1 + c * Math.sin(p) ** 2;
+    dt.push(dt[i] + (Math.cos(p) ** 2 * m - 1) / CUSP_N);
+    dn.push(dn[i] - Math.sin(p) * Math.cos(p) * m / CUSP_N);
+  }
+  return { dt, dn };
+})();
+const cuspTable = (tab, u) => {
+  const x = Math.min(1, Math.max(0, u)) * CUSP_N, i = Math.min(CUSP_N - 1, Math.floor(x));
+  return tab[i] + (tab[i + 1] - tab[i]) * (x - i);
+};
+
+/** The one-foot turn whose window the clock is in, if any: how far through it, the
+    blade's yaw off the circle (signed, + anticlockwise), and the contact's offset
+    from the circle in cm. A turn is an `arc` segment carrying `turn:` and the ENTRY
+    edge's foot, edge and direction; the arcs either side are ordinary edges. */
+export function cuspAt(move, t) {
+  const spans = move.path.map(s => s.span ?? 1 / move.path.length);
+  const sum = spans.reduce((a, b) => a + b, 0);
+  let c = 0;
+  for (let i = 0; i < move.path.length; i++) {
+    const seg = move.path[i], t0 = c / sum, t1 = (c += spans[i]) / sum;
+    if (!seg.turn || t < t0 || t > t1) continue;
+    const T = TURNS[seg.turn];
+    const entry = { foot: seg.foot, edge: seg.edge, dir: seg.dir };
+    const exit = { foot: seg.foot, edge: T.edgeChanges ? (seg.edge === 'O' ? 'I' : 'O') : seg.edge,
+                   dir: seg.dir === 'F' ? 'B' : 'F' };
+    const lobe = lobeSense(seg.foot, seg.edge, seg.dir);
+    const sense = T.rotatesInto ? lobe : -lobe;
+    const L = (seg.radius ?? move.radius) * seg.sweep * D2R;
+    const u = (t - t0) / (t1 - t0);
+    return { u, t0, t1, entry, exit, sense, L,
+             psi: sense * 180 * S3(u),
+             dt: L * cuspTable(CUSP.dt, u), dn: sense * L * cuspTable(CUSP.dn, u) };
+  }
+  return null;
+}
+
+/* The cusp applies to the reference blade only while it is the turn's foot and on
+   its edge. A turn written on a foot that is in the air is a contradiction, and
+   turnout.mjs says so rather than this quietly doing nothing. */
+const cuspFor = (move, t, pose) => {
+  const cu = cuspAt(move, t);
+  return cu && pose.skate === cu.entry.foot && onIceOf(pose, pose.skate) === 'blade' ? cu : null;
+};
+
 /* ═══ path ════════════════════════════════════════════════════ */
 export function buildPath(move){
   const TOTAL = 320, pts = [];
@@ -845,6 +929,15 @@ export function buildPath(move){
     }
     if(down) held = {t: po[down].t, n: po[down].n};
     pts[i].x += dx; pts[i].y += dy;
+    /* THE CUSP MOVES THE CONTACT AND NOT THE SKATER. poseAt has put the same offset
+       on the reference blade, so `held` carries it and the hip, path minus held,
+       stays on the circle while the tracing and the blade leave it together. */
+    const cu = cuspFor(move, i/(n-1), po);
+    if(cu){
+      const th2 = pts[i].th;
+      pts[i].x += Math.cos(th2)*cu.dt - Math.sin(th2)*cu.dn;
+      pts[i].y += Math.sin(th2)*cu.dt + Math.cos(th2)*cu.dn;
+    }
     pts[i].ot = held.t; pts[i].on = held.n;
   }
   return pts;
@@ -935,10 +1028,27 @@ export function poseAt(move, t){
     const ar = arrivalOf(a, b, which);
     return ar ? { ...f, arrival: ar, ...(u > 0 ? { onIce: null } : {}) } : f;
   };
-  return {
+  const pose = {
     hipZ: lp(a.hipZ,b.hipZ,u), hipYaw: lp(a.hipYaw,b.hipYaw,u), shYaw: lp(a.shYaw,b.shYaw,u),
     sh: lpP(a.sh,b.sh,u), L: foot('L'), R: foot('R'),
     LH: lpP(a.LH,b.LH,u), RH: lpP(a.RH,b.RH,u),
     skate: a.skate, edge: a.edge, dir: a.dir, ph: a.ph,
   };
+  /* INSIDE A ONE-FOOT TURN the reference blade's yaw, its offset from the circle and
+     its edge and direction all come from cuspAt, so they cannot disagree with the
+     tracing buildPath draws from the same call. The edge and direction change AT THE
+     APEX, where the blade is square across the circle: before it the skater is going
+     forwards on the entry edge, after it backwards on the exit edge. The yaw is
+     re-read against the new direction there, so the heading does not move. The keys
+     either side of the window carry the entry and the exit state, and nothing inside
+     it is authored. */
+  const cu = move.path && cuspFor(move, t, pose);
+  if (cu) {
+    const past = Math.abs(cu.psi) > 90, st = past ? cu.exit : cu.entry;
+    const q = pose[pose.skate];
+    pose[pose.skate] = { ...q, t: q.t + cu.dt, n: q.n + cu.dn,
+                         yaw: cu.psi - (past ? cu.sense * 180 : 0) };
+    pose.edge = st.edge; pose.dir = st.dir;
+  }
+  return pose;
 }

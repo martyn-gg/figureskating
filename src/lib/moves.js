@@ -234,6 +234,25 @@ const spinMove = m => {
   return { ...m, keys, radius: R_SPIN, speed: 0.5, duration: +total.toFixed(2) };
 };
 
+
+/* A KEY AT A ONE-FOOT TURN'S WINDOW TAKES THE WINDOW'S BOUNDARY EXACTLY — 03/10/2026.
+   poseAt reads the blade's yaw, offset, edge and direction out of cuspAt inside the
+   window and out of the keys outside it, so a key a frame inside the window would
+   hand the skater back to a key's state with the blade half way round. spinMove's
+   snap for spinMove's reason: the boundary is a fraction of the clock derived from
+   every span, and authoring it by hand is copying a number the code already knows. */
+const turnMove = m => {
+  const spans = m.path.map(g => g.span);
+  const total = spans.reduce((a, b) => a + b, 0);
+  let c = 0;
+  const bounds = spans.map(g => (c += g) / total);
+  const SNAP = 0.5 / 320;
+  return { ...m, keys: m.keys.map(k => {
+    const b = [0, ...bounds].find(g => Math.abs(g - k.t) < SNAP);
+    return b === undefined ? k : { ...k, t: b };
+  }) };
+};
+
 export const MOVES = {
   waltz: {
     name:'Waltz jump',
@@ -336,6 +355,60 @@ export const MOVES = {
        sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
     ]},
 
+  /* THE FORWARD OUTSIDE THREE TURN — 03/10/2026, Session 26, the rig for lfo-three
+     and the entry to the Salchow. Step 2 of the plan Martyn set in Session 24.
+
+     THE TURN IS A PATH SEGMENT AND NOT A POSE. The middle arc carries `turn:'three'`
+     and the entry edge, and inside it cuspAt drives the blade: its yaw comes round
+     from 0 to 180 on the smoothstep the hips are interpolated on, it grips the whole
+     time, and the point where it touches the ice is carried in to the cusp and back
+     out. The edge and direction change at the apex. Nothing between the two keys at
+     the window's ends is authored, so the tracing, the blade and the edge letter
+     cannot disagree. rig-math.js has the construction.
+
+     THE HIPS TURN WITH THE BLADE, and their two ends add to 180 on purpose: 6 going
+     in and 174 coming out. That puts the hip square across the circle at the same
+     instant as the blade, which is where the edge changes, so the skater is over the
+     outside edge until the apex and over the inside edge after it. Turning the hips
+     ahead of a gripping blade was the toe-in Session 24's attempt failed on.
+
+     THE BLADE RUNS FROM 6 cm AHEAD OF THE HIP TO 6 cm BEHIND IT across the window,
+     and the cusp's own along-track offset is zero at the apex, so the blade is under
+     the hip exactly where the edge changes. Either side of the apex the body is then
+     over the edge it is on. The forward bend sits the blade 12 cm ahead and the
+     backward one 10 cm behind, which is where the shin stays inside the boot.
+
+     THE SHOULDERS LEAD GOING IN AND CHECK COMING OUT: 30 degrees ahead of the hips
+     on the bent knee before the turn, 24 behind them on the exit. The rise onto the
+     turn and the bend after it are hipZ 88 to 94 and back down to 90.
+
+     The cusp is 0.34 of the window's 28 cm on the circle, about 9.5 cm. Smaller is a
+     shorter window, which is a faster turn.
+
+     Verified against a coach: NO. The shoulder lead, the hip timing and how fast the
+     blade comes round are the three things worth putting to one. */
+  threeTurn: turnMove({
+    name:'Forward outside three turn',
+    note:'LFO · the blade turning half a circle on its edge, the cusp in the tracing · LBI',
+    path:[ {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:70, span:195},
+           {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:10, span:28, turn:'three'},
+           {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:70, span:195} ],
+    radius:160, duration:4.4,
+    keys:[
+      {arm:[60,4,18], t:0.00, ph:'Gliding on the forward outside edge', hipZ:94, hipYaw:-4, shYaw:-10,
+       sh:P(-2,0,147), L:P(4,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:2, shYaw:32,
+       sh:P(2,0,139), L:P(12,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the hips coming round with the blade', hipZ:94, hipYaw:6, shYaw:40,
+       sh:P(0,0,146), L:P(6,15,0,0.5), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, checked on the back inside edge', hipZ:92, hipYaw:174, shYaw:150,
+       sh:P(0,0,144), L:P(-6,15,0,0.5), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:176, shYaw:160,
+       sh:P(-2,0,142), L:P(-10,15,0,-0.5), R:P(34,-4,18,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[62,6,18], t:1.00, ph:'Running out on the back inside edge', hipZ:94, hipYaw:178, shYaw:164,
+       sh:P(-2,0,146), L:P(-8,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+    ]}),
+
   /* THE SALCHOW — 03/10/2026, Martyn: he is working towards it, so it is the first
      single jump to get a rig after the waltz.
 
@@ -343,15 +416,16 @@ export const MOVES = {
      RBO (skating.js JUMPS). Both edges have the same lobe sense, so the tracing is one
      long curve broken only by the flight.
 
-     IT STARTS COMING OUT OF THE THREE TURN, NOT BEFORE IT. The usual way in is a
-     forward outside three turn, and the first build drew it. It failed four checkers
-     for one reason: a one-foot turn pivots a GRIPPING blade through half a circle at
-     the cusp, and this rig turns a blade off its line only in the air or in a skid.
-     `dir` is a carried state, so flipping it at the cusp swings the boot 179 degrees
-     between two frames (continuity.mjs), and turning the hip ahead of it asks for more
-     toe-in than the leg can give (turnout.mjs). Drawing three turns is the rig
-     capability the review said to freeze, and the three turn has its own page; so
-     this move begins checked on the back inside edge the turn leaves you on.
+     IT STARTS ON THE FORWARD OUTSIDE EDGE AND GOES IN THROUGH THE THREE TURN, which
+     is the usual way in. The first build, on 03/10/2026, drew it this way and failed
+     four checkers, because the rig could not turn a gripping blade; it began checked
+     on the back inside edge instead. Session 26 gave the rig the cusp (cuspAt in
+     rig-math.js, and threeTurn above), and the entry went back in as it was first
+     written: an LFO arc, a turn segment and three keys. The keys either side of the
+     window are threeTurn's, with the hips at 2 and 178 so that they add to 180 and
+     square up across the circle with the blade. Prepending them moved every later
+     key from t to (0.288 + t) / 1.288, which is the same instant of the jump on a
+     clock 1.6 seconds longer.
 
      THE ROTATION IS COUNTED IN hipYaw AND NEVER WRAPPED. Backwards is 180. The swing
      of the free leg turns the hips about 25 degrees on the ice before the blade
@@ -374,44 +448,52 @@ export const MOVES = {
 
      Verified against a coach: NO. The timing of the swing against the rise is the
      part most worth a coach's eye. */
-  salchow: {
+  salchow: turnMove({
     name:'Salchow',
     note:'LBI takeoff out of a three turn, no pick · one rotation · RBO landing',
-    path:[ {kind:'arc',  foot:'L', edge:'I', dir:'B', sweep:120, span:0.48},
+    path:[ {kind:'arc',  foot:'L', edge:'O', dir:'F', sweep:60,  span:0.24},
+           {kind:'arc',  foot:'L', edge:'O', dir:'F', sweep:12,  span:0.048, turn:'three'},
+           {kind:'arc',  foot:'L', edge:'I', dir:'B', sweep:120, span:0.48},
            {kind:'line', len:70,                                 span:0.10},
            {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:56,  span:0.18},
            {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.24} ],
-    radius:130, duration:5.4,
+    radius:130, duration:7.0,
     keys:[
-      {arm:[60,6,18], t:0.00, ph:'Out of the three turn, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:162,
-       sh:P(-2,0,144), L:P(-6,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[64,8,18], t:0.18, ph:'Free leg held back, the edge running', hipZ:90, hipYaw:176, shYaw:160,
+      {arm:[60,4,18], t:0, ph:'Gliding on the forward outside edge', hipZ:94, hipYaw:-4, shYaw:-10,
+       sh:P(-2,0,147), L:P(4,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[56,6,18], t:0.0932, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:0, shYaw:30,
+       sh:P(2,0,139), L:P(12,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[50,8,18], t:0.1863, ph:'The three turn: rising, the hips coming round with the blade', hipZ:94, hipYaw:2, shYaw:36,
+       sh:P(0,0,146), L:P(6,15,0,0.5), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[60,6,18], t:0.2236, ph:'Out of the three turn, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:162,
+       sh:P(-2,0,144), L:P(-6,15,0,-0.5), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[64,8,18], t:0.3634, ph:'Free leg held back, the edge running', hipZ:90, hipYaw:176, shYaw:160,
        sh:P(-4,0,140), L:P(-10,15,0,-0.5), R:P(50,-8,22,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[60,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching back', hipZ:82, hipYaw:174, shYaw:158,
+      {arm:[60,10,20], t:0.472, ph:'Skating knee bends, the free leg reaching back', hipZ:82, hipYaw:174, shYaw:158,
        sh:P(-6,0,132), L:P(-20,16,0,-1), R:P(54,-10,14,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[52,14,20], t:0.40, ph:'The free leg swings out wide', hipZ:84, hipYaw:186, shYaw:200,
+      {arm:[52,14,20], t:0.5342, ph:'The free leg swings out wide', hipZ:84, hipYaw:186, shYaw:200,
        sh:P(-6,0,134), L:P(-18,16,0,-1), R:P(10,-42,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[46,18,16], t:0.45, ph:'Free leg through in front, the shoulders leading', hipZ:92, hipYaw:196, shYaw:236,
+      {arm:[46,18,16], t:0.573, ph:'Free leg through in front, the shoulders leading', hipZ:92, hipYaw:196, shYaw:236,
        sh:P(-2,0,142), L:P(-10,14,0,1), R:P(-36,-14,34,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[40,20,8], t:0.475, ph:'Takeoff: the skating knee drives up', hipZ:102, hipYaw:202, shYaw:256,
+      {arm:[40,20,8], t:0.5924, ph:'Takeoff: the skating knee drives up', hipZ:102, hipYaw:202, shYaw:256,
        sh:P(-2,0,154), L:P(-4,8,2,3), R:P(-34,-4,52,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[30,16,10], t:0.49, ph:'Blade leaves the ice', hipZ:118, hipYaw:250, shYaw:290,
+      {arm:[30,16,10], t:0.604, ph:'Blade leaves the ice', hipZ:118, hipYaw:250, shYaw:290,
        sh:P(-2,0,170), L:P(-6,-12,32,0,NEUTRAL), R:P(-10,26,56,0,NEUTRAL), skate:null},
-      {arm:[22,14,12], t:0.525, ph:'Peak: arms in, legs together', hipZ:130, hipYaw:390, shYaw:396,
+      {arm:[22,14,12], t:0.6312, ph:'Peak: arms in, legs together', hipZ:130, hipYaw:390, shYaw:396,
        sh:P(0,0,182), L:P(3,-5,64,0,NEUTRAL), R:P(7,5,62,0,NEUTRAL), skate:null},
-      {arm:[26,14,12], t:0.555, ph:'Descending, the landing leg reaching for the ice', hipZ:112, hipYaw:500, shYaw:492,
+      {arm:[26,14,12], t:0.6545, ph:'Descending, the landing leg reaching for the ice', hipZ:112, hipYaw:500, shYaw:492,
        sh:P(-2,0,164), L:P(16,24,46,0,NEUTRAL), R:P(4,-7,28,0,NEUTRAL), skate:null},
-      {arm:[34,14,14], t:0.58, ph:'Toe of the blade touches down', hipZ:98, hipYaw:540, shYaw:522,
+      {arm:[34,14,14], t:0.6739, ph:'Toe of the blade touches down', hipZ:98, hipYaw:540, shYaw:522,
        sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
-      {arm:[46,12,16], t:0.63, ph:'Rolling back along the blade', hipZ:96, hipYaw:538, shYaw:518,
+      {arm:[46,12,16], t:0.7127, ph:'Rolling back along the blade', hipZ:96, hipYaw:538, shYaw:518,
        sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
-      {arm:[58,10,18], t:0.70, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:536, shYaw:512,
+      {arm:[58,10,18], t:0.7671, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:536, shYaw:512,
        sh:P(-10,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-15,17,0,-1), skate:'R', edge:'O', dir:'B'},
-      {arm:[62,8,18], t:0.84, ph:'Check holds, edge running', hipZ:90, hipYaw:534, shYaw:510,
+      {arm:[62,8,18], t:0.8758, ph:'Check holds, edge running', hipZ:90, hipYaw:534, shYaw:510,
        sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {arm:[64,10,18], t:1.00, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:532, shYaw:518,
+      {arm:[64,10,18], t:1.0, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:532, shYaw:518,
        sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
-    ]},
+    ]}),
 
   spiral: {
     name:'Spiral',

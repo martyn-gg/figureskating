@@ -67,7 +67,7 @@
 import { MOVES } from '../src/lib/moves.js';
 import { HIP_OUT, HIP_IN, SKID_MIN_YAW, KNEE_TWIST_OUT, THIGH, SHIN, anterior,
          twoBone, bootDir, ankleOf, turnoutAllowed, kneeFlex,
-         runnersDown, dirOf, onIceOf, edgeOf } from '../src/lib/rig-math.js';
+         runnersDown, dirOf, onIceOf, edgeOf, cuspAt, buildPath, poseAt } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const wrap = a => { while (a > 180) a -= 360; while (a <= -180) a += 360; return a; };
@@ -168,10 +168,89 @@ for (const [key, m] of Object.entries(MOVES))
       }
     }
 
+/* THE CUSP OF A ONE-FOOT TURN — 03/10/2026, Session 26.
+
+   Everything above reads keyframes, and inside a one-foot turn nothing is keyed:
+   cuspAt turns the reference blade through half a circle between two keys that both
+   say yaw 0. So the turn is held here frame by frame, and from both sides, because
+   it is an exemption from the TRACING rule above. A reference blade turned off the
+   circle is allowed exactly where it is gripping, which means:
+
+   ON THE LINE. The blade points along the tracing it is cutting, read off the drawn
+   path by finite difference and not off cuspAt, to within ALONG degrees. Take the
+   cusp out of the tracing and every frame of the turn fails this; that is the
+   mutation. A cusp has no tangent at its point, so a frame whose two neighbours lie
+   either side of the apex is skipped and counted: the chord between them crosses
+   the point of the "3" and reads 3.7° off on the threeTurn, which is the chord and
+   not the blade.
+
+   THE HIP CAN MAKE IT, the same allowance as every keyed blade above.
+
+   AND THE WINDOW IS WHERE THE TURN IS. Outside every window the reference blade's
+   yaw is nought on every frame, so a yaw that leaks out of a turn, or a key placed
+   inside one, fails too.
+
+     --break=cusp   the tracing drawn without the cusp ......... 16 (all ALONG)
+
+       node tools/turnout.mjs --break=cusp
+*/
+const ALONG = 3;
+let cuspFrames = 0, still = 0, worstAlong = 0;
+for (const [key, m] of Object.entries(MOVES)) {
+  if (!m.path.some(g => g.turn)) continue;
+  const path = buildPath(m), n = path.length;
+  if (BREAK === 'cusp') {
+    /* The same move with every turn segment stripped of its turn: the tracing is the
+       plain circle, and the poses are read from the real move as before. */
+    const flat = buildPath({ ...m, path: m.path.map(({ turn, ...g }) => g) });
+    flat.forEach((p, i) => { path[i].x = p.x; path[i].y = p.y; });
+  }
+  for (let i = 1; i < n - 1; i++) {
+    const t = i / (n - 1), pose = poseAt(m, t), w = pose.skate;
+    if (!w || onIceOf(pose, w) !== 'blade') continue;
+    const yaw = pose[w].yaw || 0, cu = cuspAt(m, t);
+    if (!cu) {
+      if (yaw) {
+        bad++;
+        console.log(`  LEAK    ${key.padEnd(13)} ${w} frame ${i}  the reference blade is yawed ` +
+          `${yaw.toFixed(1)}° outside any turn — only a cusp may turn a gripping blade`);
+      }
+      continue;
+    }
+    cuspFrames++;
+    const p = path[i], a = path[i - 1], b = path[i + 1];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const side = j => (cuspAt(m, j / (n - 1))?.u ?? (j < i ? 0 : 1)) < 0.5;
+    if (side(i - 1) !== side(i + 1)) { still++; continue; }
+    const heading = (dirOf(pose, w) === 'F' ? 0 : 180) + yaw;
+    const boot = p.th / (Math.PI / 180) - heading;           // + yaw = clockwise on the page
+    const line = Math.atan2(dy, dx) / (Math.PI / 180);
+    const off = Math.abs(wrap(boot - line)), along = Math.min(off, 180 - off);
+    worstAlong = Math.max(worstAlong, along);
+    if (along > ALONG) {
+      bad++;
+      console.log(`  ALONG   ${key.padEnd(13)} ${w} frame ${i}  the blade is ${along.toFixed(1)}° off the ` +
+        `line it is cutting, inside a ${cu.u.toFixed(2)} of the way through a turn — a gripping blade runs along its tracing`);
+    }
+    const turn = wrap(heading - pose.hipYaw), out = (w === 'L' ? 1 : -1) * turn;
+    const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, pose[w], THIGH, SHIN, anterior(pose.hipYaw));
+    const bd = bootDir(pose, w, kn, pose[w]);
+    const an = ankleOf(pose, w, bd, [kn.t - pose[w].t, kn.n - pose[w].n, kn.z - pose[w].z]);
+    const allow = turnoutAllowed(Math.hypot(an.t, an.n, an.z - pose.hipZ));
+    if (out > allow.out + 1e-9 || -out > allow.in + 1e-9) {
+      bad++;
+      console.log(`  CUSP    ${key.padEnd(13)} ${w} frame ${i}  ${out.toFixed(0)}° off the pelvis inside the turn, ` +
+        `allowed ${allow.out.toFixed(0)}° out and ${allow.in.toFixed(0)}° in — the hips have to come round with the blade`);
+    }
+  }
+}
+
 console.log(`\n${feet} blades on the ice across ${Object.keys(MOVES).length} moves, ${turned} of them turned off the tracing`);
+console.log(`${cuspFrames} frames inside one-foot turns, ${still} of them either side of the apex, where a cusp has no tangent; ` +
+  `worst blade off its own tracing ${worstAlong.toFixed(1)}° (bound ${ALONG})`);
 console.log(`furthest out ${worst.out.toFixed(0)}°${worst.key ? ` (${worst.key} ${worst.w})` : ''}, ` +
   `furthest in ${worstIn.in.toFixed(0)}°${worstIn.key ? ` (${worstIn.key} ${worstIn.w})` : ''}`);
 console.log(bad
-  ? `\n${bad} foot${bad === 1 ? '' : ' positions'} the hip cannot make`
+  ? `\n${bad} foot${bad === 1 ? '' : ' positions'} the hip cannot make, or a turned blade off its line`
   : 'every blade on the ice points somewhere its hip can put it, every skid is turned across its own line,\nand every foot turned off the tracing says which contact it is making');
 process.exit(bad ? 1 : 0);
