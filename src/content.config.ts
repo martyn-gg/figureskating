@@ -224,6 +224,10 @@ const grades = defineCollection({
     sourceUrl: z.string().url(),
     levels: z.array(z.object({
       name: z.string(),
+      /* The names the same level goes by now, where a programme has renamed its
+         levels since the document the page follows. Searchable, and printed
+         beside the level. */
+      aka: z.array(z.string()).default([]),
       note: z.string().optional(),
       items: z.array(z.object({
         label: z.string(),
