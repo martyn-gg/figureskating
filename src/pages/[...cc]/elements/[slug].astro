@@ -1,6 +1,7 @@
 ---
 import DancePattern from '../../../components/DancePattern.astro';
 import HoldDiagram from '../../../components/HoldDiagram.astro';
+import HoldRear from '../../../components/HoldRear.astro';
 import { holdParts } from '../../../lib/holds.js';
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
@@ -291,7 +292,9 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     </figure>
   )}
 
-  {d.kind === 'hold' && <HoldDiagram slug={entry.id} />}
+  {d.kind === 'hold' && (
+    <div class="holdviews"><HoldDiagram slug={entry.id} /><HoldRear slug={entry.id} /></div>
+  )}
   {d.rig && <BodyFrame move={d.rig} />}
 
   {/* A PATTERN DANCE'S STEPS — 03/10/2026. The rink pattern where it has been measured

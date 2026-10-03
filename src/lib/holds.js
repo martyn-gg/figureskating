@@ -22,7 +22,15 @@
    clasped, both arms list the same point), 'back' (a hand on the partner's back),
    'shoulder' (a hand resting on the partner's shoulder or upper arm), 'hip' (a hand
    at the partner's hip). Partner positions are a schematic of the rule's words, not
-   a measurement: the rule gives relationships, not distances. */
+   a measurement: the rule gives relationships, not distances.
+
+   HEIGHTS, for the view from behind (03/10/2026, Martyn: add the holds from the
+   rear). `z` is how high the hand is, in metres off the ice, and `vz` the elbow
+   where an arm has one. Where an arm leaves them out, its kind decides: hands
+   joined at shoulder height with the arms extended, a hand on the back at the
+   shoulder blade, a hand resting on a shoulder at the shoulder. The Kilian's
+   clasped hands rest at the follow's hip and say so. The figures are an adult of
+   about 1.75 m: shoulders at 1.42, hips at 0.95. */
 
 export const HOLDS = {
   'closed-hold': {
@@ -69,8 +77,8 @@ export const HOLDS = {
     arms: [
       { who: 'follow', side: 'L', to: [-0.58, -0.22], at: 'join' },
       { who: 'lead', side: 'L', to: [-0.58, -0.22], at: 'join' },
-      { who: 'lead', side: 'R', to: [0.42, 0.02], at: 'join' },
-      { who: 'follow', side: 'R', to: [0.42, 0.02], at: 'join' },
+      { who: 'lead', side: 'R', to: [0.42, 0.02], at: 'join', z: 1.0 },
+      { who: 'follow', side: 'R', to: [0.42, 0.02], at: 'join', z: 1.0 },
     ],
   },
   'reversed-kilian-hold': {
@@ -80,8 +88,8 @@ export const HOLDS = {
     arms: [
       { who: 'follow', side: 'R', to: [0.58, -0.22], at: 'join' },
       { who: 'lead', side: 'R', to: [0.58, -0.22], at: 'join' },
-      { who: 'lead', side: 'L', to: [-0.42, 0.02], at: 'join' },
-      { who: 'follow', side: 'L', to: [-0.42, 0.02], at: 'join' },
+      { who: 'lead', side: 'L', to: [-0.42, 0.02], at: 'join', z: 1.0 },
+      { who: 'follow', side: 'L', to: [-0.42, 0.02], at: 'join', z: 1.0 },
     ],
   },
   'hand-in-hand-hold': {
@@ -90,14 +98,20 @@ export const HOLDS = {
     lead:   { x: -0.6, y: 0, facing: 0 },
     follow: { x: 0.6, y: 0, facing: 0 },
     arms: [
-      { who: 'lead', side: 'R', to: [0, 0.04], at: 'join' },
-      { who: 'follow', side: 'L', to: [0, 0.04], at: 'join' },
+      { who: 'lead', side: 'R', to: [0, 0.04], at: 'join', z: 1.15 },
+      { who: 'follow', side: 'L', to: [0, 0.04], at: 'join', z: 1.15 },
     ],
   },
 };
 
-/* Half the shoulder width, in metres. */
+/* Half the shoulder width, in metres, and the heights the figures from behind are
+   drawn at. */
 export const SHOULDER = 0.21;
+export const HEIGHT = { head: 1.62, shoulder: 1.42, hip: 0.95 };
+const DEFAULT_Z = { join: 1.35, back: 1.3, shoulder: 1.42, hip: 1.0 };
+/** How high an arm's hand is, and its elbow if it has one. */
+export const handZ = a => a.z ?? DEFAULT_Z[a.at];
+export const elbowZ = a => a.vz ?? (HEIGHT.shoulder + handZ(a)) / 2 - 0.05;
 
 /** A partner's two shoulders, from its centre and facing. */
 export function shoulders(p) {

@@ -1,0 +1,98 @@
+---
+/* A DANCE HOLD FROM BEHIND — 03/10/2026, Martyn: add the holds from the rear.
+
+   The same frame of src/lib/holds.js as HoldDiagram, seen by someone standing
+   behind the couple and looking the way they travel: left and right are the
+   picture's left and right, as in the view from above, and up is height off the
+   ice. What this adds is the third dimension the view from above flattens: which
+   hands are high and which low, and who is in front of whom.
+
+   A LITTLE TO ONE SIDE AND A LITTLE ABOVE. Straight from behind, a closed hold is
+   one back with the other partner hidden behind it, since the two stand in line.
+   So the eye is moved: whatever is further away sits a little to the right and a
+   little higher (x - 0.45 y, z - 0.3 y, with y up the page negative), enough to
+   see both partners in every hold and too little to change which side anyone is
+   on.
+
+   EVERYTHING IS DRAWN FAR TO NEAR. Each body and each piece of each arm is sorted
+   by its depth (its y in the view from above: further up the page is further from
+   the viewer), so an arm round a partner's back passes behind that partner and an
+   arm across the front passes in front. A partner facing the viewer (skating
+   backwards) has a face; a partner facing away does not. */
+import { HOLDS, shoulders, SHOULDER, HEIGHT, handZ, elbowZ } from '../lib/holds.js';
+
+const { slug } = Astro.props;
+const H = HOLDS[slug];
+const S = { lead: shoulders(H.lead), follow: shoulders(H.follow) };
+const f2 = v => Math.round(v * 1000) / 1000;
+/* Picture coordinates: x across as from above, height up the picture, and the
+   oblique shift for depth. */
+const PX = (x, y) => f2(x - 0.45 * y);
+const PY = (z, y) => f2(-(z - 0.3 * y));
+const items = [];
+for (const who of ['lead', 'follow']) {
+  const p = H[who], t = p.facing * Math.PI / 180;
+  const half = Math.max(0.09, Math.abs(Math.cos(t)) * SHOULDER);
+  const toward = Math.cos(t) < 0;               // facing the viewer: skating backwards
+  items.push({ depth: p.y, kind: 'body', who, x: p.x, y: p.y, half, toward });
+  for (const a of H.arms.filter(a => a.who === who)) {
+    const s = S[who][a.side];
+    const pts = [[s[0], HEIGHT.shoulder, s[1]],
+                 ...(a.via ? [[a.via[0], elbowZ(a), a.via[1]]] : []),
+                 [a.to[0], handZ(a), a.to[1]]];
+    for (let i = 0; i + 1 < pts.length; i++)
+      items.push({ depth: (pts[i][2] + pts[i + 1][2]) / 2 + 0.001, kind: 'arm', who,
+        a: pts[i], b: pts[i + 1], end: i + 2 === pts.length ? a.at : null });
+  }
+}
+items.sort((m, n) => m.depth - n.depth);
+const joins = [...new Map(H.arms.filter(a => a.at === 'join').map(a => [a.to.join(','), [PX(a.to[0], a.to[1]), PY(handZ(a), a.to[1])]])).values()];
+/* Names: under the feet of the nearer partner, over the head of the further one,
+   so the two never land on each other; side by side, both under. */
+const level = Math.abs(H.lead.y - H.follow.y) < 0.05;
+const far = H.lead.y < H.follow.y ? 'lead' : 'follow';
+const names = ['lead', 'follow'].map(who => ({ who, x: PX(H[who].x, H[who].y),
+  y: !level && who === far ? f2(PY(HEIGHT.head + 0.2, H[who].y)) : f2(PY(0, H[who].y) + 0.13) }));
+---
+<figure class="hold rear">
+  <svg viewBox="-1.05 -2.2 2.1 2.55" role="img" aria-label={`The ${slug.replace(/-/g, ' ')} seen from behind the couple`}>
+    {items.map(it => it.kind === 'body' ? (
+      <g class={`partner ${it.who}`}>
+        <ellipse class="ground" cx={PX(it.x, it.y)} cy={PY(0, it.y)} rx="0.2" ry="0.04" />
+        <line class="leg" x1={PX(it.x - 0.07, it.y)} y1={PY(HEIGHT.hip, it.y)} x2={PX(it.x - 0.09, it.y)} y2={PY(0, it.y)} />
+        <line class="leg" x1={PX(it.x + 0.07, it.y)} y1={PY(HEIGHT.hip, it.y)} x2={PX(it.x + 0.09, it.y)} y2={PY(0, it.y)} />
+        <path class="torso" d={`M${PX(it.x - it.half, it.y)} ${PY(HEIGHT.shoulder, it.y)} L${PX(it.x + it.half, it.y)} ${PY(HEIGHT.shoulder, it.y)} L${PX(it.x + it.half * 0.7, it.y)} ${PY(HEIGHT.hip, it.y)} L${PX(it.x - it.half * 0.7, it.y)} ${PY(HEIGHT.hip, it.y)} Z`} />
+        <circle class="head" cx={PX(it.x, it.y)} cy={PY(HEIGHT.head, it.y)} r="0.1" />
+        {it.toward && <>
+          <circle class="eye" cx={PX(it.x - 0.035, it.y)} cy={PY(HEIGHT.head + 0.015, it.y)} r="0.013" />
+          <circle class="eye" cx={PX(it.x + 0.035, it.y)} cy={PY(HEIGHT.head + 0.015, it.y)} r="0.013" />
+        </>}
+      </g>
+    ) : (
+      <g class={`partner ${it.who}`}>
+        <line class="arm" x1={PX(it.a[0], it.a[2])} y1={PY(it.a[1], it.a[2])} x2={PX(it.b[0], it.b[2])} y2={PY(it.b[1], it.b[2])} />
+        {it.end && it.end !== 'join' && <circle class="hand" cx={PX(it.b[0], it.b[2])} cy={PY(it.b[1], it.b[2])} r="0.03" />}
+      </g>
+    ))}
+    {joins.map(q => <circle class="join" cx={q[0]} cy={q[1]} r="0.045" />)}
+    {names.map(n => <text class={n.who} x={n.x} y={n.y}>{n.who === 'lead' ? 'Lead' : 'Follow'}</text>)}
+  </svg>
+  <figcaption>From behind, a little to one side</figcaption>
+</figure>
+
+<style>
+  .rear svg { width: 100%; height: auto; display: block; background: var(--ice); border-radius: 6px; }
+  .ground { fill: var(--rule); opacity: 0.7; }
+  .torso { fill: var(--ice); stroke-width: 0.03; stroke-linejoin: round; }
+  .head { fill: var(--ice); stroke-width: 0.025; }
+  .leg, .arm { stroke-width: 0.035; stroke-linecap: round; }
+  .lead .torso, .lead .head, .lead .leg, .lead .arm { stroke: var(--ink); }
+  .follow .torso, .follow .head, .follow .leg, .follow .arm { stroke: var(--accent); }
+  .lead .eye, .lead .hand { fill: var(--ink); }
+  .follow .eye, .follow .hand { fill: var(--accent); }
+  .join { fill: var(--ice); stroke: var(--ink); stroke-width: 0.022; }
+  text { font-size: 0.11px; text-anchor: middle; dominant-baseline: central; }
+  text.lead { fill: var(--ink); }
+  text.follow { fill: var(--accent); }
+
+</style>

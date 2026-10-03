@@ -102,6 +102,13 @@ const alternates = hasCopies ? [
   )}
   <style is:global>
     *{box-sizing:border-box} html,body{margin:0}
+    /* THE PAGE DOES NOT MOVE SIDEWAYS BETWEEN PAGES — 03/10/2026, Martyn: the red
+       line and the punched holes flick between two places. They hang off the
+       centred column, and on a screen that shows scrollbars a page too short to
+       scroll had no scrollbar and a longer one had, so the column, the margin and
+       the holes sat about 8 px apart on the two. The gutter is now kept whether or
+       not the page scrolls, so every page puts them in the same place. */
+    html{scrollbar-gutter:stable}
     /* A class that sets display must not undo the hidden attribute. */
     [hidden]{display:none!important}
     body{background:var(--paper);color:var(--ink);line-height:1.6;

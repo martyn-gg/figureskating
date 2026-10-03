@@ -40,6 +40,19 @@ self.addEventListener('fetch', e => {
     .catch(() => null);
   e.waitUntil(network);
 
+  /* A PAGE COMES FROM THE NETWORK FIRST — 03/10/2026. Served stale, the first
+     page after a deploy was the old build and the next one, fetched fresh, was the
+     new: two versions of the guide's look alternating as a reader moved about,
+     which is what Martyn saw. A page now waits for the network and falls back to
+     the cache only when there is none, which is the rink with no signal this file
+     exists for. Fonts, scripts and images still come from the cache first. */
+  if (req.mode === 'navigate') {
+    e.respondWith(network
+      .then(res => res || caches.match(req))
+      .then(res => res || caches.match(new URL('./', location).pathname))
+      .then(res => res || Response.error()));
+    return;
+  }
   e.respondWith(
     caches.match(req).then(hit => hit
       || network.then(res => res || caches.match(new URL('./', location).pathname))
