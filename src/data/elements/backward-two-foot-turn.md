@@ -10,8 +10,7 @@ verified: { checked: false }
 ---
 
 Gliding backwards on both feet, the body turns through a half turn and you finish gliding
-forwards. Learn to Skate USA teaches it moving on a circle, both ways round, at its sixth
-level, three levels after the forward-to-backward turn.
+forwards.
 
 The feet do what they did in the forward turn and the shoulders lead it in the same way. The
 difference is what you can see: this turn ends facing ice you have not been looking at, so it

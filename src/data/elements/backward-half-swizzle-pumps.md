@@ -9,8 +9,8 @@ verified: { checked: false }
 ---
 
 Round a circle backwards, one foot glides and holds the curve while the other presses out and
-draws back in to keep the speed up. They come at Learn to Skate USA's fourth level, each way
-round, one level before backward crossovers.
+draws back in to keep the speed up. They come at Learn to Skate USA's fourth level, round a
+circle in either direction, one level before backward crossovers.
 
 The pumping is the forward version's, with the weight moved forward as it is for everything
 backwards. What changes is what you can see. Forwards you can watch the circle you are drawing;

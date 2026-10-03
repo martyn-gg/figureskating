@@ -15,7 +15,7 @@ verified: { checked: false }
 
 From a forward glide you lift one foot and keep going on the other. The skating knee stays
 slightly bent, the free foot is held low beside the skating ankle, and the glide runs straight.
-In Learn to Skate USA it is a second-level skill, on each foot.
+In Learn to Skate USA it is a second-level skill, on either foot.
 
 It feels narrow. On two feet you could borrow from whichever foot was steady; on one there is
 nothing to borrow from, and every wobble has to be answered from the ankle up. The usual fault

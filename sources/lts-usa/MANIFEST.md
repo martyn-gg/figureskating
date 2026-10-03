@@ -25,16 +25,13 @@ from a cache. **The URL returns 404 on the live site the same day**: the site ha
 rebuilt and the sitemap (29 URLs) lists no curriculum document. So it cannot be downloaded
 and cannot be cited as "on their website" today.
 
-Claims on the basics pages that rest on the curriculum alone, because the elements PDF does
-not list them:
+**Taken out on 03/10/2026**, on Martyn's rule that a claim must be verifiable from a document
+held here: the backward two-foot glide's "the length of the skater's height", the levels of
+the backward snowplough stop, backward stroking and the backward two-foot turn, the pivot and
+lunge bonus skills, "both directions" on the hockey stop and the two-foot turn, and "R and L"
+where the elements PDF says "either foot". Every Learn to Skate USA level now on a page is
+one the elements PDF lists.
 
-- backward two-foot glide: the length of the skater's height (Basic 2)
-- backward snowplough stop: Basic 3, each foot
-- backward stroking: Basic 6
-- backward two-foot turn, moving on a circle: Basic 6
-- forward pivots: Basic 3 bonus
-- forward lunges: Basic 4 bonus (on the drag page)
-
-Where the two documents disagree the elements PDF wins, as the live one: half-swizzle pumps
-are 6–8 consecutive in the curriculum and 4–6 in the elements event, so the page gives no
-count.
+Where the two documents disagree the elements PDF wins, as the one held: half-swizzle pumps
+are 6–8 consecutive in the curriculum and 4–6 in the elements event, and the page says four to
+six.

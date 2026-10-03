@@ -13,8 +13,8 @@ verified: { checked: false }
 ---
 
 One blade running backwards on a straight line, the knee bent, the free foot held low and close
-in front of the skating foot. Learn to Skate USA brings it in at its third level as a beginning
-glide with the focus on balance, and asks for it on each foot at its fourth.
+in front of the skating foot. Learn to Skate USA brings it in at its third level on either
+foot, and asks for it on each foot at its fourth.
 
 Two corrections arrive at once. The base halves, as it does going forwards, and the weight has
 to sit further forward than instinct wants, over the ball of the foot and off the heel. The two

@@ -10,8 +10,7 @@ verified: { checked: false }
 ---
 
 One blade presses out to the side against its inside edge while the other glides, and you
-travel backwards. The pushing foot returns underneath and the weight changes over. In Learn to
-Skate USA it waits until the sixth level, three after forward stroking.
+travel backwards. The pushing foot returns underneath and the weight changes over.
 
 The pushing foot sweeps out and finishes to the side and slightly in front of you, and each
 push feels like drawing a C on the ice. The usual fault is the wiggle: pressing out and pulling
@@ -19,4 +18,5 @@ straight back in moves the feet a great deal and the skater very little, because
 never leaves the push behind. The other is sitting back to see where you are going. Keep the
 shoulders forward and look over a shoulder, which feels wrong and is what makes the push work.
 
-By then the same syllabus has already taught backward crossovers, a level earlier.
+The backward edges, and the backward chassés, cross rolls and push backs, all start from this
+push.
