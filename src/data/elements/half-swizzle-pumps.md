@@ -9,8 +9,7 @@ verified: { checked: false }
 ---
 
 On a circle, the inside foot glides and holds the curve while the outside foot presses out and
-draws back in, over and over, each press adding speed. Both blades stay on the ice. Learn to
-Skate USA's third level wants six to eight in a row, each way round the circle.
+draws back in, over and over, each press adding speed. Both blades stay on the ice. Learn to Skate USA teaches them at its third level, on a circle, clockwise and anticlockwise.
 
 The press goes out to the side and slightly behind, against the inside edge of the pumping
 blade, and it should settle into a rhythm: press, draw in, press. The usual fault is pushing

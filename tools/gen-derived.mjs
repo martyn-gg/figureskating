@@ -1209,7 +1209,8 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
           crossover:  dir === 'F' ? 'half-swizzle-pumps' : 'backward-half-swizzle-pumps',
           crossbehind:dir === 'F' ? 'half-swizzle-pumps' : 'backward-half-swizzle-pumps',
           crossroll:  dir === 'F' ? 'forward-stroking' : 'backward-stroking',
-          coe:        'two-foot-change-of-edge',
+          /* Backwards, the Skills 1 slalom's second side is this roll on two feet too. */
+          coe:        dir === 'F' ? 'two-foot-change-of-edge' : ['two-foot-change-of-edge', 'backward-slalom'],
           chasse:     dir === 'F' ? 'forward-stroking' : 'backward-stroking',
           slipchasse: dir === 'F' ? 'forward-stroking' : 'backward-stroking',
           /* Both are the push itself, aimed. A push back IS a stroke taken from a
@@ -1217,7 +1218,7 @@ for (const foot of FEET) for (const dir of DIRS) for (const edge of EDGES) {
              rather than its replacement. */
           stepwide:   dir === 'F' ? 'forward-stroking' : 'backward-stroking',
           pushback:   'backward-stroking',
-        }[key_]].filter(Boolean).join(', ')}]`,
+        }[key_]].flat().filter(Boolean).join(', ')}]`,
       ],
       body: TRANSITION_TEXT[key_][key(s)],
     });

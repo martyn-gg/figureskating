@@ -4,7 +4,7 @@ kind: transition
 summary: "LBI to LBO: the blade rolls across without turning, still travelling backwards, and the lobe reverses."
 entry: { foot: L, edge: I, dir: B }
 turn: coe
-prerequisites: [lbi, two-foot-change-of-edge]
+prerequisites: [lbi, two-foot-change-of-edge, backward-slalom]
 verified: { checked: false }
 ---
 

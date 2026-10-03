@@ -34,6 +34,7 @@
 */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { FOUNDATIONS } from '../src/lib/foundations.js';
 
 const BREAK = (/--break=([\w-]+)/.exec(process.argv.join(' ')) || [])[1];
 
@@ -99,11 +100,16 @@ const read = dir => readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsW
 
 const ELEMENTS = read('src/data/elements');
 const OTHERS = [...read('src/data/exercises'), ...read('src/data/tests')];
+/* THE REASONS ON THE BASICS' "LEADS TO" LISTS — 03/10/2026. Prose a reader sees, kept
+   in src/lib/foundations.js, so held to the same rules as an element body: one
+   synthetic document, one paragraph per reason, foot neutrality on, length off. */
+const REASONS = { f: 'foundations.js', dir: 'src/lib', fm: 'kind: basic', reasons: true,
+  body: Object.values(FOUNDATIONS).flat().map(r => r.why).join('\n\n') };
 
-for (const doc of [...ELEMENTS, ...OTHERS]) {
+for (const doc of [...ELEMENTS, ...OTHERS, REASONS]) {
   files++;
   const where = `${doc.dir.replace('src/data/', '')}/${doc.f}`;
-  const isElement = doc.dir.endsWith('elements');
+  const isElement = doc.dir.endsWith('elements') || doc.reasons;
   /* The summary is prose a reader sees, so it is held to the same words. */
   const sm = /^summary:\s*"?(.*?)"?\s*$/m.exec(doc.fm);
   const blocks = doc.body.split(/\n\s*\n/).filter(p => p.trim());
@@ -142,7 +148,7 @@ for (const doc of [...ELEMENTS, ...OTHERS]) {
       fail(`${where} · ${label}`, 'reads as a numbered procedure — this is a reference, and step-by-step is the coach\'s job');
   }
 
-  if (isElement) {
+  if (isElement && !doc.reasons) {
     const n = doc.body.split(/\s+/).filter(Boolean).length;
     words += n;
     /* TWO FLOORS, BECAUSE THERE ARE TWO TIERS OF PROSE AND style.md ONLY KNEW ABOUT

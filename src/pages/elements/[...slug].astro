@@ -6,6 +6,7 @@ import EdgeDiagram from '../../components/EdgeDiagram.astro';
 import EdgeThumb from '../../components/EdgeThumb.astro';
 import PathThumb from '../../components/PathThumb.astro';
 import { familyOf, teachRank, syllabusRank } from '../../lib/element-groups.js';
+import { FOUNDATIONS, reasonFor } from '../../lib/foundations.js';
 import BodyFrame from '../../components/BodyFrame.astro';
 import Edge from '../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../lib/skating.js';
@@ -102,6 +103,21 @@ const leadsToAll = allElements
   .sort((a, b) => (KIND_NEAR.indexOf(a.data.kind) - KIND_NEAR.indexOf(b.data.kind))
                   || a.data.name.localeCompare(b.data.name));
 const leadsTo = leadsToAll.slice(0, 8);
+
+/* WHY, AS WELL AS WHAT — 03/10/2026. On a basic, each element built on it carries the
+   reason from lib/foundations.js, and a family that shares a reason (the four forward
+   edges) is one line with four links. Grouped, the list is short enough not to need
+   the cap, so a basic shows everything built on it. Other pages keep the cap and the
+   summaries. tools/foundations.mjs holds every basic link to having a reason. */
+const isFoundation = Boolean(FOUNDATIONS[entry.id]);
+const leadsGroups = [];
+if (isFoundation) {
+  for (const e of leadsToAll) {
+    const why = reasonFor(entry.id, e.id) || e.data.summary;
+    const g = leadsGroups.find(x => x.why === why);
+    if (g) g.items.push(e); else leadsGroups.push({ why, items: [e] });
+  }
+}
 
 /* Which way the tracing goes. Derived from the same function the diagram uses, so
    the sentence and the picture cannot disagree. */
@@ -298,7 +314,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     <>
       <h2>Build on</h2>
       <ul class="plain">
-        {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
+        {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{reasonFor(p.id, entry.id) || p.data.summary}</span></li>)}
       </ul>
     </>
   )}
@@ -309,11 +325,13 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       <p class="lede">
         {leadsToAll.length === 1
           ? 'One element in the guide is built on this one.'
-          : <>{leadsToAll.length} elements in the guide are built on this one{leadsToAll.length > leadsTo.length
+          : <>{leadsToAll.length} elements in the guide are built on this one{!isFoundation && leadsToAll.length > leadsTo.length
               ? <>, and the {leadsTo.length} nearest are listed here</> : null}.</>}
       </p>
       <ul class="plain">
-        {leadsTo.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
+        {isFoundation
+          ? leadsGroups.map(g => <li data-foundation>{g.items.map((p, i) => <>{i > 0 ? ', ' : ''}<a href={url(`elements/${p.id}/`)}>{p.data.name}</a></>)}<span>{g.why}</span></li>)
+          : leadsTo.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{p.data.summary}</span></li>)}
       </ul>
     </>
   )}

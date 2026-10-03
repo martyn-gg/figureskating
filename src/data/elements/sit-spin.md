@@ -5,7 +5,7 @@ summary: A spin held with the skating thigh at least parallel to the ice and the
 aliases: ["sit"]
 entry: { foot: L, edge: I, dir: B }
 rig: sitSpin
-prerequisites: [upright-spin, teapot]
+prerequisites: [upright-spin, teapot, dip]
 sourceUrl: https://www.isu.org/figure-skating-rules
 verified: { checked: false }
 ---
