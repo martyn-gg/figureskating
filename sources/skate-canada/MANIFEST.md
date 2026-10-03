@@ -34,3 +34,11 @@ plainly rather than force all three into one table. See `docs/style.md`.
 ## Downloaded
 
 _Add filename, date (dd/mm/yyyy) and the document's own version marking as things land._
+
+## 03/10/2026: out of scope under the public-material rule
+
+The Assessment Guide hub links its resources to `learning.skatecanada.ca` course enrolment and
+`program.skatecanada.ca` shop products. Both need an account or a purchase, so none of it
+meets `docs/style.md`'s public-material rule. The public CanSkate page
+(skatecanada.ca/learn-to-skate/canskate/) describes the programme (balance, control, agility)
+and gives no skills.

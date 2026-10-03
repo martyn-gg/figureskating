@@ -80,3 +80,11 @@ cross-referencing. See `docs/style.md`.
 ## Downloaded
 
 _Add filename, date (dd/mm/yyyy) and the document's own version marking as things land._
+
+## 03/10/2026: where the documents actually are
+
+`usfigureskating.org/documents/...` URLs return an HTML viewer page, not the PDF. The file
+itself is served from `dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/usafs.sidearmsports.com/documents/...`,
+which the session proxy refuses, so nothing is downloaded yet. The Moves in the Field link
+above (`/sites/default/files/media-files/...`) now answers "Invalid data detected in
+QueryString" and the test-requirements page no longer links it.

@@ -34,6 +34,7 @@ by hand, and after that the writing is unblocked.
     sources/usfs/           U.S. Figure Skating
     sources/lts-usa/        Learn to Skate USA
     sources/nzifsa/         New Zealand Ice Figure Skating Association (KiwiSkate)
+    sources/isa-au/         Ice Skating Australia (Aussie Skate)
 
 Each has a `MANIFEST.md` listing what to download, from where, and why it is wanted. Keep
 the original filenames where possible and add the download date to the manifest — these
