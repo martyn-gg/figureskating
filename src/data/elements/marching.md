@@ -1,7 +1,7 @@
 ---
 name: Marching
 kind: basic
-summary: Walking on the ice with each foot lifted clear in turn, forwards first and later backwards.
+summary: "Walking on the ice with each foot lifted clear in turn, forwards first and later backwards."
 aliases: ["march", "march forward", "marching forwards", "backward marching", "march forward across the ice"]
 prerequisites: []
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf

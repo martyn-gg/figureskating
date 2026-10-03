@@ -70,6 +70,19 @@ const cannotDraw = {
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
   'bunny-hop':                   'it lands on a pick while travelling, and the rig cannot set one: docs/model.md, The moving pick',
+  /* Both feet turned out about ninety degrees each, against the weight-bearing hip's
+     forty plus the bent knee's eighteen that turnout.mjs allows. Whether a trained
+     skater's hips are outside that study is a coach's question, asked in Session 26. */
+  'spread-eagle':                'each foot turned out about 90°, past the rig\'s turnout limit of 58°: a coach\'s question',
+  'ina-bauer':                   'the back foot turned out against the travel, past the rig\'s turnout limit: a coach\'s question',
+  'layback-spin':                'the arch is in the back, and the rig has a hip and shoulders and no spine between them',
+  /* Pattern dances show their steps as a table. The rink pattern is a drawing of where
+     each lobe goes, and the diagrams that hold it are US Figure Skating's to draw. */
+  'dutch-waltz':                 'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
+  'canasta-tango':               'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
+  'rhythm-blues':                'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
+  'fiesta-tango':                'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
+  'swing-dance':                 'a pattern dance: the steps are a table and the rink pattern is not drawn yet',
   'falling-and-getting-up':      'the body on the ice: the rig has hips over blades and no pose sitting or kneeling',
   'marching':                    'a walk: each step lifts a foot and puts it down, and the rig draws no stepping',
 };

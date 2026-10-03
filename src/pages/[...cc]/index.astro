@@ -26,7 +26,7 @@ const myGrades = here
    through it and landed alphabetically in amongst the jumps — a new kind should
    not be able to appear here by not having been thought of. */
 const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position',
-               'spin', 'step', 'sequence'];
+               'spin', 'step', 'sequence', 'dance'];
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
 /* How many element pages draw the body as well as the tracing — counted, not claimed.
    The line below said every element had "the same three views of the body", which was never
@@ -143,7 +143,8 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
         {counts.basic} basics, {counts.edge} edges, {counts.turn} turns,{' '}
         {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
         {counts.combination} clusters, {counts.jump} jumps, {counts.spin} spins,{' '}
-        {counts.position} positions, {counts.step + counts.sequence} steps and sequences
+        {counts.position} positions, {counts.step + counts.sequence} steps and sequences{' '}
+        and {counts.dance} pattern dances
       </span>
     </li>
     <li>

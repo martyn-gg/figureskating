@@ -32,12 +32,15 @@ export const TABS = [
   { id: 'edge', label: 'Edges', href: 'elements/in/edges/',
     kinds: ['edge'], sections: ['edges'] },
   { id: 'turn', label: 'Turns', href: 'elements/in/one-foot/',
-    kinds: ['turn', 'twizzle', 'transition', 'combination', 'step', 'dance', 'sequence'],
+    kinds: ['turn', 'twizzle', 'transition', 'combination', 'step', 'sequence'],
     sections: ['one-foot', 'two-foot', 'twizzles', 'transitions', 'clusters', 'step', 'sequence'] },
   { id: 'jump', label: 'Jumps', href: 'elements/in/jump/',
     kinds: ['jump'], sections: ['jump'] },
   { id: 'spin', label: 'Spins', href: 'elements/in/spin/',
     kinds: ['spin', 'position'], sections: ['spin', 'position'] },
+  /* DANCE — 03/10/2026, Martyn: a section for dance, to hold the pattern dances. */
+  { id: 'dance', label: 'Dance', href: 'elements/in/dance/',
+    kinds: ['dance'], sections: ['dance'] },
   { id: 'grade', label: 'Grades', href: 'grades/', kinds: [], sections: [] },
 ];
 

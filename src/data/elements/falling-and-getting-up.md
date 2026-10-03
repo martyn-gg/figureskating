@@ -1,7 +1,7 @@
 ---
 name: Falling and getting up
 kind: basic
-summary: Sitting down onto the ice on purpose, to one side, and getting back up from hands and knees.
+summary: "Sitting down onto the ice on purpose, to one side, and getting back up from hands and knees."
 aliases: ["fall and get up", "correct way to fall and stand up", "proper way to fall and get up"]
 names: {"au": "Correct way to fall and stand up", "nz": "Proper way to fall and get up"}
 prerequisites: [dip]

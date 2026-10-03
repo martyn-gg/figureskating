@@ -3,6 +3,7 @@ name: Half-swizzle pumps
 kind: basic
 summary: One foot glides the circle while the other presses out and in to feed it speed.
 aliases: ["circle thrusts", "pumping", "half swizzle pumps on a circle"]
+names: {"nz": "Pumping"}
 prerequisites: [swizzle]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }

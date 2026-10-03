@@ -41,10 +41,12 @@ export const LEARN = {
     'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
     'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
     'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag'],
-  spin: ['two-foot-spin', 'upright-spin', 'sit-spin', 'camel-spin', 'change-of-foot-spin', 'combination-spin'],
-  position: ['extended-edge', 'teapot', 'spiral'],
+  spin: ['two-foot-spin', 'upright-spin', 'sit-spin', 'camel-spin', 'layback-spin', 'change-of-foot-spin', 'combination-spin'],
+  position: ['extended-edge', 'teapot', 'spiral', 'spread-eagle', 'ina-bauer'],
   step: ['slip-step'],
   sequence: ['step-sequence', 'choreographic-sequence'],
+  /* In British Ice Skating's pattern dance order, National 1 to 5. */
+  dance: ['rhythm-blues', 'dutch-waltz', 'canasta-tango', 'fiesta-tango', 'swing-dance'],
 };
 const JUMP_ORDER = Object.values(JUMPS).map(j => j.name.toLowerCase());
 const handRank = e => {
@@ -183,7 +185,7 @@ export function elementGroups(elements, exercises = []) {
      what makes the bottom of the page one tap away instead of a scroll. */
   const oneFoot = elements.filter(e => e.data.kind === 'turn' && TURN_KEYS.includes(e.data.turn));
   const twoFoot = elements.filter(e => e.data.kind === 'turn' && STEP_KEYS.includes(e.data.turn));
-  const KIND_LABEL = k => k === 'position' ? 'Positions'
+  const KIND_LABEL = k => k === 'position' ? 'Positions' : k === 'dance' ? 'Pattern dances'
     : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`;
 
   /* THE ORDER OF THE SECTIONS IS THE ORDER A SKATER MEETS THEM — 19/09/2026,
@@ -225,6 +227,10 @@ export function elementGroups(elements, exercises = []) {
     /* SEQUENCES COME LAST — 03/10/2026. A step or choreographic sequence is a run of
        everything above it, so it cannot be met before what it is made of. */
     sequence: 12,
+    /* DANCE IS ITS OWN DISCIPLINE and its own tab, so its place here only decides
+       where it sits on the all-elements page: after everything a singles skater
+       meets. */
+    dance: 13,
   };
   const rankOf = id => {
     const r = SECTION_RANK[id];
@@ -265,6 +271,7 @@ export const SECTION_NOTE = {
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The two-foot spin, the three basic positions, and the two ways of joining them: a change of foot and a combination.',
   sequence:    'Step sequences and choreographic sequences: runs of turns, steps and movements judged as one element.',
+  dance:       'Pattern dances: set steps to set music, each step an edge held for a count of beats.',
 };
 
 /* THE ONE TAUGHT FIRST — 19/09/2026, Martyn: a link to "a three turn" should land

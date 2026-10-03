@@ -66,7 +66,7 @@ export async function GET() {
       k: 'grades', a: ['levels', 'badges', 'learn to skate'], e: '' },
     ...grades.map(g => ({
       u: `grades/${g.id}/`, t: g.data.name, s: g.data.summary, k: 'grades',
-      a: [...new Set(g.data.levels.flatMap(l => [l.name, ...l.aka].map(n => `${g.data.body} ${n}`)))], e: '', c: g.data.country,
+      a: [...new Set(g.data.levels.flatMap(l => [l.name, ...l.aka].map(n => `${g.data.body} ${n}${g.data.levelSuffix ? ' ' + g.data.levelSuffix : ''}`)))], e: '', c: g.data.country,
     })),
     ...tests.map(t => ({
       u: `tests/${t.id}/`, t: t.data.name,

@@ -88,6 +88,24 @@ const elements = defineCollection({
       .partial().default({}),
     /* Poses live in the body-frame rig, not here — this only names the move. */
     rig: z.string().optional(),
+    /* A PATTERN DANCE — 03/10/2026. The steps as the dance diagram writes them: the edge
+       (a change of edge as four letters, RFOI), the beats it is held for (two numbers
+       for a change of edge), and how it is reached, as an abbreviation src/lib/dance.js
+       knows. tools/dance.mjs holds the list to whole measures and alternating feet. */
+    dance: z.object({
+      rhythm: z.string(),
+      meter: z.enum(['3/4', '4/4', '2/4', '6/8']),
+      bpm: z.number().positive(),
+      hold: z.string(),
+      sameSteps: z.boolean(),
+      steps: z.array(z.object({
+        n: z.number().int().positive(),
+        edge: z.string().regex(/^[LR][FB](O|I|OI|IO)$/),
+        beats: z.union([z.number().positive(), z.array(z.number().positive()).length(2)]),
+        how: z.enum(['Pr', 'Ch', 'SlCh', 'SwR', 'sw', 'CR', 'XB', 'XF', 'CSt', 'opCSt']).optional(),
+        opt: z.string().optional(),
+      })).min(1),
+    }).optional(),
     /* A TRACING FOR AN ELEMENT THAT HAS NO ENTRY EDGE — added 19/09/2026.
 
        Everything with an `entry` draws itself: the page hands foot, edge and
@@ -222,6 +240,10 @@ const grades = defineCollection({
     summary: z.string(),
     source: z.string(),
     sourceUrl: z.string().url(),
+    /* Words added after each level name when the levels are searchable, for a body with
+       two ladders that share level names: British Ice Skating's National 1 is a free
+       skating test and a pattern dance test. */
+    levelSuffix: z.string().optional(),
     levels: z.array(z.object({
       name: z.string(),
       /* The names the same level goes by now, where a programme has renamed its

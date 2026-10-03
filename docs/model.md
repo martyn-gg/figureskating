@@ -2097,6 +2097,21 @@ shins at the 28° limit at once. That is how a snowplough is taught, and nobody 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
 
+## A crossed step behind does not always hold its edge — found 03/10/2026, by the dances
+
+The guide's crossed step behind (`crossbehind` in `skating.js`) holds the edge, because every
+XB in British Ice Skating's Skills sequences runs outside to outside: RBO to XB-LBO. The
+pattern dances read off US Figure Skating's diagrams disagree on forward XBs. The Rhythm Blues
+goes LFO to XB-RFI twice and the Fiesta Tango goes RFO to XB-LFI. Both change edge and keep
+the lobe, which is a crossover's flags and not a cross roll's.
+
+So a cross step behind seems to be named by where the free foot goes, and the edge it lands
+on depends on the context. The model gives it one set of flags. `tools/dance.mjs` reports the
+three steps, and the dance pages do not link them to the crossed step behind, since that page
+would show a different exit edge. Whether the model should carry two kinds of XB, or the XB
+should take its exit from the step it is in, is open. It is a question for a dance coach as
+much as for the model.
+
 ## Fifteen moves from what the rig already had — 03/10/2026, Session 26
 
 After the cusp, with the freeze in force, everything that needed only existing contacts was
