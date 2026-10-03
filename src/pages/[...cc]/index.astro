@@ -28,6 +28,10 @@ const myGrades = here
 const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position',
                'spin', 'step', 'sequence'];
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
+/* How many element pages draw the body as well as the tracing — counted, not claimed.
+   The line below said every element had "the same three views of the body", which was never
+   true: the twizzles, transitions and clusters draw a tracing and no body. */
+const rigged = elements.filter(e => e.data.rig).length;
 
 /* AN UNNAMED KIND IS A BUILD FAILURE, NOT A SENTENCE — 20/09/2026.
 
@@ -120,10 +124,10 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
       <p>
         That is a {three.data.name.toLowerCase()}, and there are{' '}
         <a href={url('elements/')}>{counts.turn - 1} more turns</a> where it came from,
-        plus {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
-        {counts.combination} clusters, {counts.jump} jumps and {counts.position}{' '}
-        positions, each with the same tracing, the same three views of the body, and
-        the tests it belongs to.
+        plus {counts.basic} basics, {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
+        {counts.combination} clusters, {counts.jump} jumps, {counts.spin} spins and{' '}
+        {counts.position} positions. Across all of them, {rigged} draw the skater's body in three
+        views as well as the tracing.
       </p>
     </>
   )}
@@ -136,9 +140,10 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
         {/* A line that ends in an expression eats the newline after it, so the
             spaces are explicit. Two counts ran together as "32 twizzles,36
             transitions" before they were. */}
-        {counts.edge} edges, {counts.turn} turns, {counts.twizzle} twizzles,{' '}
-        {counts.transition} transitions, {counts.combination} clusters,{' '}
-        {counts.jump} jumps and {counts.position} positions
+        {counts.basic} basics, {counts.edge} edges, {counts.turn} turns,{' '}
+        {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
+        {counts.combination} clusters, {counts.jump} jumps, {counts.spin} spins,{' '}
+        {counts.position} positions, {counts.step + counts.sequence} steps and sequences
       </span>
     </li>
     <li>

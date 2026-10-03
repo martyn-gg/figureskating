@@ -175,7 +175,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       calls it lands somewhere. src/content.config.ts has the rule. */}
   {aka.length > 0 &&
     <p class="aka">Also called {aka.map((a, i) =>
-      <>{i > 0 ? (i === aka.length - 1 ? ' or ' : ', ') : ''}a <b>{a}</b></>)}.
+      <>{i > 0 ? (i === aka.length - 1 ? ' or ' : ', ') : ''}<b>{a}</b></>)}.
       {' '}<a href={url('elements/other-names/')}>Other names</a>.</p>}
 
   <div class="meta">

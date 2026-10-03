@@ -259,12 +259,13 @@ const turnMove = m => {
    read off a different entry, so they are derived from one table rather than copied
    three times with the signs changed by hand.
 
-   Two numbers decide everything. `f` is +1 for a forward entry and -1 for a backward
+   Three numbers decide everything. `f` is +1 for a forward entry and -1 for a backward
    one: it flips which way along the track is behind the skater, so every t on the
    free foot and the forward lean flips with it, and so does which side of the track
-   is the skater's right. `s` is the lobe's sense: it puts the skating blade on the
-   outside of the circle (n = 15·s) and turns the hips the way the blade turns,
-   because a three turn rotates into its lobe. The hips start at `base` (0 forwards,
+   is the skater's right. `n` is the lobe's sense and puts the skating blade on the
+   outside of the circle (15·n). `s` is which way the blade and the hips turn: into
+   the lobe for a three, so equal to `n`, and against it for a bracket (added the same
+   day, when the function became turnFrom). The hips start at `base` (0 forwards,
    180 backwards) and end at base + 174·s or so, the pair at the window adding to
    2·base + 180·s, which squares the hip across the circle at the apex as threeTurn's
    comment explains. The skating blade runs from 6 cm ahead of the hip to 6 cm behind
