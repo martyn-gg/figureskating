@@ -3,7 +3,7 @@ name: Bunny hop
 kind: basic
 summary: A forward leap from one foot onto the toe pick of the other, straight back into a glide on the take-off foot.
 aliases: ["bunny jump", "forward bunny hop"]
-prerequisites: [one-foot-glide]
+prerequisites: [one-foot-glide, two-foot-hop]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---

@@ -8,6 +8,7 @@ trace:
   feet: 2
   path:
     - { kind: line, len: 240 }
+prerequisites: [marching]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---

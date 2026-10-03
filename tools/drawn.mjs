@@ -71,6 +71,9 @@ const cannotDraw = {
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
   'bunny-hop':                   'not yet authored: edge, flight and pick all exist in the rig',
+  'falling-and-getting-up':      'the body on the ice: the rig has hips over blades and no pose sitting or kneeling',
+  'marching':                    'a walk: each step lifts a foot and puts it down, and the rig draws no stepping',
+  'two-foot-hop':                'not yet authored: two blades and flight both exist, and nobody has written the hop',
 };
 
 if (BREAK === 'stale') cannotDraw.slalom = 'a deliberately stale exemption';

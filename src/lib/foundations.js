@@ -107,6 +107,13 @@ export const FOUNDATIONS = {
   'dip': [
     { to: /^teapot$/, why: 'The teapot holds a low knee bend on one foot with the free leg forward. The dip is a deep bend on two.' },
     { to: /^sit-spin$/, why: 'The ISU defines a sit spin by the skating thigh being at least parallel to the ice. Ice Skating Australia\'s dip bends the knees to about ninety degrees.' },
+    { to: /^falling-and-getting-up$/, why: 'Ice Skating Australia and KiwiSkate both start the fall from the dip, so the skater is already in a squat when they sit down.' },
+  ],
+  'marching': [
+    { to: /^two-foot-glide$/, why: 'Ice Skating Australia asks for three to five marching steps into its first two-foot glide, and Learn to Skate USA\'s youngest level writes the march and the glide as one element.' },
+  ],
+  'two-foot-hop': [
+    { to: /^bunny-hop$/, why: 'Ice Skating Australia and KiwiSkate both teach the hop on two feet several levels before the bunny hop, and US Figure Skating\'s adaptive Pre-Bronze test accepts either.' },
   ],
   'drag': [
     { to: /^spiral$/, why: 'Both extend the free leg behind, turned out. Ice Skating Australia\'s spiral lifts it to at least hip height, and its lunge lifts only the blade.' },

@@ -29,13 +29,15 @@ import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, T
    - Jumps follow JUMPS in skating.js, which is already the usual teaching
      progression: waltz, Salchow, toe loop, loop, flip, Lutz, Axel.
    - Basics follow the Learn to Skate USA Basic 1 to 6 progression as closely as the
-     guide's 22 elements map onto it. Verified against a coach: NO.
+     guide's basics map onto it. Falling and marching come first, as they do in Ice
+     Skating Australia's and KiwiSkate's first levels, and the two-foot hop sits where
+     Australia teaches it, beside the two-foot turn. Verified against a coach: NO.
    - Spins: upright, sit, camel, then the two ways of joining positions. NO coach yet.
    - Positions: the extended edge (Skills 1), the teapot (a Learn to Skate glide),
      then the spiral (Skills 3). */
 export const LEARN = {
-  basic: ['two-foot-glide', 'dip', 'swizzle', 'snowplough-stop', 'backward-wiggles', 'one-foot-glide', 'scooter-pushes',
-    'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'forward-stroking',
+  basic: ['falling-and-getting-up', 'marching', 'two-foot-glide', 'dip', 'swizzle', 'snowplough-stop', 'backward-wiggles', 'one-foot-glide', 'scooter-pushes',
+    'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'two-foot-hop', 'forward-stroking',
     'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
     'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
     'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag'],

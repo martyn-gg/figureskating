@@ -34,9 +34,6 @@ the USFS Singles Test Requirements 2026-27.
 
 | Move | Named in |
 |---|---|
-| Falling and getting up | Aussie Skate Basic 1; KiwiSkate Tiny Tots 1 |
-| Marching forwards, backward marching | Aussie Skate Basic 1; KiwiSkate Beginner |
-| Two-foot hop or jump in place | Aussie Skate Basic 2; KiwiSkate Basic (taught); USFS adaptive Pre-Bronze |
 | One-foot swizzles | USFS adaptive Pre-Bronze |
 | Side hops, ballet hops | KiwiSkate Novice 1 and Advanced (taught, not tested) |
 
@@ -62,3 +59,9 @@ unpublished. Communication 125 carries it: Basic 1 and 2 became Aussie Skate 1 a
 Novice 1 to Intermediate 2 each became two numbered levels. The page now shows the new
 names beside each level and search finds them. Which skills went into which half is still
 only in the unpublished 2021 curriculum.
+
+## Closed since
+
+- 03/10/2026, Session 26: falling and getting up, marching, and the two-foot hop have pages.
+  None draws: the first two are outside what the rig can hold, and the hop is a pose nobody
+  has written yet. Each is declared in `tools/drawn.mjs` with its reason.
