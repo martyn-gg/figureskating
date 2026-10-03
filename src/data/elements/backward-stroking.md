@@ -9,15 +9,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-One blade presses out to the side against its inside edge, the other glides, and the skater
-travels backwards. The pushing foot returns underneath and the weight changes over.
+One blade presses out to the side against its inside edge while the other glides, and you
+travel backwards. The pushing foot returns underneath and the weight changes over. In Learn to
+Skate USA it waits until the sixth level, three after forward stroking.
 
-The push wants to become a wiggle. Pressing out and drawing straight back in gives a
-side-to-side shuffle that moves the feet a great deal and the skater very little; the press
-has to finish out to the side and slightly forwards of where it started, so that the glide
-actually leaves the push behind. Keeping the shoulders ahead of the hips is again what makes
-it possible, and again feels wrong.
+The pushing foot sweeps out and finishes to the side and slightly in front of you, and each
+push feels like drawing a C on the ice. The usual fault is the wiggle: pressing out and pulling
+straight back in moves the feet a great deal and the skater very little, because the glide
+never leaves the push behind. The other is sitting back to see where you are going. Keep the
+shoulders forward and look over a shoulder, which feels wrong and is what makes the push work.
 
-It is much later in every syllabus than the forward version, and reasonably so. It is still
-the same movement, and a skater who cannot make it work usually cannot make the forward one
-work either, only faster.
+By then the same syllabus has already taught backward crossovers, a level earlier.

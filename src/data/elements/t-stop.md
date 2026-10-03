@@ -9,16 +9,13 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-You glide on one foot and bring the other behind it at a right angle, in a T, then lower it
-onto the ice so that the blade drags across the direction of travel and takes the speed off.
-The braking blade rides on its outside edge with the weight staying largely on the gliding
-foot.
+You glide on one foot and set the other behind it at a right angle, in a T, then lower it onto
+the ice so that it drags across the line of travel and takes the speed off. The braking blade
+rides on its outside edge, and most of the weight stays on the gliding foot. It is one of Learn
+to Skate USA's sixth-level skills, on each foot.
 
-Which edge does the work is the thing people get wrong. Laid flat, the blade grabs and swings
-the skater round; laid on the outside edge with only a portion of the weight on it, it shaves
-speed off in a straight line and the glide holds its direction. The other common fault is
-putting the trailing foot down too far behind, which turns the stop into a lunge and the
-skater into a passenger.
-
-It stops in a controlled, quiet way where a snowplough stops abruptly, and it goes where a
-snowplough will not: into small spaces, at speed.
+It should feel like a gentle, growing drag behind you while the glide holds its line. The usual
+fault is the wrong edge: put down flat or on its inside edge, the trailing blade grabs and
+swings you round it. The second is setting the foot down too far behind the heel of the skating
+foot, which pulls the hips open and the glide off line. Keep the hips and shoulders square to
+the direction of travel.

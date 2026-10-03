@@ -8,15 +8,13 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Toes together, heels apart, both blades down. You press the feet outwards and draw them
-back, and the skater travels backwards. The tracing is the same pair of opposed curves as
-the forward version, drawn the other way along.
+Toes together and heels apart, both blades on the ice. You press the heels outwards and draw
+them back together, and you travel backwards along the same lemon shape as the forward
+swizzle. Learn to Skate USA starts backwards with wiggles at its first level and asks for six
+to eight backward swizzles at its second.
 
-It is harder than it looks because the push has to happen while the weight sits forward over
-the balls of the feet, and pressing outwards tends to send the hips back. Most of the fault
-in a stalled backward swizzle is there. The feet are seldom the cause. Bending the knees
-more than feels necessary keeps the weight where it needs to be and turns a shuffle into a
-push.
-
-Almost every skater can swizzle forwards long before they can do this, and the gap between
-the two is a fair measure of how comfortable backwards actually is.
+It feels as if the weight is too far forward, and that is where it belongs: over the balls of
+the feet, with the knees well bent, so that the heels are free to push. The usual fault is
+sitting back. The hips go behind the heels, the push stalls into a shuffle, and the next
+thing to touch the ice is you. Look over a shoulder to see where you are going and keep the
+body facing the way you came.

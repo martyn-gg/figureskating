@@ -8,14 +8,13 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Round a circle backwards, with one foot holding the curve and the other pressing out and in
-to keep the speed up.
+Round a circle backwards, one foot glides and holds the curve while the other presses out and
+draws back in to keep the speed up. They come at Learn to Skate USA's fourth level, each way
+round, one level before backward crossovers.
 
-The mechanics are the forward version's, with the weight moved forward over the balls of the
-feet as it always is going backwards. What changes is what you can see: on the forward
-version you can watch the circle you are drawing, and here you cannot, so the circle has to
-be held by feel and by where the shoulders are pointing. They stay square across the circle.
-They do not follow the pushing foot around.
-
-It leads directly to the backward crossover, and a skater who can pump a clean backward
-circle usually finds the crossover is mostly already there.
+The pumping is the forward version's, with the weight moved forward as it is for everything
+backwards. What changes is what you can see. Forwards you can watch the circle you are drawing;
+backwards you cannot, so it has to be held by feel, and it feels as if the circle is wider than
+it is. The usual fault is the shoulders swinging with each pump, which opens the circle
+outwards. Hold them still, look back along the circle over the inside shoulder, and let the
+legs do the work.

@@ -9,18 +9,15 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Gliding backwards on both feet, the body rotates through a half turn and the skater finishes
-gliding forwards. Usually first learned on a circle, where the curve helps carry the turn
-round.
+Gliding backwards on both feet, the body turns through a half turn and you finish gliding
+forwards. Learn to Skate USA teaches it moving on a circle, both ways round, at its sixth
+level, three levels after the forward-to-backward turn.
 
-It is the harder direction, and the reason is what you can see: the rotation ends facing a
-stretch of ice you have not been looking at. It gets rushed for that reason, and a rushed
-turn is one where the feet snap round ahead of the body. Turning the head first keeps it in
-order.
+The feet do what they did in the forward turn and the shoulders lead it in the same way. The
+difference is what you can see: this turn ends facing ice you have not been looking at, so it
+gets rushed, and a rushed turn is one where the feet snap round ahead of the body. That is the
+usual fault. Turn the head first, then the shoulders, and let the feet follow. Done in that
+order it feels unhurried, with a moment where you are already looking forwards before the feet
+arrive.
 
-The feet do what they do forwards. Measured off the direction of travel the blades pass
-through the same headings in both turns, and what differs is which end of the rotation the
-skater could see.
-
-With the forward version, this is how a skater changes direction at will: the point at which
-the ice stops feeling one-way.
+With both directions you can change direction on the ice when you choose to.

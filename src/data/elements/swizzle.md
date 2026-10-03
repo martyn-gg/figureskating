@@ -7,15 +7,15 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Heels together, toes turned out, both blades on the ice. You press outwards until the feet
-are past shoulder width, then draw them back together with the toes turning in, and the
-skates come back to a point. Repeat and you travel without either foot ever leaving the ice.
+Heels together and toes turned out, both blades on the ice. You press the feet outwards until
+they are about shoulder width apart, then turn the toes in and draw the feet back together,
+and the two blades trace a lemon shape. Neither foot leaves the ice. Learn to Skate USA asks
+for six to eight in a row at its first level.
 
-This is the first real push in skating, and the thing to notice is that the speed comes from
-pressing the blades sideways against the ice. Paddling them backwards does not produce it.
-The tracing tells you whether you have it: two symmetrical curves that bulge apart and close
-again, drawn in one continuous line. A pair of straight scrape marks means the blades were
-skidding, and no speed came out of it.
+The speed comes from the press outwards against the inside edges, and you should feel the
+blades grip and the body move forward as the feet open. Bent knees make the press; straight
+legs make a shuffle. The usual fault is a swizzle that never closes. The feet stop short of
+each other, open again from a wide stance, and keep drifting apart until you stop or end up
+in the splits.
 
-Coming all the way back together matters more than going widely apart. A swizzle that never
-closes is two feet drifting.
+Forward stroking takes over from this, one foot at a time.

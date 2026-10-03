@@ -8,13 +8,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-On a circle, the inside foot holds a curve while the outside foot presses out and draws back
-in, over and over, each press adding speed. Half a swizzle, done by one foot at a time.
+On a circle, the inside foot glides and holds the curve while the outside foot presses out and
+draws back in, over and over, each press adding speed. Both blades stay on the ice. Learn to
+Skate USA's third level wants six to eight in a row, each way round the circle.
 
-This is where pushing stops being symmetrical and starts being useful, and it is the direct
-ancestor of the crossover. The pressure goes out to the side and slightly behind, against
-the inside edge of the pushing blade. A push that finishes backwards off the toe pick makes
-a scratch and no speed. The gliding foot meanwhile has to stay on its own edge and hold the
-circle, which is the part that gets forgotten while all the attention is on the pumping leg.
+The press goes out to the side and slightly behind, against the inside edge of the pumping
+blade, and it should settle into a rhythm: press, draw in, press. The usual fault is pushing
+the pumping foot backwards off the toe pick, which scratches and gives no speed. The second is
+forgetting the gliding foot. It has to stay on its own edge and lean into the circle, or the
+circle opens out into a straight line.
 
-A skater who can pump a circle can get anywhere on the ice.
+Forward crossovers follow at the next level, on the same circle.

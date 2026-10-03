@@ -9,15 +9,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-You glide on one foot with the other leg extended behind and the free foot turned in. The
-skating knee sinks until the free blade lifts clear of the ice, and what trails along the
-surface is the inside of the boot, carrying almost no weight.
+You glide forwards on an outside edge with the skating knee sunk deep and the other leg
+extended behind. The trailing boot rolls onto its inside, so the blade lifts clear of the ice
+and what brushes the surface is the side of the boot, carrying almost no weight. Coaches use
+the name lunge for the same position, and Learn to Skate USA has forward lunges on both legs
+as a bonus skill at its fourth level.
 
-The word makes it sound like a brake and it is not one. The boot brushes the ice, and if it
-presses and takes real weight the glide slows and the hips square up. The depth of the
-skating knee is what makes the rest possible: without it the free leg cannot reach back far
-enough for the blade to leave the ice at all.
-
-There is no animation here. The contact is the side of the boot, which means rolling the
-boot onto its inner edge, and that rotation is one this rig does not have. It is the same
-thing that stops it drawing a lunge.
+Despite the name, it does not slow you. It feels like a very deep lunge held on a moving
+blade, with the weight entirely over the skating foot. The usual fault is too little bend in
+the skating knee. Without it the free leg cannot reach back far enough for the blade to leave
+the ice, and the toe pick drags. If the boot presses and takes weight, the glide slows and the
+hips square up.

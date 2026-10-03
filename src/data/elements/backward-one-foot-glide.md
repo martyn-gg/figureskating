@@ -12,14 +12,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-One blade on the ice running backwards, free foot low and close, the glide held on a
-straight line.
+One blade running backwards on a straight line, the knee bent, the free foot held low and close
+in front of the skating foot. Learn to Skate USA brings it in at its third level as a beginning
+glide with the focus on balance, and asks for it on each foot at its fourth.
 
-Two hard things arrive together. The base of support halves, as it does going forwards, and
-at the same time the weight has to stay further forward than instinct wants, over the ball
-of the foot and off the heel. A skater who is comfortable on a forward one-foot glide and
-comfortable on a backward two-foot glide can still find this one takes weeks, because the
-two corrections pull in different directions and both have to be held at once.
+Two corrections arrive at once. The base halves, as it does going forwards, and the weight has
+to sit further forward than instinct wants, over the ball of the foot and off the heel. The two
+pull in different directions and both have to be held. The usual fault is the free hip opening
+outwards, which turns the glide into a curve and disguises a balance problem as an edge. Keep
+the hips square to the line and the free foot under you.
 
-Watch the free hip. It tends to open outwards, which turns the glide into a curve and
-disguises a balance problem as an edge.
+This is the starting position for backward edges and backward crossovers.

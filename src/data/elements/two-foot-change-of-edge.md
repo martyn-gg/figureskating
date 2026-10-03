@@ -14,16 +14,15 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-With both feet on the ice, the skater rolls the blades across the flat and onto the other
-pair of edges, so the curve reverses. No foot leaves the ice and no push happens: the change
-is made by moving the body across the blades.
+With both feet on the ice you roll the blades across the flat and onto the other pair of edges,
+so that the curve reverses. No foot leaves the ice and nothing pushes: the change is made by
+moving the body across the blades. The British Ice Skating Skills 1 slalom is built from it,
+repeated as a two-foot power change of edge.
 
-It is the honest test of whether a skater is standing over their skates. Two blades cannot
-change edge together unless the weight moves as one thing, so the fault it exposes is a
-skater steering with one foot and following with the other. The two tracings stay side by
-side and draw one long shallow S; what changes hands at the inflection is which of them is
-on an outside edge, since each foot's edges are named relative to that foot. Reach it at
-different moments and the feet are not working together.
+Done well, the change feels like a sway of the knees and ankles that carries the whole body
+over. The usual fault is steering with one foot and following with the other. The two tracings
+then reach the change at different moments, where they should stay side by side and draw one
+long shallow S. At the change each foot moves to its other edge, so the foot that was on an
+outside edge is now on an inside one.
 
-Skills 1 asks for it in the slalom, where the power changes of edge are this movement
-repeated.
+It shows whether a skater is standing over both skates.

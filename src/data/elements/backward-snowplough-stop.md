@@ -9,14 +9,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Moving backwards, the blades press outwards and flat so that they skid, and the skid takes
-the speed off. The feet finish wider apart than they started, which is the mirror of the
-forward version.
+Moving backwards, you bend the knees and press the heel of one blade, or both, outwards across
+the line of travel, with the blade flat so that it skids. The scrape takes the speed off and
+the feet finish wider apart than they started. It is a third-level skill in Learn to Skate USA,
+done on each foot in turn.
 
-The risk is the direction of the fall. Braking backwards throws the body backwards, so the
-weight has to move forward as the press goes on, ending over the balls of the feet with the
-knees bent. This is the same forward-weight rule as every other backward movement, arriving
-under load. A skater who braces against the stop by sitting back lands on the hip.
+The press feels like the start of a backward swizzle that refuses to glide. Braking backwards
+throws the body backwards, so the weight has to move forward as the press goes on, ending over
+the balls of the feet with the knees bent. The usual fault is bracing against the stop by
+sitting back, and that lands you on the hip.
 
-It is worth having early. Once backward crossovers arrive there is real speed going
-backwards, and a stop learned after the speed is a stop learned in a hurry.
+Have it before backward crossovers, two levels later, bring real speed going backwards.

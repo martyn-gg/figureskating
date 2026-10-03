@@ -16,14 +16,13 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Both blades parallel, swinging side to side, with the skater travelling backwards. The same
-wave down the ice and the same simultaneous change of edge.
+Both blades parallel and swinging side to side while you travel backwards. It draws the same
+wave as the forward slalom, changing edge on both feet at once. British Ice Skating Skills 1
+asks for it as the second side of the slalom exercise, with the same objectives of correct
+edges, rhythmic knee action and speed throughout.
 
-Backwards the swing has to come from lower down still. There is less room to correct a
-misplaced hip when you cannot see the ice ahead, and a slalom that is being steered from the
-upper body backwards tends to spiral off to one side without the skater noticing until they
-are somewhere else. Weight forward over the balls of the feet, as ever, and the eyes over
-one shoulder while the body stays square.
-
-It appears in the syllabus alongside the backward crossover, and the two are asking related
-questions: can you press a new edge going backwards without needing to look at it.
+The weight sits forward, as it does for everything backwards, and the eyes look back over one
+shoulder while the body stays square to the line. It feels harder to hold straight than the
+forward slalom, because you cannot see the line you are drawing. The usual fault is a slalom
+steered from the upper body, which spirals off to one side without the skater noticing until
+they are somewhere else. Keep the swing in the knees and ankles.

@@ -13,13 +13,13 @@ verified: { checked: false }
 ---
 
 You push once, bring both feet under you, and let the skates run. The blades sit flat and
-parallel, a little under hip width apart, and nothing else happens until the glide dies of
-its own accord. It is the first thing on the ice that is not walking.
+parallel, a little under hip width apart, with the ankles and knees slightly bent and the arms
+out to the sides. Learn to Skate USA puts it in its first level, straight after marching
+across the ice.
 
-What it is really testing is where your weight sits, and the answer has to be over the
-middle of the blades. Too far forward and the picks catch; too far back and the skates run
-out from under you. Ankles and knees stay slightly bent, because a locked leg has nothing
-left to give when the ice is not perfectly flat, and the ice is never perfectly flat.
+It feels like standing still while the rink moves. The weight sits over the middle of the
+blades: too far forward and the toe picks catch, too far back and the skates run out from
+under you. The usual fault is a locked knee. It feels steadier and is less steady, because a
+straight leg has nothing to give when the ice is uneven, and the ice is never perfectly flat.
 
-Everything later is a glide with something added to it. If this one wanders, so does all of
-it.
+Every later glide is this one with something added to it.

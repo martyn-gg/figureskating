@@ -8,15 +8,14 @@ sourceUrl: https://www.learntoskateusa.com/basic_skills
 verified: { checked: false }
 ---
 
-Travelling forwards, both feet rotate together to a right angle across the direction of
-travel and the blades skid sideways, throwing ice, until the skater stops. It is the
-shortest stop there is.
+Travelling forwards, you turn both feet together to a right angle across the line of travel and
+skid sideways, throwing ice, until you stop. It arrives at Learn to Skate USA's fifth level, to
+be shown both ways.
 
-The difficulty is that both blades have to be flat enough to skid without biting, and that
-requires letting the ankles roll while the body stays upright and stacked over the skates.
-That is precisely the instinct a skater has spent every previous month learning to suppress.
-Leaning back to protect against the deceleration is what makes the edges catch, and catching
-an edge at that angle is how people get hurt.
+Both blades have to skid without biting, which means tilting them only a little while the knees
+bend and the body stays upright over the skates. It feels like the bottom half of you turning
+sideways while the top half keeps facing the way you were going. The usual fault is leaning
+back against the deceleration: the edges catch, the feet stop dead and the body carries on. The
+other is turning the shoulders with the feet, which spins you round and keeps the speed.
 
-Worth saying plainly: this one is genuinely hard, it takes most people a long time, and
-being able to do everything either side of it is normal.
+Most skaters find one direction comes well before the other, and the level asks for both.
