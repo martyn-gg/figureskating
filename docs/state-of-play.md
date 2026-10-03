@@ -24,6 +24,17 @@ jumps, three held positions, **twenty-two basics**, **five spins** and **one ste
 `grep -h '^kind:' src/data/elements/*.md | sort | uniq -c` rather than trusting this line,
 which has been wrong about its own numbers three times.
 
+**The notebook is the default look, 03/10/2026.** Ruled paper, a margin line, headings in
+Kalam with a highlighter, asides in Caveat, body in Literata, the drawings taped in on
+white cards, the unverified warning on a sticky note and six index tabs down the right.
+All of it lives in `src/lib/notebook.js`, scoped under `:root:not([data-theme="formal"])`,
+and the footer switch puts `data-theme="formal"` on the root to bring the textbook back.
+Palette in `tokens.js` as `NOTEBOOK`, measured by `check:contrast` with the sticky note and
+tab labels added. Fonts are self-hosted in `public/fonts` (OFL texts beside them) so they
+work offline. Cards holding a drawing are never rotated, because the pixel checkers measure
+them. The same session added a reader's own ticks: "I can do this" on element pages and a
+box per line on grade pages with a progress bar, all in `localStorage` under `tick:`.
+
 **`sections.mjs` is the first checker that reads a page as a reader does, 02/10/2026.**
 Session 23's review found 23 element pages (all 22 basics and the slip step) printing a
 "Derived" heading over an empty bordered box: every paragraph in that block needs an entry

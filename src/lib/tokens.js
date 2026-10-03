@@ -71,6 +71,53 @@ export const DARK = {
 
 export const SCHEMES = { light: LIGHT, dark: DARK };
 
+/* THE NOTEBOOK — 03/10/2026, Martyn: "I really like the notebook. It's friendlier
+   than the textbook." It is the default look from this date, and the palette
+   above (now called the textbook) stays one switch away in the footer.
+
+   The rig, edge and limb tokens are carried over unchanged from the scheme they
+   sit in, because the stick figures are drawn in them and every pixel check that
+   measures a figure was tuned against those values. What changes is the page
+   round them: warm paper, white cards for the drawings, a softer ink.
+
+   Kept apart from SCHEMES on purpose. tools/ink.mjs walks the SCHEMES keys as
+   colour-scheme names for the browser, so a third key there would be passed to
+   emulateMedia and fail. tools/contrast.mjs measures these separately.
+
+   The decorative tokens at the end (ruling, margin, tape, sticky note,
+   highlighter, the six index tabs) carry no information, apart from the sticky
+   note, which carries the unverified warning; that pair and the tab labels are
+   measured too. */
+const NB_SHARED = {
+  'tab-basic': '#f6c76b', 'tab-edge': '#a9d1e8', 'tab-turn': '#b9dcb4',
+  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-grade': '#e6e0cf',
+  'tab-ink': '#2b2b2e',
+};
+
+export const NOTEBOOK_LIGHT = {
+  ...LIGHT,
+  ice: '#ffffff', paper: '#fbf8f0', ink: '#2b2b2e', 'ink-soft': '#5f5f63',
+  rule: '#e4dccb', 'ice-line': '#a49a86', 'grid-line': '#7d7466',
+  accent: '#2a628f', warn: '#9a4313',
+  ruling: '#dfe7f0', margin: '#e8a7a1', tape: 'rgba(214,226,236,.8)',
+  sticky: '#fff3a6', 'sticky-ink': '#3d3410', highlight: 'rgba(246,199,107,.55)',
+  hole: '#e9e3d3',
+  ...NB_SHARED,
+};
+
+export const NOTEBOOK_DARK = {
+  ...DARK,
+  ice: '#0d1620', paper: '#1c1b18', ink: '#ece6da', 'ink-soft': '#aaa397',
+  rule: '#34312b', 'ice-line': '#4a473f', 'grid-line': '#6e685c',
+  accent: '#8cc4e8', warn: '#fbbf24',
+  ruling: '#26282b', margin: '#5a2f2b', tape: 'rgba(120,135,150,.45)',
+  sticky: '#3b3517', 'sticky-ink': '#f1e7b4', highlight: 'rgba(246,199,107,.28)',
+  hole: '#0f0f0d',
+  ...NB_SHARED,
+};
+
+export const NOTEBOOK = { light: NOTEBOOK_LIGHT, dark: NOTEBOOK_DARK };
+
 const decls = t => Object.entries(t).map(([k, v]) => `--${k}:${v}`).join(';');
 
 /* The custom properties, for the layout to drop into its head.
@@ -85,7 +132,14 @@ const decls = t => Object.entries(t).map(([k, v]) => `--${k}:${v}`).join(';');
 
    Order matters. The media query is written so an explicit light override beats
    it, and the explicit dark block comes last so it beats a light OS. */
+/* The notebook is the default; `data-theme="formal"` on the root restores the
+   textbook. The formal blocks come after the notebook ones and each is one
+   attribute more specific than the notebook block it replaces, so the order of
+   precedence does not hang on source order alone. */
 export const tokenCSS = () =>
-  `:root{${decls(LIGHT)}}` +
-  `@media (prefers-color-scheme:dark){:root:not([data-scheme="light"]){${decls(DARK)}}}` +
-  `:root[data-scheme="dark"]{${decls(DARK)}}`;
+  `:root{${decls(NOTEBOOK_LIGHT)}}` +
+  `@media (prefers-color-scheme:dark){:root:not([data-scheme="light"]){${decls(NOTEBOOK_DARK)}}}` +
+  `:root[data-scheme="dark"]{${decls(NOTEBOOK_DARK)}}` +
+  `:root[data-theme="formal"]{${decls(LIGHT)}}` +
+  `@media (prefers-color-scheme:dark){:root[data-theme="formal"]:not([data-scheme="light"]){${decls(DARK)}}}` +
+  `:root[data-theme="formal"][data-scheme="dark"]{${decls(DARK)}}`;

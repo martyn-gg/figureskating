@@ -142,7 +142,7 @@ const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
 family.sort((a, b) => rankOf(a) - rankOf(b));
 clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
 ---
-<Base title={d.name} subtitle={d.summary}>
+<Base title={d.name} subtitle={d.summary} kind={d.kind}>
   <h1>{d.name}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
@@ -168,6 +168,9 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
     {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
   </div>
+  {/* The reader's own tick, kept in their browser. Base.astro wires it up and
+      unhides it; without JavaScript it stays hidden. */}
+  <label class="can" hidden><input type="checkbox" data-tick={`can:${entry.id}`} /> I can do this</label>
 
   {others.length > 0 && (
     <details class="variations">

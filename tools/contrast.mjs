@@ -20,7 +20,7 @@
    and the guide quietly stops working.
 */
 
-import { SCHEMES } from '../src/lib/tokens.js';
+import { SCHEMES, NOTEBOOK } from '../src/lib/tokens.js';
 
 const channels = hex => {
   const h = hex.replace('#', '');
@@ -90,17 +90,31 @@ const BROKEN = { light: { 'edge-out': '#0f766e', 'edge-in': '#b45309',
                  dark:  { 'edge-out': '#5eead4', 'edge-in': '#fbbf24',
                           'limb': '#7c3aed' } };
 
+/* The notebook look carries a sticky note (the unverified warning is written on
+   it) and six coloured index tabs with labels, so those pairs join the list for
+   the notebook only. */
+const NB_PAIRS = [
+  ['sticky-ink', 'sticky', 4.5, 'the sticky note'],
+  ['warn', 'sticky', 4.5, 'the warning on the sticky note'],
+  ...['basic', 'edge', 'turn', 'jump', 'spin', 'grade'].map(t => ['tab-ink', `tab-${t}`, 4.5, `the ${t} tab label`]),
+];
+
 const broken = process.argv.includes('--break');
 let failures = 0;
 
-console.log(`token contrast (${PAIRS.length} pairs x 2 schemes)${broken ? ' — with the old edge pair and a pale limb put back' : ''}\n`);
+console.log(`token contrast (${PAIRS.length} pairs x 2 schemes x 2 looks)${broken ? ' — with the old edge pair and a pale limb put back' : ''}\n`);
 
-for (const [name, base] of Object.entries(SCHEMES)) {
+const LOOKS = [
+  ...Object.entries(SCHEMES).map(([name, base]) => [name, name, base, PAIRS]),
+  ...Object.entries(NOTEBOOK).map(([name, base]) => [`notebook ${name}`, name, base, [...PAIRS, ...NB_PAIRS]]),
+];
+
+for (const [label, name, base, pairs] of LOOKS) {
   const t = broken ? { ...base, ...BROKEN[name] } : base;
-  console.log(`  ${name}`);
-  for (const [a, b, target, why] of PAIRS) {
+  console.log(`  ${label}`);
+  for (const [a, b, target, why] of pairs) {
     if (!(a in t) || !(b in t)) {
-      failures++; console.error(`  \u2717 ${name}: no such token in the pair ${a}/${b}`); continue;
+      failures++; console.error(`  \u2717 ${label}: no such token in the pair ${a}/${b}`); continue;
     }
     const got = contrast(t[a], t[b]);
     const ok = got >= target;
@@ -115,4 +129,4 @@ if (failures) {
   console.error(`${failures} contrast check(s) failed`);
   process.exit(1);
 }
-console.log('every token pair meets its target in both colour schemes');
+console.log('every token pair meets its target in both colour schemes, notebook and textbook');
