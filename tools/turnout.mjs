@@ -68,6 +68,7 @@ import { MOVES } from '../src/lib/moves.js';
 import { HIP_OUT, HIP_IN, SKID_MIN_YAW, KNEE_TWIST_OUT, THIGH, SHIN, anterior,
          twoBone, bootDir, ankleOf, turnoutAllowed, kneeFlex,
          runnersDown, dirOf, onIceOf, edgeOf, cuspAt, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { lobeSense } from '../src/lib/skating.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const wrap = a => { while (a > 180) a -= 360; while (a <= -180) a += 360; return a; };
@@ -179,7 +180,9 @@ for (const [key, m] of Object.entries(MOVES))
    ON THE LINE. The blade points along the tracing it is cutting, read off the drawn
    path by finite difference and not off cuspAt, to within ALONG degrees. Take the
    cusp out of the tracing and every frame of the turn fails this; that is the
-   mutation. A cusp has no tangent at its point, so a frame whose two neighbours lie
+   mutation. ALONG was 3 until the brackets and the mirrors put seventeen turns through it;
+   at 4 it is a statement about the polyline the page draws, and the claim that the
+   blade grips is held at 0.5° by the check on the ice further down. A cusp has no tangent at its point, so a frame whose two neighbours lie
    either side of the apex is skipped and counted: the chord between them crosses
    the point of the "3" and reads 3.7° off on the threeTurn, which is the chord and
    not the blade.
@@ -190,12 +193,12 @@ for (const [key, m] of Object.entries(MOVES))
    yaw is nought on every frame, so a yaw that leaks out of a turn, or a key placed
    inside one, fails too.
 
-     --break=cusp   the tracing drawn without the cusp ......... 16 (all ALONG)
+     --break=cusp   the tracing drawn without the cusp ......... 264 (all ALONG)
 
        node tools/turnout.mjs --break=cusp
 */
-const ALONG = 3;
-let cuspFrames = 0, still = 0, worstAlong = 0;
+const ALONG = 4;
+let cuspFrames = 0, still = 0, unresolved = 0, worstAlong = 0;
 for (const [key, m] of Object.entries(MOVES)) {
   if (!m.path.some(g => g.turn)) continue;
   const path = buildPath(m), n = path.length;
@@ -222,6 +225,16 @@ for (const [key, m] of Object.entries(MOVES)) {
     const dx = b.x - a.x, dy = b.y - a.y;
     const side = j => (cuspAt(m, j / (n - 1))?.u ?? (j < i ? 0 : 1)) < 0.5;
     if (side(i - 1) !== side(i + 1)) { still++; continue; }
+    /* WHERE THE POLYLINE CANNOT RESOLVE A TANGENT — added with the brackets. Near the
+       apex the tracing bends tens of degrees between one frame and the next, and the
+       chord across two frames is then not the tangent at the middle one. Where the
+       chord in and the chord out disagree by more than three times the bound, the frame is
+       counted as unresolved and left to the check on the ice below, which does not
+       sample at frames. Without the cusp the chords agree, so --break=cusp still
+       fails every frame. */
+    const ang = (u, v) => Math.atan2(v.y - u.y, v.x - u.x) / (Math.PI / 180);
+    const bend = Math.abs(wrap(ang(p, b) - ang(a, p)));
+    if (bend > 3 * ALONG) { unresolved++; continue; }
     const heading = (dirOf(pose, w) === 'F' ? 0 : 180) + yaw;
     const boot = p.th / (Math.PI / 180) - heading;           // + yaw = clockwise on the page
     const line = Math.atan2(dy, dx) / (Math.PI / 180);
@@ -246,8 +259,48 @@ for (const [key, m] of Object.entries(MOVES)) {
 }
 
 console.log(`\n${feet} blades on the ice across ${Object.keys(MOVES).length} moves, ${turned} of them turned off the tracing`);
-console.log(`${cuspFrames} frames inside one-foot turns, ${still} of them either side of the apex, where a cusp has no tangent; ` +
-  `worst blade off its own tracing ${worstAlong.toFixed(1)}° (bound ${ALONG})`);
+/* ON THE ICE, NOT AT FRAMES. The same claim read straight off the construction: every
+   turn segment re-integrated at 4000 steps in ground coordinates, the circle turning
+   under it, and the contact's motion held to the blade's line within ICE degrees
+   wherever it is moving. This is what found the rotating frame missing from the
+   first table: the frames could not tell 5° of construction error from 5° of
+   sampling, and this can. */
+const ICE = 0.5;
+let iceChecked = 0, worstIce = 0;
+for (const [key, m] of Object.entries(MOVES)) {
+  const spans = m.path.map(g => g.span ?? 1 / m.path.length), sum = spans.reduce((x, y) => x + y, 0);
+  let c = 0;
+  m.path.forEach((g, gi) => {
+    const t0 = c / sum; c += spans[gi]; const t1 = c / sum;
+    if (!g.turn) return;
+    const R = g.radius ?? m.radius, kap = lobeSense(g.foot, g.edge, g.dir) / R;
+    const at = u => {
+      const cu = cuspAt(m, t0 + (t1 - t0) * u), sArc = cu.L * u, th = kap * sArc;
+      const C = [Math.sin(th) / kap, (1 - Math.cos(th)) / kap];
+      const T = [Math.cos(th), Math.sin(th)], Lf = [-Math.sin(th), Math.cos(th)];
+      return { x: C[0] + cu.dt * T[0] - cu.dn * Lf[0], y: C[1] + cu.dt * T[1] - cu.dn * Lf[1],
+               head: th / (Math.PI / 180) + cu.psi };
+    };
+    const N = 4000;
+    for (let i = 1; i < N; i++) {
+      const u0 = at((i - 1) / N), u1 = at((i + 1) / N), q = at(i / N);
+      const dx = u1.x - u0.x, dy = u1.y - u0.y;
+      if (Math.hypot(dx, dy) < 1e-4) continue;
+      const off = Math.abs(wrap(Math.atan2(dy, dx) / (Math.PI / 180) - q.head)), along = Math.min(off, 180 - off);
+      iceChecked++; worstIce = Math.max(worstIce, along);
+      if (along > ICE) {
+        bad++;
+        console.log(`  ICE     ${key.padEnd(13)} ${(i / N).toFixed(3)} of the way through the turn, the contact moves ` +
+          `${along.toFixed(2)}° off the blade's line on the ice — the construction does not grip`);
+        break;
+      }
+    }
+  });
+}
+
+console.log(`${cuspFrames} frames inside one-foot turns: ${still} either side of the apex, where a cusp has no tangent, and ` +
+  `${unresolved} where the drawn tracing bends too fast to read one; worst blade off its own tracing ${worstAlong.toFixed(1)}° (bound ${ALONG})`);
+console.log(`${iceChecked} steps of the same turns on the ice, worst ${worstIce.toFixed(3)}° (bound ${ICE})`);
 console.log(`furthest out ${worst.out.toFixed(0)}°${worst.key ? ` (${worst.key} ${worst.w})` : ''}, ` +
   `furthest in ${worstIn.in.toFixed(0)}°${worstIn.key ? ` (${worstIn.key} ${worstIn.w})` : ''}`);
 console.log(bad

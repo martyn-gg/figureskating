@@ -2163,9 +2163,10 @@ is derived from the turn and is not a mark drawn on afterwards.
 
 Across a window of the clock, `u` from 0 to 1, the blade's yaw off the circle is
 ψ = 180·S(u), S being poseAt's smoothstep. The contact moves along the blade at
-σ = cos ψ · (1 + c·sin²ψ) times the circle's own rate. `cos ψ` is the grip; the bracket is 1
-at both ends, so the contact leaves and rejoins the circle at the circle's speed, and `c`
-(3.61) is solved so that it rejoins it at the right place. The offsets are integrated once
+σ = cos ψ · (1 + c1·sin²ψ + c2·sinψ·cosψ) times the circle's own rate. `cos ψ` is the grip;
+the bracket is 1 at both ends, so the contact leaves and rejoins the circle at the circle's
+speed, and c1 and c2 are solved so that it rejoins it at the right place. The integration
+carries the circle turning under the window (see *The circle turns under the cusp* below). The offsets are integrated once
 into a table in `rig-math.js`. The cusp's depth comes out at 0.34 of the window's length on
 the circle, and the along-track offset is zero at the apex.
 
@@ -2188,14 +2189,27 @@ apex and over the inside edge after it.
 ### What holds it
 
 `turnout.mjs` has a per-frame section. Inside a window the blade must point along the tracing
-it is cutting, read off the drawn path by central difference, to within 3°. The two frames
+it is cutting, read off the drawn path by central difference, to within 3° when written (4°
+since the brackets, below). The two frames
 whose neighbours straddle the apex are skipped, because a cusp has no tangent at its point.
 The hip allowance applies as it does to a keyed blade. Outside every window the reference
 blade's yaw must be nought on every frame. `--break=cusp` draws the tracing without the cusp
-and fails 16 frames.
+and failed 16 frames with one turn in the file; with seventeen moves carrying a turn it fails 264.
 
-The worst reading is 2.8°, on the Salchow, whose turn has twelve frames. That is the drawn
-polyline being coarse, and it says a faster turn needs more frames before it can be drawn.
+### The circle turns under the cusp — corrected the same day, by the brackets
+
+The first table integrated the offsets in the frame of the circle as if that frame stood
+still. It turns with the skater, so the contact gripped in the rotating frame rather than on
+the ice. The brackets were the first move to show it: 5° off the tracing two frames from the
+apex. Most of those 5° turned out to be the drawn polyline, which cannot resolve a tangent
+where the tracing bends tens of degrees a frame, but some was the construction. So there are
+now two checks. On the ice, every turn is re-integrated at 4000 steps in ground coordinates
+and the contact's motion held to the blade's line within 0.5°: with the frame's rotation left
+out it fails at 0.50°, with it in the worst is 0.29°. On the drawn tracing, the bound is 4°
+and frames where the chord in and the chord out differ by more than 12° are counted as
+unresolved rather than judged (seven of 364). The frame's rotation needs a second
+coefficient in the speed profile, so the table is now solved per turn and cached.
+
 
 ### What building it cost
 

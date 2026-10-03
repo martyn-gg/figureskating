@@ -664,8 +664,8 @@ export function bootDir(pose, which, knee, foot){
    blade at σ = cosψ·(1 + c·sin²ψ) of the circle's own rate. cosψ is the grip: it
    is forwards before the apex, nothing at it and backwards after it. The second
    factor is 1 at both ends, so the contact leaves and rejoins the circle at the
-   circle's speed, and c is solved so that it rejoins it at the right place. The
-   offsets are integrated once into a table.
+   circle's speed, and its coefficients are solved so that it rejoins it at the right
+   place (cuspTables, below, which also carries the circle turning under the window).
 
    DEPTH IS NOT AUTHORED, it falls out at 0.34 of the window's length on the circle.
    Write a shorter window for a tighter cusp.
@@ -674,21 +674,47 @@ export function bootDir(pose, which, knee, foot){
    of the turn, carried by the window's length on the clock, is a choice. */
 const CUSP_N = 400;
 const S3 = x => x * x * (3 - 2 * x);
-const CUSP = (() => {
-  const at = i => Math.PI * S3((i + 0.5) / CUSP_N);
-  let i1 = 0, i2 = 0;
-  for (let i = 0; i < CUSP_N; i++) {
-    const p = at(i); i1 += Math.cos(p) ** 2; i2 += (Math.cos(p) * Math.sin(p)) ** 2;
-  }
-  const c = (1 - i1 / CUSP_N) / (i2 / CUSP_N);
-  const dt = [0], dn = [0];
-  for (let i = 0; i < CUSP_N; i++) {
-    const p = at(i), m = 1 + c * Math.sin(p) ** 2;
-    dt.push(dt[i] + (Math.cos(p) ** 2 * m - 1) / CUSP_N);
-    dn.push(dn[i] - Math.sin(p) * Math.cos(p) * m / CUSP_N);
-  }
-  return { dt, dn };
-})();
+
+/* THE CIRCLE TURNS UNDER THE CUSP — corrected 03/10/2026, the same session, found by the
+   brackets. The offsets are measured in the frame of the circle, and that frame turns as
+   the skater goes round it. The first table left that out, so the contact gripped in the
+   rotating frame rather than on the ice. A three turn's cusp points inwards and the error
+   stayed under the 3° turnout.mjs allows; a bracket's points outwards and read 5° two
+   frames from the apex.
+
+   So the integration carries the frame's own turn, K = the window's sweep in radians,
+   signed with the lobe, in units of the window's length: the contact's velocity on the
+   ice is σ along the blade exactly, which means its velocity in the frame is that less
+   the frame's advance (1, 0) and its rotation K × (a, b). With K in, the two end
+   conditions no longer share a single symmetry, so the speed profile takes two
+   coefficients, m = 1 + c1·sin²ψ + c2·sinψ·cosψ, and both are solved. Everything is
+   linear in them, so three integrations and a 2×2 solve do it. a is along the track and
+   b is to the left. */
+const cuspCache = new Map();
+const cuspTables = (s, K) => {
+  const key = `${s}:${K.toFixed(9)}`;
+  if (cuspCache.has(key)) return cuspCache.get(key);
+  const run = (c1, c2) => {
+    const A = [0], B = [0];
+    let x = 0, y = 0;
+    for (let i = 0; i < CUSP_N; i++) {
+      const p = s * Math.PI * S3((i + 0.5) / CUSP_N);
+      const m = 1 + c1 * Math.sin(p) ** 2 + c2 * Math.sin(p) * Math.cos(p);
+      const sg = Math.cos(p) * m;
+      const dx = (sg * Math.cos(p) - 1 + K * y) / CUSP_N;
+      const dy = (sg * Math.sin(p) - K * x) / CUSP_N;
+      x += dx; y += dy; A.push(x); B.push(y);
+    }
+    return { A, B, x, y };
+  };
+  const o = run(0, 0), e1 = run(1, 0), e2 = run(0, 1);
+  const a11 = e1.x - o.x, a12 = e2.x - o.x, a21 = e1.y - o.y, a22 = e2.y - o.y;
+  const det = a11 * a22 - a12 * a21;
+  const c1 = (-o.x * a22 + o.y * a12) / det, c2 = (-o.y * a11 + o.x * a21) / det;
+  const out = run(c1, c2);
+  cuspCache.set(key, out);
+  return out;
+};
 const cuspTable = (tab, u) => {
   const x = Math.min(1, Math.max(0, u)) * CUSP_N, i = Math.min(CUSP_N - 1, Math.floor(x));
   return tab[i] + (tab[i + 1] - tab[i]) * (x - i);
@@ -713,9 +739,10 @@ export function cuspAt(move, t) {
     const sense = T.rotatesInto ? lobe : -lobe;
     const L = (seg.radius ?? move.radius) * seg.sweep * D2R;
     const u = (t - t0) / (t1 - t0);
+    const tab = cuspTables(sense, lobe * seg.sweep * D2R);
     return { u, t0, t1, entry, exit, sense, L,
              psi: sense * 180 * S3(u),
-             dt: L * cuspTable(CUSP.dt, u), dn: sense * L * cuspTable(CUSP.dn, u) };
+             dt: L * cuspTable(tab.A, u), dn: -L * cuspTable(tab.B, u) };
   }
   return null;
 }

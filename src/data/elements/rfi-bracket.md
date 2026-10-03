@@ -4,6 +4,7 @@ kind: turn
 summary: "RFI to RBO: half a turn against the circle, changing edge and staying on the same lobe."
 entry: { foot: R, edge: I, dir: F }
 turn: bracket
+rig: rfiBracket
 prerequisites: [rfi-three]
 verified: { checked: false }
 ---

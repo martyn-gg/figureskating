@@ -270,10 +270,13 @@ const turnMove = m => {
    comment explains. The skating blade runs from 6 cm ahead of the hip to 6 cm behind
    it across the window in the direction of travel at each end, so it averages to
    nought there. */
-const threeFrom = (foot, edge, dir, name, note) => {
+const turnFrom = (turn, foot, edge, dir, name, note) => {
   const f = dir === 'F' ? 1 : -1;
   const lobe = (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * f;
-  const s = lobe, base = dir === 'F' ? 0 : 180;
+  /* `n` puts the blade on the outside of the lobe; `s` is which way it turns, into the
+     lobe for a three and against it for a bracket (TURNS.rotatesInto). For a three
+     the two are the same number, so every three drawn before brackets is unchanged. */
+  const n = lobe, s = turn === 'three' ? lobe : -lobe, base = dir === 'F' ? 0 : 180;
   const exit = { edge: edge === 'O' ? 'I' : 'O', dir: dir === 'F' ? 'B' : 'F' };
   const g = exit.dir === 'F' ? 1 : -1;
   const R = (t, n, z) => P(t, n, z, 0, NEUTRAL);
@@ -282,26 +285,45 @@ const threeFrom = (foot, edge, dir, name, note) => {
   return turnMove({
     name, note,
     path:[ {kind:'arc', foot, edge, dir, sweep:70, span:195},
-           {kind:'arc', foot, edge, dir, sweep:10, span:28, turn:'three'},
+           {kind:'arc', foot, edge, dir, sweep:10, span:28, turn},
            {kind:'arc', foot, edge:exit.edge, dir:exit.dir, sweep:70, span:195} ],
     radius:160, duration:4.4,
     keys:[
       {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base - 4*s, shYaw:base - 10*s,
-       sh:P(-2*f,0,147), L:P(4*f,15*s,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
+       sh:P(-2*f,0,147), L:P(4*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
       {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:base + 2*s, shYaw:base + 32*s,
-       sh:P(2*f,0,139), L:P(12*f,15*s,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
+       sh:P(2*f,0,139), L:P(12*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
       {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the hips coming round with the blade', hipZ:94, hipYaw:base + 6*s, shYaw:base + 40*s,
-       sh:P(0,0,146), L:P(6*f,15*s,0,0.5), R:R(-6*f,8*f,16), ...on(inn)},
+       sh:P(0,0,146), L:P(6*f,15*n,0,0.5), R:R(-6*f,8*f,16), ...on(inn)},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 174*s, shYaw:base + 150*s,
-       sh:P(0,0,144), L:P(6*g,15*s,0,0.5), R:R(-6*g,8*f,16), ...on(exit)},
+       sh:P(0,0,144), L:P(6*g,15*n,0,0.5), R:R(-6*g,8*f,16), ...on(exit)},
       {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:base + 176*s, shYaw:base + 160*s,
-       sh:P(-2*g,0,142), L:P(10*g,15*s,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
+       sh:P(-2*g,0,142), L:P(10*g,15*n,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
       {arm:[62,6,18], t:1.00, ph:`Running out on the ${exit.dir === 'F' ? 'forward' : 'back'} ${exit.edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base + 178*s, shYaw:base + 164*s,
-       sh:P(-2*g,0,146), L:P(8*g,15*s,0,-0.5), R:R(-40*g,6*g,20), ...on(exit)},
+       sh:P(-2*g,0,146), L:P(8*g,15*n,0,-0.5), R:R(-40*g,6*g,20), ...on(exit)},
     ]});
 };
+
+const threeFrom = (...a) => turnFrom('three', ...a);
+
+/* A MOVE SEEN IN A MIRROR — 03/10/2026, Session 26, so the right-foot elements cost one
+   line each. Reflecting across the line of travel swaps the feet and the hands, negates
+   every n and every angle (hipYaw, shYaw, a foot's yaw and roll), and leaves t, z, pitch,
+   the edges and the directions alone. The path's foot swaps too, which flips lobeSense
+   and with it the curvature, the cusp's side and the turn's sense, so nothing in the
+   rig needs telling. Hands computed from the default carriage are recomputed afterwards
+   by the loop at the foot of this file, from the mirrored shoulders. */
+const mirrorFoot = q => q && ({ ...q, n: -q.n,
+  ...(q.yaw !== undefined ? { yaw: -q.yaw } : {}), ...(q.roll ? { roll: -q.roll } : {}) });
+const swapLR = w => w === 'L' ? 'R' : w === 'R' ? 'L' : w;
+const mirrorMove = (m, name, note) => ({ ...m, name, note,
+  path: m.path.map(g => g.foot ? { ...g, foot: swapLR(g.foot) } : { ...g }),
+  keys: m.keys.map(k => ({ ...k, hipYaw: -k.hipYaw, shYaw: -k.shYaw, sh: mirrorFoot(k.sh),
+    L: mirrorFoot(k.R), R: mirrorFoot(k.L),
+    ...(k.LH ? { RH: mirrorFoot(k.LH) } : {}), ...(k.RH ? { LH: mirrorFoot(k.RH) } : {}),
+    skate: swapLR(k.skate) })) });
 
 export const MOVES = {
   waltz: {
@@ -465,6 +487,26 @@ export const MOVES = {
     'LBO · the blade turning half a circle on its edge, the cusp in the tracing · LFI'),
   lbiThree: threeFrom('L','I','B', 'Back inside three turn',
     'LBI · the blade turning half a circle on its edge, the cusp in the tracing · LFO'),
+
+  /* THE BRACKETS — 03/10/2026, Session 26, Martyn: try them. The three turn's
+     construction with the rotation reversed: a bracket turns AGAINST its lobe, so
+     cuspAt's sense is the lobe's negative and the cusp points out of the circle
+     (TURNS.bracket.rotatesInto is false). The first time that branch of cuspAt has met
+     a real move, so it was looked at as well as checked.
+
+     The lean holds through the apex for a reason worth writing down, because it is
+     not the three turn's. With the cusp pointing outwards the blade moves AWAY from the
+     hip, out to about 25 cm, so one frame either side of the apex the body is already
+     several centimetres over the edge it is on, more than the cusp's along-track
+     offset can undo. Verified against a coach: NO. */
+  lfoBracket: turnFrom('bracket','L','O','F', 'Forward outside bracket',
+    'LFO · the blade turning half a circle against the curve, the cusp pointing out · LBI'),
+  lfiBracket: turnFrom('bracket','L','I','F', 'Forward inside bracket',
+    'LFI · the blade turning half a circle against the curve, the cusp pointing out · LBO'),
+  lboBracket: turnFrom('bracket','L','O','B', 'Back outside bracket',
+    'LBO · the blade turning half a circle against the curve, the cusp pointing out · LFI'),
+  lbiBracket: turnFrom('bracket','L','I','B', 'Back inside bracket',
+    'LBI · the blade turning half a circle against the curve, the cusp pointing out · LFO'),
 
   /* THE SALCHOW — 03/10/2026, Martyn: he is working towards it, so it is the first
      single jump to get a rig after the waltz.
@@ -1911,6 +1953,27 @@ MOVES.spiralCheck.keys.forEach((k, i) => { k.LH = CHECKED_HANDS[i].LH; k.RH = CH
    the same shape as the featured filter that absorbed the twizzles: a comment
    describing an intention the code contradicts, and it would have shipped. The
    fix is the one guard below; tools/arms.mjs asserts it. */
+/* THE RIGHT-FOOT TURNS, by reflection. Before the carriage loop below, so their default
+   hands are computed from their own mirrored shoulders. */
+Object.assign(MOVES, {
+  rfoThree:   mirrorMove(MOVES.threeTurn, 'Right forward outside three turn',
+    'RFO · the blade turning half a circle on its edge, the cusp in the tracing · RBI'),
+  rfiThree:   mirrorMove(MOVES.lfiThree, 'Right forward inside three turn',
+    'RFI · the blade turning half a circle on its edge, the cusp in the tracing · RBO'),
+  rboThree:   mirrorMove(MOVES.lboThree, 'Right back outside three turn',
+    'RBO · the blade turning half a circle on its edge, the cusp in the tracing · RFI'),
+  rbiThree:   mirrorMove(MOVES.lbiThree, 'Right back inside three turn',
+    'RBI · the blade turning half a circle on its edge, the cusp in the tracing · RFO'),
+  rfoBracket: mirrorMove(MOVES.lfoBracket, 'Right forward outside bracket',
+    'RFO · the blade turning half a circle against the curve, the cusp pointing out · RBI'),
+  rfiBracket: mirrorMove(MOVES.lfiBracket, 'Right forward inside bracket',
+    'RFI · the blade turning half a circle against the curve, the cusp pointing out · RBO'),
+  rboBracket: mirrorMove(MOVES.lboBracket, 'Right back outside bracket',
+    'RBO · the blade turning half a circle against the curve, the cusp pointing out · RFI'),
+  rbiBracket: mirrorMove(MOVES.lbiBracket, 'Right back inside bracket',
+    'RBI · the blade turning half a circle against the curve, the cusp pointing out · RFO'),
+});
+
 for(const m of Object.values(MOVES)) for(const k of m.keys){
   const R = lateral(k.shYaw), F = anterior(k.shYaw);
   // [out from the shoulder centre, forward, drop] in cm. Default is arms held
