@@ -51,6 +51,7 @@ export const FOUNDATIONS = {
     { to: /^extended-edge$/, why: 'An extended edge holds one foot for a third of a circle. The one-foot glide is where holding one foot starts.' },
     { to: /^pivot$/, why: 'Ice Skating Australia teaches pivots at its last level, long after the one-foot glide. The circling foot glides on an inside edge.' },
     { to: /^spiral$/, why: 'A spiral is held on an edge, the free leg stretched out behind, turned out, and raised to hip height or higher.' },
+    { to: /^bunny-hop$/, why: 'The bunny hop springs off a glide on one foot and returns to it, so the glide has to hold first.' },
     { to: /^t-stop$/, why: 'The T-stop starts from a one-foot glide, the other foot set down behind it.' },
   ],
   'backward-one-foot-glide': [
@@ -107,6 +108,9 @@ export const FOUNDATIONS = {
   ],
   'drag': [
     { to: /^spiral$/, why: 'Both extend the free leg behind, turned out. Ice Skating Australia\'s spiral lifts it to at least hip height, and its lunge lifts only the blade.' },
+  ],
+  'bunny-hop': [
+    { to: /^waltz-jump$/, why: 'Both leave the ice from a forward glide. New Zealand\'s KiwiSkate teaches them together, on its Free skating 1 badge.' },
   ],
   'snowplough-stop': [
     { to: /^backward-snowplough-stop$/, why: 'The same skidding stop, travelling backwards. New Zealand teaches the backward half snowplough at its Basic badge.' },

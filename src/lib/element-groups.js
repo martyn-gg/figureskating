@@ -38,7 +38,7 @@ export const LEARN = {
     'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'forward-stroking',
     'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
     'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
-    'backward-two-foot-turn', 'backward-stroking', 't-stop', 'hockey-stop', 'pivot', 'drag'],
+    'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag'],
   spin: ['upright-spin', 'sit-spin', 'camel-spin', 'change-of-foot-spin', 'combination-spin'],
   position: ['extended-edge', 'teapot', 'spiral'],
   step: ['slip-step'],

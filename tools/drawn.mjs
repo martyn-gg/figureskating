@@ -61,6 +61,11 @@ const cannotDraw = {
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
   'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
+  /* NOT YET AUTHORED, AND SAID SO — 03/10/2026. Every contact the hop needs exists
+     (an edge, flight, a pick, as the waltz jump and toePick show), so this is a pose
+     nobody has written, not a capability the rig lacks. It falls outside the rig
+     freeze for that reason; take it off this list when the move is written. */
+  'bunny-hop':                   'not yet authored: edge, flight and pick all exist in the rig',
 };
 
 if (BREAK === 'stale') cannotDraw.slalom = 'a deliberately stale exemption';

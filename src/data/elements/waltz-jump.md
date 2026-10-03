@@ -9,7 +9,7 @@ jump:
   assisted: false
   rotations: 0.5
 rig: waltz
-prerequisites: [lfo-three]
+prerequisites: [lfo-three, bunny-hop]
 verified: { checked: false }
 ---
 

@@ -215,7 +215,7 @@ piece of work, specified the way the pick was.
 ## Still not covered, deliberately
 
 **Bunny hop** (Basic 6), **lunge** (Basic 4 bonus) and **shoot the duck** (Basic 6 bonus) are
-basics by any curriculum and are not here. The bunny hop is a jump and belongs with the jumps;
+basics by any curriculum and are not here. The bunny hop is a jump and belongs with the jumps (REVERSED 03/10/2026: it is now a basic, `bunny-hop`, because every learn-to-skate programme the guide holds teaches it and the jump model's take-off and landing edges cannot describe a hop that lands on a pick and returns to the take-off foot);
 the lunge needs a boot rolled onto its side, which is a missing axis and has been the lunge's
 blocker since Session 14. **Snowplow Sam** (ages 3–5) sits below the guide's floor.
 
