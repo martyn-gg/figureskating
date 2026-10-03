@@ -24,7 +24,9 @@ export const DONATE = 'https://ko-fi.com/figureskatingguide';
    site's other profiles. Remove an entry rather than leaving a dead link. */
 export const SOCIAL = [
   { name: 'Instagram', href: 'https://www.instagram.com/figureskatingguide/' },
-  /* Facebook goes here once the Page exists: a Page, not a second personal profile. */
+  /* The Page's numeric address until the username figureskatingguide is granted;
+     Facebook keeps redirecting this one after that, but swap it for the tidy one. */
+  { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61594992484789' },
 ];
 
 /* Renewed annually. The registrar bills registration and privacy separately, ex
