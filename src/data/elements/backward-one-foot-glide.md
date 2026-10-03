@@ -1,6 +1,7 @@
 ---
 name: Backward one-foot glide
 kind: basic
+rig: oneFootGlideBack
 summary: Backwards on one blade in a straight line, the free foot carried at the skating knee.
 trace:
   radius: 200

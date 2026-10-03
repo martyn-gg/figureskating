@@ -1,6 +1,7 @@
 ---
 name: Two-foot change of edge
 kind: basic
+rig: twoFootCoe
 summary: Both blades rolled from one set of edges to the other, in one movement, without a step.
 aliases: ["two foot change of edge", "two-foot power change of edge"]
 trace:

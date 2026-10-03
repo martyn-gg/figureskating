@@ -822,6 +822,30 @@ export function buildPath(move){
         else { px = x+(Math.sin(th+k*t)-Math.sin(th))/k; py = y-(Math.cos(th+k*t)-Math.cos(th))/k; }
         pts.push({x:px,y:py,th:th+k*t});
       }
+    } else if(r0 == null && (kIn*k <= 0 || kOut*k <= 0)){
+      /* A RAMP THROUGH AN INFLECTION — 03/10/2026, Session 26. The branch below steps
+         in ANGLE and divides by the curvature to get a length, which is fine while a
+         ramp stays on one side of straight and infinite where it reaches it. Two arcs
+         curving opposite ways ramp to a mean of nought at their boundary, so a slalom
+         took a single step of 288 cm and drew 42 m of tracing for a 7 m element. It had
+         been doing so on the slalom, backward slalom and two-foot change of edge pages
+         since their tracings were added, and nothing measured a tracing's length.
+
+         So this case steps in ARC LENGTH, where nought curvature is just a straight
+         piece. The ramp is the same shape, linear in, a plateau, linear out, and the
+         plateau K is solved so the segment still turns exactly `sweep`: the turn is
+         K·(L − ws) + (kIn + kOut)·ws/2, set equal to k·L. No move whose ramps stay on one
+         side of straight comes this way, so every such path is unchanged. */
+      const L = len, ws = Math.min(L/2, RAMP*D2R/Math.abs(k));
+      const K = (k*L - (kIn + kOut)*ws/2) / (L - ws);
+      const kS = q => q < ws ? kIn + (K - kIn)*(q/ws) : q > L - ws ? K + (kOut - K)*((q - (L - ws))/ws) : K;
+      const ds = L / N;
+      for(let i=0;i<N;i++){
+        const dth = kS((i + 0.5)*ds) * ds;
+        x += Math.cos(th + dth/2)*ds; y += Math.sin(th + dth/2)*ds;
+        th += dth;
+        pts.push({x,y,th});
+      }
     } else {
       const TH = seg.sweep, w = Math.min(TH/2, RAMP);
       const ramp = (inV, mid, outV) => phi =>
@@ -919,6 +943,13 @@ export function buildPath(move){
   for(let i=0;i<n;i++){
     const po = poseAt(move, i/(n-1));
     const down = po.skate && onIceOf(po, po.skate) ? po.skate : null;
+    /* A BLADE TAKING THE ICE, not a DIFFERENT blade — 03/10/2026, Session 26. This
+       read `down !== src`, and `src` was never cleared while nothing was on the ice, so
+       a landing on the foot that took off was not a landing: the loop (takeoff and
+       landing both RBO) moved the hip 3 cm in one frame, under continuity.mjs's 5, and
+       the two-foot hop, which lands where it took off, moved it 8. Every move that
+       lands on the other foot is unchanged, because for those the two conditions
+       agree. */
     if(down && down !== src){
       if(i > 0){
         const th2 = pts[i].th, dt = po[down].t - held.t, dn = po[down].n - held.n;
@@ -928,6 +959,7 @@ export function buildPath(move){
       src = down;
     }
     if(down) held = {t: po[down].t, n: po[down].n};
+    else src = null;
     pts[i].x += dx; pts[i].y += dy;
     /* THE CUSP MOVES THE CONTACT AND NOT THE SKATER. poseAt has put the same offset
        on the reference blade, so `held` carries it and the hip, path minus held,

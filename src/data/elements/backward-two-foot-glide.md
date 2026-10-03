@@ -1,6 +1,7 @@
 ---
 name: Backward two-foot glide
 kind: basic
+rig: twoFootGlideBack
 summary: The same flat glide travelling the other way, where you cannot see where you are going.
 trace:
   radius: 200

@@ -1,6 +1,7 @@
 ---
 name: Loop
 kind: jump
+rig: loop
 summary: RBO takeoff, off the edge, 1 rotation to RBO.
 jump:
   takeoff: { foot: R, edge: O, dir: B }

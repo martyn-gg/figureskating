@@ -1,6 +1,7 @@
 ---
 name: Axel
 kind: jump
+rig: axel
 summary: LFO takeoff, off the edge, 1.5 rotations to RBO.
 jump:
   takeoff: { foot: L, edge: O, dir: F }

@@ -1,6 +1,7 @@
 ---
 name: Scooter pushes
 kind: basic
+rig: scooterPushes
 summary: One foot glides while the other pushes, two or three times in a row, before the feet change roles.
 aliases: ["scooter push"]
 prerequisites: [two-foot-glide]

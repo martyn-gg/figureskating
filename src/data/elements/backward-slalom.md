@@ -1,6 +1,7 @@
 ---
 name: Backward slalom
 kind: basic
+rig: slalomBack
 summary: The same wave, drawn travelling backwards.
 aliases: ["backward two-foot slalom"]
 trace:

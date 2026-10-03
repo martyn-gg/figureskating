@@ -1,6 +1,7 @@
 ---
 name: Two-foot glide
 kind: basic
+rig: twoFootGlide
 summary: Both blades flat and parallel, carrying speed you have already got.
 aliases: ["forward two-foot glide"]
 trace:

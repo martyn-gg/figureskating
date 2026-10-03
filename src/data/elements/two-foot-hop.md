@@ -1,6 +1,7 @@
 ---
 name: Two-foot hop
 kind: basic
+rig: twoFootHop
 summary: Standing still, bending both knees and jumping straight up off both feet, landing on both in the same place.
 aliases: ["two-foot jump", "two-foot hop in place", "two-foot jump on the spot", "jump on the spot", "two-foot jump in place"]
 names: {"au": "Two-foot hop in place", "nz": "Two-foot jump on the spot"}

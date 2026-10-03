@@ -1,6 +1,7 @@
 ---
 name: One-foot glide
 kind: basic
+rig: oneFootGlide
 summary: The same glide with the other foot lifted, which is where balance stops being shared.
 aliases: ["forward one-foot glide"]
 trace:

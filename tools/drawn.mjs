@@ -67,13 +67,11 @@ const cannotDraw = {
      freeze for that reason; take it off this list when the move is written. */
   'two-foot-spin':               'not yet authored: both blades turning on the spot',
   'backward-wiggles':            'the zigzag turns both blades across the travel, as the swizzles do',
-  'scooter-pushes':              'not yet authored: the push is pushOff repeated, never written as a move',
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
-  'bunny-hop':                   'not yet authored: edge, flight and pick all exist in the rig',
+  'bunny-hop':                   'it lands on a pick while travelling, and the rig cannot set one: docs/model.md, The moving pick',
   'falling-and-getting-up':      'the body on the ice: the rig has hips over blades and no pose sitting or kneeling',
   'marching':                    'a walk: each step lifts a foot and puts it down, and the rig draws no stepping',
-  'two-foot-hop':                'not yet authored: two blades and flight both exist, and nobody has written the hop',
 };
 
 if (BREAK === 'stale') cannotDraw.slalom = 'a deliberately stale exemption';

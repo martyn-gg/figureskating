@@ -2097,6 +2097,53 @@ shins at the 28° limit at once. That is how a snowplough is taught, and nobody 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
 
+## Fifteen moves from what the rig already had — 03/10/2026, Session 26
+
+After the cusp, with the freeze in force, everything that needed only existing contacts was
+rigged: the other three left-foot three turns (`threeFrom`, one table read off the entry
+edge), the one- and two-foot glides both ways, the dip, both slaloms, the two-foot change of
+edge, the loop, the Axel, the two-foot hop and the scooter pushes. All 483 frame files of the
+23 earlier moves hash identical before and after.
+
+### Two faults the new moves found, both in `buildPath`
+
+**A ramp through an inflection stepped to infinity.** The ramp steps in angle and divides by
+the curvature to get a length. Two arcs curving opposite ways ramp to a mean of nought at
+their boundary, so the slalom's tracing took one step of 288 cm and came to 42 m for a 7 m
+element. The slalom, backward slalom and two-foot change of edge PAGES had been drawing that
+tracing since it was added; nothing measured a tracing's length. Such a ramp now steps in arc
+length, with the plateau solved so the segment still turns its `sweep`.
+
+**A landing on the takeoff foot was not a landing.** The handover displaced the path when the
+reference blade was a different blade from the last one, and the last one was never cleared
+in the air. The loop (RBO to RBO) moved the hip 3 cm in a frame, under `continuity.mjs`'s 5,
+and the two-foot hop moved it 8. It now displaces whenever a blade takes the ice, which is
+what the comment above it always said.
+
+### The flat is where the lean is less than half the stance
+
+The slaloms and the two-foot change of edge pass through a flat. With the blades 12 cm apart,
+the hip is between them while the lean is under 6 cm, so the edge letter goes to null at 6
+and picks up the new edge at 6.3 the other way. `lean.mjs` holds both sides without being
+told anything.
+
+## The moving pick is new capability — measured 03/10/2026
+
+The toe loop, flip, Lutz and bunny hop all set a pick while the skater is travelling. A probe
+move (glide on RBO, the left foot coming down onto its pick behind, the pick's hip-relative t
+falling as the hip passes it so it stays put on the ice) failed three checkers:
+
+- `freefoot.mjs`: 73 to 86 degrees between shin and boot against the boot's 30, at hip
+  heights of 74. `toePick` needed hipZ 54 for the same reason.
+- `continuity.mjs`: the top-down glyph turns 166 degrees in the frame the pick goes in. The
+  arrival blend aims a foot at a PLANTED direction along the tracing, and a pick takes its
+  direction from the reach, so the blend lands on the wrong target.
+- `underice.mjs`: the boot 15 cm below the ice on the way down.
+
+These are the failures `toePick`'s comment records for its entry, and each needs the model
+changed: an arrival onto a pick, and a pick's ankle allowance or its height. So the toe jumps
+and the bunny hop wait for the freeze to lift.
+
 ## A gripping blade turns at a cusp — specified and built 03/10/2026
 
 The rig could turn a blade off its own line in two ways: in the air, and in a skid. A one-foot

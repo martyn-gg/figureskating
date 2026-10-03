@@ -1,6 +1,7 @@
 ---
 name: Slalom
 kind: basic
+rig: slalom
 summary: Both blades held parallel and swung side to side, drawing a wave down the ice.
 aliases: ["forward slalom", "two-foot slalom"]
 trace:

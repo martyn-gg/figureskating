@@ -1,6 +1,7 @@
 ---
 name: Dip
 kind: basic
+rig: dip
 summary: A two-foot glide taken down into a deep knee bend and back up without a wobble.
 aliases: ["sit glide"]
 trace:

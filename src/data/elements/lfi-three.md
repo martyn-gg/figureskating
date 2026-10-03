@@ -4,6 +4,7 @@ kind: turn
 summary: "LFI to LBO: half a turn into the circle, changing edge and staying on the same lobe."
 entry: { foot: L, edge: I, dir: F }
 turn: three
+rig: lfiThree
 prerequisites: [lfi, two-foot-turn]
 verified: { checked: false }
 ---

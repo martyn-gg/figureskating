@@ -253,6 +253,56 @@ const turnMove = m => {
   }) };
 };
 
+
+/* THE OTHER THREE LEFT-FOOT THREE TURNS, WRITTEN ONCE — 03/10/2026, Session 26.
+   threeTurn is authored by hand and stays that way; these three are the same move
+   read off a different entry, so they are derived from one table rather than copied
+   three times with the signs changed by hand.
+
+   Two numbers decide everything. `f` is +1 for a forward entry and -1 for a backward
+   one: it flips which way along the track is behind the skater, so every t on the
+   free foot and the forward lean flips with it, and so does which side of the track
+   is the skater's right. `s` is the lobe's sense: it puts the skating blade on the
+   outside of the circle (n = 15·s) and turns the hips the way the blade turns,
+   because a three turn rotates into its lobe. The hips start at `base` (0 forwards,
+   180 backwards) and end at base + 174·s or so, the pair at the window adding to
+   2·base + 180·s, which squares the hip across the circle at the apex as threeTurn's
+   comment explains. The skating blade runs from 6 cm ahead of the hip to 6 cm behind
+   it across the window in the direction of travel at each end, so it averages to
+   nought there. */
+const threeFrom = (foot, edge, dir, name, note) => {
+  const f = dir === 'F' ? 1 : -1;
+  const lobe = (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * f;
+  const s = lobe, base = dir === 'F' ? 0 : 180;
+  const exit = { edge: edge === 'O' ? 'I' : 'O', dir: dir === 'F' ? 'B' : 'F' };
+  const g = exit.dir === 'F' ? 1 : -1;
+  const R = (t, n, z) => P(t, n, z, 0, NEUTRAL);
+  const on = (x) => ({ skate: foot, edge: x.edge, dir: x.dir });
+  const inn = { edge, dir };
+  return turnMove({
+    name, note,
+    path:[ {kind:'arc', foot, edge, dir, sweep:70, span:195},
+           {kind:'arc', foot, edge, dir, sweep:10, span:28, turn:'three'},
+           {kind:'arc', foot, edge:exit.edge, dir:exit.dir, sweep:70, span:195} ],
+    radius:160, duration:4.4,
+    keys:[
+      {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
+       hipZ:94, hipYaw:base - 4*s, shYaw:base - 10*s,
+       sh:P(-2*f,0,147), L:P(4*f,15*s,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:base + 2*s, shYaw:base + 32*s,
+       sh:P(2*f,0,139), L:P(12*f,15*s,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the hips coming round with the blade', hipZ:94, hipYaw:base + 6*s, shYaw:base + 40*s,
+       sh:P(0,0,146), L:P(6*f,15*s,0,0.5), R:R(-6*f,8*f,16), ...on(inn)},
+      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 174*s, shYaw:base + 150*s,
+       sh:P(0,0,144), L:P(6*g,15*s,0,0.5), R:R(-6*g,8*f,16), ...on(exit)},
+      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:base + 176*s, shYaw:base + 160*s,
+       sh:P(-2*g,0,142), L:P(10*g,15*s,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
+      {arm:[62,6,18], t:1.00, ph:`Running out on the ${exit.dir === 'F' ? 'forward' : 'back'} ${exit.edge === 'O' ? 'outside' : 'inside'} edge`,
+       hipZ:94, hipYaw:base + 178*s, shYaw:base + 164*s,
+       sh:P(-2*g,0,146), L:P(8*g,15*s,0,-0.5), R:R(-40*g,6*g,20), ...on(exit)},
+    ]});
+};
+
 export const MOVES = {
   waltz: {
     name:'Waltz jump',
@@ -408,6 +458,13 @@ export const MOVES = {
       {arm:[62,6,18], t:1.00, ph:'Running out on the back inside edge', hipZ:94, hipYaw:178, shYaw:164,
        sh:P(-2,0,146), L:P(-8,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
     ]}),
+
+  lfiThree: threeFrom('L','I','F', 'Forward inside three turn',
+    'LFI · the blade turning half a circle on its edge, the cusp in the tracing · LBO'),
+  lboThree: threeFrom('L','O','B', 'Back outside three turn',
+    'LBO · the blade turning half a circle on its edge, the cusp in the tracing · LFI'),
+  lbiThree: threeFrom('L','I','B', 'Back inside three turn',
+    'LBI · the blade turning half a circle on its edge, the cusp in the tracing · LFO'),
 
   /* THE SALCHOW — 03/10/2026, Martyn: he is working towards it, so it is the first
      single jump to get a rig after the waltz.
@@ -1431,6 +1488,383 @@ export const MOVES = {
       {t:1.00, ph:'Held: loaded against the toe, ready to vault', hipZ:54, hipYaw:176, shYaw:154,
        sh:P(3,0,103), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
+
+  /* THE GLIDES, THE DIP, THE SLALOMS AND THE TWO-FOOT CHANGE OF EDGE — 03/10/2026,
+     Session 26. The basics that drew a tracing and no body. Every contact they use
+     already existed: a flat (edge null), a second blade (ON), a foot leaving the ice.
+
+     A FLAT IS WHERE THE LEAN IS LESS THAN HALF THE STANCE. On two feet the blades sit
+     12 cm apart, so while the lean carries the hip less than 6 cm off their middle the
+     hip is between them, and neither blade can be on an edge that leans into a circle.
+     That is what lean.mjs's flat route says, so the changes of edge in the slaloms and
+     the two-foot change of edge are keyed that way: the edge letter goes to null when
+     the lean comes down to 6 and picks up the new edge at 6.3 the other way. The tracing
+     draws the flat in neutral ink between the two coloured curves. The lean peaks at 10
+     on a 150 cm slalom and 9 on the 240 cm change of edge, at the clock times where the
+     path's own curvature peaks.
+
+     THE DIP SITS THE HIP BEHIND THE FEET, for the teapot's reason: a knee bent to about
+     ninety degrees with the shin inside the boot leaves the hip well behind the blades,
+     and the arms go forward to balance it, as Ice Skating Australia asks.
+
+     Verified against a coach: NO. */
+  oneFootGlide: {
+    name:'One-foot glide',
+    note:'both blades flat, then the weight onto the left and the right foot lifted to the inside of the knee',
+    path:[{kind:'line', len:300}],
+    radius:300, duration:4.0,
+    keys:[
+      {t:0.00, ph:'Gliding on two feet', hipZ:96, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.25, ph:'The weight moving over the left foot', hipZ:95, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,147), L:P(0,-3,0,-0.5), R:ON(0,10,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.45, ph:'The right foot lifting', hipZ:95, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,147), L:P(0,-1,0,-0.5), R:P(2,10,12,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {t:0.70, ph:'The free foot at the inside of the skating knee, toe down', hipZ:95, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,147), L:P(0,-1,0,-0.5), R:P(6,6,34), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held: gliding on one foot in a straight line', hipZ:95, hipYaw:0, shYaw:-2,
+       sh:P(-2,0,147), L:P(0,-1,0,-0.5), R:P(6,6,34), skate:'L', edge:null, dir:'F'},
+    ]},
+
+  oneFootGlideBack: {
+    name:'Backward one-foot glide',
+    note:'both blades flat, travelling backwards, then the right foot lifted to the inside of the knee',
+    path:[{kind:'line', len:300}],
+    radius:300, duration:4.0,
+    keys:[
+      {t:0.00, ph:'Gliding backwards on two feet', hipZ:96, hipYaw:180, shYaw:182,
+       sh:P(-4,0,148), L:P(0,7,0,-0.5), R:ON(0,-7,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.25, ph:'The weight moving over the left foot', hipZ:95, hipYaw:180, shYaw:182,
+       sh:P(-4,0,147), L:P(0,3,0,-0.5), R:ON(0,-10,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.45, ph:'The right foot lifting', hipZ:95, hipYaw:180, shYaw:182,
+       sh:P(-4,0,147), L:P(0,1,0,-0.5), R:P(-2,-10,12,0,NEUTRAL), skate:'L', edge:null, dir:'B'},
+      {t:0.70, ph:'The free foot at the inside of the skating knee, toe down', hipZ:95, hipYaw:180, shYaw:182,
+       sh:P(-4,0,147), L:P(0,1,0,-0.5), R:P(-6,-6,34), skate:'L', edge:null, dir:'B'},
+      {t:1.00, ph:'Held: gliding backwards on one foot', hipZ:95, hipYaw:180, shYaw:182,
+       sh:P(-4,0,147), L:P(0,1,0,-0.5), R:P(-6,-6,34), skate:'L', edge:null, dir:'B'},
+    ]},
+
+  twoFootGlide: {
+    name:'Two-foot glide',
+    note:'both blades flat and parallel, about hip width apart, running straight',
+    path:[{kind:'line', len:300}],
+    radius:300, duration:3.6,
+    keys:[
+      {t:0.00, ph:'The feet coming together under the hips', hipZ:95, hipYaw:0, shYaw:-3,
+       sh:P(-2,0,147), L:P(-4,-8,0,-0.5), R:ON(4,8,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.40, ph:'Both blades running, the weight between them', hipZ:96, hipYaw:0, shYaw:-1,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held: gliding straight on two feet', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+    ]},
+
+  twoFootGlideBack: {
+    name:'Backward two-foot glide',
+    note:'both blades flat and parallel, about hip width apart, running backwards',
+    path:[{kind:'line', len:300}],
+    radius:300, duration:3.6,
+    keys:[
+      {t:0.00, ph:'The feet coming together under the hips', hipZ:95, hipYaw:180, shYaw:183,
+       sh:P(-4,0,147), L:P(4,8,0,-0.5), R:ON(-4,-8,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.40, ph:'Both blades running backwards, the weight over the toes', hipZ:96, hipYaw:180, shYaw:181,
+       sh:P(-4,0,148), L:P(0,7,0,-0.5), R:ON(0,-7,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:1.00, ph:'Held: gliding backwards on two feet', hipZ:96, hipYaw:180, shYaw:180,
+       sh:P(-4,0,148), L:P(0,7,0,-0.5), R:ON(0,-7,0,-0.5), skate:'L', edge:null, dir:'B'},
+    ]},
+
+  dip: {
+    name:'Dip',
+    note:'a two-foot glide, sinking until the knees are bent to about ninety degrees, arms out in front',
+    path:[{kind:'line', len:340}],
+    radius:340, duration:4.6,
+    keys:[
+      {t:0.00, ph:'Gliding on two feet', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {arm:[30,36,10], t:0.28, ph:'Bending both knees, the arms coming forward', hipZ:84, hipYaw:0, shYaw:0,
+       sh:P(8,0,134), L:P(18,-7,0,-0.5), R:ON(18,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {arm:[22,50,6], t:0.50, ph:'Down in the dip, the arms stretched out in front', hipZ:64, hipYaw:0, shYaw:0,
+       sh:P(14,0,112), L:P(30,-7,0,-0.5), R:ON(30,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {arm:[22,50,6], t:0.72, ph:'Held low, the glide carrying on', hipZ:64, hipYaw:0, shYaw:0,
+       sh:P(14,0,112), L:P(30,-7,0,-0.5), R:ON(30,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Rising again on two feet', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+    ]},
+
+  slalom: {
+    name:'Slalom',
+    note:'both blades on the ice and close together, curving side to side and changing edge together',
+    path:[ {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:55,  span:1},
+           {kind:'arc', foot:'L', edge:'I', dir:'F', sweep:110, span:2},
+           {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:110, span:2},
+           {kind:'arc', foot:'L', edge:'I', dir:'F', sweep:55,  span:1} ],
+    radius:150, duration:5.0,
+    keys:[
+      {t:0, ph:'Leaning into the first curve, both blades on their edges', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,4,0,-0.5), R:ON(3,16,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.0833, ph:'The curve running', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,4,0,-0.5), R:ON(3,16,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.1167, ph:'Coming upright: both blades flat as the curve straightens', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,0,0,-0.5), R:ON(3,12,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.2667, ph:'Leaning the other way, both blades onto the other edges', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-12.3,0,-0.5), R:ON(3,-0.3,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:0.3333, ph:'The second curve at its deepest', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-16,0,-0.5), R:ON(3,-4,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:0.4, ph:'Upright again through the change', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-12,0,-0.5), R:ON(3,0,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.6, ph:'Onto the first edges again', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,0.3,0,-0.5), R:ON(3,12.3,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.6667, ph:'The third curve at its deepest', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,4,0,-0.5), R:ON(3,16,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.7333, ph:'Upright through the last change', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,0,0,-0.5), R:ON(3,12,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.8833, ph:'Onto the other edges for the last curve', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-12.3,0,-0.5), R:ON(3,-0.3,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:0.9167, ph:'The last curve', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-16,0,-0.5), R:ON(3,-4,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:1.0, ph:'Running out on the curve', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-16,0,-0.5), R:ON(3,-4,0,-0.5), skate:'L', edge:'I', dir:'F'},
+    ]},
+
+  slalomBack: {
+    name:'Backward slalom',
+    note:'both blades on the ice, travelling backwards, curving side to side and changing edge together',
+    path:[ {kind:'arc', foot:'L', edge:'O', dir:'B', sweep:55,  span:1},
+           {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:110, span:2},
+           {kind:'arc', foot:'L', edge:'O', dir:'B', sweep:110, span:2},
+           {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:55,  span:1} ],
+    radius:150, duration:5.4,
+    keys:[
+      {t:0, ph:'Leaning into the first curve, both blades on their edges', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,-4,0,-0.5), R:ON(-3,-16,0,-0.5), skate:'L', edge:'O', dir:'B'},
+      {t:0.0833, ph:'The curve running', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,-4,0,-0.5), R:ON(-3,-16,0,-0.5), skate:'L', edge:'O', dir:'B'},
+      {t:0.1167, ph:'Coming upright: both blades flat as the curve straightens', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,0,0,-0.5), R:ON(-3,-12,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.2667, ph:'Leaning the other way, both blades onto the other edges', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,12.3,0,-0.5), R:ON(-3,0.3,0,-0.5), skate:'L', edge:'I', dir:'B'},
+      {t:0.3333, ph:'The second curve at its deepest', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,16,0,-0.5), R:ON(-3,4,0,-0.5), skate:'L', edge:'I', dir:'B'},
+      {t:0.4, ph:'Upright again through the change', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,12,0,-0.5), R:ON(-3,0,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.6, ph:'Onto the first edges again', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,-0.3,0,-0.5), R:ON(-3,-12.3,0,-0.5), skate:'L', edge:'O', dir:'B'},
+      {t:0.6667, ph:'The third curve at its deepest', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,-4,0,-0.5), R:ON(-3,-16,0,-0.5), skate:'L', edge:'O', dir:'B'},
+      {t:0.7333, ph:'Upright through the last change', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,0,0,-0.5), R:ON(-3,-12,0,-0.5), skate:'L', edge:null, dir:'B'},
+      {t:0.8833, ph:'Onto the other edges for the last curve', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,12.3,0,-0.5), R:ON(-3,0.3,0,-0.5), skate:'L', edge:'I', dir:'B'},
+      {t:0.9167, ph:'The last curve', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,16,0,-0.5), R:ON(-3,4,0,-0.5), skate:'L', edge:'I', dir:'B'},
+      {t:1.0, ph:'Running out on the curve', hipZ:96, hipYaw:180, shYaw:175,
+       sh:P(-4,0,148), L:P(3,16,0,-0.5), R:ON(-3,4,0,-0.5), skate:'L', edge:'I', dir:'B'},
+    ]},
+
+  twoFootCoe: {
+    name:'Two-foot change of edge',
+    note:'both blades rolling from one pair of edges through a flat onto the other, the curve reversing',
+    path:[ {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:75, span:1},
+           {kind:'arc', foot:'L', edge:'I', dir:'F', sweep:75, span:1} ],
+    radius:240, duration:4.4,
+    keys:[
+      {t:0, ph:'Both blades on the first pair of edges', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,3,0,-0.5), R:ON(3,15,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.25, ph:'The curve running', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,3,0,-0.5), R:ON(3,15,0,-0.5), skate:'L', edge:'O', dir:'F'},
+      {t:0.333, ph:'Rolling upright: both blades flat', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,0,0,-0.5), R:ON(3,12,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:0.675, ph:'Rolled over onto the other pair of edges', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-12.3,0,-0.5), R:ON(3,-0.3,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:0.75, ph:'The new curve, the other way', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-15,0,-0.5), R:ON(3,-3,0,-0.5), skate:'L', edge:'I', dir:'F'},
+      {t:1.0, ph:'Running on the new curve', hipZ:96, hipYaw:0, shYaw:-5,
+       sh:P(-2,0,148), L:P(-3,-15,0,-0.5), R:ON(3,-3,0,-0.5), skate:'L', edge:'I', dir:'F'},
+    ]},
+
+
+  /* THE LOOP — 03/10/2026, Session 26. Takeoff RBO, no pick, one rotation, landing
+     RBO (skating.js JUMPS). Both edges are the same edge, so like the Salchow the
+     tracing is one curve broken only by the flight, and the landing is the Salchow's
+     and the waltz jump's, 360 degrees round.
+
+     The Salchow's clock and air keys with the takeoff on the other foot: the right
+     blade carries the skater into the jump and out of it, and the left leg is the one
+     crossed in front before the takeoff and held back after the landing. In the track
+     frame, facing backwards, in front is -t.
+
+     Verified against a coach: NO. How far the free leg crosses before the takeoff is
+     the part most worth a coach's eye. */
+  loop: {
+    name:'Loop',
+    note:'RBO takeoff, no pick · one rotation · RBO landing',
+    path:[ {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:120, span:0.48},
+           {kind:'line', len:70,                                 span:0.10},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:56,  span:0.18},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.24} ],
+    radius:130, duration:5.4,
+    keys:[
+      {arm:[60,6,18], t:0.00, ph:'Gliding on the back outside edge, the free leg in front', hipZ:92, hipYaw:178, shYaw:166,
+       sh:P(-2,0,144), R:P(-6,15,0,-0.5), L:P(-30,8,20,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.18, ph:'The edge running, the shoulders checked', hipZ:90, hipYaw:178, shYaw:170,
+       sh:P(-4,0,140), R:P(-10,15,0,-0.5), L:P(-28,4,18,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg crossed in front', hipZ:82, hipYaw:176, shYaw:168,
+       sh:P(-6,0,132), R:P(-20,16,0,-1), L:P(-30,2,16,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[50,14,18], t:0.45, ph:'Rising, the shoulders starting to turn', hipZ:92, hipYaw:192, shYaw:222,
+       sh:P(-2,0,142), R:P(-10,14,0,1), L:P(-30,-4,30,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[40,20,8], t:0.475, ph:'Takeoff: the skating knee drives up', hipZ:102, hipYaw:202, shYaw:256,
+       sh:P(-2,0,154), R:P(-4,8,2,3), L:P(-24,-2,46,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[30,16,10], t:0.49, ph:'Blade leaves the ice', hipZ:118, hipYaw:250, shYaw:290,
+       sh:P(-2,0,170), R:P(-4,6,32,0,NEUTRAL), L:P(-10,-6,56,0,NEUTRAL), skate:null},
+      {arm:[22,14,12], t:0.525, ph:'Peak: arms in, legs together', hipZ:130, hipYaw:390, shYaw:396,
+       sh:P(0,0,182), L:P(3,-5,64,0,NEUTRAL), R:P(7,5,62,0,NEUTRAL), skate:null},
+      {arm:[26,14,12], t:0.555, ph:'Descending, the landing leg reaching for the ice', hipZ:112, hipYaw:500, shYaw:492,
+       sh:P(-2,0,164), L:P(16,24,46,0,NEUTRAL), R:P(4,-7,28,0,NEUTRAL), skate:null},
+      {arm:[34,14,14], t:0.58, ph:'Toe of the blade touches down', hipZ:98, hipYaw:540, shYaw:522,
+       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[46,12,16], t:0.63, ph:'Rolling back along the blade', hipZ:96, hipYaw:538, shYaw:518,
+       sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,18], t:0.70, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:536, shYaw:512,
+       sh:P(-10,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-15,17,0,-1), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.84, ph:'Check holds, edge running', hipZ:90, hipYaw:534, shYaw:510,
+       sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {arm:[64,10,18], t:1.00, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:532, shYaw:518,
+       sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
+    ]},
+
+  /* THE AXEL — 03/10/2026, Session 26. The waltz jump with a full turn more in the air:
+     takeoff LFO, one and a half rotations, landing RBO. The set-up, the swing and the
+     whole landing are the waltz jump's keys, the landing 360 degrees further round,
+     which leaves the track-frame feet where they were because the skater faces the same
+     way. The air is new: between leaving the ice and opening out, the legs are held
+     together under the hip, where their track-frame position does not depend on which
+     way the skater faces, and the arms are pulled in, which is what lets the rotation
+     run at about twice the waltz jump's rate.
+
+     Verified against a coach: NO. */
+  axel: {
+    name:'Axel',
+    note:'LFO takeoff · one and a half rotations · RBO landing',
+    path:[ {kind:'arc',  foot:'L', edge:'O', dir:'F', sweep:99,  span:0.32},
+           {kind:'line', len:90,                                 span:0.12},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:56,  span:0.20},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.36} ],
+    radius:130, duration:5.6,
+    keys:[
+      {arm:[64,10,18], t:0.00, ph:'Set-up on the forward outside edge', hipZ:96, hipYaw:-8, shYaw:-24,
+       sh:P(-4,0,148), L:P(14,14,0,-0.5), R:P(-49,-6,27,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[60,-2,24], t:0.14, ph:'Knee bends, edge deepens', hipZ:86, hipYaw:-6, shYaw:-20,
+       sh:P(2,0,132), L:P(19,18,0,-1), R:P(-55,-5,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[54,16,18], t:0.25, ph:'Free leg swings through', hipZ:92, hipYaw:-2, shYaw:-10,
+       sh:P(0,0,138), L:P(15,16,0,0.5), R:P(0,-4,10,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[50,26,6], t:0.30, ph:'Takeoff: leg and knee drive up', hipZ:100, hipYaw:8, shYaw:2,
+       sh:P(-4,0,154), L:P(2,8,2,3), R:P(46,0,62,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[36,22,6], t:0.32, ph:'Blade leaves the ice', hipZ:118, hipYaw:26, shYaw:18,
+       sh:P(-4,0,170), L:P(-12,6,30,0,NEUTRAL), R:P(40,-2,70,0,NEUTRAL), skate:null},
+      {arm:[20,12,12], t:0.35, ph:'Pulling in: the legs coming together', hipZ:128, hipYaw:150, shYaw:150,
+       sh:P(-2,0,180), L:P(-2,-5,58,0,NEUTRAL), R:P(4,5,64,0,NEUTRAL), skate:null},
+      {arm:[18,12,12], t:0.38, ph:'Peak: arms in tight, legs together', hipZ:134, hipYaw:330, shYaw:330,
+       sh:P(0,0,186), L:P(3,-5,64,0,NEUTRAL), R:P(-3,5,64,0,NEUTRAL), skate:null},
+      {arm:[20,12,12], t:0.41, ph:'Still turning, starting down', hipZ:122, hipYaw:470, shYaw:466,
+       sh:P(-2,0,174), L:P(4,6,52,0,NEUTRAL), R:P(-2,-4,40,0,NEUTRAL), skate:null},
+      {arm:[26,14,12], t:0.425, ph:'Opening out, reaching for the ice', hipZ:112, hipYaw:518, shYaw:502,
+       sh:P(-2,0,164), L:P(52,10,44,0,NEUTRAL), R:P(-2,0,24,0,NEUTRAL), skate:null},
+      {arm:[34,14,14], t:0.44, ph:'Front of the blade touches down', hipZ:98, hipYaw:540, shYaw:522,
+       sh:P(-4,0,148), L:P(38,12,26,0,NEUTRAL), R:P(-4,11,1,3,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[46,12,16], t:0.48, ph:'Rolling back along the blade', hipZ:96, hipYaw:538, shYaw:518,
+       sh:P(-6,0,146), L:P(58,13,25,0,NEUTRAL), R:P(-4,15,0,1), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,18], t:0.55, ph:'Knee absorbs: deepest landing position', hipZ:84, hipYaw:536, shYaw:512,
+       sh:P(-8,0,136), L:P(52,15,10,0,NEUTRAL), R:P(-20,17,0,-1), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.70, ph:'Check holds, edge running', hipZ:90, hipYaw:534, shYaw:510,
+       sh:P(-8,0,142), L:P(50,15,15,0,NEUTRAL), R:P(-12,18,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {arm:[63,9,18], t:0.86, ph:'Rising out of the landing knee', hipZ:96, hipYaw:534, shYaw:514,
+       sh:P(-6,0,148), L:P(59,14,26,0,NEUTRAL), R:P(-6,17,0), skate:'R', edge:'O', dir:'B'},
+      {arm:[64,10,18], t:1.00, ph:'Run-out: still on the back outside edge', hipZ:98, hipYaw:532, shYaw:518,
+       sh:P(-5,0,150), L:P(60,13,28,0,NEUTRAL), R:P(-4,15,0), skate:'R', edge:'O', dir:'B'},
+    ]},
+
+
+  /* THE TWO-FOOT HOP — 03/10/2026, Session 26. Standing still, both knees bend, both
+     blades leave the ice together and come down together where they left it, which is
+     Ice Skating Australia's description. The path is a line four centimetres long,
+     because the skater is not travelling and a path of no length has no direction.
+     Every piece already existed: two flat blades, flight (`skate: null`), and both
+     blades arriving, the waltz jump's landing on two feet at once.
+
+     The bend puts the feet ahead of the hip, for the dip's reason: the shin stays
+     inside the boot. Verified against a coach: NO. */
+  twoFootHop: {
+    name:'Two-foot hop',
+    note:'standing still · both knees bend · both blades leave the ice and land together',
+    path:[{kind:'line', len:4}],
+    radius:300, duration:2.8,
+    keys:[
+      {t:0.00, ph:'Standing on two feet', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {arm:[52,12,24], t:0.24, ph:'Bending both knees', hipZ:84, hipYaw:0, shYaw:0,
+       sh:P(6,0,134), L:P(16,-7,0,-0.5), R:ON(16,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {arm:[48,18,4], t:0.36, ph:'Springing up off both feet', hipZ:98, hipYaw:0, shYaw:0,
+       sh:P(0,0,150), L:P(2,-7,1,3), R:ON(2,7,1,3), skate:'L', edge:null, dir:'F'},
+      {arm:[48,18,2], t:0.44, ph:'In the air, both feet together', hipZ:112, hipYaw:0, shYaw:0,
+       sh:P(0,0,164), L:P(0,-7,14,0,NEUTRAL), R:P(0,7,14,0,NEUTRAL), skate:null},
+      {arm:[52,14,10], t:0.52, ph:'Coming down', hipZ:104, hipYaw:0, shYaw:0,
+       sh:P(0,0,156), L:P(2,-7,6,0,NEUTRAL), R:P(2,7,6,0,NEUTRAL), skate:null},
+      {arm:[60,10,18], t:0.58, ph:'Landing on both feet together', hipZ:92, hipYaw:0, shYaw:0,
+       sh:P(4,0,144), L:P(10,-7,0,1), R:ON(10,7,0,1), skate:'L', edge:null, dir:'F'},
+      {arm:[64,8,20], t:0.74, ph:'The knees taking the landing, the arms placed', hipZ:84, hipYaw:0, shYaw:0,
+       sh:P(6,0,134), L:P(16,-7,0,-0.5), R:ON(16,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Standing again', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
+    ]},
+
+  /* SCOOTER PUSHES — 03/10/2026, Session 26. One foot glides while the other pushes,
+     three times, which is Learn to Skate USA's count. pushOff held one push at its
+     widest; this is that push made, released and made again: the right blade comes down
+     beside the gliding foot already turned out, drives out and back, lifts, and returns.
+     Arriving on a turned blade and leaving one are both things the rig already does,
+     because a foot's yaw interpolates toward the key it is arriving at.
+
+     The glide is a gentle forward outside edge rather than a straight flat, for
+     pushOff's reason: on two flat blades the pushing foot would count toward the flat's
+     centroid and carry it far from under the hip, which lean.mjs rightly refuses. On an
+     edge the pushing blade's edge is derived, inside, as a push is.
+
+     WHAT IT DOES NOT DRAW is the change of feet the element ends with. That hands the
+     reference blade from one foot to the other on the ice, which the rig cannot do yet.
+     Verified against a coach: NO. */
+  scooterPushes: {
+    name:'Scooter pushes',
+    note:'LFO glide · the right blade pushing three times, lifting and coming back between pushes',
+    path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:50}],
+    radius:500, duration:4.8,
+    keys:[
+      {t:0.0, ph:'Gliding on the left foot, the right foot beside it', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(0,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.08, ph:'The right blade down beside it, turned out', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-2,20,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.2, ph:'Pushing: the blade driving out and back', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.27, ph:'The foot lifting off the ice', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(-16,32,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.3333, ph:'Gliding on the left foot, the right foot beside it', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(0,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.4133, ph:'The right blade down beside it, turned out', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-2,20,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.5333, ph:'Pushing: the blade driving out and back', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.6033, ph:'The foot lifting off the ice', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(-16,32,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.6667, ph:'Gliding on the left foot, the right foot beside it', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(0,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.7467, ph:'The right blade down beside it, turned out', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-2,20,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.8667, ph:'Pushing: the blade driving out and back', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.9367, ph:'The foot lifting off the ice', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(-16,32,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:1, ph:'Back beside the gliding foot', hipZ:94, hipYaw:0, shYaw:-4,
+       sh:P(-2,0,146), L:P(2,6,0,-0.5), R:P(0,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+    ]},
+
 };
 
 /* ONE ASYMMETRIC POSE, authored deliberately — 29/08/2026, Martyn's call.
