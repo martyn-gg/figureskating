@@ -20,6 +20,7 @@
    and the guide quietly stops working.
 */
 
+import { TABS } from '../src/lib/notebook.js';
 import { SCHEMES, NOTEBOOK } from '../src/lib/tokens.js';
 
 const channels = hex => {
@@ -96,7 +97,9 @@ const BROKEN = { light: { 'edge-out': '#0f766e', 'edge-in': '#b45309',
 const NB_PAIRS = [
   ['sticky-ink', 'sticky', 4.5, 'the sticky note'],
   ['warn', 'sticky', 4.5, 'the warning on the sticky note'],
-  ...['basic', 'edge', 'turn', 'jump', 'spin', 'grade'].map(t => ['tab-ink', `tab-${t}`, 4.5, `the ${t} tab label`]),
+  /* Every tab in TABS, so a tab added without a colour fails here as well as looking
+     wrong: the Dance tab shipped on 03/10/2026 with no colour and nothing noticed. */
+  ...TABS.map(t => t.id).map(t => ['tab-ink', `tab-${t}`, 4.5, `the ${t} tab label`]),
 ];
 
 const broken = process.argv.includes('--break');

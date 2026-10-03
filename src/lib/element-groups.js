@@ -45,8 +45,16 @@ export const LEARN = {
   position: ['extended-edge', 'teapot', 'spiral', 'spread-eagle', 'ina-bauer'],
   step: ['slip-step'],
   sequence: ['step-sequence', 'choreographic-sequence'],
-  /* In British Ice Skating's pattern dance order, National 1 to 5. */
-  dance: ['rhythm-blues', 'dutch-waltz', 'canasta-tango', 'fiesta-tango', 'swing-dance'],
+  /* In British Ice Skating's pattern dance order, National 1 to Gold Star, then the
+     U.S. Figure Skating dances British Ice Skating does not test. */
+  dance: [
+    'rhythm-blues', 'dutch-waltz', 'canasta-tango', 'fiesta-tango', 'hickory-hoedown',
+    'willow-waltz', 'swing-dance', 'foxtrot', 'fourteenstep', 'rocker-foxtrot',
+    'european-waltz', 'blues', 'silver-samba', 'american-waltz', 'tango', 'kilian',
+    'quickstep', 'argentine-tango', 'starlight-waltz', 'paso-doble', 'rhumba',
+    'cha-cha-congelado', 'ravensburger-waltz', 'cha-cha', 'ten-fox', 'tea-time-foxtrot',
+    'yankee-polka', 'tango-romantica', 'viennese-waltz', 'westminster-waltz'
+  ],
 };
 const JUMP_ORDER = Object.values(JUMPS).map(j => j.name.toLowerCase());
 const handRank = e => {

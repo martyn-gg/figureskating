@@ -11,6 +11,7 @@ dance:
   bpm: 104
   hold: reversed Kilian
   sameSteps: true
+  patternSeconds: 16
   steps:
     - { n: 1,  edge: LFO, beats: 1 }
     - { n: 2,  edge: RFI, beats: 1, how: Pr }

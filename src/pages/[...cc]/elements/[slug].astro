@@ -8,7 +8,7 @@ import PathThumb from '../../../components/PathThumb.astro';
 import { familyOf, teachRank, syllabusRank } from '../../../lib/element-groups.js';
 import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
 import BodyFrame from '../../../components/BodyFrame.astro';
-import { DANCE_KEY, stepLink, totalBeats } from '../../../lib/dance.js';
+import { DANCE_KEY, stepLink, patternBeats } from '../../../lib/dance.js';
 import Edge from '../../../components/Edge.astro';
 import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../../lib/skating.js';
 
@@ -291,29 +291,46 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       a step links to an element. */}
   {d.dance && (() => {
     const D = d.dance, ids = new Set(allElements.map(e => e.id));
-    const used = [...new Set(D.steps.map(s => s.how).filter(Boolean))];
+    const used = D.steps ? [...new Set(D.steps.map(s => s.how).filter(Boolean))] : [];
     return (<>
       <h2>The dance</h2>
       <p>{D.rhythm} in {D.meter}, {D.bpm} beats a minute. The hold is {D.hold}.
         {' '}{D.sameSteps ? 'Both partners skate the same steps.' : 'The partners skate different steps.'}
-        {' '}{D.steps.length} steps and {totalBeats(D.steps)} beats to one pattern.</p>
-      <table class="grid steps">
-        <thead><tr><th>Step</th><th>Edge</th><th>Beats</th><th>How</th></tr></thead>
-        <tbody>
-          {D.steps.map((s, i) => {
-            const k = s.how && DANCE_KEY[s.how], ln = stepLink(D.steps, i);
-            const word = k && (ln && ln.slug && ids.has(ln.slug)
-              ? <a href={url(`elements/${ln.slug}/`)}>{k.word}</a> : k.word);
-            return <tr><td>{s.n}</td><td><b>{s.edge}</b></td>
-              <td>{Array.isArray(s.beats) ? s.beats.join(' + ') : s.beats}</td>
-              <td>{word}{k && s.opt ? '; ' : ''}{s.opt}</td></tr>;
-          })}
-        </tbody>
-      </table>
-      <p class="small">Edges are written foot, direction, edge, and a change of edge carries
-        both letters. The steps and beats are read off the dance diagram in US Figure
-        Skating's 2026-27 rulebook{used.length > 0 && <>, and the words for {used.map((h, i) =>
-          <>{i > 0 ? (i === used.length - 1 ? ' and ' : ', ') : ''}{h}</>)} come from its key</>}.</p>
+        {' '}{(D.steps || D.chart).length} steps and {patternBeats(D)} beats to one pattern.</p>
+      {D.chart && (<>
+        <table class="grid steps">
+          <thead><tr><th>Step</th><th>Hold</th>
+            {D.sameSteps ? <th>Both partners</th> : <><th>Lead</th><th>Follow</th></>}
+            <th>Beats</th></tr></thead>
+          <tbody>
+            {D.chart.map(r => <tr><td>{r.n}</td><td>{r.hold}</td><td><b>{r.lead}</b></td>
+              {!D.sameSteps && <td><b>{r.follow}</b></td>}<td>{r.beats.replace(/\+/g, ' + ')}</td></tr>)}
+          </tbody>
+        </table>
+        <p class="small">The steps are in the rulebook's own notation: foot, direction and edge,
+          with Pr for a progressive, Ch for a chassé, SwR for a swing roll, XB and XF for a cross
+          step behind or in front, 3 for a three turn, CSt and SSt for C and S steps, Op for open
+          and Cl for closed. From the step chart in US Figure Skating's 2026-27 rulebook.</p>
+      </>)}
+      {D.steps && (<>
+        <table class="grid steps">
+          <thead><tr><th>Step</th><th>Edge</th><th>Beats</th><th>How</th></tr></thead>
+          <tbody>
+            {D.steps.map((s, i) => {
+              const k = s.how && DANCE_KEY[s.how], ln = stepLink(D.steps, i);
+              const word = k && (ln && ln.slug && ids.has(ln.slug)
+                ? <a href={url(`elements/${ln.slug}/`)}>{k.word}</a> : k.word);
+              return <tr><td>{s.n}</td><td><b>{s.edge}</b></td>
+                <td>{Array.isArray(s.beats) ? s.beats.join(' + ') : s.beats}</td>
+                <td>{word}{k && s.opt ? '; ' : ''}{s.opt}</td></tr>;
+            })}
+          </tbody>
+        </table>
+        <p class="small">Edges are written foot, direction, edge, and a change of edge carries
+          both letters. The steps and beats are read off the dance diagram in US Figure
+          Skating's 2026-27 rulebook{used.length > 0 && <>, and the words for {used.map((h, i) =>
+            <>{i > 0 ? (i === used.length - 1 ? ' and ' : ', ') : ''}{h}</>)} come from its key</>}.</p>
+      </>)}
     </>);
   })()}
 

@@ -85,12 +85,12 @@ export const SCHEMES = { light: LIGHT, dark: DARK };
    emulateMedia and fail. tools/contrast.mjs measures these separately.
 
    The decorative tokens at the end (ruling, margin, tape, sticky note,
-   highlighter, the six index tabs) carry no information, apart from the sticky
+   highlighter, the index tabs) carry no information, apart from the sticky
    note, which carries the unverified warning; that pair and the tab labels are
    measured too. */
 const NB_SHARED = {
   'tab-basic': '#f6c76b', 'tab-edge': '#a9d1e8', 'tab-turn': '#b9dcb4',
-  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-grade': '#e6e0cf',
+  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-dance': '#f4b896', 'tab-grade': '#e6e0cf',
   'tab-ink': '#2b2b2e',
 };
 

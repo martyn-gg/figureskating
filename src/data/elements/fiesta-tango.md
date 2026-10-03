@@ -11,6 +11,7 @@ dance:
   bpm: 108
   hold: reversed Kilian, then Kilian from step 11
   sameSteps: true
+  patternSeconds: 18
   steps:
     - { n: 1,  edge: LFO,  beats: 2 }
     - { n: 2,  edge: RFO,  beats: 2 }

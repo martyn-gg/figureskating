@@ -9,6 +9,7 @@ dance:
   bpm: 96
   hold: closed, with hands only for steps 9 to 13 and 24 to 28
   sameSteps: true
+  patternSeconds: 40
   steps:
     - { n: 1,  edge: LFO, beats: 1 }
     - { n: 2,  edge: RFI, beats: 1, how: Ch }

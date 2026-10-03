@@ -9,6 +9,7 @@ dance:
   bpm: 138
   hold: Kilian
   sameSteps: true
+  patternSeconds: 21
   steps:
     - { n: 1,  edge: LFO, beats: 2 }
     - { n: 2,  edge: RFI, beats: 1, how: Pr }

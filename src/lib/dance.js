@@ -53,3 +53,17 @@ export function stepLink(steps, i) {
 
 export const totalBeats = steps =>
   steps.reduce((a, s) => a + (Array.isArray(s.beats) ? s.beats.reduce((x, y) => x + y, 0) : s.beats), 0);
+
+/** A chart row's beats as written, "2+1" or "0.5+0.5", summed. */
+export const rowBeats = r => r.beats.split('+').reduce((a, b) => a + Number(b), 0);
+
+/** Beats in one pattern, whichever form the dance is written in. */
+export const patternBeats = D => D.chart ? D.chart.reduce((a, r) => a + rowBeats(r), 0) : totalBeats(D.steps);
+
+/** Beats the timing chart says one pattern should take, and how far off a step list
+    may be: the seconds are rounded to whole seconds, which at these tempi is up to
+    about a beat and a half. */
+export const expectedBeats = D => D.patternSeconds && {
+  beats: D.bpm * D.patternSeconds / 60,
+  slack: D.bpm / 120 + 0.5,
+};

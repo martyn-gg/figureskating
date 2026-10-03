@@ -98,14 +98,31 @@ const elements = defineCollection({
       bpm: z.number().positive(),
       hold: z.string(),
       sameSteps: z.boolean(),
+      /* Seconds one pattern takes, from the timing chart in the same rulebook. With the
+         tempo it says how many beats the step list should come to, which is the check
+         on a list read off a page by hand. */
+      patternSeconds: z.number().positive().optional(),
+      /* THE STEP CHART, for the dances whose steps carry turns, double steps or a
+         different step for each partner. Each row keeps the rulebook's notation as
+         written, because a three turn inside a progressive or a wide step on two feet
+         does not reduce to one edge, and a lossy version would be wrong in a way nobody
+         could see. `beats` is a sum as written, "2+1" or "0.5+0.5". */
+      chart: z.array(z.object({
+        n: z.string(),
+        hold: z.string().optional(),
+        lead: z.string().optional(),
+        follow: z.string().optional(),
+        beats: z.string().regex(/^[0-9.]+(\+[0-9.]+)*$/),
+        note: z.string().optional(),
+      })).min(1).optional(),
       steps: z.array(z.object({
         n: z.number().int().positive(),
         edge: z.string().regex(/^[LR][FB](O|I|OI|IO)$/),
         beats: z.union([z.number().positive(), z.array(z.number().positive()).length(2)]),
         how: z.enum(['Pr', 'Ch', 'SlCh', 'SwR', 'sw', 'CR', 'XB', 'XF', 'CSt', 'opCSt']).optional(),
         opt: z.string().optional(),
-      })).min(1),
-    }).optional(),
+      })).min(1).optional(),
+    }).refine(d => !!d.steps !== !!d.chart, 'a dance has steps or a chart, not both').optional(),
     /* A TRACING FOR AN ELEMENT THAT HAS NO ENTRY EDGE — added 19/09/2026.
 
        Everything with an `entry` draws itself: the page hands foot, edge and
