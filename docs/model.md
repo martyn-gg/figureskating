@@ -2386,6 +2386,44 @@ the buttons and nowhere else.
    circle, repeated. It is the largest piece here and also the
    next basic the guide owes (Skills and Basic 4 both ask for it).
 
+### Built, the same session: the splice, the page, and the first entrances
+
+- **The default keeps the element's own id.** The spec had every variant at `<id>@<entrance>`;
+  built, the first entrance is the move itself and only the others take the `@` name. Every
+  page, double, combination and hash that reads `MOVES.salchow` reads what it did, and the
+  three-turn cores are not cut out of their moves: `ENTRIES.<id>.join` says where the element
+  starts, and `sliceMove` cuts there when another entrance is joined on. `entries.mjs`
+  proves the cut is exact by putting each authored move back together with `withEntry` and
+  comparing every key.
+- **`withEntry(entry, core, …, keep)`** joins at the core's first key (`keep: 'core'`), or at
+  the entrance's last (`'entry'`, the core's first key dropped). The core's facing is turned
+  by whole turns to meet the entrance's. The move runs at the core's own frame rate.
+- **Built:** the loop from a forward inside three turn (`loop@three`, the toe loop's entrance)
+  and its double; the upright, sit, change-of-foot and combination spins entered from a
+  forward outside edge and three turn (the Salchow's), now their only and default entrance.
+- **The spins' entrance runs in slow motion.** A spin's first arc runs at nearly 5 m/s; the
+  Salchow's three at about 1. Redrawn at the spin's speed the three took a twelfth of a
+  second, the free boot turned 31° a frame and the cusp, whose depth is a fraction of its
+  length on the ice, pushed the blade out from under the body (`lean.mjs`). So the entrance
+  keeps the Salchow's clock, the skater picks up the spin's speed out of the turn (the
+  doubles' rule of slowing the part a reader needs to see), and the move runs at no fewer
+  than 120 frames a second, at which the pick-up is 3.2 cm a frame against continuity's 5.
+  The join is the Salchow's key out of the three; the spin's own first key is dropped, since
+  the three was never written to turn into it.
+- **The camel waits.** Its free leg has to rise from low behind to above the hip out of the
+  three, and every route tried bent the knee with the shin level and the boot pointing at the
+  ice (`freefoot.mjs`, 83 to 89° against 60). Declared in `entries.mjs` with the waltz jump,
+  Axel, Lutz, back spin and two-foot spin, each with what it waits on.
+- **On the page**, an element with more than one entrance shows them as buttons above the
+  rig, the default pressed; one with a single entrance names it. Under the controls a strip
+  marks the entrance, the jump or spin, and the exit, in proportion.
+- **`tools/entries.mjs`**, in the chain: every entrance named exists and nothing in `MOVES`
+  claims to be one that is not named; every built entrance arrives on the foot, edge and
+  direction its element starts on, facing within 20°, read off the source move's key, not off
+  anything `withEntry` recorded; the splice is exact; every jump and spin with a body has an
+  entrance or is declared waiting (a declared one that gains an entrance fails); and every one
+  ends on an exit. Mutations: edge 7, facing 7, splice 102, stale 1.
+
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
 `shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the

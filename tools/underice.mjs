@@ -268,7 +268,10 @@ for (const id of Object.keys(MOVES)) {
                   `   (${r.n} frame${r.n === 1 ? '' : 's'} from f=${r.from.toFixed(3)} to f=${r.to.toFixed(3)})`;
     /* The window and the foot decide whether this is a declared case at all. A run
        outside either is an ordinary failure, which is the point of naming them. */
-    const ex = (handover[id] || []).find(e => r.w === e.foot && r.from >= e.from && r.to <= e.to);
+    /* Windows are written on the element's own clock. A move given an entrance since
+       (moves.js ENTRIES, 04/10/2026) has its element later on its clock: map them. */
+    const at = MOVES[id]?.entrance?.at ?? 0, on = x => at + x * (1 - at);
+    const ex = (handover[id] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002);
     if (ex) {
       declared.add(ex);
       if (r.cm > ex.cm + JITTER) {

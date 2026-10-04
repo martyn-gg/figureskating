@@ -1,8 +1,17 @@
 ---
-import { MOVES } from '../lib/moves.js';
+import { MOVES, entrancesOf, phasesOf } from '../lib/moves.js';
 import { RATES, rateIndex } from '../lib/body-frame.js';
 const { move, views = 'top,side,rear', controls = true } = Astro.props;
 const m = MOVES[move];
+/* ENTRANCES — 04/10/2026, Session 34 (moves.js ENTRIES). A jump or spin that has more than
+   one entrance offers them as buttons, the one the move was written with first; each is a
+   move of its own, so switching remounts the rig. The strip under the controls marks where
+   the entrance ends and the exit begins, read off the move. */
+const options = controls ? entrancesOf(move) : [];
+const strip = id => { const p = phasesOf(id);
+  return p && (p.entry > 0 || p.exit < 1) ? [p.entry, p.exit - p.entry, 1 - p.exit].map(x => (100 * x).toFixed(2)) : null; };
+const middle = m && m.path.some(g => g.kind === 'line') ? 'Jump' : 'Spin';
+const bar = options.length ? strip(move) : null;
 /* The button's opening label comes from the same list the script cycles, so the
    server-rendered markup and the client cannot disagree about it. */
 const rate0 = rateIndex(m);
@@ -10,22 +19,37 @@ const [, rateText, rateWords] = RATES[rate0];
 ---
 {m && (
 <figure class="bf" data-move={move} data-views={views}>
+  {options.length > 1 && (
+    <div class="bf-entries" role="group" aria-label="Entrance">
+      <span>Entrance</span>
+      {options.map((o, i) => (
+        <button type="button" data-entry={o.move} aria-pressed={i === 0 ? 'true' : 'false'}
+                data-note={MOVES[o.move].note} data-bar={(strip(o.move) || []).join(',')}>{o.name}</button>
+      ))}
+    </div>
+  )}
+  {options.length === 1 && <p class="bf-entries"><span>Entrance</span> {options[0].name}</p>}
   <div class="bf-views"></div>
-  {controls && (
+  {controls && (<>
     <div class="bf-ctl">
       <button type="button" data-play aria-label="Play or pause">❚❚</button>
       <button type="button" class="spd" data-speed data-rate={rate0} data-slow={rate0 ? '' : undefined}
             aria-label={`Playback speed, currently ${rateWords}`}>{rateText}</button>
       <input type="range" min="0" max="1000" value="0" data-scrub aria-label="Scrub" />
     </div>
+    {bar && (
+      <div class="bf-phases" aria-hidden="true" data-phases>
+        <span style={`flex-basis:${bar[0]}%`}>Entrance</span><span style={`flex-basis:${bar[1]}%`}>{middle}</span><span style={`flex-basis:${bar[2]}%`}>Exit</span>
+      </div>
+    )}
     <p class="bf-phase" data-phase></p>
-  )}
+  </>)}
   <div class="bf-readouts">
     <span>shoulder to hip <b data-twist>—</b></span>
     <span>on the <b data-blade>—</b></span>
   </div>
   <figcaption>
-    {m.note}. Negative twist means the shoulders are held back against the hips, which
+    <span data-note>{m.note}</span>. Negative twist means the shoulders are held back against the hips, which
     stores rotation before a takeoff and checks it on a landing.
   </figcaption>
 </figure>
@@ -44,8 +68,8 @@ const [, rateText, rateWords] = RATES[rate0];
     const blade = fig.querySelector('[data-blade]');
     let lastWrite = 0;
 
-    const rig = mount(host, {
-      move: fig.dataset.move,
+    const start = id => mount(host, {
+      move: id,
       views: fig.dataset.views.split(','),
       onFrame(i, pose, tw, zone) {
         /* Ten updates a second is unreadable. Write at most eight, and only when
@@ -59,6 +83,7 @@ const [, rateText, rateWords] = RATES[rate0];
         if (blade && blade.textContent !== zone) blade.textContent = zone;
       },
     });
+    let rig = start(fig.dataset.move);
     if (scrub) scrub.max = String(rig.frames - 1);
 
     play?.addEventListener('click', () => {
@@ -82,6 +107,19 @@ const [, rateText, rateWords] = RATES[rate0];
       if (rate) spd.setAttribute('data-slow', ''); else spd.removeAttribute('data-slow');
       rig.speed = v;
       if (!rig.playing) { rig.playing = true; if (play) play.textContent = '❚❚'; }
+    });
+
+    const note = fig.querySelector('[data-note]'), phases = fig.querySelector('[data-phases]');
+    for (const b of fig.querySelectorAll('[data-entry]')) b.addEventListener('click', () => {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      const playing = rig.playing, speed = rig.speed;
+      rig.destroy();
+      rig = start(b.dataset.entry);
+      rig.playing = playing; rig.speed = speed;
+      if (scrub) scrub.max = String(rig.frames - 1);
+      for (const o of fig.querySelectorAll('[data-entry]')) o.setAttribute('aria-pressed', String(o === b));
+      if (note) note.textContent = b.dataset.note;
+      if (phases && b.dataset.bar) b.dataset.bar.split(',').forEach((w, i) => { phases.children[i].style.flexBasis = w + '%'; });
     });
 
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {

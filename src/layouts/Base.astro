@@ -260,6 +260,20 @@ const alternates = hasCopies ? [
     font-family:ui-sans-serif,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
   .bf-ctl button.spd[data-slow]{border-color:var(--accent);color:var(--accent)}
   .bf-ctl input[type=range]{flex:1;accent-color:var(--accent);min-width:0;height:44px}
+  /* Entrances (moves.js ENTRIES): a row of choices above the rig, and a strip under the
+     controls marking where the entrance ends and the exit begins. */
+  .bf-entries{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:0 0 .6rem;
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem;color:var(--ink-soft)}
+  .bf-entries span{font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;margin-right:.2rem}
+  .bf-entries button{min-height:44px;padding:0 .9rem;border-radius:999px;border:1px solid var(--ice-line);
+    background:var(--paper);color:var(--ink);cursor:pointer;font:inherit}
+  .bf-entries button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:var(--ice)}
+  .bf-phases{display:flex;margin:.35rem .7rem 0;font-family:ui-sans-serif,-apple-system,sans-serif;
+    font-size:.7rem;color:var(--ink-soft)}
+  .bf-phases span{flex-grow:0;flex-shrink:0;border-top:3px solid var(--ice-line);padding-top:.15rem;
+    white-space:nowrap;overflow:hidden;text-overflow:clip}
+  .bf-phases span:nth-child(2){border-top-color:var(--accent);text-align:center}
+  .bf-phases span:nth-child(3){text-align:right}
   .bf-phase{margin:.45rem 0 0;font-size:.82rem;color:var(--ink-soft);
     font-family:ui-sans-serif,-apple-system,sans-serif}
   .bf figcaption{margin-top:.6rem;font-family:ui-sans-serif,-apple-system,sans-serif;

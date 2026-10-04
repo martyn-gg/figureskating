@@ -108,7 +108,9 @@ for (const { slug, rig } of claims) {
 const named = new Map();
 for (const { slug, rig } of claims) named.set(rig, [...(named.get(rig) ?? []), slug]);
 for (const key of Object.keys(MOVES)) {
-  const pages = named.get(key) ?? [];
+  /* An entrance variant, `<id>@<entrance>` (moves.js ENTRIES), is offered on the page that
+     names its element, so the element's page names it. */
+  const pages = named.get(key) ?? named.get(key.split('@')[0]) ?? [];
   const excused = Object.prototype.hasOwnProperty.call(unpublished, key);
   if (pages.length && excused)
     fail(`STALE   ${key}  is named by ${pages.join(', ')}, and unpublished still says it is not`,

@@ -2743,7 +2743,10 @@ const doubleOf = (m, name, note) => {
   const b = a + f, grow = 1 + (AIR - 1) * f;
   const at = t => (t <= a ? t : t < b ? a + AIR * (t - a) : t + (AIR - 1) * f) / grow;
   const path = m.path.map((g, i) => (i === li ? { ...g, span: AIR * g.span, len: AIR * g.len } : { ...g }));
-  return { ...m, name, note, path, duration: m.duration * grow, keys: m.keys.map((k, i) => {
+  /* An entrance's end is a time on the ice before the flight, so it moves with the clock. */
+  return { ...m, name, note, path, duration: m.duration * grow,
+    ...(m.entrance ? { entrance: { ...m.entrance, at: at(m.entrance.at) } } : {}),
+    keys: m.keys.map((k, i) => {
     const o = { ...k, t: at(k.t) };
     for (const f of ['sh','L','R','LH','RH']) if (o[f]) o[f] = { ...o[f] };
     if (i >= down) { o.hipYaw += 360; o.shYaw += 360; }
@@ -3113,6 +3116,157 @@ Object.assign(MOVES, {
   doubleLutzDoubleToeLoop: comboOf(MOVES.doubleLutz, MOVES.doubleToeLoop, 'Double Lutz + double toe loop',
     'LBO takeoff off the right pick · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
 });
+
+/* ENTRANCES — 04/10/2026, Session 34, docs/model.md "Entrances and exits", agreed with
+   Martyn the same day. An entrance is the run of path and keys before an element's
+   take-off (a jump) or its centring (a spin), and an element may have more than one.
+
+   THE DEFAULT ENTRANCE IS THE AUTHORED ONE, AND THE ELEMENT'S OWN ID KEEPS IT. Where a move
+   was written with its entrance (the Salchow, flip and toe loop and their three turns), the
+   move is unchanged and ENTRIES records where the entrance ends: `join`, the index of the
+   first path segment that belongs to the element. Every page, double, combination and hash
+   that reads MOVES.salchow reads what it read before. A second entrance is a new move,
+   `<id>@<entrance>`, built by withEntry from another move's entrance and this move's core
+   (everything from `join` on), so every checker that walks MOVES walks it unasked.
+
+   withEntry joins at the core's first key. The entrance's own last key sits on the same
+   instant (the boundary) and is dropped: it says where the entrance was written to arrive,
+   and entries.mjs asserts it agrees with the core's first key on foot, edge, direction and
+   facing, which is what makes the two halves one movement. The core's facing is turned by
+   whole turns to meet the entrance's, as comboOf does.
+
+   AN EXIT IS AN ELEMENT'S LAST PATH SEGMENT: every jump's RBO run-out after the check, every
+   spin's opening arc. `phasesOf` reads both boundaries off the move for the page. */
+export const boundsOf = m => {
+  const total = m.path.reduce((x, g) => x + g.span, 0);
+  let c = 0;
+  return [0, ...m.path.map(g => (c += g.span) / total)];
+};
+/* Segments [from, to) of a move as a move of their own, spans in seconds, keys re-timed. */
+export const sliceMove = (m, from, to = m.path.length) => {
+  const b = boundsOf(m), t0 = b[from], t1 = b[to];
+  const keys = m.keys.filter(k => k.t >= t0 - 1e-9 && k.t <= t1 + 1e-9)
+    .map(k => ({ ...copyKey(k), t: (k.t - t0) / (t1 - t0) }));
+  if (Math.abs(keys[0].t) > 1e-6 || Math.abs(keys[keys.length - 1].t - 1) > 1e-6)
+    throw new Error(`sliceMove: ${m.name} has no key on the boundaries of segments ${from} to ${to}`);
+  keys[0].t = 0; keys[keys.length - 1].t = 1;
+  return { name: m.name, path: secsPath(m).slice(from, to), radius: m.radius,
+           duration: m.duration * (t1 - t0), keys };
+};
+export const withEntry = (entry, core, name, note, extra = {}, keep = 'core') => {
+  const e = entry.keys[entry.keys.length - 1], c = core.keys[0];
+  const turn = 360 * Math.round((e.hipYaw - c.hipYaw) / 360);
+  const D = entry.duration + core.duration;
+  const path = [...entry.path.map(g => ({ ...g })), ...secsPath(core)];
+  /* keep 'core' joins at the core's first key; keep 'entry' at the entrance's last, and the
+     core's first key is dropped instead, for a core whose first key is a pose the entrance
+     cannot turn into within its last segment (the spins, below). */
+  const keys = [
+    ...entry.keys.slice(0, keep === 'core' ? -1 : undefined).map(k => ({ ...copyKey(k), t: k.t * entry.duration / D })),
+    /* keep a number: the entrance's last key, and the core's first key moved that far into
+       the core (a fraction of its clock) rather than dropped. */
+    ...(typeof keep === 'number' ? [{ ...core.keys[0], t: keep }, ...core.keys.slice(1)]
+        : core.keys.slice(keep === 'core' ? 0 : 1)).map(k => { const o = copyKey(k);
+      o.t = (entry.duration + k.t * core.duration) / D; o.hipYaw += turn; o.shYaw += turn; return o; }),
+  ];
+  /* A key on a segment boundary in either half sits on it exactly in the whole. */
+  /* The core's own frame rate, carried over the entrance: the element plays exactly as
+     finely as on its own page. */
+  const frames = Math.round((core.frames ?? 320) / core.duration * D);
+  const bounds = boundsOf({ path });
+  for (const k of keys) { const at = bounds.find(g => Math.abs(g - k.t) < 0.5 / frames); if (at !== undefined) k.t = at; }
+  return { ...core, name, note, path, radius: core.radius, duration: +D.toFixed(4), frames, keys,
+           entrance: { at: entry.duration / D, arrives: { skate: e.skate, edge: e.edge, dir: e.dir, hipYaw: e.hipYaw - turn },
+                       ...extra } };
+};
+
+/* The entrances drawn so far. `join` is where the element starts in the authored move;
+   `from: [move, join]` takes another move's entrance. Commonest first, from coaches' public
+   teaching pages and the programmes held in sources/ (docs/model.md). */
+const FO_THREE = 'Forward outside three turn', FI_THREE = 'Forward inside three turn';
+export const ENTRIES = {
+  salchow:  { join: 2, list: [{ id: 'three', name: FO_THREE }] },
+  flip:     { join: 2, list: [{ id: 'three', name: FO_THREE }] },
+  toeLoop:  { join: 2, list: [{ id: 'three', name: FI_THREE }] },
+  loop:     { join: 0, list: [{ id: 'edge',  name: 'Back outside edge' },
+                              { id: 'three', name: FI_THREE, from: ['toeLoop', 2] }] },
+};
+/* Variants: built, named and added to MOVES. */
+for (const [id, E] of Object.entries(ENTRIES)) {
+  const core = sliceMove(MOVES[id], E.join);
+  for (const v of E.list.slice(1)) {
+    const [src, j] = v.from, entry = sliceMove(MOVES[src], 0, j);
+    MOVES[`${id}@${v.id}`] = withEntry(entry, E.join ? core : MOVES[id],
+      `${MOVES[id].name}, from a ${v.name.toLowerCase()}`, `${v.name} · ${MOVES[id].note}`);
+  }
+}
+
+/* A double has its single's entrances: doubleOf reads the single's keys, whichever entrance
+   they start with. */
+for (const [id, E] of Object.entries(ENTRIES)) {
+  const dbl = 'double' + id[0].toUpperCase() + id.slice(1);
+  if (!MOVES[dbl]) continue;
+  ENTRIES[dbl] = { join: E.join, list: E.list.map(v => ({ ...v })) };
+  for (const v of E.list.slice(1))
+    MOVES[`${dbl}@${v.id}`] = doubleOf(MOVES[`${id}@${v.id}`], `${MOVES[dbl].name}, from a ${v.name.toLowerCase()}`,
+      `${v.name} · ${MOVES[dbl].note}`);
+}
+
+/* EVERY SPIN THAT CENTRES ON A BACK INSIDE EDGE IS ENTERED FROM A FORWARD OUTSIDE EDGE AND A
+   THREE TURN: the skater steps onto a deep forward outside edge, the knee bent, and turns the
+   three into the spin (coaches' public teaching pages, base guidance only; one centres the spin
+   on that three turn). The entrance is the Salchow's, the same edge and the same turn, and it
+   becomes the spin's default: the spin's own wide and tightening arcs on the back inside edge
+   follow it as before.
+
+   AT THE SALCHOW'S PACE, IN SLOW MOTION. A spin is entered fast: its own first arc runs at
+   nearly five metres a second, and the Salchow's three is drawn at about one. Redrawn at the
+   spin's speed the three turn took a twelfth of a second, the free boot turned 31° a frame,
+   and its cusp, whose depth is a fraction of its length on the ice (rig-math.js, cuspAt),
+   pushed the blade out from under the body (lean.mjs). So the entrance keeps the Salchow's
+   path and clock, and the skater picks up the spin's speed out of the turn: the doubles'
+   rule (doubleOf) of slowing the part a reader needs to see. At 56 frames a second that
+   pick-up was a lurch (continuity.mjs: 6.7 cm a frame against 5); the move runs at no
+   fewer than ENTRY_FPS, at which it is 3.2. */
+const ENTRY_FPS = 120;
+/* THE JOIN IS THE SALCHOW'S, THE KEY OUT OF THE THREE TURN CHECKED ON THE BACK INSIDE EDGE,
+   and the spin's own first key is dropped. Joined at the spin's first key, the three turned
+   the skater into a pose the Salchow's three was never written to reach: the camel's free
+   leg went from low in front to above the hip behind inside the turn (freefoot.mjs: 67.8°
+   against 60), and the shoulders the spin carries forward pushed the body off the blade's
+   edge at the apex (lean.mjs, 2.7 cm). Out of the three, the spin's second key, where the
+   circle is tightening, is reached across the whole wide arc. The spins as they stood, which
+   entries.mjs checks the join against, are kept in CORES. */
+export const CORES = {};
+/* THE CAMEL WAITS. Out of the Salchow's three its free leg has to go from low behind to
+   above the hip, and every route tried (dropping its first key, keeping it a little later,
+   one, two and three keys between, the leg kept at full reach, the foot pointed and not)
+   passed through a bent knee with the shin level and the boot pointing at the ice
+   (freefoot.mjs, 83 to 89° against 60). A camel entered from a three swings the leg up
+   from the hip, straight, and this rig's knee bends whenever the foot is short of full
+   reach. entries.mjs declares it. */
+{
+  const entry = sliceMove(MOVES.salchow, 0, 2);
+  for (const id of ['uprightSpin', 'sitSpin', 'changeFootSpin', 'combinationSpin']) {
+    const m = CORES[id] = MOVES[id];
+    MOVES[id] = withEntry(entry, m, m.name, `forward outside edge and three turn · ${m.note}`, {}, 'entry');
+    MOVES[id].frames = Math.max(MOVES[id].frames, Math.round(ENTRY_FPS * MOVES[id].duration));
+    ENTRIES[id] = { join: 2, list: [{ id: 'three', name: FO_THREE, from: ['salchow', 2] }] };
+  }
+}
+/* Where a move's entrance ends and its exit begins, as fractions of its clock. */
+export const phasesOf = (id) => {
+  const m = MOVES[id]; if (!m) return null;
+  const base = id.split('@')[0], E = ENTRIES[base], b = boundsOf(m);
+  const entry = m.entrance ? m.entrance.at : E ? b[E.join] : 0;
+  return { entry, exit: b[m.path.length - 1] };
+};
+/* The entrances a page offers for a move: the default (the move itself) first. */
+export const entrancesOf = (id) => {
+  const E = ENTRIES[id];
+  if (!E) return [];
+  return E.list.map((v, i) => ({ id: v.id, name: v.name, move: i ? `${id}@${v.id}` : id }));
+};
 
 for(const m of Object.values(MOVES)) for(const k of m.keys){
   const R = lateral(k.shYaw), F = anterior(k.shYaw);
