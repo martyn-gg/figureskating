@@ -72,7 +72,7 @@
    produce it with.
 
        node tools/twofoot.mjs
-       node tools/twofoot.mjs --break=air|float|apart|sense|bis|carry|dip|stray
+       node tools/twofoot.mjs --break=air|float|apart|sense|bis|carry|dip|stray|shared|drift|yaw
 */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -80,7 +80,8 @@ import { execFileSync } from 'node:child_process';
 import { ROOT } from './_rig.mjs';
 import { MOVES } from '../src/lib/moves.js';
 import { lobeSense, secondFoot, label } from '../src/lib/skating.js';
-import { onIceOf, edgeOf, dirOf, edgesDown, runnersDown, contactsDown, buildPath, poseAt, CLEAR } from '../src/lib/rig-math.js';
+import { onIceOf, edgeOf, dirOf, edgesDown, runnersDown, contactsDown, buildPath, poseAt, CLEAR,
+         trackRuns, trackedAt, TRACK_AGREE } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 /* CLEAR MOVED TO rig-math.js ON 20/09/2026 and is imported. It became load-bearing in
@@ -183,7 +184,10 @@ for (const [id, m] of Object.entries(MOVES))
         if (authored[f] === undefined) continue;
         carried++;
         const a = authored[f], b = got && got[f];
-        const same = typeof a === 'number' ? Math.abs(a - (b ?? NaN)) < 1e-6 : a === b;
+        /* A TRACKED FOOT'S YAW IS THE TRACK'S, read back off its own line, and the key's
+           number is held to it by section 6 within TRACK_AGREE rather than here. */
+        const tol = got && got.track && f === 'yaw' ? TRACK_AGREE : 1e-6;
+        const same = typeof a === 'number' ? Math.abs(a - (b ?? NaN)) < tol : a === b;
         if (!same)
           fail(`${where(id, k)}: the ${w} foot's ${f} is ${JSON.stringify(a)} in the keyframe ` +
             `and ${JSON.stringify(b)} after poseAt — lpP is dropping it`);
@@ -209,7 +213,7 @@ const brkPose = pose => {
   return pose;
 };
 
-let frames = 0, twoFootFrames = 0, handoverFrames = 0;
+let frames = 0, twoFootFrames = 0, handoverFrames = 0, trackedFrames = 0;
 for (const [id, m] of Object.entries(MOVES)) {
   const path = buildPath(m);
   for (let i = 0; i < path.length; i++) {
@@ -253,12 +257,89 @@ for (const [id, m] of Object.entries(MOVES)) {
     const down = edgesDown(pose);
     if (down.length < 2) continue;
     twoFootFrames++;
+    /* A blade on its own circle is on its own lobe by construction: that is what a
+       track is. Its claim is held in section 6, against the line it draws. */
+    if (down.some(w => pose[w].track)) { trackedFrames++; continue; }
     const senses = down.map(w => (BREAK === 'sense' && w !== pose.skate ? -1 : 1) *
       lobeSense(w, edgeOf(pose, w), dirOf(pose, w)));
     if (senses[0] !== senses[1])
       fail(`${id} f=${(i / (path.length - 1)).toFixed(3)}: ` +
         down.map((w, j) => `${w}${dirOf(pose, w)}${edgeOf(pose, w)} (${senses[j] > 0 ? '+1' : '-1'})`).join(' and ') +
         ' are on two different lobes, so they cannot be on one circle');
+  }
+}
+
+/* ── 6: a blade on its own circle ─────────────────────────────────────
+   04/10/2026, Session 33. rig-math.js, *a second blade on its own circle*. A track
+   takes a second blade out of assertion 4 — the swizzle's two inside edges are on two
+   lobes and must be — so this is what it answers to instead, and all three claims come
+   from the line the renderer draws, not from the track that made it:
+
+     a  THE KEYS SAY WHERE THE BLADE IS. Inside a track the keys' t, n and yaw do not
+        place the foot, so they may not disagree with it by more than TRACK_AGREE.
+     b  THE EDGE IS THE WAY THE LINE TURNS. The blade's contact in the world, rebuilt
+        from poseAt per frame, turns frame to frame; wherever it turns by more than
+        BEND, the sense of the turn is the lobeSense of the edge edgeOf reports. Where
+        the edge is a flat the blade does not turn while it travels.
+     c  THE BLADE POINTS ALONG ITS LINE. A gripping blade travels along itself, so the
+        boot's heading and the direction its contact moves agree within ALONG, wherever
+        it moves more than MOVES_BY. The pivot is where it does not move.
+
+       --break=shared   the derived edge, as though the blades shared a circle ... 952
+       --break=drift    every tracked key's t moved 3 cm ............................ 72
+       --break=yaw      every tracked foot's yaw read as nought ...................... 826 */
+const BEND = 0.05, ALONG = 4, MOVES_BY = 0.2;
+let trackKeys = 0, trackLine = 0;
+for (const [id, m] of Object.entries(MOVES)) {
+  const runs = trackRuns(m);
+  if (!runs.length) continue;
+  const path = buildPath(m), n = path.length;
+  for (const r of runs) {
+    for (const k of m.keys) {
+      if (k.t < r.from || k.t > r.to) continue;
+      trackKeys++;
+      const q = k[r.foot], g = trackedAt(r, k.t), dt = BREAK === 'drift' ? 3 : 0;
+      const off = Math.max(Math.abs(q.t + dt - g.t), Math.abs(q.n - g.n), Math.abs((q.yaw || 0) - g.yaw));
+      if (off > TRACK_AGREE)
+        fail(`${where(id, k)}: ${r.foot}'s key says t ${q.t + dt}, n ${q.n}, yaw ${q.yaw}, and its track ` +
+          `puts it at t ${g.t.toFixed(2)}, n ${g.n.toFixed(2)}, yaw ${g.yaw.toFixed(2)}`);
+    }
+    const w = r.foot, world = [];
+    for (let i = 0; i < n; i++) {
+      const tt = i / (n - 1), pose = poseAt(m, tt), p = path[i], q = pose[w];
+      const T = [Math.cos(p.th), Math.sin(p.th)], N = [-Math.sin(p.th), Math.cos(p.th)];
+      const hx = p.x - T[0]*(p.ot || 0) - N[0]*(p.on || 0), hy = p.y - T[1]*(p.ot || 0) - N[1]*(p.on || 0);
+      const yaw = BREAK === 'yaw' ? 0 : (q.yaw || 0);
+      world.push({ x: hx + T[0]*q.t + N[0]*q.n, y: hy + T[1]*q.t + N[1]*q.n, tt, pose,
+                   head: p.th - yaw * Math.PI / 180, on: tt >= r.from && tt <= r.to });
+    }
+    for (let i = 1; i < n - 1; i++) {
+      const a = world[i - 1], b = world[i], c = world[i + 1];
+      if (!a.on || !c.on || onIceOf(b.pose, w) !== 'blade') continue;
+      trackLine++;
+      const at = `${id} f=${b.tt.toFixed(3)}`;
+      const d1 = [b.x - a.x, b.y - a.y], d2 = [c.x - b.x, c.y - b.y];
+      const l1 = Math.hypot(...d1), l2 = Math.hypot(...d2);
+      if (l1 < MOVES_BY || l2 < MOVES_BY) continue;            // turning where it stands
+      const bend = Math.atan2(d1[0]*d2[1] - d1[1]*d2[0], d1[0]*d2[0] + d1[1]*d2[1]) * 180 / Math.PI;
+      const pose = b.pose;
+      const edge = BREAK === 'shared'
+        ? secondFoot({ foot: pose.skate, edge: pose.edge, dir: pose.dir }, dirOf(pose, w)).edge
+        : edgeOf(pose, w);
+      if (edge === 'O' || edge === 'I') {
+        if (Math.abs(bend) > BEND && -Math.sign(bend) !== lobeSense(w, edge, dirOf(pose, w)))
+          fail(`${at}: ${w} is reported on ${w}${dirOf(pose, w)}${edge}, and the line it draws turns ` +
+            `${bend > 0 ? 'clockwise' : 'anticlockwise'} — that edge turns the other way`);
+      } else if (Math.abs(bend) > BEND)
+        fail(`${at}: ${w} is flat and its line turns ${bend.toFixed(2)}° in a frame`);
+      /* The direction of travel: the chord through the frame. Backwards, the boot
+         points the other way along it, and the heading here is the travel's. */
+      const mv = Math.atan2(c.y - a.y, c.x - a.x);
+      let diff = (mv - b.head) * 180 / Math.PI;
+      diff = ((diff + 180) % 360 + 360) % 360 - 180;
+      if (Math.abs(diff) > ALONG)
+        fail(`${at}: ${w} is gripping and points ${diff.toFixed(1)}° off the line its contact is cutting`);
+    }
   }
 }
 
@@ -297,9 +378,11 @@ console.log(`  ${keys} keyframes, ${twoFoot} with two blades down`);
 console.log(`  ${carried} authored per-foot fields, every one of them surviving poseAt`);
 console.log(`  ${frames} frames, ${twoFootFrames} with two blades down, ${handoverFrames} foot-frames changing hands`);
 console.log(`  ${pairs} two-foot pairs read out of British Ice Skating's Skills 1`);
+console.log(`  ${trackKeys} keys on a second blade's own track agreeing with it, ${trackLine} frames of its line ` +
+  `turning with its edge and running along its boot, ${trackedFrames} two-blade frames on two circles`);
 console.log(bad
   ? `\n${bad} failure${bad === 1 ? '' : 's'}`
   : '\nevery contact claimed with the ice is touching it, every free foot is clear\n' +
     'or changing hands, every tracing is drawn from a blade on the ice, and both\n' +
-    'blades of every two-foot pose are on one lobe');
+    'blades of every two-foot pose are on one lobe, or each on its own line and turning with its edge');
 process.exit(bad ? 1 : 0);

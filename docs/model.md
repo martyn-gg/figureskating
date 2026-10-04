@@ -2141,7 +2141,8 @@ What the second tracing is:
    successive contacts), solid where it grips.
 5. **Faint whole, live so far**, as the reference line is.
 
-What it does not do yet: give the second blade an edge of its own. Its edge is still derived
+What it does not do yet: give the second blade an edge of its own (built in Session 33, *A
+second blade on its own circle*, below). Its edge is still derived
 as though it shared the reference's circle, which is why the swizzles stay excused; the line
 will show where that derivation is wrong rather than fix it.
 
@@ -2152,6 +2153,47 @@ handover (marching, the change-foot spin), and on nothing else: no jump, no pick
 Looked at on eight: the pumps draw their scallops outside the circle, the snowplough two
 bands, the two-foot spin two spirals, marching two short tracks where the zigzag was, the
 slalom two lines 12 cm apart that at this scale read as one line in two colours.
+
+## A second blade on its own circle — 04/10/2026, Session 33
+
+The second tracing showed where the derived edge was wrong and did not fix it. Since
+Session 09 a second blade's edge has come from `secondFoot`: two blades on one circle share
+a lobe, so the letter falls out of the reference's. A swizzle is the case that breaks it:
+the blades run two halves of a lemon, curving opposite ways, on LFI and RFI together, which
+the derivation was written to refuse.
+
+**A second blade may have its own path.** `move.tracks` lists `{ foot, from, to, path,
+radius }`. The segments are the reference path's kind, built by the same `buildPath`, so the
+blade's edge comes out of its segment exactly as the reference blade's does: the curvature is
+computed from the segment's foot, edge and direction, and the two cannot disagree. The track
+is anchored where the foot is at `from` (the hip's place and heading on the reference path,
+plus the key's t, n and yaw) and after that the foot is wherever its track has got to,
+re-expressed hip-relative each frame, with its yaw the difference between its own heading and
+the path's. It is the pin's construction with a moving point, and it lives in `poseAt` for the
+pin's reason: every checker and every view reads the same foot. `edgeOf` returns the track's
+edge for a tracked blade and derives as before for every other.
+
+**A pivot is a path segment** (`kind: 'pivot'`): the heading swings by `sweep` on a smoothstep
+while the contact stays put, and the blade is flat through it. That is the pointed end of the
+lemon, where the toes come round with the feet together. At a constant rate a 60° pivot in ten
+frames stepped the path's rate of turn by 5.25° at each end against `continuity.mjs`'s 2.
+
+**`buildPath` takes `heading`**, the direction the path sets off in, defaulting to nought, so
+the swizzle's lemons run along the page and not at 30° to it.
+
+**What holds it**, `twofoot.mjs` section 6, off the line the renderer draws rather than the
+track that made it: the keys agree with the track within `TRACK_AGREE` (1 cm and 1°); the line
+turns the way its reported edge turns wherever it bends more than 0.05° a frame, and does not
+bend where the edge is a flat; and the blade points along its line within 4° wherever its
+contact moves. Assertion 4 (one lobe) skips a pair with a tracked blade, since that is what a
+track is for. `lean.mjs`'s TRACK route measures a tracked blade across its own line. Mutations:
+`--break=shared` (the derived edge back) 952, `--break=yaw` (the tracked yaw read as nought)
+826, `--break=drift` (every tracked key 3 cm out) 72.
+
+**The backward wiggles did not need it.** `drawn.mjs` excused them as a swizzle, curving
+opposite ways. The guide's own page, and all three programmes' words, have the feet swinging
+to the same side together under still shoulders: the backward slalom's two blades on one
+curve, small and quick, with the twist added. So they draw with the derived edge.
 
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 

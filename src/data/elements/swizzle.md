@@ -1,6 +1,7 @@
 ---
 name: Swizzle
 kind: basic
+rig: swizzle
 summary: Both blades on the ice throughout, drawing two mirrored curves that open and close.
 aliases: ["lemon", "sculling", "forward swizzle"]
 names: {"nz": "Sculling"}

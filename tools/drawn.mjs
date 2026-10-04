@@ -46,16 +46,6 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 /* slug → why it draws nothing. Remove an entry when the page gains a picture. */
 const cannotDraw = {
   'other-names':                 'a listing of aliases, not an element',
-  /* RE-READ 04/10/2026, Session 32, after the half-swizzle pumps were drawn. A turned
-     blade is no longer the obstacle (PUSH, 19/09/2026). In a swizzle each blade runs
-     along its OWN curved line, the two halves of the lemon curving opposite ways: the
-     reference can follow its half as an arc, but the second blade's edge is derived as
-     though it shared the reference's circle, which is the wrong way round here. Its line
-     has been drawn since the second tracing (later the same session); its edge has not. */
-  'swizzle':                     'each blade runs its own half of the lemon, curving opposite ways: '
-                               + 'the second blade\'s edge is derived as though it shared the reference\'s circle',
-  'backward-swizzle':            'each blade runs its own half of the lemon, curving opposite ways: '
-                               + 'the second blade\'s edge is derived as though it shared the reference\'s circle',
   /* NOT A CLAIM ABOUT SKATERS — 19/09/2026, Martyn's challenge, and he is right that
      the first version of this line overreached. What the sweep found is that THIS RIG
      has no legal pose for it, and the rig holds one hip height, a knee that faced
@@ -67,7 +57,6 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  'backward-wiggles':            'both blades zigzag on their own lines, curving opposite ways, as the swizzles do',
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
   /* Both feet turned out about ninety degrees each, against the weight-bearing hip's

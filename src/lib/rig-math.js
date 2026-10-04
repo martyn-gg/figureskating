@@ -104,6 +104,11 @@ export function edgeOf(pose, which) {
      error is doing it on the inside. So it is stated on the foot, like pitch and
      yaw, and a pose that omits it is refused rather than guessed at. */
   if (on === 'skid') return pose[which].edge ?? null;
+  /* A BLADE ON ITS OWN CIRCLE HAS ITS OWN EDGE — 04/10/2026, Session 33. poseAt has
+     put it there from the segment the blade is on (trackedAt), the same way the
+     reference blade's comes from its path, so it is derived, not stated: the curvature
+     of the line it draws is computed from that same letter. */
+  if (on === 'blade' && pose[which].track) return pose[which].edge ?? null;
   if (on !== 'blade') return pose.edge;
   return secondFoot({ foot: pose.skate, edge: pose.edge, dir: pose.dir },
                     dirOf(pose, which)).edge;
@@ -879,7 +884,11 @@ export function buildPath(move){
      did. A jump combination is twice as long as a jump and sets it, so that it turns
      no further between frames than its jumps do on their own (moves.js, comboOf). */
   const TOTAL = move.frames ?? 320, pts = [];
-  let x=0, y=0, th=0;
+  /* `heading` is the direction the path sets off in, degrees + anticlockwise (the yaw
+     convention), defaulting to nought. The swizzle's left blade sets off toes out, at
+     an angle to the line the lemons run along, and without it the whole chain of
+     lemons is drawn tilted by that angle. Absent everywhere else, so nothing moves. */
+  let x=0, y=0, th=-(move.heading ?? 0)*D2R;
   pts.push({x,y,th});
   const spans = move.path.map(s => s.span ?? 1/move.path.length);
   const sum = spans.reduce((a,b)=>a+b, 0);
@@ -899,6 +908,24 @@ export function buildPath(move){
        no step in position or heading, only in curvature. A run of arcs of
        falling radius is therefore a spiral approximated in arcs, which is what
        a spin entrance is. */
+    /* A PIVOT — 04/10/2026, Session 33, for the swizzle. The blade turns where it stands:
+       the heading swings by `sweep` degrees (+ anticlockwise seen from above, the yaw
+       convention) and the contact does not move, so the tracing draws a point. That is
+       the pointed end of a lemon, where the toes come round from in to out with the feet
+       together. The blade is flat through it (the pose's edge is null), which is the only
+       way a blade can turn without travelling: an edge would carry it along its own curve.
+       Not an arc, so the arcs either side do not ramp into it.
+
+       The heading comes round on a smoothstep, not at a constant rate: the blade's rate
+       of turn starts and ends near the arcs' own, which is what continuity.mjs holds
+       every path to (WRENCH, 2° a frame). At a constant rate a 60° pivot in ten frames
+       stepped by 5.25° at each end. */
+    if (seg.kind === 'pivot') {
+      const S = u => u*u*(3 - 2*u);
+      for (let i = 1; i <= N; i++) pts.push({x, y, th: th - seg.sweep*D2R*S(i/N)});
+      th -= seg.sweep*D2R;
+      return;
+    }
     const R = seg.radius ?? move.radius;
     const k = seg.kind==='arc' ? -lobeSense(seg.foot,seg.edge,seg.dir)/R : 0;
     const len = seg.kind==='arc' ? R*seg.sweep*D2R : seg.len;
@@ -1315,7 +1342,7 @@ const hipOnPath = (path, t) => {
   const a = path[i], b = path[i + 1], L = (u, v) => u + (v - u) * f;
   const th = L(a.th, b.th), ot = L(a.ot || 0, b.ot || 0), on = L(a.on || 0, b.on || 0);
   const T = [Math.cos(th), Math.sin(th)], N = [-Math.sin(th), Math.cos(th)];
-  return { x: L(a.x, b.x) - T[0]*ot - N[0]*on, y: L(a.y, b.y) - T[1]*ot - N[1]*on, T, N };
+  return { x: L(a.x, b.x) - T[0]*ot - N[0]*on, y: L(a.y, b.y) - T[1]*ot - N[1]*on, T, N, th };
 };
 
 /** The pinned runs of a move: per foot, each maximal run of consecutive keys whose
@@ -1354,10 +1381,89 @@ export const pinnedAt = (run, t) => {
 export function poseAt(move, t){
   const pose = poseFree(move, t);
   const runs = move.keys ? pinRuns(move) : [];
-  if (!runs.length) return pose;
   for (const r of runs) {
     if (t < r.from || t > r.to) continue;
     pose[r.foot] = { ...pose[r.foot], ...pinnedAt(r, t), pin: true };
   }
+  for (const r of move.keys ? trackRuns(move) : []) {
+    if (t < r.from || t > r.to) continue;
+    pose[r.foot] = { ...pose[r.foot], ...trackedAt(r, t), track: true };
+  }
   return pose;
 }
+
+/* ═══ a second blade on its own circle ═══════════════════════════
+   04/10/2026, Session 33. docs/model.md, *A second blade on its own circle*.
+
+   Since Session 09 a second blade's edge has been derived: two blades on one circle
+   share a lobe, so the second letter falls out of the first (secondFoot). That is
+   true of every two-foot pose the rig held until the swizzle, and false of the
+   swizzle, whose blades run two halves of a lemon curving opposite ways: RFI and LFI
+   together, which the derivation cannot produce and was written to refuse.
+
+   So a second blade may have its OWN PATH. `move.tracks` lists them:
+
+       { foot: 'R', from: 0, to: 1, path: [segments], radius }
+
+   The segments are the reference path's own kind, built by the same buildPath, and
+   the blade's edge comes out of its segment exactly as the reference blade's does:
+   the curvature is computed FROM the segment's foot, edge and direction, so the edge
+   and the line cannot disagree. Nothing is stated that the geometry does not imply.
+
+   The track is anchored where the foot is at `from` — the hip's place and heading on
+   the reference path at that time, plus the foot's authored t, n and yaw there — and
+   from then on the foot is wherever its track has got to, re-expressed hip-relative
+   in the path frame at each time, with its yaw the difference between its own heading
+   and the path's. That is the pin's construction (pinRuns, above) with a moving point.
+
+   As with a pin, the authored t, n and yaw of the keys inside the run do not place the
+   foot. They say where it is, which is worth reading in a move, and tools/twofoot.mjs
+   holds them to the track within TRACK_AGREE, so they cannot drift from it. Not on the
+   reference blade: the path is rooted on it, and a track there would be a second
+   path for one blade. */
+export const TRACK_AGREE = 1;                        // cm and degrees, an authored key against its track
+const trackCache = new WeakMap();
+const wrap180 = a => { a = ((a + 180) % 360 + 360) % 360 - 180; return a === -180 ? 180 : a; };
+
+export function trackRuns(move){
+  if (trackCache.has(move)) return trackCache.get(move);
+  const out = [];
+  if (move.tracks && move.tracks.length) {
+    const path = buildPath(move);
+    for (const tr of move.tracks) {
+      const k0 = (move.keys || []).find(k => Math.abs(k.t - tr.from) < 1e-9);
+      if (!k0 || !k0[tr.foot]) throw new Error(`track on ${tr.foot} from t=${tr.from}: no key there to anchor it`);
+      for (const k of move.keys)
+        if (k.t >= tr.from && k.t <= tr.to && k.skate === tr.foot)
+          throw new Error(`track on the reference blade (${tr.foot} at t=${k.t}): the path is rooted on it`);
+      const shape = buildPath({ path: tr.path, radius: tr.radius ?? move.radius, frames: move.frames });
+      const spans = tr.path.map(s => s.span ?? 1 / tr.path.length);
+      const sum = spans.reduce((a, b) => a + b, 0);
+      const h = hipOnPath(path, tr.from), q = k0[tr.foot];
+      const head = h.th - (q.yaw || 0) * D2R;           // the foot's own heading, path units
+      out.push({ foot: tr.foot, from: tr.from, to: tr.to, path, shape, segs: tr.path,
+                 bounds: spans.map((_, i) => spans.slice(0, i + 1).reduce((a, b) => a + b, 0) / sum),
+                 x: h.x + h.T[0]*q.t + h.N[0]*q.n, y: h.y + h.T[1]*q.t + h.N[1]*q.n, head });
+    }
+  }
+  trackCache.set(move, out);
+  return out;
+}
+
+/** Where a tracked foot is at time t: hip-relative t and n in the path frame, its yaw
+    off the path's heading, and the edge and direction of the segment it is on. */
+export const trackedAt = (run, t) => {
+  const u = Math.min(1, Math.max(0, (t - run.from) / Math.max(1e-9, run.to - run.from)));
+  const S = run.shape, xi = u * (S.length - 1);
+  const i = Math.min(S.length - 2, Math.floor(xi)), f = xi - i, a = S[i], b = S[i + 1];
+  const lx = a.x + (b.x - a.x) * f, ly = a.y + (b.y - a.y) * f, lth = a.th + (b.th - a.th) * f;
+  const c = Math.cos(run.head), s = Math.sin(run.head);
+  const wx = run.x + c*lx - s*ly, wy = run.y + s*lx + c*ly;
+  const h = hipOnPath(run.path, t), dx = wx - h.x, dy = wy - h.y;
+  let si = run.bounds.findIndex(e => u <= e + 1e-12); if (si < 0) si = run.segs.length - 1;
+  /* At a boundary the segment being LEFT holds, as a key's state does in poseFree. */
+  const seg = run.segs[si];
+  return { t: dx*h.T[0] + dy*h.T[1], n: dx*h.N[0] + dy*h.N[1],
+           yaw: wrap180(-(run.head + lth - h.th) / D2R),
+           edge: seg.kind === 'arc' ? seg.edge : null, dir: seg.dir };
+};

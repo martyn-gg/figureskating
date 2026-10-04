@@ -1,6 +1,7 @@
 ---
 name: Backward swizzle
 kind: basic
+rig: swizzleBack
 summary: The same two mirrored curves, pressed out and drawn back while travelling backwards.
 aliases: ["backward lemon", "backward sculling"]
 names: {"nz": "Backward sculling"}

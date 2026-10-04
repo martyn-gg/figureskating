@@ -15,7 +15,7 @@
    touching, which is most of what distinguishes one edge from another. A foot that
    really is on the picks says so with PICK() below, not with a pitch nobody flagged. */
 
-import { anterior, lateral, ANKLE_POINT } from './rig-math.js';
+import { anterior, lateral, ANKLE_POINT, buildPath } from './rig-math.js';
 
 /* `point` is how hard the free foot is pointed, in degrees from the right angle
    you stand at, and it is clamped to the boot's allowance in bootDir. It is
@@ -2215,6 +2215,151 @@ MOVES.halfSwizzlePumpsBack = {
   note:'LBO glide on the circle · the right blade pressing out and drawing in, four times, travelling backwards',
   path:[{kind:'arc', foot:'L', edge:'O', dir:'B', sweep:100}],
   radius:300, duration:6.4, keys: pumpKeys('B'),
+};
+
+/* THE SWIZZLES — 04/10/2026, Session 33. Both blades stay on the ice and draw a lemon:
+   heels together and toes out, the feet pressed apart on their inside edges, the toes
+   turned in at the widest and the feet drawn back until they meet (Ice Skating
+   Australia; Learn to Skate USA Basic 1 forwards and Basic 2 backwards, six to eight in
+   a row). Backwards it is toes together and heels apart, the same lemon the other way
+   along. Four here.
+
+   EACH BLADE RUNS ITS OWN HALF OF THE LEMON, curving the other way from its partner:
+   LFI and RFI together, which secondFoot was written to refuse because two blades on
+   one circle cannot be on two inside edges. So the right blade has its own path
+   (`tracks`, rig-math.js, *a second blade on its own circle*), the mirror of the
+   left's, and its edge comes out of its own segment.
+
+   THE POINTED ENDS ARE PIVOTS. Where the feet meet, the toes come round from in to out
+   (backwards, the heels do) with the feet together, and a blade that turns without
+   travelling is flat and turning where it stands: a `pivot` segment, which draws the
+   lemon's point. The skater does not stop there: the body carries on over the feet,
+   so for that ninth of each swizzle the feet run back under the hip, as marching's
+   standing blade does.
+
+   Every key is computed from one construction below, so the keys, the reference path
+   and the right blade's track are three readings of one lemon. The body faces down the
+   line throughout, so hipYaw is the left blade's heading read back: the feet turn out
+   and in under a pelvis that does not.
+
+   Verified against a coach: NO. The lemon's size (about a metre long and 40 cm across)
+   and how fast the toes come round are choices. */
+const swizzleMove = (dir) => {
+  const s = dir === 'F' ? 1 : -1, B = dir === 'B';
+  const A = 30, Rr = 100, G = 5, NSW = 4, ARC = 8, PIV = 1;
+  const a = A * Math.PI / 180, c = 2 * Rr * Math.sin(a);
+  const units = NSW * ARC + (NSW - 1) * PIV, HZ = B ? 93 : 92;
+  const sweep = 2 * A;
+  const path = [], track = [];
+  for (let j = 0; j < NSW; j++) {
+    path.push({kind:'arc', foot:'L', edge:'I', dir, sweep, span:ARC});
+    track.push({kind:'arc', foot:'R', edge:'I', dir, sweep, span:ARC});
+    if (j < NSW - 1) {
+      path.push({kind:'pivot', foot:'L', dir, sweep: s * sweep, span:PIV});
+      track.push({kind:'pivot', foot:'R', dir, sweep: -s * sweep, span:PIV});
+    }
+  }
+  /* The left blade in the world at clock unit u: x along the line of travel, y to the
+     right of it, th its heading (clockwise +, as buildPath has it). */
+  const footAt = u => {
+    const j = Math.min(NSW - 1, Math.floor(u / (ARC + PIV)));
+    const r = u - j * (ARC + PIV), x0 = j * c;
+    if (r >= ARC) { const v = (r - ARC) / PIV;
+      return { x: x0 + c, y: -s * G, th: s * a - s * 2 * a * v * v * (3 - 2 * v), piv: true }; }
+    const th = -s * a + s * 2 * a * (r / ARC);
+    return { x: x0 + Rr * (Math.sin(s * th) - Math.sin(-a)),
+             y: -s * G - s * Rr * (Math.cos(th) - Math.cos(a)), th, piv: false };
+  };
+  /* One lemon per swizzle; the hip 4 cm back toward the heels from centred over the feet,
+     which puts the mass over the middle of the blades (npm run balance). */
+  const speed = c / (ARC + PIV), lead = c / 2 - speed * ARC / 2 - s * 4;
+  const keys = [];
+  for (let u = 0; u <= units + 1e-9; u++) {
+    const f = footAt(u), hx = speed * u + lead;
+    const dx = f.x - hx, T = [Math.cos(f.th), Math.sin(f.th)], N = [-Math.sin(f.th), Math.cos(f.th)];
+    const at = (x, y) => ({ t: +(x * T[0] + y * T[1]).toFixed(2), n: +(x * N[0] + y * N[1]).toFixed(2) });
+    const l = at(dx, f.y), r = at(dx, -f.y), deg = f.th * 180 / Math.PI;
+    const last = u >= units;
+    const ph = u === 0 ? (B ? 'Toes together, heels apart, both blades on the ice' : 'Heels together, toes out, both blades on the ice')
+      : last ? 'Held: the feet together at the end of the swizzle'
+      : f.piv ? (B ? 'The feet together, the heels coming round to open again' : 'The feet together, the toes coming round to open again')
+      : (u % (ARC + PIV)) < ARC / 2 ? (B ? 'Pressing the heels apart on the inside edges' : 'Pressing the feet apart on the inside edges')
+      : (B ? 'Past the widest, drawing the heels back together' : 'Past the widest, the toes turning in and the feet drawing together');
+    keys.push({ t: +(u / units).toFixed(6), ph, arm: [56, 10, 20],
+      hipZ: HZ, hipYaw: +((B ? 180 : 0) + deg).toFixed(2), shYaw: +((B ? 180 : 0) + deg).toFixed(2),
+      sh: P(s * 4, 0, HZ + 52),
+      L: P(l.t, l.n, 0, -0.5), R: PUSH(r.t, r.n, 0, +(2 * deg).toFixed(2), -0.5),
+      skate: 'L', edge: f.piv && !last ? null : 'I', dir });
+  }
+  return { path, radius: Rr, frames: units * 15, keys, heading: s * A,
+           tracks: [{ foot: 'R', from: 0, to: 1, path: track, radius: Rr }] };
+};
+MOVES.swizzle = {
+  name: 'Swizzle',
+  note: 'both blades on the ice, pressed apart on their inside edges and drawn back together, four times',
+  duration: 4.8, ...swizzleMove('F'),
+};
+MOVES.swizzleBack = {
+  name: 'Backward swizzle',
+  note: 'both blades on the ice travelling backwards, the heels pressed apart and drawn back together, four times',
+  duration: 5.2, ...swizzleMove('B'),
+};
+
+/* BACKWARD WIGGLES — 04/10/2026, Session 33. Both blades on the ice, travelling backwards
+   in a zigzag, the feet swinging from side to side under the skater while the upper body
+   twists against them and the head and arms stay where they are (Ice Skating Australia:
+   about a metre in six; New Zealand's KiwiSkate: the skater's height in four zigzags).
+
+   drawn.mjs EXCUSED IT AS A SWIZZLE, "both blades zigzag on their own lines, curving
+   opposite ways". The guide's own page says otherwise, and so do all three programmes'
+   words: the feet swing to the same side together, which is the backward slalom's two
+   blades on one curve, made small and quick, with the twist added. So it needs no track:
+   the second blade shares the reference's circle and secondFoot derives its edge, as on
+   the slalom. The edges change through a flat where the lean comes back under half the
+   stance, keyed as the slaloms are.
+
+   THE TWIST is the shoulders held square to the line of travel while the path, and the
+   hips and feet with it, swing about 20° either way. hipYaw follows the path; shYaw is
+   the path's own heading read back (buildPath, at each key's time), so the shoulders do
+   not turn in the world.
+
+   Verified against a coach: NO. That the feet curve together rather than apart is read
+   from the descriptions, which none of the three spells out. */
+const wigglesMove = () => {
+  const R = 35, path = [{kind:'arc', foot:'L', edge:'O', dir:'B', sweep:20, span:1}];
+  for (let i = 0; i < 5; i++)
+    path.push({kind:'arc', foot:'L', edge: i % 2 ? 'O' : 'I', dir:'B', sweep:40, span:2});
+  path.push({kind:'arc', foot:'L', edge:'I', dir:'B', sweep:20, span:1});
+  const units = 12, shape = buildPath({ path, radius: R });
+  const mean = shape.reduce((a, p) => a + p.th, 0) / shape.length;
+  const dev = t => (shape[Math.round(t * (shape.length - 1))].th - mean) * 180 / Math.PI;
+  const HZ = 94;
+  /* The slalom's stance, from slalomBack, set 3 cm further toward the heels so that the
+     mass is over the middle of the blades (npm run balance read 4 cm toward the toes): on the O lobes both feet to the skater's right
+     of the track's centre, on the I lobes to the left, 12 cm apart. */
+  const feet = { O: [P(0,-4,0,-0.5), ON(-6,-16,0,-0.5)], I: [P(0,16,0,-0.5), ON(-6,4,0,-0.5)],
+                 toI: [P(0,0,0,-0.5), ON(-6,-12,0,-0.5)], inI: [P(0,12.3,0,-0.5), ON(-6,0.3,0,-0.5)],
+                 toO: [P(0,12,0,-0.5), ON(-6,0,0,-0.5)], inO: [P(0,-0.3,0,-0.5), ON(-6,-12.3,0,-0.5)] };
+  const key = (u, f, edge, ph) => { const t = +(u / units).toFixed(5);
+    return { t, ph, hipZ: HZ, hipYaw: 180, shYaw: +(180 + dev(t)).toFixed(2), arm: [70, 10, 10],
+             sh: P(-3, 0, HZ + 52), L: f[0], R: f[1], skate: 'L', edge, dir: 'B' }; };
+  const keys = [key(0, feet.O, 'O', 'Feet together, swinging to one side, travelling backwards')];
+  let u = 0.5, edge = 'O';
+  keys.push(key(u, feet.O, 'O', 'The heels swung out, the shoulders still'));
+  for (let b = 1; b <= 11; b += 2) {
+    const next = edge === 'O' ? 'I' : 'O';
+    keys.push(key(b - 0.3, edge === 'O' ? feet.toI : feet.toO, null, 'Coming upright, both blades flat, the feet swinging across'));
+    keys.push(key(b + 0.6, edge === 'O' ? feet.inI : feet.inO, next, 'The feet swung to the other side, the hips twisting under the shoulders'));
+    if (b < 11) keys.push(key(b + 1, next === 'I' ? feet.I : feet.O, next, 'The wiggle at its widest'));
+    edge = next;
+  }
+  keys.push(key(12, feet[edge], edge, 'Running out, feet together'));
+  return { path, radius: R, keys };
+};
+MOVES.backwardWiggles = {
+  name: 'Backward wiggles',
+  note: 'both blades on the ice, travelling backwards, the feet swinging side to side together under still shoulders',
+  duration: 4.4, ...wigglesMove(),
 };
 
 /* MARCHING — 04/10/2026, Session 32. Walking on the ice, each foot lifted clear in turn

@@ -1,6 +1,7 @@
 ---
 name: Backward wiggles
 kind: basic
+rig: backwardWiggles
 summary: Both feet on the ice, the body twisting to zigzag backwards. The first way of travelling backwards.
 aliases: ["back wiggles", "wiggles", "back wiggle"]
 names: {"nz": "Back wiggles"}

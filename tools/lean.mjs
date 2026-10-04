@@ -33,6 +33,15 @@
    in direction rather than in edge. The generalisation makes this file stronger
    rather than weaker: it now says every blade on the ice leans the same way.
 
+   EXCEPT ON TWO CIRCLES — 04/10/2026, Session 33. A swizzle's blades run two halves
+   of a lemon, LFI and RFI, and the inside of the left foot is the skater's right while
+   the inside of the right foot is the skater's left: they bite toward each other, the
+   knees come in, and the hip is between them. Both routes still hold per blade, and
+   they hold without being told: BODY puts the hip on the biting side of each blade,
+   which for two blades biting inward is between them; TRACK is measured across each
+   blade's own line (below). What is no longer true is the sentence above, for those
+   poses only.
+
        node tools/lean.mjs
        node tools/lean.mjs --break    # put the outward-leaning waltz landing back
 */
@@ -100,8 +109,16 @@ for (const [id, move] of Object.entries(MOVES)) {
       /* TRACK. k = -lobeSense/radius, and an arc of curvature k turns toward
          sign(k) x n — so the centre is on the sign(-lobeSense) side and the blade
          must be on the other one. Which lands on: sign(blade n) === lobeSense. */
+      /* ACROSS ITS OWN LINE — 04/10/2026, Session 33. n is across the PATH, which is the
+         reference blade's line and, for a blade sharing its circle, that blade's line too.
+         A blade on its own circle (a swizzle's) has its own centre, across its OWN
+         direction of travel, so its offset is measured in its own frame: the path frame
+         turned by the blade's yaw, which trackedAt reads off its track. For every other
+         blade the yaw is nought here or the blade is the reference, and this is q.n. */
+      const own = pose[w].track ? lateral(pose[w].yaw || 0) : [0, 1];
+      const across = q.t * own[0] + q.n * own[1];
       const want = lobeSense(w, edge, dir);
-      if (Math.sign(q.n) !== want)
+      if (Math.sign(across) !== want)
         worstTrack = worstTrack && Math.abs(worstTrack.n) > Math.abs(q.n) ? worstTrack
           : { t: i / (FRAMES - 1), n: q.n, want, w, ph: pose.ph };
 
