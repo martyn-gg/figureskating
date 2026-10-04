@@ -45,7 +45,7 @@ const WHEN = {
     <span class="chip">{WHEN[d.syllabus]}</span>
   </div>
 
-  <Unverified verified={d.verified} what="requirements" />
+  <Unverified verified={d.verified} what="requirements" title={d.name} />
 
   {d.changesInOctober && (
     <p class="note"><b>Changes on 01/10/2026.</b> {d.changesInOctober}</p>

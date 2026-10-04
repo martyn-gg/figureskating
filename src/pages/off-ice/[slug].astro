@@ -23,7 +23,7 @@ const crumbs = [{ name: 'Off the ice', href: url('off-ice/') }, { name: d.name }
   <h1>{d.name}</h1>
   <p class="lede">{d.summary}</p>
   <div class="meta">{d.capacity.map(c => <span class="chip">{c}</span>)}</div>
-  <Unverified verified={d.verified} what="suggestions" />
+  <Unverified verified={d.verified} what="suggestions" title={d.name} />
   <Content />
   <h2>On the ice, this prepares</h2>
   <ul class="plain">

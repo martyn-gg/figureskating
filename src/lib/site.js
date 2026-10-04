@@ -48,3 +48,12 @@ export const COSTS = {
 };
 
 export const money = n => `£${n.toFixed(2)}`;
+
+/* A CORRECTION FOR THIS PAGE, ONE TAP AWAY — 04/10/2026, Session 28. The roadmap's
+   aim for these weeks is feedback, and a reader who spots a mistake should not have
+   to say which page they mean. An email with the page named in the subject and its
+   address in the body, from the footer of every page and from the "not checked yet"
+   note. */
+export const correctionHref = (title, pageUrl) => `mailto:${CONTACT}?subject=` +
+  encodeURIComponent(`Correction: ${title || 'Field Guide to Figure Skating'}`) +
+  '&body=' + encodeURIComponent(`Page: ${pageUrl}\n\nWhat is wrong, and what should it say?\n\n`);

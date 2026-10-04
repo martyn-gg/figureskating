@@ -1,0 +1,37 @@
+---
+/* THE GLOSSARY — 04/10/2026, Session 28. From src/lib/glossary.js, alphabetical, one
+   anchor per term so a page can link to #check. */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+import { GLOSSARY, slugOf } from '../../lib/glossary.js';
+const terms = [...GLOSSARY].sort((a, b) => a.term.localeCompare(b.term));
+const seen = new Set();
+for (const t of terms) {
+  const s = slugOf(t.term);
+  if (seen.has(s)) throw new Error(`glossary: two terms make the anchor #${s}`);
+  seen.add(s);
+}
+---
+<Base title="Glossary" subtitle="The words the guide uses that a newcomer will not know, each in a sentence or two.">
+  <h1>Glossary</h1>
+  <p class="lede">
+    The words skaters and coaches use, and this guide with them, in a sentence or two each.
+  </p>
+  <dl class="gloss">
+    {terms.map(t => (
+      <>
+        <dt id={slugOf(t.term)}>{t.term}{t.also && <span class="also"> · also {t.also.join(', ')}</span>}</dt>
+        <dd>
+          {t.def}
+          {t.see && <span class="see"> See {t.see.map(([label, href], i) => <>{i > 0 ? ', ' : ''}<a href={url(href)}>{label}</a></>)}.</span>}
+        </dd>
+      </>
+    ))}
+  </dl>
+</Base>
+<style>
+  .gloss dt{font-weight:700;margin-top:1.1rem;scroll-margin-top:1rem}
+  .gloss dt .also{font-weight:400;font-size:.88rem;color:var(--ink-soft)}
+  .gloss dd{margin:.2rem 0 0}
+  .gloss .see{color:var(--ink-soft)}
+</style>

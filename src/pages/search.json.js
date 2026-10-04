@@ -26,6 +26,7 @@ import { getCollection } from 'astro:content';
 import { label } from '../lib/skating.js';
 import { elementGroups, SECTION_NOTE } from '../lib/element-groups.js';
 import { KIT } from '../lib/kit.js';
+import { GLOSSARY } from '../lib/glossary.js';
 
 export async function GET() {
   const [elements, exercises, tests, grades, conditioning] = await Promise.all(
@@ -69,6 +70,13 @@ export async function GET() {
       u: `grades/${g.id}/`, t: g.data.name, s: g.data.summary, k: 'grades',
       a: [...new Set(g.data.levels.flatMap(l => [l.name, ...l.aka].map(n => `${g.data.body} ${n}${g.data.levelSuffix ? ' ' + g.data.levelSuffix : ''}`)))], e: '', c: g.data.country,
     })),
+    /* THE GLOSSARY AND THE FIRST SESSION — 04/10/2026, Session 28. The glossary is one
+       page, so its terms go in the summary, where a search for a word finds it, rather
+       than as aliases, which must each land on a page of their own. */
+    { u: 'glossary/', t: 'Glossary', s: GLOSSARY.map(g => g.term).join(', '), k: 'glossary',
+      a: ['terms', 'jargon', 'what does it mean'], e: '' },
+    { u: 'first-session/', t: 'Your first session', s: 'Getting on and off the ice, which way to skate, where to stop, and never standing on metal',
+      k: 'first session', a: ['rink etiquette', 'public session', 'first time'], e: '' },
     /* KIT AND OFF THE ICE — 04/10/2026, Session 28. */
     { u: 'kit/', t: 'Kit', s: 'The blade, the boot and how to look after them', k: 'kit',
       a: ['equipment', 'skates', 'gear'], e: '' },

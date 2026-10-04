@@ -1,0 +1,90 @@
+---
+/* YOUR FIRST SESSION — 04/10/2026, Session 28. The questions of a skater's first visits
+   that are about the rink rather than the kit. Martyn: emphasise never standing on
+   metal, which is at the edges of some temporary seasonal rinks and in the bleachers. */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+---
+<Base title="Your first session" subtitle="Getting on and off the ice, which way to skate, where to stop, and never standing on metal.">
+  <h1>Your first session</h1>
+  <p class="lede">
+    What nobody tells you before your first few visits to a rink, from the changing area
+    to the ice and back.
+  </p>
+
+  <h2>Before you step on</h2>
+  <p>
+    Lace up away from the ice door, so you are not in the way of people getting on and off.
+    Walk to the ice in your guards. Take them off at the door, put them somewhere you will
+    find them, and step on holding the barrier. Taking the guards off before that first
+    step matters: a guard on the ice stops dead and the skater does not.
+  </p>
+  <p>
+    What to bring besides skates is on <a href={url('kit/bag/')}>the kit bag</a>.
+  </p>
+
+  <div class="warn" role="note">
+    <h2>Never stand on metal</h2>
+    <p>
+      <b>A blade's edge is lost the moment it stands on metal, concrete or stone.</b> One
+      step can blunt it or chip it, and an edge that has gone will not hold until the blade
+      is sharpened again.
+    </p>
+    <p>
+      Metal is easy to miss around a rink. Temporary and seasonal rinks often have metal
+      frames, edging and thresholds at the side of the ice, and the step from the ice to
+      the walkway may be one of them. Seating and bleachers around a rink often have metal
+      steps and floors. Door sills, drain covers and the doors themselves are metal too.
+    </p>
+    <p>
+      Keep to the rubber matting, and put your guards on for anything else. If there is
+      no matting between the ice and where you are going, the guards go on at the ice
+      door.
+    </p>
+  </div>
+
+  <h2>Which way to skate</h2>
+  <p>
+    A public session skates round the rink in one direction, usually anticlockwise. Follow
+    the signs and the stewards, and go with everyone else. Keep to the outside while you
+    find your feet, and if you need the barrier, use it: that is what it is for.
+  </p>
+
+  <h2>Stopping and standing</h2>
+  <p>
+    Stop at the side, beside the barrier, not in the middle of the ice and never in front of
+    the door. Skaters coming round behind you are looking ahead, not for someone standing
+    still. If you need a rest, step off the ice.
+  </p>
+
+  <h2>Falling</h2>
+  <p>
+    Everyone falls, coaches included. Keep your hands close in and your fingers off the ice
+    while you are down, because other skaters' blades are the real danger, and get up
+    straight away. The <a href={url('elements/falling-and-getting-up/')}>falling and getting
+    up</a> page shows how.
+  </p>
+
+  <h2>Kinds of session</h2>
+  <p>
+    A public session is for everyone, at every level. A freestyle or practice session is
+    for skaters training jumps, spins and programmes, and is usually booked through a
+    club or a coach. On those, the skater whose music is playing usually has priority, and
+    some rinks mark them with a sash or a bib. Lessons may share a public session in a
+    coned-off area, or have the ice to themselves.
+  </p>
+  <p>
+    Most sessions stop for the ice to be resurfaced. Leave when you are asked, guards on at
+    the door.
+  </p>
+
+  <h2>After the session</h2>
+  <p>
+    Guards on at the door, dry the blades as soon as you sit down, and again later. The
+    rest is on <a href={url('kit/care/')}>looking after skates</a>.
+  </p>
+</Base>
+<style>
+  .warn{margin:1.6rem 0;padding:.4rem 1rem .6rem;border:2px solid var(--accent);border-radius:10px;background:var(--ice)}
+  .warn h2{margin-top:.6rem}
+</style>

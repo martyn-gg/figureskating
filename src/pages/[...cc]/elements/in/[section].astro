@@ -52,6 +52,8 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
       from when all of them shared one page (Martyn, 03/10/2026: the heading is
       followed by the same title beneath it). On its own page the h1 is the name. */}
   {/* The Dance tab holds two sections; each points at the other. */}
+  {section === 'basic' && <p class="note">New to the rink? <a href={url('first-session/')}>Your first
+    session</a> covers getting on and off the ice, which way to skate and never standing on metal.</p>}
   {section === 'dance' && <HoldStrip url={url} heading="The holds these dances are skated in" />}
   {section === 'hold' && <p class="note">The <a href={url('elements/in/dance/')}>pattern
     dances</a> name these holds step by step, and each name links back here.</p>}

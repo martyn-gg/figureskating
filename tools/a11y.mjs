@@ -37,7 +37,7 @@ const PAGES = ['', 'about/', 'coaches/', 'elements/', 'elements/in/edges/', 'ele
   /* Kit and off the ice, 04/10/2026: both figures, a hub, an entry, and an element page
      carrying the new combination figure and the Off the ice list. */
   'kit/', 'kit/blade/', 'kit/boots/', 'kit/care/', 'off-ice/', 'off-ice/holding-the-landing/',
-  'elements/in/combo/', 'elements/salchow-loop/'];
+  'elements/in/combo/', 'elements/salchow-loop/', 'kit/bag/', 'glossary/', 'first-session/'];
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 const srv = await serveDist(); const b = await browser();

@@ -5,7 +5,7 @@ import { BUILD_ID } from '../lib/build-id.js';
 import { tokenCSS } from '../lib/tokens.js';
 import { notebookCSS, TABS, tabFor } from '../lib/notebook.js';
 import { COUNTRIES, countryOf, curl, localised, splitPath } from '../lib/country.js';
-import { CONTACT, DONATE, SOCIAL } from '../lib/site.js';
+import { CONTACT, DONATE, SOCIAL, correctionHref } from '../lib/site.js';
 /* The version travels in the query string so the browser sees a byte-different
    worker on every deploy and reinstalls it, and so the worker can name its cache
    after the build it belongs to. */
@@ -351,7 +351,8 @@ const alternates = hasCopies ? [
       <p class="foot-links">
         <a href={url('about/')}>About</a>
         <a href={url('coaches/')}>For coaches</a>
-        <a href={`mailto:${CONTACT}`}>Corrections</a>
+        <a href={url('glossary/')}>Glossary</a>
+        <a href={correctionHref(title, canonical)}>Suggest a correction</a>
         {/* Rendered only once there is somewhere for it to go. A donate button
             that 404s asks for money and loses the reader in one click. */}
         {DONATE && <a href={DONATE}>Buy a coffee</a>}

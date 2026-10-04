@@ -56,6 +56,8 @@ export const tabFor = (pathname, kind) => {
   if (sec) return TABS.find(t => t.sections.includes(sec))?.id ?? null;
   if (/\/(grades|tests)\//.test(pathname)) return 'grade';
   if (/\/off-ice\//.test(pathname)) return 'office';
+  /* The first session is the floor below the basics, so it lights the Basics tab. */
+  if (/\/first-session\//.test(pathname)) return 'basic';
   return null;
 };
 

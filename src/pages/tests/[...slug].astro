@@ -43,7 +43,7 @@ const WHEN = { current: 'before 01/10/2026 only', october2026: 'new 01/10/2026',
     <span class="chip">{d.discipline}</span>
     <span class="chip">level <b>{d.level}</b></span>
   </div>
-  <Unverified verified={d.verified} what="requirements" />
+  <Unverified verified={d.verified} what="requirements" title={d.name} />
   <Content />
 
   {exercises.length > 0 && (

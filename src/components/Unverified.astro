@@ -1,11 +1,13 @@
 ---
-const { verified, what = 'mechanics' } = Astro.props;
+import { correctionHref } from '../lib/site.js';
+const { verified, what = 'mechanics', title = '' } = Astro.props;
+const href = correctionHref(title, new URL(Astro.url.pathname, Astro.site).href);
 ---
 {!verified?.checked && (
   <p class="unverified">
     <b>Not checked yet.</b> The {what} on this page are a first draft by a non-expert, and
-    no coach has seen them yet. Read them as a starting point and check them with a coach.
-    Corrections are very welcome, and the repository is public.
+    no coach has seen them yet. Read them as a starting point and check them with a coach.{' '}
+    <a href={href}>Corrections are very welcome</a>, and the repository is public.
   </p>
 )}
 {verified?.checked && (

@@ -271,7 +271,7 @@ const crumbs = [
     </details>
   )}
 
-  <Unverified verified={d.verified} />
+  <Unverified verified={d.verified} title={shown} />
 
   {d.entry && <EdgeDiagram entry={d.entry} turn={d.turn ?? null} turns={d.turns ?? null} />}
 

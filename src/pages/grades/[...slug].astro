@@ -23,7 +23,7 @@ const key = (l, k) => `grade:${entry.id}:${slug(l.name)}:${k}`;
   {/* The reader's progress through this programme, from their own ticks below.
       Filled in and unhidden by the script in Base.astro. */}
   <p class="tally" data-tally={`grade:${entry.id}:`} hidden><b><i></i></b> <span></span></p>
-  <Unverified verified={d.verified} what="level lists" />
+  <Unverified verified={d.verified} what="level lists" title={d.name} />
   <Content />
 
   {d.levels.map(l => (
