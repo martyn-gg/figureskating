@@ -2113,6 +2113,64 @@ const sameLegs = m => ({ ...m, keys: m.keys.map(k => {
   return o;
 }) });
 
+/* HALF-SWIZZLE PUMPS — 04/10/2026, Session 32. On a circle the inside foot glides and
+   holds the curve while the outside foot makes half a swizzle, out and back, over and
+   over (Ice Skating Australia six to eight; Learn to Skate USA four to six). The
+   pushing blade never leaves the ice: it is set down beside the gliding foot turned
+   out, presses out and back on its inside edge, turns its toe in at the widest point
+   and draws back in. Four pumps here.
+
+   WHAT drawn.mjs SAID AGAINST IT WAS STALE: "the pushing blade is angled across the
+   circle" is a yaw, and the yaw went in on 19/09/2026 (PUSH). What it does not draw yet
+   is the pushing blade's own line on the ice, the lemon-shaped scallops outside the
+   circle; the tracing is the gliding blade's. That is the second tracing, specified in
+   docs/model.md and built after this.
+
+   The gliding blade is the reference, as scooterPushes's is, and for its reason: on
+   an edge, the pushing blade's edge is derived (inside), which is what a push is.
+
+   Verified against a coach: NO. */
+const HZ = 93;
+const pumpKeys = (dir) => {
+  const B = dir === 'B', N = 4, out = [];
+  /* Facing backwards the skater's right is -n, and a heel-first push turns the blade
+     the other way about the vertical. The push still drives the blade away from the
+     circle and against the travel, which is behind the body going forwards and in
+     front of it going backwards, so the foot positions are not a mirror of each other
+     in the body's frame: knees bend toward where the skater faces. */
+  const side = B ? -1 : 1, yawOut = B ? 20 : -30, yawIn = B ? -18 : 18;
+  const T = B ? [-6, -14, -12, -8] : [0, -8, -2, 6];
+  const base = { hipZ: HZ, hipYaw: B ? 180 : 0, shYaw: B ? 184 : -4, sh: P(B ? -6 : 6, 0, HZ + 51),
+                 skate: 'L', edge: 'O', dir };
+  const L = P(B ? -2 : 2, side * 6, 0, -0.5);
+  const beside = R => ({ ...base, L, R });
+  const at = (c, i) => (i + c) / N;
+  for (let i = 0; i < N; i++) {
+    out.push({ ...beside(PUSH(T[0], side * 18, 0, yawOut)), t: at(0, i), arm: [56, 10, 20],
+      ph: i ? 'Back beside the gliding foot, turned out again' : 'The right blade beside the gliding foot, turned out' });
+    out.push({ ...beside(PUSH(T[1], side * 34, 0, yawOut)), t: at(0.45, i), arm: [56, 10, 20],
+      ph: 'Pressing out on the inside edge, against the travel' });
+    out.push({ ...beside(PUSH(T[2], side * 34, 0, B ? -4 : 4)), t: at(0.6, i), arm: [56, 10, 20],
+      ph: 'At the widest, the toe turning in' });
+    out.push({ ...beside(PUSH(T[3], side * 20, 0, yawIn)), t: at(0.85, i), arm: [56, 10, 20],
+      ph: 'Drawing back in toward the gliding foot' });
+  }
+  out.push({ ...beside(PUSH(T[0], side * 18, 0, yawOut)), t: 1, arm: [56, 10, 20], ph: 'Held: beside the gliding foot' });
+  return out;
+};
+MOVES.halfSwizzlePumps = {
+  name:'Half-swizzle pumps',
+  note:'LFO glide on the circle · the right blade pressing out and drawing in, four times, never leaving the ice',
+  path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:110}],
+  radius:300, duration:6.0, keys: pumpKeys('F'),
+};
+MOVES.halfSwizzlePumpsBack = {
+  name:'Backward half-swizzle pumps',
+  note:'LBO glide on the circle · the right blade pressing out and drawing in, four times, travelling backwards',
+  path:[{kind:'arc', foot:'L', edge:'O', dir:'B', sweep:100}],
+  radius:300, duration:6.4, keys: pumpKeys('B'),
+};
+
 MOVES.spiralCheck = sameLegs(MOVES.spiral);
 MOVES.spiralCheck.name = 'Spiral, arms checked';
 MOVES.spiralCheck.note = 'held position · free leg at or above hip height · left arm across, right arm back';

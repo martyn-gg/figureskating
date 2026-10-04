@@ -2162,6 +2162,24 @@ Where the mass should sit is not one place: over the middle of the blade on a gl
 forward toward the rocker's front for turns and spins, behind the feet in a braking
 stop. Those per-phase targets are what turns the report into a checker.
 
+## Half-swizzle pumps were authoring, not capability — 04/10/2026, Session 32
+
+`drawn.mjs` excused both pumps because "the pushing blade is angled across the circle".
+That is a yaw, and `PUSH` has carried one since 19/09/2026. Both are now drawn from one
+generator (`pumpKeys` in `moves.js`): the gliding foot holds an outside edge on the
+circle as the reference, and the outside blade stays on the ice through four pumps,
+turned out pressing out against the travel, turning its toe in at the widest, drawing
+back in.
+
+Going backwards the push still drives the blade against the travel, which is in front
+of the body rather than behind it, so the two are not mirrors in the body's frame: the
+backward one's blade turns toe-in on the press (20°, what a straight-ish weight-bearing
+leg allows) and toe-out on the draw. `shin.mjs` set the hip at 93: at 90 the toe-in
+draw put 30 to 36° of forward lean on the pushing shin.
+
+What neither draws is the pushing blade's own line, the scallops outside the circle.
+That is the second tracing, below.
+
 ## A pick that lands along the travel — 04/10/2026, Session 32, the bunny hop
 
 Every pick before today was a jab behind, and `pickDir` points its toe back along the

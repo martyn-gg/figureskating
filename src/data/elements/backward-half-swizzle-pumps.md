@@ -1,6 +1,7 @@
 ---
 name: Backward half-swizzle pumps
 kind: basic
+rig: halfSwizzlePumpsBack
 summary: The same circle, the same pumping foot, travelling backwards.
 aliases: ["backward circle thrusts"]
 prerequisites: [backward-swizzle]

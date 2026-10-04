@@ -48,8 +48,6 @@ const cannotDraw = {
   'other-names':                 'a listing of aliases, not an element',
   'swizzle':                     'the blades are turned out against the travel',
   'backward-swizzle':            'the blades are turned out against the travel',
-  'half-swizzle-pumps':          'the pushing blade is angled across the circle',
-  'backward-half-swizzle-pumps': 'the pushing blade is angled across the circle',
   /* NOT A CLAIM ABOUT SKATERS — 19/09/2026, Martyn's challenge, and he is right that
      the first version of this line overreached. What the sweep found is that THIS RIG
      has no legal pose for it, and the rig holds one hip height, a knee that faces
