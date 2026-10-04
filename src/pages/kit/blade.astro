@@ -26,20 +26,22 @@ const crumbs = [{ name: 'Kit', href: url('kit/') }, { name: 'The blade' }];
     Along its length the blade is ground to a curve called the rocker. Figure blades are
     commonly ground to a radius of about 7 or 8 feet; the figures in this guide stand on
     one of {Math.round(ROCKER / 30.48)} feet. A tighter rocker turns more easily and a flatter one runs
-    faster and steadier. Many blades are also ground a little tighter towards the front,
-    the part a spin sits on.
+    faster and steadier. Most blades are ground to more than one radius: the long main
+    rocker, then a tighter spin rocker towards the front, and a tighter curve still up to
+    the pick.
   </p>
   <BladeRocker />
   <p>
     Because the blade is curved, only a short stretch of it touches the ice at once, and
-    which stretch depends on how the boot is tilted. Tilting the foot forward by one degree
-    moves the contact {perDegree} cm towards the toe. Past about {MAX_BLADE_PITCH.toFixed(1)} degrees
-    the contact runs off the front of the blade altogether, and the next thing to touch the
-    ice is the pick.
+    which stretch depends on how the boot is tilted. On the single {Math.round(ROCKER / 30.48)} ft curve the
+    guide's figures stand on, tilting the foot forward by one degree moves the contact{' '}
+    {perDegree} cm towards the toe, and past about {MAX_BLADE_PITCH.toFixed(1)} degrees the next thing to
+    touch the ice is the pick. A real blade's tighter front curves change those numbers but
+    not the idea.
   </p>
   <p>
     That is why a coach talks so much about where your weight is. Gliding and most edges
-    sit a little behind the middle. Spins sit forward, close to the pick. Rocking too far
+    sit a little behind the middle. Spins sit forward, on the spin rocker, just behind the pick. Rocking too far
     back puts a skater on the heel, where the blade stops steering.
   </p>
 

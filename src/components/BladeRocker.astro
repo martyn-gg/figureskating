@@ -1,84 +1,109 @@
 ---
-/* THE BLADE FROM THE SIDE, DRAWN FROM THE RIG'S OWN NUMBERS — 04/10/2026, Session 28.
+/* THE BLADE FROM THE SIDE — 04/10/2026, Session 28; redrawn the same day (Martyn: a
+   blade-profile drawing elsewhere showed the spin rocker and the pick better than one
+   curve could).
 
-   Every figure in the guide stands on this blade: rig-math.js grinds it to ROCKER,
-   runs it from BLADE_BACK to BLADE_FRONT, puts the pick's deepest tooth at PICK_ALONG,
-   and names the part of the blade a skater is on with bladeZone. This draws those, and
-   nothing else, so the picture and the skater cannot disagree. The zones are found by
-   asking bladeZone along the whole blade, not by copying its thresholds.
+   A figure blade is usually ground to more than one radius: a long, flat main rocker,
+   then a tighter spin rocker towards the front, then a tighter curve still running up
+   to the pick. This draws one common profile of that kind, chained arc to arc with no
+   kink, from the lowest point outwards. The radii and the lengths are illustrative:
+   profiles differ from blade to blade, and the page says so.
 
-   The curve is drawn EX times taller than it is, and the figure says so: at true scale
-   a 7 ft rocker over a blade's running length is too flat to see, which is the point
-   the caption makes in numbers. */
-import { ROCKER, BLADE_FRONT, BLADE_BACK, PICK_ALONG, MAX_BLADE_PITCH, contactAlong, bladeZone } from '../lib/rig-math.js';
+   The guide's figures stand on something simpler, one radius of ROCKER along the whole
+   blade (rig-math.js), and the caption says that too. The main rocker drawn here is
+   that radius. */
+import { ROCKER } from '../lib/rig-math.js';
 
-const EX = 5;                        // vertical exaggeration (Martyn, 04/10/2026: 10 read too curved)
-const PX = 16;                       // px per cm along the blade
-const sag = x => ROCKER - Math.sqrt(ROCKER * ROCKER - x * x);   // cm above the lowest point
-const x0 = BLADE_BACK - 3, x1 = PICK_ALONG + 3;
-const W = (x1 - x0) * PX, H = 180, GROUND = 110;
-const X = x => (x - x0) * PX;
-const Y = h => GROUND - h * EX * PX;        // EX times the true height
+const IN = 2.54;
+/* Forward from the lowest point: [radius cm, length cm]. Backward: the main rocker to
+   the heel. Lengths are along the blade. */
+const FORWARD = [[ROCKER, 5], [27 * IN, 4.5], [12 * IN, 3.5]];
+const BACK = 13;
+const PICK = [12 * IN, 2.6];          // the teeth continue the last curve
+const EX = 3;                          // vertical exaggeration
+const PX = 16;                         // px per cm along the blade
 
-/* Zones along the blade: sample the pitch finely, read where the contact is and what
-   bladeZone calls it, and keep the runs. */
-const runs = [];
-for (let p = -MAX_BLADE_PITCH; p <= MAX_BLADE_PITCH + 1e-9; p += MAX_BLADE_PITCH / 400) {
-  const a = contactAlong(p), z = bladeZone(p);
-  const last = runs[runs.length - 1];
-  if (last && last.z === z) last.b = a; else runs.push({ z, a, b: a });
-}
-const curve = (a, b) => {
-  const n = 40, pts = [];
-  for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; pts.push(`${i ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(sag(x)).toFixed(1)}`); }
-  return pts.join(' ');
+/* Walk the blade by arc length, turning by 1/radius per cm. Returns points (x along,
+   h up) and the index where each segment ends. */
+const walk = (segs, dir) => {
+  let x = 0, h = 0, th = 0;
+  const pts = [[0, 0]], ends = [];
+  for (const [r, len] of segs) {
+    const n = Math.ceil(len * 4);
+    for (let i = 0; i < n; i++) {
+      const ds = len / n;
+      th += ds / r;
+      x += dir * Math.cos(th) * ds; h += Math.sin(th) * ds;
+      pts.push([x, h]);
+    }
+    ends.push(pts.length - 1);
+  }
+  return { pts, ends };
 };
-/* The outline: the running surface along the rocker, then the same circle continued
-   past the front of the blade as far as the pick's deepest tooth, with the teeth cut
-   into it. That is the model's own claim, drawn: tilt the foot forward far enough and
-   the circle brings the pick to the ice. The top edge is flat at a height chosen for
-   the picture, not measured. */
-const TOP = Math.min(GROUND - 70, Y(sag(PICK_ALONG)) - 12);
-const pickPts = [];
-const NT = 4;
-for (let i = 0; i <= NT * 2; i++) {
-  const x = BLADE_FRONT + (PICK_ALONG - BLADE_FRONT) * i / (NT * 2);
-  const inset = i % 2 ? 9 : 0;           // notches between the teeth
-  const ang = Math.atan2(x, ROCKER - sag(x));
-  pickPts.push(`L${(X(x) - inset * Math.sin(ang)).toFixed(1)} ${(Y(sag(x)) - inset * Math.cos(ang)).toFixed(1)}`);
-}
-const body = `M${X(BLADE_BACK - 1).toFixed(1)} ${TOP} L${X(BLADE_BACK).toFixed(1)} ${Y(sag(BLADE_BACK)).toFixed(1)} ` +
-  `${curve(BLADE_BACK, BLADE_FRONT).replace(/^M/, 'L')} ${pickPts.join(' ')} ` +
-  `L${X(PICK_ALONG + 1).toFixed(1)} ${TOP} Z`;
-const SHORT = { heel: 'heel', 'behind centre': 'behind', 'middle of the blade': 'middle', 'forward of centre': 'forward', 'front of the blade': 'front' };
-const mid = r => (r.a + r.b) / 2;
+const fwd = walk([...FORWARD, PICK], 1);
+const back = walk([[ROCKER, BACK]], -1);
+
+const xs = [...fwd.pts, ...back.pts].map(p => p[0]);
+const x0 = Math.min(...xs) - 2, x1 = Math.max(...xs) + 6;
+const hPick = fwd.pts[fwd.pts.length - 1][1];
+const W = (x1 - x0) * PX, GROUND = 24 + hPick * EX * PX, H = GROUND + 70;
+const X = x => (x - x0) * PX;
+const Y = h => GROUND - h * EX * PX;
+const TOP = Y(hPick) - 2;
+const P = ([x, h]) => `${X(x).toFixed(1)} ${Y(h).toFixed(1)}`;
+
+/* The running surface, heel to the start of the pick, as one path per segment so each
+   can carry its own colour. */
+const segPath = (pts, a, b) => `M${pts.slice(a, b + 1).map(P).join(' L')}`;
+const runs = [
+  { d: segPath([...back.pts].reverse().concat(fwd.pts.slice(1)), 0, back.pts.length - 1 + fwd.ends[0]), cls: 'main', label: `${Math.round(ROCKER / 30.48)} ft main rocker`, at: 0 },
+  { d: segPath(fwd.pts, fwd.ends[0], fwd.ends[1]), cls: 'spin', label: 'spin rocker', at: 1 },
+  { d: segPath(fwd.pts, fwd.ends[1], fwd.ends[2]), cls: 'front', label: '', at: 2 },
+];
+/* The teeth: notches cut into the last stretch of the curve. */
+const pickPts = fwd.pts.slice(fwd.ends[2]);
+const teeth = pickPts.map((p, i) => {
+  const [x, h] = p;
+  if (i % 3 !== 1) return P(p);
+  return `${(X(x) - 6).toFixed(1)} ${(Y(h) - 9).toFixed(1)}`;
+});
+const heel = back.pts[back.pts.length - 1];
+const body = `M${X(heel[0]).toFixed(1)} ${TOP} L${P(heel)} ` +
+  [...back.pts].reverse().concat(fwd.pts.slice(1, fwd.ends[2] + 1)).map(p => `L${P(p)}`).join(' ') +
+  ` ${teeth.map(t => `L${t}`).join(' ')} L${(X(pickPts[pickPts.length - 1][0]) + 4).toFixed(1)} ${TOP} Z`;
+const mid = (pts, a, b) => pts[Math.round((a + b) / 2)];
+const labelAt = [
+  { x: X(-4), text: `${Math.round(ROCKER / 30.48)} ft main rocker` },
+  { x: X(mid(fwd.pts, fwd.ends[0], fwd.ends[1])[0]), text: 'spin rocker', row: 1 },
+  { x: X(mid(fwd.pts, fwd.ends[1], fwd.ends[2])[0]) + 8, text: '12 in' },
+];
+const pickTop = pickPts[pickPts.length - 1];
 ---
 <figure class="kitfig">
-  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`A figure blade from the side: the rocker from heel to front, divided into ${runs.map(r => r.z).join(', ')}, with the toe pick beyond the front.`}>
+  <svg viewBox={`0 0 ${W.toFixed(0)} ${H.toFixed(0)}`} role="img" aria-label="A figure blade from the side, heel on the left: a long main rocker, a tighter spin rocker towards the front, a tighter curve still, and the toe pick at the front.">
     <line x1="0" x2={W} y1={GROUND} y2={GROUND} class="ice" />
     <path d={body} class="steel" />
-    {runs.map((r, i) => <path d={curve(r.a, r.b)} class={`zone z${i % 2}`} />)}
-    {runs.map((r, i) => (
-      <text x={X(mid(r))} y={GROUND + (i % 2 ? 56 : 28)} text-anchor="middle">{SHORT[r.z] ?? r.z}</text>
-    ))}
-    <text x={X(PICK_ALONG) - 6} y={GROUND + 28} text-anchor="middle">pick</text>
+    {runs.map(r => <path d={r.d} class={`zone ${r.cls}`} />)}
+    {labelAt.map(l => <text x={l.x} y={GROUND + (l.row ? 52 : 26)} text-anchor="middle">{l.text}</text>)}
+    <text x={X(pickTop[0]) + 12} y={Y(pickTop[1]) + 30} text-anchor="start">pick</text>
+    <text x={X(heel[0]) + 2} y={GROUND + 52} text-anchor="start">heel</text>
   </svg>
   <figcaption>
-    Heel on the left, toe on the right, height drawn {EX} times taller than it is. The
-    blade is ground to a curve of about {Math.round(ROCKER / 30.48)} ft radius, so over its{' '}
-    {BLADE_FRONT - BLADE_BACK} cm running length the ends stand only {(sag(BLADE_FRONT) * 10).toFixed(1)} mm above
-    the lowest point. The names are the ones the guide's figures use for where the skater
-    is standing.
+    Heel on the left, toe on the right, height drawn {EX} times taller than it is. One common
+    profile: {Math.round(ROCKER / 30.48)} ft along most of the blade, 27 in for the spin rocker and 12 in up to
+    the pick. Profiles differ from blade to blade. The skaters drawn elsewhere in this guide
+    stand on a simpler blade, the {Math.round(ROCKER / 30.48)} ft curve all the way along.
   </figcaption>
 </figure>
 <style>
   .kitfig{margin:1.5rem 0;padding:1rem .9rem .2rem;background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
   .kitfig svg{display:block;width:100%;height:auto}
   .ice{stroke:var(--ice-line);stroke-width:2}
-  .steel{fill:var(--ice-line);stroke:var(--ink-soft);stroke-width:1.5}
+  .steel{fill:var(--ice-line);stroke:var(--ink-soft);stroke-width:1.5;stroke-linejoin:round}
   .zone{fill:none;stroke-width:6;stroke-linecap:butt}
-  .z0{stroke:var(--edge-out)}
-  .z1{stroke:var(--edge-in)}
+  .main{stroke:var(--edge-out)}
+  .spin{stroke:var(--edge-in)}
+  .front{stroke:var(--ink-soft)}
   text{font:21px ui-sans-serif,-apple-system,sans-serif;fill:var(--ink-soft)}
   figcaption{margin:.6rem 0 0;padding:.6rem .1rem .8rem;border-top:1px solid var(--ice-line);
     font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem;color:var(--ink-soft);line-height:1.5}
