@@ -17,5 +17,9 @@ skaters still pick out something familiar around the rink to keep their bearings
 is harder in a rink they do not know. Twizzles, which turn while travelling, ask for the
 same thing.
 
+What helps most is coming out of the spin: fix the eyes on one point as the turning
+stops, and the world settles sooner. The tolerance fades with a break, so after a few
+days off the ice, expect the first spins to feel worse than usual.
+
 Some skaters use a small spinning board on the floor. It is worth asking a coach first, as
 it turns more freely than a blade does and can teach a position the ice will not hold.

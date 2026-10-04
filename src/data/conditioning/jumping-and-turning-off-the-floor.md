@@ -12,7 +12,8 @@ then a full turn, landing in the landing position. There is no edge to take off 
 no glide out, so what is left is what the floor can teach: going up before going round,
 pulling the arms and legs in quickly, and opening out to land.
 
-Floor jumps go on a forgiving surface, after a warm-up, landing on a bent knee. A coach
+Floor jumps go on a forgiving surface with plenty of clear space, after a warm-up, landing
+on a bent knee and holding the landing position for a slow count of three. A coach
 should introduce them, because a turn practised wrongly on the floor is a fault carried
 onto the ice, where it is harder to see.
 

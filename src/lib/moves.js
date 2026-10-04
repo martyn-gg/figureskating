@@ -298,11 +298,11 @@ const turnFrom = (turn, foot, edge, dir, name, note) => {
       {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base - 4*s, shYaw:base - 10*s,
        sh:P(-2*f,0,147), L:P(4*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:base + 2*s, shYaw:base + 32*s,
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:base + 0*s, shYaw:base + 32*s,
        sh:P(2*f,0,139), L:P(12*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
-      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the hips coming round with the blade', hipZ:94, hipYaw:base + 6*s, shYaw:base + 40*s,
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:base + 2*s, shYaw:base + 40*s,
        sh:P(0,0,146), L:P(6*f,15*n,0,0.5), R:R(-6*f,8*f,16), ...on(inn)},
-      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 174*s, shYaw:base + 150*s,
+      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 178*s, shYaw:base + 150*s,
        sh:P(0,0,144), L:P(6*g,15*n,0,0.5), R:R(-6*g,8*f,16), ...on(exit)},
       {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:base + 176*s, shYaw:base + 160*s,
        sh:P(-2*g,0,142), L:P(10*g,15*n,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
@@ -463,8 +463,15 @@ export const MOVES = {
      The cusp is 0.34 of the window's 28 cm on the circle, about 9.5 cm. Smaller is a
      shorter window, which is a faster turn.
 
-     Verified against a coach: NO. The shoulder lead, the hip timing and how fast the
-     blade comes round are the three things worth putting to one. */
+     CHECKED AGAINST COACHES' TEACHING, 04/10/2026 (the guidance, not their words): bend
+     on the entry edge, rise to release the turn, bend again after it; the shoulders turn
+     into the circle beforehand and check afterwards without over-twisting; and the free
+     hip is held back on the entry and through the turn, not allowed to come round early.
+     The knee and the shoulders already did that. The hips led by 6 degrees at the rise and
+     now lead by 2, the Salchow's numbers (0, 2, 178), so the pelvis comes round through
+     the cusp and not before it. Same change in turnFrom, so every three turn and bracket.
+
+     Verified against a coach: NO. How fast the blade comes round is the open part. */
   threeTurn: turnMove({
     name:'Forward outside three turn',
     note:'LFO · the blade turning half a circle on its edge, the cusp in the tracing · LBI',
@@ -475,11 +482,11 @@ export const MOVES = {
     keys:[
       {arm:[60,4,18], t:0.00, ph:'Gliding on the forward outside edge', hipZ:94, hipYaw:-4, shYaw:-10,
        sh:P(-2,0,147), L:P(4,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:2, shYaw:32,
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:0, shYaw:32,
        sh:P(2,0,139), L:P(12,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the hips coming round with the blade', hipZ:94, hipYaw:6, shYaw:40,
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:2, shYaw:40,
        sh:P(0,0,146), L:P(6,15,0,0.5), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, checked on the back inside edge', hipZ:92, hipYaw:174, shYaw:150,
+      {arm:[52,8,18], t:0.533, ph:'Out of the cusp, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:150,
        sh:P(0,0,144), L:P(-6,15,0,0.5), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
       {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:176, shYaw:160,
        sh:P(-2,0,142), L:P(-10,15,0,-0.5), R:P(34,-4,18,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
@@ -551,8 +558,14 @@ export const MOVES = {
      same toe-first touchdown, the same free leg held back and neutral (Martyn,
      20/09/2026: a landing free foot is pushed back and neutral, not pointed).
 
-     Verified against a coach: NO. The timing of the swing against the rise is the
-     part most worth a coach's eye. */
+     CHECKED AGAINST COACHES' TEACHING, 04/10/2026 (the guidance, not their words): the
+     free leg swings wide and well inside the circle, low and close to the ice, while the
+     body drops into the circle on a bent knee; then the skater comes up to be straight
+     at the moment of takeoff. The keys already did that: the leg swings 42 cm out to the
+     inside at a hip of 84, comes through in front as the hip rises to 92, and the takeoff
+     is at 102. Nothing changed.
+
+     Verified against a coach: NO. */
   salchow: turnMove({
     name:'Salchow',
     note:'LBI takeoff out of a three turn, no pick · one rotation · RBO landing',
@@ -1733,8 +1746,13 @@ export const MOVES = {
      crossed in front before the takeoff and held back after the landing. In the track
      frame, facing backwards, in front is -t.
 
-     Verified against a coach: NO. How far the free leg crosses before the takeoff is
-     the part most worth a coach's eye. */
+     CHECKED AGAINST COACHES' TEACHING, 04/10/2026 (the guidance, not their words): the
+     free leg is crossed in front with the feet a little apart, and it stays across
+     through the takeoff rather than being thrown out sideways for rotation. The keys
+     already did that: crossed 14 cm past the skating foot at the bend and 20 at the rise,
+     lifting rather than swinging wide. Nothing changed.
+
+     Verified against a coach: NO. */
   loop: {
     name:'Loop',
     note:'RBO takeoff, no pick · one rotation · RBO landing',
@@ -2049,7 +2067,8 @@ Object.assign(MOVES, {
    Three parts, and the rules are the whole derivation:
    - the first jump, key for key, up to its deepest landing key (the knee absorbing),
      where its path is cut;
-   - LINK seconds on the landing edge, in which the free leg comes in from behind,
+   - LINK seconds on the landing edge (a quarter of a second since Session 29, see RUSH
+     below), in which the free leg comes in from behind,
      passes the skating foot and crosses in front, with two keys of its own;
    - the second jump, key for key, from its own deepest key before the takeoff (the
      skating knee bent, the free leg crossed in front), where its path is cut too.
@@ -2069,9 +2088,21 @@ Object.assign(MOVES, {
    as far between frames as its jumps do on their own pages (continuity.mjs bounds that
    at 30 degrees). `frames` keeps the finer of the two jumps' frame rates.
 
-   Verified against a coach: NO. How quickly the free leg comes through between the two
-   jumps is the part most worth a coach's eye. */
-const LINK = 0.9;
+   Verified against a coach: NO. */
+const LINK = 0.25;
+/* HOW MUCH FASTER THE SECOND JUMP'S ENTRY RUNS IN A COMBINATION — 04/10/2026, Session 29.
+   Until today the second jump was its single's keys from the deepest bend on, at the
+   single's own speed, after 0.9 s on the landing edge: about two and a half seconds from
+   the first touchdown to the second takeoff. Checked against coaches' teaching (the
+   guidance, not their words): there is no pause; the landing's knee bend IS the second
+   jump's, the free leg is already going round (into a toe loop) or already in front
+   (into a loop), and the pick goes in as the skating leg is already straightening. So
+   the link is a quarter of a second and the second jump's run from its bend to the pick
+   or the flight, whichever comes first, takes RUSH of its own time. The path is cut and
+   scaled with it, sweep and span together, so the skater's speed does not change; the
+   pick and everything after it run at the single's own speed, so a pinned pick travels
+   exactly as far as it does on the single's page. */
+const RUSH = 0.45;
 const secsPath = m => {
   const total = m.path.reduce((x, g) => x + g.span, 0);
   return m.path.map(g => ({ ...g, radius: g.radius ?? m.radius, span: g.span / total * m.duration }));
@@ -2118,14 +2149,24 @@ const comboOf = (A, B, name, note) => {
   if (a.skate !== 'R') throw new Error('comboOf: the link keys assume a right-foot landing');
   const turn = 360 * Math.round((a.hipYaw - b.hipYaw) / 360);
 
-  const [pa] = cutPath(A, a.t), [, pb] = cutPath(B, b.t);
+  const tA = a.t * A.duration, tB = b.t * B.duration;
+  /* Where the rush ends: the first pinned key after the bend, or the start of the
+     flight, whichever is sooner. */
+  const flightAt = (() => { let x = 0; for (const g of secsPath(B)) { if (g.kind === 'line') return x; x += g.span; } return B.duration; })();
+  const pinKey = B.keys.find((k, i) => i > bend && ['L', 'R'].some(w => k[w]?.pin));
+  const tC = Math.min(flightAt, pinKey ? pinKey.t * B.duration : Infinity);
+  const [pa] = cutPath(A, a.t), [, pbc] = cutPath(B, b.t), [, pc] = cutPath(B, tC / B.duration);
+  /* Bend to tC, cut out of bend-to-end (cutPath splits a segment that tC falls inside). */
+  const [toC] = cutPath({ ...B, path: pbc.map(g => ({ ...g })), duration: B.duration - tB }, (tC - tB) / (B.duration - tB));
+  const pb = [...toC.map(g => ({ ...g, span: g.span * RUSH, ...(g.sweep != null ? { sweep: g.sweep * RUSH } : {}),
+                                ...(g.len != null ? { len: g.len * RUSH } : {}) })), ...pc];
   const rate = g => g.sweep / g.span;
   const linkRate = (rate(pa[pa.length - 1]) + rate(pb[0])) / 2;
   const path = [...pa,
     { kind: 'arc', foot: a.skate, edge: a.edge, dir: a.dir, sweep: linkRate * LINK, span: LINK, radius: A.radius },
     ...pb];
-  const tA = a.t * A.duration, tB = b.t * B.duration;
-  const duration = tA + LINK + (B.duration - tB);
+  const rushT = kt => kt <= tC ? (kt - tB) * RUSH : (tC - tB) * RUSH + (kt - tC);
+  const duration = tA + LINK + rushT(B.duration);
 
   /* The link. Hips, shoulders, the skating foot and the arms move straight from the
      first landing to the second bend; the free foot comes in low from behind and passes
@@ -2161,7 +2202,7 @@ const comboOf = (A, B, name, note) => {
     ]),
     ...B.keys.slice(bend).map(k => {
       const o = copyKey(k);
-      o.t = (tA + LINK + (k.t - b.t) * B.duration) / duration;
+      o.t = (tA + LINK + rushT(k.t * B.duration)) / duration;
       o.hipYaw += turn; o.shYaw += turn;
       return o;
     }),
