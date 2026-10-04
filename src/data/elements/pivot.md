@@ -1,6 +1,7 @@
 ---
 name: Pivot
 kind: basic
+rig: pivot
 summary: One toe pick set in the ice as an anchor while the other foot scribes a circle round it.
 aliases: ["forward pivot"]
 prerequisites: [one-foot-glide]

@@ -2217,6 +2217,25 @@ Australia finishes it on a right back outside edge, which hands the reference ov
 the spin; `spin.mjs` reads any change of foot as a change-foot spin, so this one opens out
 on two feet and lifts the right.
 
+## The pivot is a compass, and the boot chose which way round — 04/10/2026, Session 32
+
+The right pick is pinned at the centre of the left blade's circle, so its hip-relative
+position holds while the hip orbits it: the pin has to be authored at the centre exactly,
+or `continuity.mjs` reads it drifting off its authored end (25 cm on the first try, when
+the skating foot moved forward and the centre went with it).
+
+Australia asks for the anchored foot's heel to point at the foot going round. With the hip
+between the feet and the anchor leg reaching out to the pick, a boot square to a shin
+tilted outward points its toe out and up, and `freefoot.mjs` read 62° between shin and
+boot. With the hip over the pick, the anchor leg bent under the body and the skating leg
+out to the circle, the anchor shin is near upright and a toe pitched 24° in with its heel
+toward the circling foot fits the boot's 30. The pick names a `dir` and a yaw of −90°.
+
+Limits it found: `shin.mjs` held the circle to 38 cm with the skating foot 18 cm ahead of
+the hip (a wider circle leans the skating shin across its boot), and `continuity.mjs`
+held it to one and a quarter turns, because the rate of turn may change by 2° a frame and
+a 38 cm circle entered from a straight changes it by more at 540°.
+
 ## A pick that lands along the travel — 04/10/2026, Session 32, the bunny hop
 
 Every pick before today was a jab behind, and `pickDir` points its toe back along the

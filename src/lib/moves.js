@@ -2270,6 +2270,55 @@ const marchKeys = () => {
   };
 }
 
+/* THE PIVOT — 04/10/2026, Session 32. One toe pick set in the ice at the centre while the
+   other foot goes round it on a forward inside edge, one and a quarter turns (Ice Skating
+   Australia: one to two, no pumping, the anchored foot's heel pointing at the foot going
+   round). The right pick is pinned at the centre of the left blade's circle, so its
+   hip-relative position holds while the hip orbits it.
+
+   A COMPASS, AND THE BOOT DECIDED WHICH WAY ROUND. The first draft put the hip between
+   the feet with the anchor leg reaching out to the pick; freefoot.mjs read 62 degrees
+   between shin and boot, because a boot square to a shin tilted outward points its toe
+   outward and UP, and the heel-toward-the-circling-foot Australia asks for then needs
+   a pointed foot no skating boot allows. With the hip over the pick (the anchor leg
+   bent under the body, the skating leg out to the circle) the anchor shin is near
+   upright, and a toe pitched 24 degrees into the ice with its heel toward the circling
+   foot is inside the boot's 30. The pick names a `dir` and a yaw a quarter turn off the
+   tracing (alongDir, since the bunny hop).
+
+   The circle is small, 38 cm, and the skating foot 18 cm ahead of the hip, because the
+   skating leg out to the side leans its shin across its boot (shin.mjs) and a wider
+   circle needs a wider stance. The pelvis opens 45 degrees toward the centre, splitting
+   the turnout between the feet. Entered and left along short straights, so it is not
+   read as a spin; one and a quarter turns because continuity.mjs caps how fast the rate
+   of turn may change entering a 38 cm circle. Verified against a coach: NO. */
+{
+  const R = 38, X = 30, LT = 18, SWEEP = 450;               // blade circle, blade's offset from the hip
+  const arc = R * Math.PI * SWEEP / 180, total = 60 + arc + 60;
+  const t0 = +(60 / total).toFixed(5), t1 = +((60 + arc) / total).toFixed(5);
+  const base = { hipZ: 86, hipYaw: -45, shYaw: -40, sh: P(4, 0, 137), skate: 'L', edge: 'I', dir: 'F',
+                 L: P(LT, -X, 0, -0.5) };
+  const pin = { ...PIN(LT, R - X, 0, 24), dir: 'F', yaw: -90 };
+  const k = (t, ph, R_, extra = {}) => ({ ...base, t, ph, R: R_, ...extra });
+  MOVES.pivot = {
+    name:'Pivot',
+    note:'the right toe pick fixed at the centre · the left foot round it on a forward inside edge, one and a quarter turns',
+    path:[ {kind:'line', len:60, span:60},
+           {kind:'arc', foot:'L', edge:'I', dir:'F', sweep:SWEEP, radius:R, span:arc},
+           {kind:'line', len:60, span:60} ],
+    radius:R, duration:5.6,
+    keys:[
+      k(0, 'Gliding in on the left inside edge, the right foot coming under the hip', P(-6, 12, 12, 0, NEUTRAL), { arm: [60, 10, 18] }),
+      k(t0, 'The right toe pick goes in at the centre', pin, { arm: [56, 10, 18] }),
+      k(0.35, 'Round the pick on the forward inside edge', pin, { arm: [54, 10, 18] }),
+      k(0.65, 'The heel of the anchored foot pointing at the circling foot', pin, { arm: [54, 10, 18] }),
+      k(t1, 'The last half turn', pin, { arm: [56, 10, 18] }),
+      k(0.96, 'The pick out, the right foot lifting', P(-4, 10, 12, 0, NEUTRAL), { arm: [60, 10, 18] }),
+      k(1, 'Gliding out on the left', P(-14, 14, 12, 0, NEUTRAL), { arm: [62, 10, 18] }),
+    ],
+  };
+}
+
 MOVES.spiralCheck = sameLegs(MOVES.spiral);
 MOVES.spiralCheck.name = 'Spiral, arms checked';
 MOVES.spiralCheck.note = 'held position · free leg at or above hip height · left arm across, right arm back';
