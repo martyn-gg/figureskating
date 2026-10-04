@@ -1,0 +1,59 @@
+---
+/* THE BOOT — 04/10/2026, Session 28. Prose only; the one number is the rig's own
+   assumption about shin lean (tools/shin.mjs), named as an assumption. No products. */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+import { kitPage } from '../../lib/kit.js';
+const crumbs = [{ name: 'Kit', href: url('kit/') }, { name: 'The boot' }];
+---
+<Base title="The boot" subtitle={kitPage('boots').summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('kit/')}>Kit</a></p></div>
+  <h1>The boot</h1>
+  <p class="lede">
+    A figure boot holds the ankle upright over a narrow blade and still lets the knee and
+    shin bend forward. Most of what matters about one is how well it does both for you.
+  </p>
+
+  <h2>Fit</h2>
+  <p>
+    The heel should sit firmly at the back of the boot and stay there when you bend your
+    knee and rise again. The toes should be able to move, but the foot should not slide
+    forward. Skating boots are often sized differently from street shoes, so a fitting at a
+    skate shop is worth more than the number on your trainers. A boot that is too big is
+    the usual mistake, made so that a growing skater can grow into it, and it costs balance
+    long before it fits.
+  </p>
+
+  <h2>Stiffness</h2>
+  <p>
+    Boots come in a range of stiffness, matched to the skater's weight and to what they
+    skate. A boot that is too soft for the skater folds at the ankle and lets the edges go.
+    One that is too stiff is the opposite problem and just as common: the shin cannot lean
+    forward far enough, so the knee cannot bend, and every element that lives on a bent
+    knee suffers. The figures in this guide assume a boot that lets the shin lean about 28
+    degrees forward, and a skater in a boot that allows much less cannot make the shapes
+    they show.
+  </p>
+  <p>
+    A stiffer boot is not a better boot. It is the right boot once the skater's jumps and
+    weight need it, and a coach or a fitter can say when that is.
+  </p>
+
+  <h2>Breaking in and lacing</h2>
+  <p>
+    New boots are stiff and take some sessions to soften where the ankle bends. Some can be
+    heat-moulded to the foot when they are fitted. Lace firmly across the foot and the
+    ankle, so the heel stays down, and a little looser over the top hooks, so the shin can
+    still lean forward. Laces pulled tight all the way to the top make even a soft boot too
+    stiff.
+  </p>
+
+  <h2>The blade on the boot</h2>
+  <p>
+    Blades are bought separately on most boots beyond the first, and mounted by a
+    technician. Where the blade sits under the boot, a few millimetres either way, changes
+    how the skater balances over it, which is why the mounting is worth having done by
+    someone who does it often. The <a href={url('kit/blade/')}>blade page</a> has the shape
+    of the blade itself.
+  </p>
+</Base>

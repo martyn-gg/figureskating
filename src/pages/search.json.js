@@ -25,10 +25,11 @@
 import { getCollection } from 'astro:content';
 import { label } from '../lib/skating.js';
 import { elementGroups, SECTION_NOTE } from '../lib/element-groups.js';
+import { KIT } from '../lib/kit.js';
 
 export async function GET() {
-  const [elements, exercises, tests, grades] = await Promise.all(
-    ['elements', 'exercises', 'tests', 'grades'].map(c => getCollection(c)));
+  const [elements, exercises, tests, grades, conditioning] = await Promise.all(
+    ['elements', 'exercises', 'tests', 'grades', 'conditioning'].map(c => getCollection(c)));
 
   const testName = id => tests.find(t => t.id === id)?.data.name ?? id;
 
@@ -68,6 +69,13 @@ export async function GET() {
       u: `grades/${g.id}/`, t: g.data.name, s: g.data.summary, k: 'grades',
       a: [...new Set(g.data.levels.flatMap(l => [l.name, ...l.aka].map(n => `${g.data.body} ${n}${g.data.levelSuffix ? ' ' + g.data.levelSuffix : ''}`)))], e: '', c: g.data.country,
     })),
+    /* KIT AND OFF THE ICE — 04/10/2026, Session 28. */
+    { u: 'kit/', t: 'Kit', s: 'The blade, the boot and how to look after them', k: 'kit',
+      a: ['equipment', 'skates', 'gear'], e: '' },
+    ...KIT.map(k => ({ u: `kit/${k.slug}/`, t: k.name, s: k.summary, k: 'kit', a: [], e: '' })),
+    { u: 'off-ice/', t: 'Off the ice', s: 'What the body needs for the elements, and which elements need it',
+      k: 'off-ice', a: ['off-ice training', 'conditioning', 'fitness'], e: '' },
+    ...conditioning.map(c => ({ u: `off-ice/${c.id}/`, t: c.data.name, s: c.data.summary, k: 'off-ice', a: [], e: '' })),
     ...tests.map(t => ({
       u: `tests/${t.id}/`, t: t.data.name,
       s: `${t.data.governingBody} · ${t.data.discipline}, level ${t.data.level}`,

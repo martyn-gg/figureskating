@@ -116,6 +116,9 @@ const comboPage = c => allElements.find(e => e.data.kind === 'combo' && e.data.c
 const startsCombos = jumpKey ? ALL_COMBOS.filter(c => c.first.key === jumpKey && c.first.count === count)
   .map(c => ({ c, el: comboPage(c) })).filter(x => x.el) : [];
 const isSecond = jumpKey ? SECONDS.includes(jumpKey) : false;
+/* OFF THE ICE — 04/10/2026. The conditioning entries that name this element. Their
+   pages are not copied per country, and curl sends the link to the single copy. */
+const offIce = (await getCollection('conditioning')).filter(c => c.data.prepares.some(r => r.id === entry.id));
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
 
 /* WHAT THIS LEADS TO — 19/09/2026, Martyn: say how a basic prepares a skater for
@@ -507,6 +510,15 @@ const crumbs = [
       <h2>Build on</h2>
       <ul class="plain">
         {prereqs.map(p => <li><a href={url(`elements/${p.id}/`)}>{p.data.name}</a><span>{reasonFor(p.id, entry.id) || p.data.summary}</span></li>)}
+      </ul>
+    </>
+  )}
+
+  {offIce.length > 0 && (
+    <>
+      <h2>Off the ice</h2>
+      <ul class="plain">
+        {offIce.map(c => <li><a href={url(`off-ice/${c.id}/`)}>{c.data.name}</a><span>{c.data.summary}</span></li>)}
       </ul>
     </>
   )}

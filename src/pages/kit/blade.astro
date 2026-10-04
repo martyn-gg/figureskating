@@ -1,0 +1,82 @@
+---
+/* THE BLADE — 04/10/2026, Session 28. The rocker figure is BladeRocker, drawn from
+   rig-math.js; the numbers in the prose are computed from the same constants, so the
+   page cannot say one thing while the skaters on every other page stand on another.
+   Facts not in the rig (7 and 8 ft rockers, the common hollows, a 1/2 in default) are
+   from a skating club's equipment guide, cited at the foot of the page. */
+import Base from '../../layouts/Base.astro';
+import BladeRocker from '../../components/BladeRocker.astro';
+import BladeHollow from '../../components/BladeHollow.astro';
+import { url } from '../../lib/url.js';
+import { kitPage } from '../../lib/kit.js';
+import { ROCKER, MAX_BLADE_PITCH, contactAlong } from '../../lib/rig-math.js';
+const perDegree = contactAlong(1).toFixed(1);
+const crumbs = [{ name: 'Kit', href: url('kit/') }, { name: 'The blade' }];
+---
+<Base title="The blade" subtitle={kitPage('blade').summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('kit/')}>Kit</a></p></div>
+  <h1>The blade</h1>
+  <p class="lede">
+    A figure blade is not flat along its length and not flat across it. Both curves decide
+    how it skates.
+  </p>
+
+  <h2>The rocker</h2>
+  <p>
+    Along its length the blade is ground to a curve called the rocker. Figure blades are
+    commonly ground to a radius of about 7 or 8 feet; the figures in this guide stand on
+    one of {Math.round(ROCKER / 30.48)} feet. A tighter rocker turns more easily and a flatter one runs
+    faster and steadier. Many blades are also ground a little tighter towards the front,
+    the part a spin sits on.
+  </p>
+  <BladeRocker />
+  <p>
+    Because the blade is curved, only a short stretch of it touches the ice at once, and
+    which stretch depends on how the boot is tilted. Tilting the foot forward by one degree
+    moves the contact {perDegree} cm towards the toe. Past about {MAX_BLADE_PITCH.toFixed(1)} degrees
+    the contact runs off the front of the blade altogether, and the next thing to touch the
+    ice is the pick.
+  </p>
+  <p>
+    That is why a coach talks so much about where your weight is. Gliding and most edges
+    sit a little behind the middle. Spins sit forward, close to the pick. Rocking too far
+    back puts a skater on the heel, where the blade stops steering.
+  </p>
+
+  <h2>The toe pick</h2>
+  <p>
+    The teeth at the front are the toe pick. They are for jabbing into the ice: the vault
+    of a toe loop, flip or Lutz, and the push of a toe-assisted hop. They are not for
+    standing on, and a skater who drifts forward onto them while gliding trips. The pick
+    is also why figure skates are sharpened differently from hockey skates, which have
+    none.
+  </p>
+
+  <h2>The hollow and the two edges</h2>
+  <p>
+    Across its width the blade is sharpened with a shallow groove, the hollow, which leaves
+    a sharp edge on each side: the inside edge and the outside edge that every element in
+    the guide is written in. The groove is part of a circle, and it is named by that
+    circle's radius. A smaller radius cuts a deeper groove, grips harder and is harder to
+    stop on; a larger one is shallower and slides more.
+  </p>
+  <BladeHollow />
+  <p>
+    Most figure skaters skate on a hollow between 7/16 and 5/8 of an inch, and 1/2 inch is
+    the usual starting point. A sharpener can suggest a different one for your weight and
+    what you skate. It is a small number with a large effect, so change it one step at a
+    time.
+  </p>
+
+  <h2>Where to next</h2>
+  <ul class="plain">
+    <li><a href={url('kit/care/')}>Looking after skates</a><span>Guards, soakers, drying and sharpening.</span></li>
+    <li><a href={url('elements/in/edges/')}>The eight edges</a><span>The inside and outside edges, on each foot, both directions.</span></li>
+    <li><a href={url('elements/in/spin/')}>Spins</a><span>The elements that live at the front of the blade.</span></li>
+  </ul>
+  <p class="note">
+    Rocker radii and common hollows: Charleston Figure Skating Club,{' '}
+    <a href="https://charlestonfsc.com/next-steps/equipment/blades/">Equipment: blades</a>.
+    Everything else on this page is computed from the blade the guide's figures stand on.
+  </p>
+</Base>

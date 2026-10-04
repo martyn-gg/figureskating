@@ -1,0 +1,33 @@
+---
+/* One off-ice capacity: what it is, why the ice needs it, and the elements it
+   prepares, each linking to its page. The element page links back (its "Off the ice"
+   line), and tools/office.mjs holds the two directions together. */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import { url } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('conditioning');
+  return entries.map(e => ({ params: { slug: e.id }, props: { entry: e } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const elements = await getCollection('elements');
+const prepares = d.prepares.map(r => elements.find(e => e.id === r.id)).filter(Boolean);
+const crumbs = [{ name: 'Off the ice', href: url('off-ice/') }, { name: d.name }];
+---
+<Base title={d.name} subtitle={d.summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('off-ice/')}>Off the ice</a></p></div>
+  <h1>{d.name}</h1>
+  <p class="lede">{d.summary}</p>
+  <div class="meta">{d.capacity.map(c => <span class="chip">{c}</span>)}</div>
+  <Unverified verified={d.verified} what="suggestions" />
+  <Content />
+  <h2>On the ice, this prepares</h2>
+  <ul class="plain">
+    {prepares.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}
+  </ul>
+  <p class="note">{d.source}</p>
+</Base>

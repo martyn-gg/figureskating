@@ -1,0 +1,30 @@
+---
+/* THE KIT — 04/10/2026, Session 28 (docs/roadmap.md, equipment). Three pages: the
+   blade, drawn from the rig's own numbers; the boot; and looking after both. Nothing
+   here names a product, a model or a maker (the roadmap's standing rule). */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+import { KIT } from '../../lib/kit.js';
+---
+<Base title="Kit" subtitle="The blade, the boot and how to look after them, without naming a single brand.">
+  <h1>Kit</h1>
+  <p class="lede">
+    What a figure skate is made of and why it is shaped the way it is, so that the rest
+    of the guide makes sense, and so that the questions of a skater's first month have
+    somewhere to land.
+  </p>
+  <ul class="plain">
+    {KIT.map(k => <li><a href={url(`kit/${k.slug}/`)}>{k.name}</a><span>{k.summary}</span></li>)}
+  </ul>
+  <p class="note">
+    The guide names no products, models or makers, here or anywhere else. What a rocker or
+    a hollow does is the same whoever grinds it. A skate shop or a coach can say which
+    boot and blade suit you.
+  </p>
+  <h2>Off the ice</h2>
+  <p>
+    What the body needs for the elements, and which elements need it: balance, the knee,
+    turnout, the landing, floor jumps, spinning and stamina.{' '}
+    <a href={url('off-ice/')}>Off the ice</a>.
+  </p>
+</Base>

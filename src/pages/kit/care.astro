@@ -1,0 +1,61 @@
+---
+/* LOOKING AFTER SKATES — 04/10/2026, Session 28. The sharpening interval is given
+   as the cited club guide gives it, as a rough figure, with the sign that matters more. */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+import { kitPage } from '../../lib/kit.js';
+const crumbs = [{ name: 'Kit', href: url('kit/') }, { name: 'Looking after skates' }];
+---
+<Base title="Looking after skates" subtitle={kitPage('care').summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('kit/')}>Kit</a></p></div>
+  <h1>Looking after skates</h1>
+  <p class="lede">
+    A blade's edges are a fraction of a millimetre of hardened steel. Most of looking after
+    skates is keeping those edges away from anything harder than ice, and keeping them dry.
+  </p>
+
+  <h2>Guards and soakers</h2>
+  <p>
+    Hard guards are for walking. Put them on as you step off the ice and take them off as
+    you step back on: rubber matting is kind to edges, but concrete, tiles and the metal
+    edge of a door are not, and one step on any of them can take an edge off.
+  </p>
+  <p>
+    Take the guards off before the first step onto the ice, every time. Stepping on with
+    them still on is one of the commonest falls in skating, and it happens to experienced
+    skaters too.
+  </p>
+  <p>
+    Soakers are cloth covers for storage. A hard guard holds water against the steel, so a
+    blade left in one rusts. Once the blades are dry, soakers go on and the hard guards
+    stay off.
+  </p>
+
+  <h2>Drying</h2>
+  <p>
+    Wipe the blades with a towel as soon as you come off the ice, along the whole length
+    and over the edges, and again later, when the steel has warmed up and fogged with
+    condensation. At home, take the skates out of the bag and leave them open to dry, with
+    the tongues pulled forward. A boot left damp in a closed bag stays damp, and so do the
+    screws that hold the blade on.
+  </p>
+
+  <h2>Sharpening</h2>
+  <p>
+    Blades dull with skating. One club guide suggests a sharpening after about 35 hours on
+    the ice, but the better sign is the skating itself: edges that held last week start to
+    slip, or the blade skids sideways in a stop it used to bite in. A nick from a hard
+    surface needs attention sooner.
+  </p>
+  <p>
+    Have figure blades sharpened by someone who sharpens figure blades. The pick, the
+    rocker and the hollow all need care that a machine set up for hockey skates does not
+    give, and a careless sharpening can flatten the rocker or shorten the pick. Tell the
+    sharpener the hollow you skate on, and keep it the same unless you mean to change it.
+    The <a href={url('kit/blade/')}>blade page</a> shows what a hollow is.
+  </p>
+  <p class="note">
+    The sharpening figure: Charleston Figure Skating Club,{' '}
+    <a href="https://charlestonfsc.com/next-steps/equipment/blades/">Equipment: blades</a>.
+  </p>
+</Base>

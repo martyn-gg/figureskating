@@ -249,8 +249,12 @@ const exercises = defineCollection({
    the collection above is. */
 const conditioning = defineCollection({
   loader: md('./src/data/conditioning'),
+  /* Filled 04/10/2026, Session 28 (docs/roadmap.md, off-ice training). The rule above
+     held: each entry names a capacity and says which elements need it, and leaves the
+     programme to a coach or physiotherapist. `summary` added for the page subtitle. */
   schema: z.object({
     name: z.string(),
+    summary: z.string(),
     capacity: z.array(z.string()),
     prepares: z.array(reference('elements')).default([]),
     source: z.string(),

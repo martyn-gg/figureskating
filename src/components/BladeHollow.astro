@@ -1,0 +1,49 @@
+---
+/* THE HOLLOW, AT TRUE SCALE — 04/10/2026, Session 28. A blade is sharpened with a
+   concave groove along its bottom, which leaves two edges. The groove is a circle's
+   arc, named by the circle's radius (the "radius of hollow"); a smaller radius cuts
+   deeper. The depth across a blade W wide is R − √(R² − (W/2)²), computed here for the
+   three radii skaters most often meet, and drawn at the scale of the width, so the
+   picture shows how shallow a hollow really is. */
+const MM = 25.4;
+const W = 4;                                   // mm, the blade width drawn
+const RADII = [['7/16', 7 / 16], ['1/2', 1 / 2], ['5/8', 5 / 8]];
+const depth = r => r - Math.sqrt(r * r - (W / 2) ** 2);
+const S = 50;                                  // px per mm
+const CW = W * S + 40, CH = 120;
+---
+<figure class="kitfig">
+  <div class="hollows">
+    {RADII.map(([name, inch]) => {
+      const R = inch * MM * S, d = depth(inch * MM) * S, left = 20, right = 20 + W * S, base = 80;
+      return (
+        <div>
+          <svg viewBox={`0 0 ${CW} ${CH}`} role="img" aria-label={`A blade end-on with a ${name} inch hollow, ${depth(inch * MM).toFixed(2)} mm deep.`}>
+            <path class="steel" d={`M${left} 10 L${left} ${base} A${R.toFixed(1)} ${R.toFixed(1)} 0 0 1 ${right} ${base} L${right} 10 Z`} />
+            <line class="ice" x1="0" x2={CW} y1={base + 1} y2={base + 1} />
+            <circle class="edgept" cx={left} cy={base} r="5" /><circle class="edgept" cx={right} cy={base} r="5" />
+            <text x={CW / 2} y={base - d - 8} text-anchor="middle">{depth(inch * MM).toFixed(2)} mm</text>
+          </svg>
+          <b>{name} in</b>
+        </div>
+      );
+    })}
+  </div>
+  <figcaption>
+    A blade {W} mm wide seen end-on, sharpened to three common radii of hollow and drawn to
+    the scale of its width. The two dots are the edges. Even the deepest of the three is
+    less than a fifth of a millimetre, and it is enough to decide how much the blade grips.
+  </figcaption>
+</figure>
+<style>
+  .kitfig{margin:1.5rem 0;padding:1rem .9rem .2rem;background:var(--ice);border:1px solid var(--ice-line);border-radius:12px}
+  .hollows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;text-align:center}
+  .hollows svg{display:block;width:100%;height:auto}
+  .hollows b{font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.9rem}
+  .steel{fill:var(--ice-line);stroke:var(--ink-soft);stroke-width:2}
+  .ice{stroke:var(--edge-out);stroke-width:2}
+  .edgept{fill:var(--accent)}
+  text{font:13px ui-sans-serif,-apple-system,sans-serif;fill:var(--ink)}
+  figcaption{margin:.6rem 0 0;padding:.6rem .1rem .8rem;border-top:1px solid var(--ice-line);
+    font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem;color:var(--ink-soft);line-height:1.5}
+</style>

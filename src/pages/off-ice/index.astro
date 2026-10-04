@@ -1,0 +1,50 @@
+---
+/* OFF THE ICE — 04/10/2026, Session 28 (docs/roadmap.md). The conditioning
+   collection, which has had a schema and no entries since August. Each entry names a
+   capacity and the elements that need it; the programme is left to a coach or a
+   physiotherapist, which is the rule written into content.config.ts and the reason
+   this is not a workout page. General fitness is better covered elsewhere. */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+/* The order a skater needs them in: balance and the knee from the first lessons, then
+   what the jumps and spins ask for, then what a whole programme asks for. */
+const ORDER = ['balance-on-one-leg', 'a-deep-soft-knee', 'hips-and-turnout', 'core-and-carriage',
+  'holding-the-landing', 'jumping-and-turning-off-the-floor', 'spotting-and-rotation', 'spin-positions', 'stamina'];
+const entries = (await getCollection('conditioning')).sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
+const unplaced = entries.filter(e => !ORDER.includes(e.id));
+if (unplaced.length) throw new Error(`off-ice: ${unplaced.map(e => e.id).join(', ')} has no place in ORDER`);
+---
+<Base title="Off the ice" subtitle="What the body needs for the elements, and which elements need it.">
+  <h1>Off the ice</h1>
+  <p class="lede">
+    Each page here names something the body has to be able to do, says which elements ask
+    for it, and leaves the programme to a coach or a physiotherapist.
+  </p>
+  <p>
+    That is deliberate. A website cannot see how you move, and a squat or a stretch is
+    better taught by someone who can. What the guide can do is connect the work to the ice:
+    why a skater needs a held single-leg bend, and which jumps fall apart without one. Every
+    element named below links back here from its own page.
+  </p>
+  <p>
+    Warm up before anything off the ice, and before jumping above all. Jump on a forgiving
+    surface, land on a bent knee, and stop if something hurts. A skater with an injury or a
+    health condition should ask a doctor or physiotherapist first.
+  </p>
+
+  <h2>What the elements ask for</h2>
+  <ul class="plain">
+    {entries.map(e => (
+      <li>
+        <a href={url(`off-ice/${e.id}/`)}>{e.data.name}</a>
+        <span>{e.data.summary} {e.data.prepares.length} element{e.data.prepares.length === 1 ? '' : 's'} named.</span>
+      </li>
+    ))}
+  </ul>
+
+  <p class="note">
+    The kit you skate in is on its own page: <a href={url('kit/')}>the blade, the boot and
+    how to look after them</a>.
+  </p>
+</Base>
