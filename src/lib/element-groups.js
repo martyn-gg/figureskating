@@ -118,8 +118,13 @@ export function elementGroups(elements, exercises = []) {
 
   /* Look an element up by what it *is*, not by a constructed slug — so a file
      renamed by hand does not silently drop out of the table. */
+  /* A plain edge is kind `edge`, not anything with an entry and no turn: until
+     04/10/2026 the Edges grid's LBI linked to the camel spin and its RBO to the extended
+     edge, as did the entry column of both turn tables, and tools/crumbs.mjs found it
+     on its first run. */
   const find = (s, turn) => elements.find(e =>
-    e.data.entry && label(e.data.entry) === label(s) && (e.data.turn ?? null) === turn);
+    e.data.entry && label(e.data.entry) === label(s) && (e.data.turn ?? null) === turn
+    && (turn !== null || e.data.kind === 'edge'));
 
   const EDGE_ROWS = [['F', 'O'], ['F', 'I'], ['B', 'O'], ['B', 'I']];
   const ROW_WORD = { FO: 'forward outside', FI: 'forward inside',
@@ -207,9 +212,7 @@ export function elementGroups(elements, exercises = []) {
      what makes the bottom of the page one tap away instead of a scroll. */
   const oneFoot = elements.filter(e => e.data.kind === 'turn' && TURN_KEYS.includes(e.data.turn));
   const twoFoot = elements.filter(e => e.data.kind === 'turn' && STEP_KEYS.includes(e.data.turn));
-  const KIND_LABEL = k => k === 'position' ? 'Positions' : k === 'dance' ? 'Pattern dances'
-    : k === 'combo' ? 'Jump combinations'
-    : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`;
+  const KIND_LABEL = sectionLabel;
 
   /* THE ORDER OF THE SECTIONS IS THE ORDER A SKATER MEETS THEM — 19/09/2026,
      Martyn: these should be ordered properly, with basics at the top and then
@@ -267,18 +270,37 @@ export function elementGroups(elements, exercises = []) {
     return r;
   };
 
-  const SECTIONS = [
-    { id: 'edges',       label: 'Edges',          n: nEdges },
-    { id: 'one-foot',    label: 'One-foot turns', n: oneFoot.length },
-    { id: 'two-foot',    label: 'Two-foot turns', n: twoFoot.length },
-    { id: 'twizzles',    label: 'Twizzles',       n: twizzles.length },
-    { id: 'transitions', label: 'Transitions',    n: transitions.length },
-    { id: 'clusters',    label: 'Clusters',       n: combos.length },
-    ...restKinds.map(k => ({ id: k, label: KIND_LABEL(k),
-                             n: rest.filter(e => e.data.kind === k).length })),
-  ].filter(s => s.n > 0).sort((a, b) => rankOf(a.id) - rankOf(b.id));
+  /* WHICH SECTION A PAGE IS IN IS ONE RULE, sectionOf below, and the counts come
+     from it — 04/10/2026, with the breadcrumbs, which ask the same question from
+     the element's side. Two answers would let a crumb point at a section that does
+     not list the page; tools/crumbs.mjs checks the built pages both ways. */
+  const counted = new Map();
+  for (const e of elements) { const id = sectionOf(e.data); counted.set(id, (counted.get(id) ?? 0) + 1); }
+  const SECTIONS = [...counted].map(([id, n]) => ({ id, label: sectionLabel(id), n }))
+    .filter(s => s.n > 0).sort((a, b) => rankOf(a.id) - rankOf(b.id));
   return { STATES, TURN_KEYS, STEP_KEYS, find, EDGE_ROWS, ROW_WORD, transitions, transitionGroups, twizzles, twizzleGroups, combos, comboGroups, rest, KIND_ORDER, restKinds, nEdges, nTurns, oneFoot, twoFoot, KIND_LABEL, SECTIONS };
 }
+
+/* WHICH SECTION AN ELEMENT BELONGS TO, AND WHAT THAT SECTION IS CALLED — 04/10/2026,
+   for the breadcrumb on every element page (Martyn: give every page the holds' crumb).
+   The six bespoke sections are named here; every other kind is its own section, which
+   is how restKinds has always worked. A turn whose key is in neither TURNS nor STEPS
+   throws: it would otherwise be listed nowhere and crumbed somewhere. */
+const BESPOKE = { edge: 'edges', twizzle: 'twizzles', transition: 'transitions', combination: 'clusters' };
+export function sectionOf(d) {
+  if (d.kind === 'turn') {
+    if (TURNS[d.turn]) return 'one-foot';
+    if (STEPS[d.turn]) return 'two-foot';
+    throw new Error(`sectionOf: the turn "${d.turn}" is in neither TURNS nor STEPS`);
+  }
+  return BESPOKE[d.kind] ?? d.kind;
+}
+const SECTION_LABEL = {
+  edges: 'Edges', 'one-foot': 'One-foot turns', 'two-foot': 'Two-foot turns', twizzles: 'Twizzles',
+  transitions: 'Transitions', clusters: 'Clusters', position: 'Positions', dance: 'Pattern dances',
+  combo: 'Jump combinations',
+};
+export const sectionLabel = id => SECTION_LABEL[id] ?? `${id.charAt(0).toUpperCase()}${id.slice(1)}s`;
 
 /* WHAT EACH SECTION IS, IN ONE LINE. The hub prints these as the card subtitles
    and each section page prints its own as the page subtitle, so a reader meets the

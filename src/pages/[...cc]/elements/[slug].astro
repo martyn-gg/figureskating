@@ -9,7 +9,7 @@ import Unverified from '../../../components/Unverified.astro';
 import EdgeDiagram from '../../../components/EdgeDiagram.astro';
 import EdgeThumb from '../../../components/EdgeThumb.astro';
 import PathThumb from '../../../components/PathThumb.astro';
-import { familyOf, teachRank, syllabusRank } from '../../../lib/element-groups.js';
+import { familyOf, teachRank, syllabusRank, sectionOf, sectionLabel } from '../../../lib/element-groups.js';
 import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
 import BodyFrame from '../../../components/BodyFrame.astro';
 import { DANCE_KEY, stepLink, patternBeats } from '../../../lib/dance.js';
@@ -198,12 +198,24 @@ const SR = syllabusRank(allExercises);
 const rankOf = e => e.data.turn ? SR.ofElement(e.id) : -1;
 family.sort((a, b) => rankOf(a) - rankOf(b));
 clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.length - b.data.turns.length);
+/* Where this page is listed: Elements, then its section (element-groups.js). */
+const section = sectionOf(d);
+const crumbs = [
+  { name: 'Elements', href: url('elements/') },
+  { name: sectionLabel(section), href: url(`elements/in/${section}/`) },
+  { name: shown },
+];
 ---
-<Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource}
-  crumbs={[{ name: 'Elements', href: url('elements/') }, { name: shown }]}>
-  {/* The holds have no tab of their own, so a hold page says where it belongs, the
-      way a section page does. */}
-  {d.kind === 'hold' && <p class="lede"><a href={url('elements/')}>Elements</a> · <a href={url('elements/in/hold/')}>Holds</a></p>}
+<Base title={shown} subtitle={d.summary} kind={d.kind} measured={patternSource} crumbs={crumbs}>
+  {/* EVERY ELEMENT PAGE SAYS WHERE IT BELONGS — 04/10/2026. The holds had this alone,
+      because they have no tab of their own; Martyn: give every page the same. A tab
+      opens its first section, which is not always the list a page is in, and a reader
+      arriving from a search engine has seen neither. The same trail goes to search
+      engines as JSON-LD, from the one `crumbs` array. tools/crumbs.mjs checks it. */}
+  {/* A div with the navigation role, not a <nav>: both stylesheets style every nav as
+      the site's link row, and this is the same line a section page opens with. */}
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede">{crumbs.slice(0, -1).map((c, i) =>
+    <>{i > 0 ? ' · ' : ''}<a href={c.href}>{c.name}</a></>)}</p></div>
   <h1>{shown}</h1>
   <p class="lede">{d.summary}</p>
   {/* The guide keeps the governing body's word and never translates it silently.
