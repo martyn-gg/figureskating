@@ -2491,6 +2491,20 @@ Each join agreed with Martyn before it was built.
   the skater slows from 2.6 m/s to the loop's 1.05 in that last 0.8 s; `continuity.mjs` is
   clean. A choice beside the edge and the three, not the default, because `MOVES.loop` is the
   second jump of every combination.
+- **The Lutz** (`lutz@crossovers`, and its double): three anticlockwise crossovers, then a
+  backward step from RBO onto LBO, which curves the other way, into the Lutz's long edge.
+  Agreed as the cheaper join; the public teaching found (Kori Ade, icoachskating) has a step
+  forward and a right forward mohawk in between, and no public source was found for the
+  direct step. The step is T stroking's, backwards: the left blade down beside the right
+  (LBI, derived), one key on the flat with both blades within the sole's 8 cm of the hip at
+  the change of reference, then the left on its outside edge with the right pushing away as
+  the backward push does. Written once, in `ENTRANCES` (runs that exist only to be joined),
+  which `from` reads after `MOVES`.
+- **`buildPath` found a second inflection case.** Two arcs curving opposite ways with
+  UNEQUAL radii ramp to a mean that is small and not nought, so the tighter arc's ramp began
+  at a radius of 18.5 m and stepping in angle moved the tracing 16.9 cm in one frame against
+  its own 3 (`continuity.mjs`, 12.4 cm change of speed). The arc-length branch now takes any
+  arc whose neighbour curves the other way. No existing move's frames changed.
 - `underice.mjs` lends a source move's declarations to an entrance built from it, mapped onto
   the entrance's part of the clock, with the depth the same frame reaches at the element's
   frame rate (`entered`).

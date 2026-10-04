@@ -997,7 +997,15 @@ export function buildPath(move){
         else { px = x+(Math.sin(th+k*t)-Math.sin(th))/k; py = y-(Math.cos(th+k*t)-Math.cos(th))/k; }
         pts.push({x:px,y:py,th:th+k*t});
       }
-    } else if(r0 == null && (kIn*k <= 0 || kOut*k <= 0)){
+    } else if(r0 == null && (kIn*k <= 0 || kOut*k <= 0
+              || (isArc && si > 0 && arcs[si-1] && kOf(si-1)*k < 0)
+              || (isArc && si < arcs.length-1 && arcs[si+1] && kOf(si+1)*k < 0))){
+      /* ...and where the NEIGHBOUR curves the other way, though the mean stays this side
+         of straight — 04/10/2026, Session 35. Two arcs of unequal radius curving opposite
+         ways (the crossovers' 4 m circle into the Lutz's 2.8 m edge) meet at a mean that
+         is small and not nought: the tighter arc's ramp started at a radius of 18.5 m,
+         and stepping in angle through it moved the tracing 16.9 cm in one frame against
+         its own 3. Arc length is right for any ramp that passes near straight. */
       /* A RAMP THROUGH AN INFLECTION — 03/10/2026, Session 26. The branch below steps
          in ANGLE and divides by the curvature to get a length, which is fine while a
          ramp stays on one side of straight and infinite where it reaches it. Two arcs

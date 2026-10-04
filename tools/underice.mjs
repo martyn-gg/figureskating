@@ -82,7 +82,7 @@
  * after twoFoot and toePick. `handover` below declares them, from both sides, the way
  * drawn.mjs holds its undrawable pages.
  */
-import { MOVES, ENTRIES, boundsOf } from '../src/lib/moves.js';
+import { MOVES, ENTRIES, ENTRANCES, boundsOf } from '../src/lib/moves.js';
 import { onIceOf } from '../src/lib/rig-math.js';
 import { rigFor, findAll } from './_dom.mjs';
 
@@ -293,12 +293,17 @@ for (const id of Object.keys(MOVES)) {
     /* And an entrance borrowed from another move (loop@crossovers, Session 35) brings that
        move's declarations with it, onto [0, at] of this clock: the same lift, drawn again. */
     const [base, vid] = id.split('@'), from = vid && ENTRIES[base]?.list.find(v => v.id === vid)?.from;
-    const fromEnd = from ? boundsOf(MOVES[from[0]])[from[1]] : 1, inE = x => x / fromEnd * at;
+    const fromEnd = from ? boundsOf(MOVES[from[0]] ?? ENTRANCES[from[0]])[from[1]] : 1, inE = x => x / fromEnd * at;
     /* Replayed at the element's frame rate, the frame after a lift falls at a different
        instant of it, so a borrowed declaration carries the depth it reaches there (`entered`). */
     const own = (handover[id] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002);
     const lent = !own && from ? (handover[from[0]] || []).find(e => r.w === e.foot && r.from >= inE(e.from) - 0.002 && r.to <= inE(e.to) + 0.002) : undefined;
-    const ex = own || (lent && { ...lent, cm: lent.entered ?? lent.cm, src: lent });
+    /* One step further: an entrance written for joining (ENTRANCES) that begins with another
+       move borrows that move's declarations onto its own clock (lutz@crossovers). */
+    const B = from && ENTRANCES[from[0]]?.borrows, inB = x => inE(x / B.upto * B.to);
+    const lent2 = !own && !lent && B ? (handover[B.move] || []).find(e => r.w === e.foot && r.from >= inB(e.from) - 0.002 && r.to <= inB(e.to) + 0.002) : undefined;
+    const ex = own || (lent && { ...lent, cm: lent.entered ?? lent.cm, src: lent })
+                   || (lent2 && { ...lent2, cm: lent2.entered ?? lent2.cm, src: lent2 });
     if (ex) {
       declared.add(ex.src || ex);
       if (r.cm > ex.cm + JITTER) {

@@ -24,14 +24,14 @@
       has a skating foot.
 
    Broken on purpose (each restored after):
-       --break=edge     every built entrance read as arriving on the other edge .. 8 entrances
-       --break=facing   the core's first key turned 90 degrees ................... 8 entrances
+       --break=edge     every built entrance read as arriving on the other edge .. 10 entrances
+       --break=facing   the core's first key turned 90 degrees ................... 10 entrances
        --break=splice   withEntry's rebuilt keys shifted one frame ............... 102 keys, 6 moves
        --break=stale    the Salchow declared as waiting .......................... 1
-   (Session 35: the counts read 7 against 6 built until the loop's crossovers made them 8.)
+   (Session 35: the counts read 7 against 6 built until the loop's crossovers made them 8, and the Lutz's 10.)
 
        node tools/entries.mjs [--break=edge|facing|splice|stale] */
-import { MOVES, ENTRIES, CORES, sliceMove, withEntry, boundsOf } from '../src/lib/moves.js';
+import { MOVES, ENTRIES, ENTRANCES, CORES, sliceMove, withEntry, boundsOf } from '../src/lib/moves.js';
 import { readFile, readdir } from 'node:fs/promises';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
@@ -51,8 +51,6 @@ const waiting = {
   waltz:       'a step forward onto LFO from a back edge, or back crossovers: the rig has neither',
   axel:        'a step forward onto LFO from a back edge, or back crossovers: the rig has neither',
   doubleAxel:  'the Axel\'s',
-  lutz:        'back crossovers into the corner: the rig has no crossover',
-  doubleLutz:  'the Lutz\'s',
   backSpin:    'a standing pivot wound up, or a step and a three turn onto RBO',
   twoFootSpin: 'a standstill wind-up: the spin starts gliding and has nowhere to wind from',
   camelSpin:   'the free leg rising straight from low behind to above the hip: this rig bends the knee on the way (moves.js)',
@@ -81,7 +79,7 @@ for (const [id, E] of Object.entries(ENTRIES)) for (const [i, v] of E.list.entri
      (the spins'). */
   const m = MOVES[i ? `${id}@${v.id}` : id]; if (!m || !v.from || !m.entrance) continue;
   variants++;
-  const [src, j] = v.from, S = MOVES[src], tb = boundsOf(S)[j];
+  const [src, j] = v.from, S = MOVES[src] ?? ENTRANCES[src], tb = boundsOf(S)[j];
   const arrive = { ...S.keys.find(k => Math.abs(k.t - tb) < 1e-6) };
   if (BREAK === 'edge') arrive.edge = arrive.edge === 'O' ? 'I' : 'O';
   /* The element's first key: in the variant, or (a spin that keeps its entrance's key at the
