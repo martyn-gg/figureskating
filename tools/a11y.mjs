@@ -33,7 +33,11 @@ catch {
 const PAGES = ['', 'about/', 'coaches/', 'elements/', 'elements/in/edges/', 'elements/in/dance/', 'elements/in/hold/',
   'elements/lfo/', 'elements/lfo-three/', 'elements/waltz-jump/', 'elements/dutch-waltz/', 'elements/westminster-waltz/',
   'elements/kilian-hold/', 'elements/forward-stroking/', 'grades/', 'uk/grades/', 'grades/bis-ice-dance/', 'tests/',
-  'tests/bis-skills-1/', 'search/', 'rig/', 'uk/', 'elements/other-names/'];
+  'tests/bis-skills-1/', 'search/', 'rig/', 'uk/', 'elements/other-names/',
+  /* Kit and off the ice, 04/10/2026: both figures, a hub, an entry, and an element page
+     carrying the new combination figure and the Off the ice list. */
+  'kit/', 'kit/blade/', 'kit/boots/', 'kit/care/', 'off-ice/', 'off-ice/holding-the-landing/',
+  'elements/in/combo/', 'elements/salchow-loop/'];
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 const srv = await serveDist(); const b = await browser();

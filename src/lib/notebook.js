@@ -41,6 +41,9 @@ export const TABS = [
   /* DANCE — 03/10/2026, Martyn: a section for dance, to hold the pattern dances. */
   { id: 'dance', label: 'Dance', href: 'elements/in/dance/',
     kinds: ['hold', 'dance'], sections: ['hold', 'dance'] },
+  /* OFF THE ICE — 04/10/2026, Martyn: off the ice is not kit, so it gets its own tab.
+     Its pages are found by path, like the grades. */
+  { id: 'office', label: 'Off ice', href: 'off-ice/', kinds: [], sections: [] },
   { id: 'grade', label: 'Grades', href: 'grades/', kinds: [], sections: [] },
 ];
 
@@ -51,6 +54,7 @@ export const tabFor = (pathname, kind) => {
   const sec = pathname.match(/\/elements\/in\/([a-z-]+)\/?$/)?.[1];
   if (sec) return TABS.find(t => t.sections.includes(sec))?.id ?? null;
   if (/\/(grades|tests)\//.test(pathname)) return 'grade';
+  if (/\/off-ice\//.test(pathname)) return 'office';
   return null;
 };
 

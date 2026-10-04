@@ -11,9 +11,11 @@ Turning quickly makes most people dizzy, and the body gets used to it with pract
 the ice that practice is expensive, so skaters do some of it on the floor: turning on the
 spot, keeping the head steady and the eyes level, and stopping in a balanced position.
 
-Spinning skaters do not spot the way dancers do, fixing on one point. The head stays still
-on the body and turns with it, and the skater learns to come out of a spin and see
-straight again quickly. Twizzles, which turn while travelling, ask for the same thing.
+A spin turns too fast to snap the head round to one point on every turn, as a dancer
+does in a pirouette, so the head mostly stays steady on the body and turns with it. Many
+skaters still pick out something familiar around the rink to keep their bearings, which
+is harder in a rink they do not know. Twizzles, which turn while travelling, ask for the
+same thing.
 
 Some skaters use a small spinning board on the floor. It is worth asking a coach first, as
 it turns more freely than a blade does and can teach a position the ice will not hold.

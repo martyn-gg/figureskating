@@ -6,7 +6,10 @@
    three radii skaters most often meet, and drawn at the scale of the width, so the
    picture shows how shallow a hollow really is. */
 const MM = 25.4;
-const W = 4;                                   // mm, the blade width drawn
+/* 3/16 in, the width reference works give for a figure blade (Britannica; Wikipedia).
+   The makers whose pages were checked on 04/10/2026 publish the rocker and the hollow
+   but not the width, and a tapered blade is thinner at the heel than at the toe. */
+const W = 3 / 16 * MM;                         // mm, the blade width drawn
 const RADII = [['7/16', 7 / 16], ['1/2', 1 / 2], ['5/8', 5 / 8]];
 const depth = r => r - Math.sqrt(r * r - (W / 2) ** 2);
 const S = 50;                                  // px per mm
@@ -30,9 +33,10 @@ const CW = W * S + 40, CH = 120;
     })}
   </div>
   <figcaption>
-    A blade {W} mm wide seen end-on, sharpened to three common radii of hollow and drawn to
-    the scale of its width. The two dots are the edges. Even the deepest of the three is
-    less than a fifth of a millimetre, and it is enough to decide how much the blade grips.
+    A blade 3/16 in ({W.toFixed(1)} mm) wide seen end-on, sharpened to three common radii of
+    hollow and drawn to the scale of its width. The two dots are the edges. Even the deepest
+    of the three is {depth(RADII[0][1] * MM).toFixed(2)} mm, and it is enough to decide how much
+    the blade grips.
   </figcaption>
 </figure>
 <style>
