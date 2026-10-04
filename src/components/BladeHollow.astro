@@ -9,8 +9,9 @@ const MM = 25.4;
 /* THE WIDTH IS A MEASURED BLADE, 3.5 mm — 04/10/2026, Martyn measured his own. Reference
    works give 3/16 in (4.8 mm: Britannica, Wikipedia). One maker publishes 3.8 mm for a
    parallel blade (everglides.co.uk, the Legacy 7 page, read 04/10/2026, Martyn's find);
-   it is not named on the page, by the brand-agnostic rule in docs/roadmap.md. The other
-   makers' pages checked give the rocker and the hollow but not the width. Depth goes with the square
+   John Wilson lists 4 or 4.1 mm depending on the blade (Martyn, from their site, the same
+   day). Neither is named on the page, by the brand-agnostic rule in docs/roadmap.md; the
+   caption gives the makers' range. Depth goes with the square
    of the width, so the caption gives both. A tapered blade varies along its length. */
 const W = 3.5;                                 // mm, the blade width drawn
 const W_REF = 3 / 16 * MM;                     // mm, the reference works' figure
@@ -41,8 +42,8 @@ const CW = W * S + 40, CH = 120;
     A blade {W} mm wide seen end-on, the width of one measured for this guide, sharpened to
     three common radii of hollow and drawn to the scale of its width. The two dots are the
     edges. The deepest of the three is {depth(RADII[0][1] * MM).toFixed(2)} mm, and it is enough to
-    decide how much the blade grips. Blades vary: one maker publishes 3.8 mm for a blade of
-    even width, reference works give 3/16 in ({W_REF.toFixed(1)} mm), and on a blade that
+    decide how much the blade grips. Blades vary: makers publish widths from 3.8 to 4.1 mm,
+    reference works give 3/16 in ({W_REF.toFixed(1)} mm), and on a blade that
     wide the same hollows are{' '}
     {RADII.map(([, inch]) => depthAt(inch * MM, W_REF).toFixed(2)).join(', ')} mm deep.
   </figcaption>
