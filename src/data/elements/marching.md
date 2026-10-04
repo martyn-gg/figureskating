@@ -1,6 +1,7 @@
 ---
 name: Marching
 kind: basic
+rig: marching
 summary: "Walking on the ice with each foot lifted clear in turn, forwards first and later backwards."
 aliases: ["march", "march forward", "marching forwards", "backward marching", "march forward across the ice"]
 prerequisites: []

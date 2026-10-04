@@ -2180,6 +2180,21 @@ draw put 30 to 36° of forward lean on the pushing shin.
 What neither draws is the pushing blade's own line, the scallops outside the circle.
 That is the second tracing, below.
 
+## Marching is a standing blade running back under the hip — 04/10/2026, Session 32
+
+`drawn.mjs` said the rig draws no stepping. Since Session 30 a free blade can be set down
+and the reference handed over on the ice, so marching is four of those (`marchKeys`). What
+makes it a walk rather than four glides is that the standing blade's hip-relative t runs
+from 10 ahead to 10 behind across its step while the path, its tracing, advances 6 cm:
+the hip hangs off the blade by the blade's own offset (buildPath), so the hip travels 26
+cm a step and the blade slides 6. Flat blades, feet straight (a reference blade cannot be
+turned off its own line without skidding), the standing foot close under the hip because
+a flat is a blade with the hip over it, the knees lifted high.
+
+From above, the single tracing jumps sideways at each change of foot, because it is the
+standing blade's line and the standing blade changes. The second tracing is what draws
+two short parallel tracks instead.
+
 ## A pick that lands along the travel — 04/10/2026, Session 32, the bunny hop
 
 Every pick before today was a jab behind, and `pickDir` points its toe back along the

@@ -2171,6 +2171,59 @@ MOVES.halfSwizzlePumpsBack = {
   radius:300, duration:6.4, keys: pumpKeys('B'),
 };
 
+/* MARCHING — 04/10/2026, Session 32. Walking on the ice, each foot lifted clear in turn
+   (Ice Skating Australia: eight to ten steps, every foot lifted). Four steps here,
+   left first.
+
+   drawn.mjs SAID THE RIG DRAWS NO STEPPING, and since Session 30 that was stale: a free
+   blade can be set down beside the gliding one and the reference handed over on the ice
+   (pushOffT). What makes it a walk rather than a glide is that the standing blade runs
+   BACKWARDS under the hip, from 10 cm ahead to 10 behind, while it glides only 6 cm
+   along the ice. The path is that blade's tracing and the hip is hung off it by the
+   blade's own offset (buildPath), so the hip covers 26 cm a step and the blade 6:
+   which is what a beginner's march looks like, a short slide under each step.
+
+   Flat blades and straight feet. A reference blade cannot be turned off its own line
+   without skidding (turnout.mjs), so the march's small V of the toes is not drawn; the
+   standing foot sits close under the hip, because a flat is a blade with the hip over
+   it (lean.mjs). The knees lift high, as KiwiSkate teaches it.
+
+   Verified against a coach: NO. */
+const marchKeys = () => {
+  const N = 4, out = [], G = 6;                    // G: cm the standing blade glides a step
+  const nOf = { L: -4, R: 4 }, nFree = { L: -9, R: 9 };
+  const pose = (S, extra) => ({ hipZ: 94, hipYaw: 0, shYaw: 0, sh: P(3, 0, 146),
+                                skate: S, edge: null, dir: 'F', arm: [62, 8, 20], ...extra });
+  for (let i = 0; i < N; i++) {
+    const S = i % 2 ? 'R' : 'L', O = S === 'L' ? 'R' : 'L', b = i / N, p = 1 / N;
+    const st = t => (S === 'L' ? { L: P(t, nOf.L, 0, -0.5) } : { R: P(t, nOf.R, 0, -0.5) });
+    const f = q => ({ [O]: q });
+    out.push({ ...pose(S, { ...st(10), ...f(ON(-10, nOf[O], 0, -0.5)) }), t: +b.toFixed(4),
+      ph: i ? `The weight onto the ${S === 'L' ? 'left' : 'right'} foot` : 'Standing on both feet, the weight going onto the left' });
+    out.push({ ...pose(S, { ...st(7), ...f(P(-12, nFree[O], 7, 0, NEUTRAL)) }), t: +(b + 0.14 * p).toFixed(4),
+      ph: `The ${O === 'L' ? 'left' : 'right'} foot lifting clear` });
+    out.push({ ...pose(S, { ...st(0), ...f(P(2, nFree[O], 24, 0, NEUTRAL)), hipZ: 95 }), t: +(b + 0.5 * p).toFixed(4),
+      ph: 'The knee up, the foot passing under it' });
+    out.push({ ...pose(S, { ...st(-7), ...f(P(10, nFree[O], 7, 0, NEUTRAL)) }), t: +(b + 0.84 * p).toFixed(4),
+      ph: 'Reaching forward to step' });
+    out.push({ ...pose(S, { ...st(-9.5), ...f(ON(10.5, nOf[O], 0, -0.5)) }), t: +(b + 0.96 * p).toFixed(4),
+      ph: `The ${O === 'L' ? 'left' : 'right'} blade down ahead` });
+  }
+  out.push({ hipZ: 95, hipYaw: 0, shYaw: 0, sh: P(2, 0, 147), arm: [62, 8, 20], t: 1,
+    L: ON(0, -7, 0, -0.5), R: P(0, 7, 0, -0.5), skate: 'R', edge: null, dir: 'F',
+    ph: 'Both feet together, ready to glide' });
+  return { keys: out, len: N * G };
+};
+{
+  const m = marchKeys();
+  MOVES.marching = {
+    name:'Marching',
+    note:'four steps on flat blades, each foot lifted clear, the standing blade sliding a little under each',
+    path:[{kind:'line', len:m.len}],
+    radius:300, duration:4.8, keys:m.keys,
+  };
+}
+
 MOVES.spiralCheck = sameLegs(MOVES.spiral);
 MOVES.spiralCheck.name = 'Spiral, arms checked';
 MOVES.spiralCheck.note = 'held position · free leg at or above hip height · left arm across, right arm back';
