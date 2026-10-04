@@ -78,6 +78,21 @@ const cannotDraw = {
   'layback-spin':                'the arch is in the back, and the rig has a hip and shoulders and no spine between them',
   /* Pattern dances show their steps as a table. The rink pattern is a drawing of where
      each lobe goes, and the diagrams that hold it are US Figure Skating's to draw. */
+  /* THE PAGES SESSION 32 ADDED FROM docs/gaps-grades.md, each with what the rig lacks.
+     None of them has a rig that fits, which was the brief's condition for drawing one. */
+  'back-spin':                   'not yet drawn: the upright spin\'s machinery on the other foot\'s back outside edge, with the free leg crossed',
+  'flying-spin':                 'a jump into a spin: the rig has flight and spins, and nothing joining a take-off to a centred landing',
+  'flying-camel-spin':           'a jump into a spin: the rig has flight and spins, and nothing joining a take-off to a centred landing',
+  'choreographic-spin':          'any position by the skater\'s choice: there is no one pose to draw',
+  'half-flip':                   'not yet drawn: a pick take-off, a half turn and a landing on the other toe, then a three turn',
+  'half-lutz':                   'not yet drawn: the half flip from a back outside edge, counter-rotated',
+  'tap-toe-jump':                'not yet drawn: a pick take-off, a half turn and a toe-to-toe landing with a push-off',
+  'cross-strokes':               'a push from under a crossed leg: the pushing blade\'s own line is the second tracing',
+  'power-change-of-edge-pulls':  'not yet drawn: one blade changing edge down a straight, its lobes alternating',
+  'power-pulls':                 'not yet drawn: one backward blade changing edge, with quick rockers between',
+  'swing-roll':                  'a dance step held for beats: not yet drawn, the free leg\'s swing is the whole of it',
+  'progressive':                 'not yet drawn: a step passing the skating foot, the dance version of the crossover',
+  'crossed-step-in-front':       'not yet drawn: the crossed step behind\'s family crossed in front, as derived pages',
   'falling-and-getting-up':      'the body on the ice: the rig has hips over blades and no pose sitting or kneeling',
 };
 

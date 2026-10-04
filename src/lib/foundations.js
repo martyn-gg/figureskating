@@ -24,7 +24,15 @@
    coach's sign-off. */
 
 export const FOUNDATIONS = {
+  'power-change-of-edge-pulls': [
+    { to: /^power-pulls$/, why: "Power pulls are the backward change of edge pulls skated on the diagonal with quick rockers between them, three levels later in U.S. Figure Skating's tests." },
+  ],
+  'half-flip': [
+    { to: /^tap-toe-jump$/, why: "The tap toe jump is the half flip's take-off and half turn, landing toe to toe and pushing straight off onto the other foot." },
+    { to: /^half-lutz$/, why: 'The half Lutz is the half flip taken off from a back outside edge.' },
+  ],
   'pivot': [
+    { to: /^back-spin$/, why: "KiwiSkate's Free skating 1 badge enters the back spin from a pivot." },
     { to: /^toe-loop$/, why: 'The back outside pivot, entered from a forward inside three turn, is the toe loop\'s entry and pick without the jump: the pick set behind on a back outside edge while the skating foot goes round it.' },
   ],
   'swizzle': [
@@ -51,6 +59,8 @@ export const FOUNDATIONS = {
     { to: /^backward-stroking$/, why: 'Each backward stroke finishes in a backward glide.' },
   ],
   'one-foot-glide': [
+    { to: /^swing-roll$/, why: 'A swing roll is a one-foot edge held for several beats while the free leg swings past, so it rests on holding one foot that long.' },
+    { to: /^power-change-of-edge-pulls$/, why: 'Every change of edge in the pulls is made on one foot, held for the length of the rink.' },
     { to: /^[lr]f[oi]$/, why: 'The one-foot glide runs on a flat. New Zealand teaches it straight and then on a curve, which is the blade on an edge.' },
     { to: /^drag$/, why: 'The drag is a glide on one foot with the skating knee bent deep and the free leg extended behind, turned out.' },
     { to: /^extended-edge$/, why: 'An extended edge holds one foot for a third of a circle. The one-foot glide is where holding one foot starts.' },
@@ -60,10 +70,13 @@ export const FOUNDATIONS = {
     { to: /^t-stop$/, why: 'The T-stop starts from a one-foot glide, the other foot set down behind it.' },
   ],
   'backward-one-foot-glide': [
+    { to: /^power-pulls$/, why: 'Power pulls are skated travelling backwards on one foot throughout.' },
     { to: /^[lr]b[oi]$/, why: 'New Zealand moves the backward glide onto a curve and round a circle, which is the backward edges. On them, Ice Skating Australia keeps the free leg ahead, above the line.' },
     { to: /^(upright-spin|change-of-foot-spin)$/, why: 'Ice Skating Australia\'s two-foot spin exits on a back outside edge, and its first one-foot spin carries the free foot at the side of the knee, as this glide does.' },
   ],
   'forward-stroking': [
+    { to: /^progressive$/, why: "A progressive is a stroke on the same lobe: the new foot passes the skating foot and gains some impetus from the edge of the foot becoming free, in U.S. Figure Skating's definition." },
+    { to: /^cross-strokes$/, why: "The forward length of U.S. Figure Skating's Bronze cross strokes is forward stroking with the push taken from the outside edge of a foot crossed above the knee." },
     { to: /^[lr]f[oi]$/, why: 'An edge is a stroke held on one foot round a curve. Ice Skating Australia already asks for each stroke to be held for the skater\'s height.' },
     { to: /^[lr]f[oi]-chasse$/, why: 'British Ice Skating defines a chassé as two edges, the free foot put down next to the skating foot for the second and then lifted with its blade level.' },
     { to: /^[lr]f[oi]-slipchasse$/, why: 'British Ice Skating\'s slip chassé is the chassé with the free foot sliding off the ice in front on the second step.' },
@@ -72,6 +85,7 @@ export const FOUNDATIONS = {
     { to: /^slip-step$/, why: 'British Ice Skating\'s slip step keeps the weight on the skating leg as the free foot glides forward along the ice.' },
   ],
   'backward-stroking': [
+    { to: /^cross-strokes$/, why: "The backward length of U.S. Figure Skating's Bronze cross strokes is backward stroking with the push taken from under a crossed leg." },
     { to: /^[lr]b[oi]$/, why: 'Ice Skating Australia holds each backward stroke for two to three seconds with the free foot ahead above the line, and its backward edges keep the free leg in the same place.' },
     { to: /^[lr]b[oi]-pushback$/, why: 'A push back is a backward stroke taken from a named edge onto the other foot\'s outside edge.' },
     { to: /^[lr]b[oi]-chasse$/, why: 'British Ice Skating\'s chassé, skated backwards: two edges, the free foot set down beside the skating foot on the second and lifted again.' },
@@ -98,6 +112,7 @@ export const FOUNDATIONS = {
     { to: /^[lr]b[oi]-mohawk$/, why: 'Both turn from backwards to forwards, and the mohawk changes feet as it turns.' },
   ],
   'two-foot-change-of-edge': [
+    { to: /^power-change-of-edge-pulls$/, why: 'The same change of curve, made on one foot and driven for speed down the length of the rink.' },
     { to: /^[lr][fb][oi]-coe$/, why: 'British Ice Skating defines a change of edge as one foot\'s tracing leaving one curve and edge for another. Here both feet do it together.' },
     { to: /^slalom$/, why: 'British Ice Skating\'s Skills 1 slalom is this change, repeated as a two-foot power change of edge.' },
   ],
@@ -128,6 +143,7 @@ export const FOUNDATIONS = {
     { to: /^forward-stroking$/, why: 'A scooter push repeats one push from a glide; forward stroking, a level later in Learn to Skate USA, alternates it between the feet.' },
   ],
   'bunny-hop': [
+    { to: /^half-flip$/, why: 'Landing on a toe pick and stepping straight on is the bunny hop, and it is how the half flip lands; the half flip adds a backward take-off and half a turn.' },
     { to: /^waltz-jump$/, why: 'Both leave the ice from a forward glide. New Zealand\'s KiwiSkate teaches them together, on its Free skating 1 badge.' },
   ],
   'snowplough-stop': [

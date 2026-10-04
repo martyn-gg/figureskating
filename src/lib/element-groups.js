@@ -40,10 +40,12 @@ export const LEARN = {
     'backward-two-foot-glide', 'backward-swizzle', 'two-foot-turn', 'two-foot-hop', 'forward-stroking',
     'half-swizzle-pumps', 'two-foot-change-of-edge', 'slalom', 'backward-one-foot-glide',
     'backward-half-swizzle-pumps', 'backward-snowplough-stop', 'backward-slalom',
-    'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag'],
-  spin: ['two-foot-spin', 'upright-spin', 'sit-spin', 'camel-spin', 'layback-spin', 'change-of-foot-spin', 'combination-spin'],
+    'backward-two-foot-turn', 'backward-stroking', 't-stop', 'bunny-hop', 'hockey-stop', 'pivot', 'drag',
+    'half-flip', 'half-lutz', 'tap-toe-jump', 'cross-strokes', 'power-change-of-edge-pulls', 'power-pulls'],
+  spin: ['two-foot-spin', 'upright-spin', 'back-spin', 'sit-spin', 'camel-spin', 'layback-spin', 'change-of-foot-spin', 'combination-spin',
+    'flying-spin', 'flying-camel-spin', 'choreographic-spin'],
   position: ['extended-edge', 'teapot', 'spiral', 'spread-eagle', 'ina-bauer'],
-  step: ['slip-step'],
+  step: ['slip-step', 'progressive', 'swing-roll', 'crossed-step-in-front'],
   sequence: ['step-sequence', 'choreographic-sequence'],
   /* The holds in the order U.S. Figure Skating's rule 8107 builds them: the Kilian
      first because the first dances are skated in it, then its mirror, then the

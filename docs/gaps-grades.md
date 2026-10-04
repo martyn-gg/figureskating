@@ -6,33 +6,13 @@ reading a grade page sees the gap. Checked against: the seven grade pages in
 `src/data/grades`, NZIFSA Rules section 700 (2025), ISA Communications 125 and 186, and
 the USFS Singles Test Requirements 2026-27.
 
-## Free skating
+## Still without a page
 
-| Move | Named in |
-|---|---|
-| Back spin (backward upright spin) | KiwiSkate Free skating 1 and 3; USFS Pre-Preliminary and adaptive Silver |
-| Flying entries and flying spins, flying camel | BIS National 5 to 8; USFS Pre-Silver, Silver |
-| Choreographic spin | BIS National 7 and 8; USFS Silver, Pre-Gold, Gold |
-| Half flip | KiwiSkate Free skating 2; USFS Pre-Preliminary, adaptive Bronze |
-| Half Lutz | KiwiSkate Free skating 3; USFS Pre-Preliminary, adaptive Bronze |
-| Stag jump | KiwiSkate Free skating 3 |
-| Tap toe jump | Aussie Skate Intermediate 2 (probably the toe-assisted hop) |
-
-## Skating skills
-
-| Move | Named in |
-|---|---|
-| Power pulls | USFS Pre-Gold |
-| Power change of edge pull | USFS Pre-Bronze (linked to the changes of edge it is made of) |
-| Cross strokes | USFS Bronze (linked to the cross roll) |
-| Inside slide chassé | USFS Pre-Silver. Not yet settled whether a slide chassé is the guide's slip chassé |
-
-## First lessons
-
-| Move | Named in |
-|---|---|
-| One-foot swizzles | USFS adaptive Pre-Bronze |
-| Side hops, ballet hops | KiwiSkate Novice 1 and Advanced (taught, not tested) |
+| Move | Named in | Why no page |
+|---|---|---|
+| Stag jump | KiwiSkate Free skating 3 | No document in `sources/` describes it; a page would rest on unsourced mechanics |
+| One-foot swizzles | USFS adaptive Pre-Bronze | No USFS definition. Probably the half-swizzle pumps (Ice Skating Australia's *½ swizzle pumps* match the mechanics), but no source says so |
+| Side hops, ballet hops | KiwiSkate Novice 1 and Advanced (taught, not tested) | Named in teaching progressions only, never described. KiwiSkate gives *quick starts* beside ballet hops |
 
 Skating the width of the rink and rhythm skating (KiwiSkate) are drills, not moves, and
 stay as text.
@@ -62,6 +42,15 @@ only in the unpublished 2021 curriculum.
 - 03/10/2026, Session 26: the spread eagle, the Ina Bauer and the layback spin have pages, as
   text; none draws, for the reasons in `tools/drawn.mjs`.
 - 03/10/2026, Session 26: the KiwiSkate dance badges are laid out on the KiwiSkate page, and
-  British Ice Skating's pattern dance tests have a grade page. Five pattern dances have pages.
-  Still missing from those lists: the swing roll, the progressive, the slide chassé and the
-  cross step as moves, and every pattern dance except the five.
+  British Ice Skating's pattern dance tests have a grade page. (Thirty pattern dances have
+  pages now; this line said five until 04/10/2026.)
+- 04/10/2026, Session 32: thirteen pages from these lists, every one sourced from `sources/`
+  only. Back spin, flying spin, flying camel spin and choreographic spin; half flip, half
+  Lutz and tap toe jump (a toe-assisted half-turn jump from a back edge in Ice Skating
+  Australia's manual, not a hop); power change of edge pulls, power pulls and cross strokes;
+  swing roll, progressive and crossed step in front. None draws, and each is declared in
+  `tools/drawn.mjs` with what the rig lacks. Every grade line that named one now links it.
+- 04/10/2026, Session 32: the slide chassé is the guide's slip chassé. British Ice Skating's
+  definitions head the entry *slip/slide chassé* with the ISU's slide chassé text, and USFS's
+  own inside slide chassé diagram labels the step *slip*. The slip chassé pages already
+  carried *slide chassé* as an alias; the grade lines now link them.
