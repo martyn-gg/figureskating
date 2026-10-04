@@ -83,10 +83,12 @@ const front = p => {
 const claims = [];
 for (const f of readdirSync(ELEMENTS).filter(n => n.endsWith('.md')).sort()) {
   const slug = f.replace(/\.md$/, '');
-  const rig = (/^rig:\s*(.+)$/m.exec(front(join(ELEMENTS, f))) || [])[1]
-    ?.trim().replace(/^["']|["']$/g, '');
-  if (!rig) continue;
-  claims.push({ slug, rig: BREAK === 'ghost' && slug === 'slip-step' ? 'slipStepp' : rig });
+  /* `alsoRig` is a second figure on the same page (Session 30, forward stroking's T),
+     and it is a claim exactly as `rig` is. */
+  for (const [, field, val] of front(join(ELEMENTS, f)).matchAll(/^(rig|alsoRig):\s*(.+)$/gm)) {
+    const rig = val.trim().replace(/^["']|["']$/g, '');
+    claims.push({ slug, rig: BREAK === 'ghost' && slug === 'slip-step' && field === 'rig' ? 'slipStepp' : rig });
+  }
 }
 
 const real = new Set(Object.keys(MOVES));

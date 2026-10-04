@@ -105,6 +105,10 @@ const elements = defineCollection({
       .partial().default({}),
     /* Poses live in the body-frame rig, not here — this only names the move. */
     rig: z.string().optional(),
+    /* A SECOND RIG FOR THE SAME ELEMENT — 04/10/2026, Session 30. Forward stroking is
+       taught twice, the side push and then the T, and the page draws both, one after the
+       other. tools/rig-names.mjs reads it beside `rig`. */
+    alsoRig: z.string().optional(),
     /* A PATTERN DANCE — 03/10/2026. The steps as the dance diagram writes them: the edge
        (a change of edge as four letters, RFOI), the beats it is held for (two numbers
        for a change of edge), and how it is reached, as an abbreviation src/lib/dance.js

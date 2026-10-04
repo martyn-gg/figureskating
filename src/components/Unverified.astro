@@ -7,7 +7,7 @@ const href = correctionHref(title, new URL(Astro.url.pathname, Astro.site).href)
   <p class="unverified">
     <b>Not checked yet.</b> The {what} on this page are a first draft by a non-expert, and
     no coach has seen them yet. Read them as a starting point and check them with a coach.{' '}
-    <a href={href}>Corrections are very welcome</a>, and the repository is public.
+    <a href={href}>Corrections are very welcome</a>.
   </p>
 )}
 {verified?.checked && (

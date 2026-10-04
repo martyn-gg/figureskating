@@ -1295,40 +1295,73 @@ export const MOVES = {
      The gliding foot is the reference blade and runs true along its lobe. The other
      is planted, flat, and turned thirty-five degrees off the line of travel onto its
      inside edge — which is a push, and the thing every syllabus in the sport starts
-     with. `notCovered` in nine BIS exercises says "the push back" because until
-     today there was nothing to link to.
+     with.
 
      THIRTY-FIVE IS NOT A ROUND NUMBER, it is most of what a weight-bearing hip has.
      HIP_OUT is forty. Turning the foot further is not available at the hip, so a
      skater who wants a wider push turns the pelvis instead — which is why a strong
      push looks like the whole body opening rather than a foot twisting.
 
-     A MOVEMENT SINCE 04/10/2026, Session 29 (Martyn, who skates, against video). It was a
-     held pose at the push's widest. Stroking starts from a T: the pushing blade set behind
-     the gliding heel and square across it, which is what puts the push on an inside edge
-     from the start and the glide on an outside edge, so stroking is where edges are
-     learned. The blade can be turned the full ninety degrees, as far as the skater's hips
-     allow; the rig opens the pelvis 35 degrees to get it, the way a T-stop does. Then the
-     push drives out to full extension, the pushing leg straight; the foot leaves the ice,
-     the skater rises into the glide with the leg extended behind, then bends again and
-     brings the free foot back to place the next push while already bent (Martyn).
+     THE SIDE PUSH, WHAT A BEGINNER LEARNS — 04/10/2026, Session 30, Martyn's correction
+     to Session 29, which had drawn the T here as THE way to stroke. Beginners push out to
+     the side with the feet opening like a book: heels together, the pushing foot turned
+     out, driving out sideways to full extension. The foot leaves the ice, the skater
+     rises into the glide with the free foot low and close, then bends again and brings
+     it back beside the gliding heel. The T is the progression and has its own rig,
+     `pushOffT`, below. The pelvis stays square here; that is the difference a reader
+     should see between the two.
+
+     Arms forward in a low V, the hands at about rib height, between one and three
+     o'clock, further forward for a beginner (Martyn, Session 29). Verified against a
+     coach: NO. */
+  pushOff: {
+    name:'Push',
+    note:'the side push · heels together, the right foot turned out and driving out sideways · rising into the glide',
+    path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:60}],
+    radius:300, duration:3.6,
+    keys:[
+      {t:0.00, ph:'Knees bent, heels together, the pushing foot turned out', hipZ:92, hipYaw:0, shYaw:-4, arm:[50,36,26],
+       sh:P(-2,0,145), L:P(12,8,0,-0.5), R:PUSH(6,20,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.24, ph:'Pushing out to the side against the inside edge', hipZ:93, hipYaw:0, shYaw:-4, arm:[50,36,26],
+       sh:P(-2,0,146), L:P(6,7,0,-0.5), R:PUSH(-2,27,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.42, ph:'The push at full extension, the pushing leg straight', hipZ:94, hipYaw:0, shYaw:-4, arm:[50,36,26],
+       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.52, ph:'The pushing foot leaving the ice', hipZ:95, hipYaw:0, shYaw:-3, arm:[50,36,26],
+       sh:P(-2,0,148), L:P(0,6,0,-0.5), R:P(-18,32,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.72, ph:'Rising into the glide, the free foot low and close behind', hipZ:97, hipYaw:0, shYaw:-2, arm:[50,36,26],
+       sh:P(-2,0,150), L:P(0,6,0,-0.5), R:P(-20,22,10,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:1.00, ph:'Bending again, the free foot coming back beside the gliding heel', hipZ:92, hipYaw:0, shYaw:-4, arm:[50,36,26],
+       sh:P(-2,0,145), L:P(12,8,0,-0.5), R:P(4,18,6,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+    ]},
+
+  /* T STROKING, THE PROGRESSION — 04/10/2026, Session 30 (Martyn, who skates, against
+     video, in two passes). Session 29 drew this as forward stroking itself; it is the
+     second level. An improving skater moves from the side push to the T: the pushing
+     blade set behind the gliding heel and square across it, which puts the push on an
+     inside edge from the start and the glide on an outside edge. More elegant, more
+     power, and edges rather than a straight line.
+
+     TWO STROKES, BECAUSE ONE CANNOT SHOW WHAT MAKES IT T STROKING. Each stroke puts a
+     slight curve on its edge and the next, on the other foot, curves the other way, so
+     the tracing is a run of shallow arcs alternating side to side, one per foot. The
+     path is an LFO arc then an RFO arc of the same size; their opposite curvature comes
+     out of lobeSense, not out of anything written here.
+
+     THE SECOND STROKE IS THE FIRST ONE MIRRORED, through mirrorMove's own key map, so the
+     two cannot disagree. Between them the new foot is set down beside the gliding one,
+     the reference blade hands over on the ice (buildPath displaces the path so the hip
+     does not move), and the old gliding foot turns out under the body into the next T.
 
      HOW BENT THE T CAN BE IS LIMITED BY THE KNEE, NOT THE BOOT. The rig points every knee
      where the pelvis faces (twoBone's anterior(hipYaw)); a skater's knee follows a
      turned-out foot. So a bent knee over a blade turned ninety degrees leans the shin
      sideways in its boot, and shin.mjs stops it at a hip of 92 (measured, Session 29). The
-     fix is a knee that tracks its own foot, which is its own piece of work. Arms forward in a low V, the hands at about
-     rib height, between one and three o'clock (further forward for a beginner); the rig
-     uses half past one. The gliding knee bend was right as it was (Martyn).
-
-     One reference blade throughout: the left glides and the right pushes. Drawing the next
-     stroke on the other foot is the handover the waltz does, and is left for later. */
-  pushOff: {
-    name:'Push',
-    note:'from a T behind the gliding heel · the right blade pushing on its inside edge · rising into the glide, the free leg behind',
-    path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:60}],
-    radius:300, duration:3.6,
-    keys:[
+     fix is a knee that tracks its own foot, which is its own piece of work. The pelvis
+     opens 35 degrees to let the blade turn the full ninety, the way a T-stop does.
+     Verified against a coach: NO. */
+  pushOffT: (() => {
+    const at = (o, s) => k => ({ ...k, t: +(o + k.t * s).toFixed(4) });
+    const stroke = [
       {t:0.00, ph:'The T, knees bent: the pushing blade behind the gliding heel, square across it', hipZ:92, hipYaw:-35, shYaw:-12, arm:[50,32,26],
        sh:P(-2,0,145), L:P(14,12,0,-0.5), R:PUSH(-2,14,0,-90), skate:'L', edge:'O', dir:'F'},
       {t:0.22, ph:'Pushing out against the inside edge', hipZ:92, hipYaw:-20, shYaw:-8, arm:[50,32,26],
@@ -1339,9 +1372,35 @@ export const MOVES = {
        sh:P(-2,0,148), L:P(0,6,0,-0.5), R:P(-28,28,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {t:0.72, ph:'Rising into the glide on the outside edge, the free leg extended behind', hipZ:97, hipYaw:0, shYaw:-2, arm:[50,32,26],
        sh:P(-2,0,150), L:P(0,6,0,-0.5), R:P(-50,14,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {t:1.00, ph:'Bending again, the free foot coming back to place the next push', hipZ:92, hipYaw:-25, shYaw:-10, arm:[50,32,26],
-       sh:P(-2,0,145), L:P(12,12,0,-0.5), R:P(-6,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-    ]},
+      {t:0.90, ph:'Bending again, the free foot coming forward beside the gliding foot', hipZ:92, hipYaw:-6, shYaw:-6, arm:[50,32,26],
+       sh:P(-2,0,145), L:P(12,8,0,-0.5), R:P(6,18,6,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+    ];
+    const down = {t:0.44, ph:'The free blade set down beside the gliding one', hipZ:92, hipYaw:-3, shYaw:-4, arm:[50,32,26],
+       sh:P(-2,0,145), L:P(12,2,0,-0.5), R:ON(14,10,0,-0.5), skate:'L', edge:'O', dir:'F'};
+    /* THE WEIGHT CROSSES OVER UPRIGHT. Each glide leans into its own curve, the left
+       blade right of the hip and the right blade left of it, and the right foot is
+       always right of the left one, so at the instant the reference changes both blades
+       are under the hip and neither is on an edge: one key on the flat, which lean.mjs
+       holds to its centroid under the hip, then onto the new outside edge. */
+    const over = [
+      {t:0.50, ph:'The weight moving across onto the new foot', hipZ:92, hipYaw:0, shYaw:-2, arm:[50,32,26],
+       sh:P(-2,0,145), L:PUSH(10,1,0,0), R:P(14,5,0,-0.5), skate:'R', edge:null, dir:'F'},
+      {t:0.51, ph:'Onto the new outside edge, the old gliding foot turning out', hipZ:92, hipYaw:2, shYaw:0, arm:[50,32,26],
+       sh:P(-2,0,145), L:PUSH(10,-7,0,10), R:P(14,-1,0,-0.5), skate:'R', edge:'O', dir:'F'},
+    ];
+    const mirror = ks => mirrorMove({ path: [], keys: ks }).keys;
+    const first = [...stroke.map(at(0, 0.42)), down];
+    const second = mirror(stroke.map(at(0.56, 0.44 / 0.9)));
+    return {
+      name:'T stroking',
+      note:'from a T behind the gliding heel · two strokes, one on each foot, each curving the other way',
+      path:[ {kind:'arc', foot:'L', edge:'O', dir:'F', sweep:35, span:1},
+             {kind:'arc', foot:'R', edge:'O', dir:'F', sweep:35, span:1} ],
+      radius:500, duration:7.2,
+      keys:[ ...first, ...over, ...second ],
+    };
+  })(),
+
 
   /* BACKWARD STROKING — the rig for `backward-stroking`, and it is pushOff read
      off a base of 180 rather than a new idea, the same way twoFootTurnBack is

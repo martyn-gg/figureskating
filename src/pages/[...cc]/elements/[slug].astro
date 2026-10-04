@@ -380,6 +380,7 @@ const crumbs = [
     <div class="holdviews"><HoldDiagram slug={entry.id} /><HoldRear slug={entry.id} /></div>
   )}
   {d.rig && <BodyFrame move={d.rig} />}
+  {d.alsoRig && <BodyFrame move={d.alsoRig} />}
 
   {/* A PATTERN DANCE'S STEPS — 03/10/2026. The rink pattern where it has been measured
       (components/DancePattern.astro), then the step table. src/lib/dance.js says where

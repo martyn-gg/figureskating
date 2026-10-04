@@ -1,25 +1,26 @@
 ---
 name: Forward stroking
 kind: basic
-summary: "The push itself: one blade drives against its inside edge while the other glides away."
+summary: "The push itself: one blade drives against its inside edge while the other glides away, first out to the side, then from a T."
 aliases: ["stroking", "forward skating"]
 rig: pushOff
+alsoRig: pushOffT
 prerequisites: [swizzle, two-foot-glide, scooter-pushes]
 sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instructors-Manual_Updated-Jan-2020.pdf
 verified: { checked: false }
 ---
 
 Push with the inside edge of one blade and glide on the other, then bring the pushing foot
-back before the next push. The push comes off the inside edge, never off the toe pick, a rule
+back. The push comes off the inside edge, never off the toe pick, a rule
 Ice Skating Australia repeats.
 
-Start each push from the T: the pushing blade behind the gliding heel and at right angles to
-it, turned as far as the hips allow. That is how stroking introduces edges. The push comes off
-an inside edge and the glide runs on an outside edge.
+Beginners push out to the side. Bend both knees, heels together and the pushing foot
+turned out, so the feet open like a book, then drive that leg out sideways until it is
+straight. Rise into the glide, then bend and bring the free foot back beside
+the gliding heel. Arms go forward in a low V, hands at about rib height. Australia wants at least
+six strokes.
 
-Bend both knees, drive the pushing leg out until it is straight, then rise into the glide
-with the free leg stretched out behind. Bend again and set the next pushing blade down while
-already bent. Arms go forward in a low V, hands at about rib height, further forward while
-learning. Australia wants at least six strokes.
-
-Held on one foot round a curve, a stroke becomes an edge.
+The progression is the T: the pushing blade set behind the gliding heel and square across
+it. It looks more elegant, gives more power and puts every stroke on an edge, so each one
+curves slightly and the next, on the other foot, curves back the other way,
+as the second figure shows.
