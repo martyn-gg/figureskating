@@ -46,23 +46,28 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 /* slug → why it draws nothing. Remove an entry when the page gains a picture. */
 const cannotDraw = {
   'other-names':                 'a listing of aliases, not an element',
-  'swizzle':                     'the blades are turned out against the travel',
-  'backward-swizzle':            'the blades are turned out against the travel',
+  /* RE-READ 04/10/2026, Session 32, after the half-swizzle pumps were drawn. A turned
+     blade is no longer the obstacle (PUSH, 19/09/2026). In a swizzle each blade runs
+     along its OWN curved line, the two halves of the lemon curving opposite ways: the
+     reference can follow its half as an arc, but the second blade's edge is derived as
+     though it shared the reference's circle, which is the wrong way round here, and its
+     line is not drawn at all. Both are the second tracing. */
+  'swizzle':                     'each blade runs its own half of the lemon, curving opposite ways: '
+                               + 'the second blade\'s edge and line need the second tracing',
+  'backward-swizzle':            'each blade runs its own half of the lemon, curving opposite ways: '
+                               + 'the second blade\'s edge and line need the second tracing',
   /* NOT A CLAIM ABOUT SKATERS — 19/09/2026, Martyn's challenge, and he is right that
      the first version of this line overreached. What the sweep found is that THIS RIG
-     has no legal pose for it, and the rig holds one hip height, a knee that faces
-     wherever hipYaw points, and no spine. A hockey stop is made of the things it does
-     not have: the shoulders and hips counter-rotating against each other and the
+     has no legal pose for it, and the rig holds one hip height, a knee that faced
+     wherever hipYaw pointed, and no spine. (The knee has followed its own foot since
+     Session 31, 04/10/2026; the hockey stop has not been re-swept against it.)
+     A hockey stop is made of the things it does not have: the shoulders and hips counter-rotating against each other and the
      upper body leaning away from the travel while the feet go across it. The boot is
      the right boot — Learn to Skate USA teaches this in Basic 5, in figure skates, and
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  /* NOT YET AUTHORED, AND SAID SO — 03/10/2026. Every contact the hop needs exists
-     (an edge, flight, a pick, as the waltz jump and toePick show), so this is a pose
-     nobody has written, not a capability the rig lacks. It falls outside the rig
-     freeze for that reason; take it off this list when the move is written. */
-  'backward-wiggles':            'the zigzag turns both blades across the travel, as the swizzles do',
+  'backward-wiggles':            'both blades zigzag on their own lines, as the swizzles do: the second tracing',
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
   /* Both feet turned out about ninety degrees each, against the weight-bearing hip's
