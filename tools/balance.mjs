@@ -31,7 +31,7 @@
    authored, so which shoulder the arm hangs from barely moves the centre. Known and
    left; it is the renderer's arms, not this file's, that would show it. */
 import { MOVES } from '../src/lib/moves.js';
-import { poseAt, D2R } from '../src/lib/rig-math.js';
+import { poseAt, cuspAt, D2R } from '../src/lib/rig-math.js';
 import { SEGMENTS, TOTAL, segmentsOf, massCentre, balanceOf } from '../src/lib/mass.js';
 
 const quiet = process.argv.includes('--quiet');
@@ -84,7 +84,73 @@ const sp = MOVES.snowplough.keys.map(k => balanceOf(poseAt(MOVES.snowplough, k.t
 ok(sp.every(a => Math.abs(a) <= 1.5), `6. snowplough over the middle of its blades (${sp.map(a => a.toFixed(1)).join(', ')} cm)`);
 
 if (bad) { console.log(`\n${bad} expectations of the mass model broken`); process.exit(1); }
-if (quiet) { console.log('the mass model holds its six expectations'); process.exit(0); }
+
+/* PHASE TARGETS — 04/10/2026, Session 33. Martyn's, set phase by phase as moves are
+   written; the first family is the one-foot turns. Each family names its moves and, per
+   phase, a band for `along` (the mass against the blade's contact, + toward the toe) and
+   for `onBlade` (where the contact is on the blade, + forward of the middle, blade ±13).
+
+   THE PHASES ARE READ OFF THE MOVE, not authored a second time: the turn is the cusp
+   window (cuspAt), the entry is everything before it, and the exit is everything from
+   the first key after the window. Between the window and that key the blade rocks back
+   from the front of the rocker to the middle, and only `along` is held there.
+
+   NOT `along` INSIDE THE WINDOW. The blade turns square across the circle at the apex,
+   so a distance measured along the blade there is the lean across the circle (the
+   bracket reads −19.7 at the apex for that reason), not a fore-aft balance.
+
+   Broken on purpose: --break=turns puts the turns' old poses' numbers back by moving
+   every skating blade 6 cm ahead of the hip at every key (the entry glides read 5 to 8
+   behind before today): 4768 frame-quantities out. --break=rock flattens the blade
+   through the cusp: 352. */
+const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
+const TURN_IDS = ['threeTurn', 'lfiThree', 'lboThree', 'lbiThree', 'lfoBracket', 'lfiBracket', 'lboBracket', 'lbiBracket',
+  'rfoThree', 'rfiThree', 'rboThree', 'rbiThree', 'rfoBracket', 'rfiBracket', 'rboBracket', 'rbiBracket'];
+const TARGETS = [{ family: 'one-foot turns', ids: TURN_IDS,
+  entry: { along: [-2, 2] }, turn: { onBlade: [4, 8] }, settle: { along: [-2, 2] },
+  exit: { along: [-2, 2], onBlade: [-3, 0] } }];
+const mutate = (m) => {
+  if (!BREAK) return m;
+  return { ...m, keys: m.keys.map(k => { const w = k.skate, q = k[w]; if (!w) return k;
+    const dirSign = k.dir === 'F' ? 1 : -1;
+    if (BREAK === 'turns') return { ...k, [w]: { ...q, t: q.t + 6 * dirSign } };
+    if (BREAK === 'rock' && q.pitch > 1) return { ...k, [w]: { ...q, pitch: 0 } };
+    return k; }) };
+};
+let phaseFrames = 0, phaseBad = 0;
+for (const T of TARGETS) {
+  for (const id of T.ids) {
+    const mv = mutate(MOVES[id]);
+    if (!MOVES[id]) { bad++; console.log(`  FAIL ${T.family}: ${id} is not a move`); continue; }
+    const NF = 320, inWin = [];
+    for (let i = 0; i < NF; i++) inWin.push(!!cuspAt(mv, i / (NF - 1)));
+    const wEnd = inWin.lastIndexOf(true) / (NF - 1);
+    /* The key at the window's far edge is the turn's last pose, so the exit starts at the one after it. */
+    const exitFrom = (mv.keys.find(k => k.t > wEnd + 2 / (NF - 1)) || { t: 1 }).t;
+    let worst = null;
+    for (let i = 0; i < NF; i++) {
+      const t = i / (NF - 1), b = balanceOf(poseAt(mv, t));
+      if (!b) continue;
+      const ph = inWin[i] ? 'turn' : inWin.indexOf(true) > i ? 'entry' : t < exitFrom ? 'settle' : 'exit';
+      const want = T[ph];
+      phaseFrames++;
+      for (const [q, [lo, hi]] of Object.entries(want)) {
+        const v = q === 'along' ? b.along : b.contactOnBlade;
+        if (v < lo - 1e-9 || v > hi + 1e-9) {
+          const off = v < lo ? lo - v : v - hi;
+          if (!worst || off > worst.off) worst = { off, t, ph, q, v, lo, hi };
+          phaseBad++;
+        }
+      }
+    }
+    if (worst) { bad++; console.log(`  FAIL ${id}: at t=${worst.t.toFixed(3)} (${worst.ph}) ${worst.q} is ` +
+      `${worst.v.toFixed(1)} cm, wanted ${worst.lo} to ${worst.hi}`); }
+    else if (!quiet) console.log(`  ok   ${id} inside its targets on every frame`);
+  }
+}
+if (bad) { console.log(`\n${phaseBad} frame-quantities outside a phase target`); process.exit(1); }
+if (quiet) { console.log(`the mass model holds its six expectations, and ${phaseFrames} frames of ` +
+  `${TARGETS.reduce((a, T) => a + T.ids.length, 0)} moves sit inside their phase targets`); process.exit(0); }
 
 /* THE REPORT. Every move sampled at N instants through poseAt (pins included), frames
    with no runner down skipped. Nothing here fails. */
@@ -112,4 +178,4 @@ for (const r of rows)
     (r.share ? `  ${(r.share * 100).toFixed(0)}%` : ''));
 const m = rows.map(r => r.mean);
 console.log(`\n${rows.length} moves: ${m.filter(x => Math.abs(x) <= 5).length} within 5 cm on average, ` +
-  `${m.filter(x => x < -5).length} behind, ${m.filter(x => x > 5).length} ahead. Targets not set; nothing asserted.`);
+  `${m.filter(x => x < -5).length} behind, ${m.filter(x => x > 5).length} ahead. Targets set for the one-foot turns only (above).`);

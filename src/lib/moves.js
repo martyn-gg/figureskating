@@ -246,6 +246,15 @@ const spinMove = m => {
    hand the skater back to a key's state with the blade half way round. spinMove's
    snap for spinMove's reason: the boundary is a fraction of the clock derived from
    every span, and authoring it by hand is copying a number the code already knows. */
+/* BALANCE IN A ONE-FOOT TURN — 04/10/2026, Session 33, targets set by Martyn and held by
+   tools/balance.mjs. On the glides either side of the turn the mass is over the blade's
+   contact (±2 cm); through the cusp the contact is on the front of the rocker, 4 to 8 cm
+   ahead of the blade's middle; on the exit edge, once the check is held, it is back at the
+   middle or a little behind it (−3 to 0). TURN_PITCH is the pitch that puts it there:
+   ROCKER·sin(1.6°) is 5.9 cm. The skating blade's place under the hip at each key was then
+   solved so the mass sits over it: the glides had been 5 to 10 cm behind the contact.
+   Three turns and brackets only; the Salchow's three is a jump's entry and keeps its own. */
+const TURN_PITCH = 1.6;
 const turnMove = m => {
   const spans = m.path.map(g => g.span);
   const total = spans.reduce((a, b) => a + b, 0);
@@ -273,9 +282,9 @@ const turnMove = m => {
    day, when the function became turnFrom). The hips start at `base` (0 forwards,
    180 backwards) and end at base + 174·s or so, the pair at the window adding to
    2·base + 180·s, which squares the hip across the circle at the apex as threeTurn's
-   comment explains. The skating blade runs from 6 cm ahead of the hip to 6 cm behind
-   it across the window in the direction of travel at each end, so it averages to
-   nought there. */
+   comment explains. The skating blade runs from 2 cm ahead of the hip to 2.4 cm behind
+   it across the window in the direction of travel at each end (6 and 6 until Session
+   33, when balance.mjs's targets moved every key: TURN_PITCH, above turnMove). */
 const turnFrom = (turn, foot, edge, dir, name, note) => {
   const f = dir === 'F' ? 1 : -1;
   const lobe = (foot === 'L' ? 1 : -1) * (edge === 'O' ? 1 : -1) * f;
@@ -297,18 +306,18 @@ const turnFrom = (turn, foot, edge, dir, name, note) => {
     keys:[
       {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base - 4*s, shYaw:base - 10*s,
-       sh:P(-2*f,0,147), L:P(4*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:base + 0*s, shYaw:base + 32*s,
-       sh:P(2*f,0,139), L:P(12*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
+       sh:P(-2*f,0,147), L:P(-1*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:89, hipYaw:base + 0*s, shYaw:base + 32*s,
+       sh:P(2*f,0,140), L:P(5*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
       {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:base + 2*s, shYaw:base + 40*s,
-       sh:P(0,0,146), L:P(6*f,15*n,0,0.5), R:R(-6*f,8*f,16), ...on(inn)},
+       sh:P(0,0,146), L:P(2*f,15*n,0,TURN_PITCH), R:R(-6*f,8*f,16), ...on(inn)},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 178*s, shYaw:base + 150*s,
-       sh:P(0,0,144), L:P(6*g,15*n,0,0.5), R:R(-6*g,8*f,16), ...on(exit)},
-      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:base + 176*s, shYaw:base + 160*s,
-       sh:P(-2*g,0,142), L:P(10*g,15*n,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
+       sh:P(0,0,144), L:P(2.4*g,15*n,0,TURN_PITCH), R:R(-6*g,8*f,16), ...on(exit)},
+      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:91, hipYaw:base + 176*s, shYaw:base + 160*s,
+       sh:P(-2*g,0,143), L:P(1.5*g,15*n,0,-0.5), R:R(-34*g,4*g,18), ...on(exit)},
       {arm:[62,6,18], t:1.00, ph:`Running out on the ${exit.dir === 'F' ? 'forward' : 'back'} ${exit.edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base + 178*s, shYaw:base + 164*s,
-       sh:P(-2*g,0,146), L:P(8*g,15*n,0,-0.5), R:R(-40*g,6*g,20), ...on(exit)},
+       sh:P(-2*g,0,146), L:P(-1*g,15*n,0,-0.5), R:R(-40*g,6*g,20), ...on(exit)},
     ]});
 };
 
@@ -481,17 +490,17 @@ export const MOVES = {
     radius:160, duration:4.4,
     keys:[
       {arm:[60,4,18], t:0.00, ph:'Gliding on the forward outside edge', hipZ:94, hipYaw:-4, shYaw:-10,
-       sh:P(-2,0,147), L:P(4,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:88, hipYaw:0, shYaw:32,
-       sh:P(2,0,139), L:P(12,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+       sh:P(-2,0,147), L:P(-1,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:89, hipYaw:0, shYaw:32,
+       sh:P(2,0,140), L:P(5,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:2, shYaw:40,
-       sh:P(0,0,146), L:P(6,15,0,0.5), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+       sh:P(0,0,146), L:P(2,15,0,TURN_PITCH), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:150,
-       sh:P(0,0,144), L:P(-6,15,0,0.5), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
-      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:90, hipYaw:176, shYaw:160,
-       sh:P(-2,0,142), L:P(-10,15,0,-0.5), R:P(34,-4,18,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+       sh:P(0,0,144), L:P(-2.4,15,0,TURN_PITCH), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+      {arm:[60,6,18], t:0.75, ph:'The check holding, the free leg extending back', hipZ:91, hipYaw:176, shYaw:160,
+       sh:P(-2,0,143), L:P(-1.5,15,0,-0.5), R:P(34,-4,18,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
       {arm:[62,6,18], t:1.00, ph:'Running out on the back inside edge', hipZ:94, hipYaw:178, shYaw:164,
-       sh:P(-2,0,146), L:P(-8,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
+       sh:P(-2,0,146), L:P(1,15,0,-0.5), R:P(40,-6,20,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
     ]}),
 
   lfiThree: threeFrom('L','I','F', 'Forward inside three turn',
