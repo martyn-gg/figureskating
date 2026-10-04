@@ -1121,8 +1121,8 @@ export const MOVES = {
 
      FORTY AGAIN SINCE SESSION 32, and over the middle of the blade. Martyn's two
      corrections: a little more knee to allow the rotation, and the body has to line
-     up over the middle of the blade. Measured with Winter's segment fractions (the
-     rig has no mass; a scratch measurement, not a checker), the pose above had its
+     up over the middle of the blade. Measured with Winter's segment fractions
+     (src/lib/mass.js, written for it; npm run balance), the pose above had its
      mass 6 cm behind the blades' midpoints, and moving the feet forward to buy the
      bend put it 19 cm behind. Over the middle, a lower hip leans the shin forward
      over the toe and nowhere else, which the single 28° cone in shin.mjs refused;

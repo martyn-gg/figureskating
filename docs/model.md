@@ -2137,10 +2137,30 @@ The shoulders sit 14 cm ahead of the hip, about fifteen degrees of trunk lean, w
 is what brings the mass back over the blades. A starter move, so deliberately not
 sunk further; the sweep had 40° balanced down to a hip of 90.
 
-Balance is still asserted nowhere. Where the mass should sit is not one place: over
-the middle of the blade on a glide, forward toward the rocker's sweet spot for turns
-and spins, behind the feet in a braking stop. A checker needs that target per phase
-before it can say anything.
+### The rig has mass
+
+The scratch measurement became `src/lib/mass.js` the same session: Winter's segment
+fractions, the head placed 20 cm up the trunk above the shoulder line (the rig draws
+none), and foot plus skate at the blade's middle. Joints come from the renderer's own
+functions, so the mass sits where the drawn limbs are. `balanceOf(pose)` answers fore
+and aft: on one runner, the mass against the contact along the blade and where that
+contact sits on the blade; on two, the mass against the middle of the two contacts
+along the way the hips face, and how far across the support it sits.
+
+`tools/balance.mjs` (`npm run balance`) asserts the MODEL against six expectations
+from outside it (stature fraction from Drillis and Contini, mirror symmetry, the rocker
+written out, the snowplough as authored) and reports every move. `check:balance` runs
+the model half in the chain. It moves no pose and asserts nothing about poses.
+
+First reading, 61 samples a move: of 86 moves with a runner down, 20 sit within 5 cm on
+average, 64 behind and 2 ahead. Spins read forward (upright +3, camel +7). Every three
+turn and bracket reads about 6 cm behind its contact, the wrong way for a turn, and the
+jump entries 8 to 10 behind. Not fixed here: Martyn's direction is to get balance right
+as the undrawables are written and expand out from them.
+
+Where the mass should sit is not one place: over the middle of the blade on a glide,
+forward toward the rocker's front for turns and spins, behind the feet in a braking
+stop. Those per-phase targets are what turns the report into a checker.
 
 ## Where a knee points — measured, specified and built 04/10/2026, Session 31
 
