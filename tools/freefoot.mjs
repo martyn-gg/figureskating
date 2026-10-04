@@ -52,7 +52,7 @@
        node tools/freefoot.mjs --break=point|standing|long
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, D2R, ANKLE_MAX, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt,
+import { THIGH, SHIN, D2R, ANKLE_MAX, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt,
          onIceOf, contactsDown } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
@@ -102,7 +102,7 @@ for (const [key, m] of Object.entries(MOVES)) {
       if (onIceOf(pose, w)) { flush(); continue; }
       glyphs++;
       const q = pose[w];
-      const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
+      const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, kneeFace(pose, w));
       const bd = bootDir(pose, w, kn, q);
       const el = Math.asin(Math.max(-1, Math.min(1, bd[2]))) * 180 / Math.PI;
       if (Math.abs(el) > LIMIT) {
@@ -142,7 +142,7 @@ for (const [key, m0] of Object.entries(MOVES)) {
       if (onIceOf(k, w) !== 'pick') continue;
       picks++;
       const q = k[w];
-      const kn = twoBone({ t: 0, n: 0, z: hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
+      const kn = twoBone({ t: 0, n: 0, z: hipZ }, q, THIGH, SHIN, kneeFace(k, w));
       const bd = bootDir(k, w, kn, q);
       const s = [q.t - kn.t, q.n - kn.n, q.z - kn.z], sl = Math.hypot(...s) || 1;
       const ankle = Math.asin(Math.max(-1, Math.min(1,

@@ -41,7 +41,7 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { MAX_BLADE_PITCH, contactAlong, bladeZone, contactsDown, onIceOf, soleEdgeZ,
-         THIGH, SHIN, anterior, twoBone, bootDir, ankleOf } from '../src/lib/rig-math.js';
+         THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 let bad = 0, blades = 0, picks = 0, sides = 0;
@@ -91,7 +91,7 @@ for (const [key, m] of Object.entries(MOVES))
            rolled past its own sole or the runner still reaches. tools/boot.mjs excuses
            these from its roll limit and points here for the other side. */
         sides++;
-        const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
+        const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, kneeFace(k, w));
         const bd = bootDir(k, w, k0, q);
         const an = ankleOf(k, w, bd, [k0.t - q.t, k0.n - q.n, k0.z - q.z]);
         const v = [an.t - q.t, an.n - q.n, an.z - q.z];

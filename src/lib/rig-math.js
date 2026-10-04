@@ -367,6 +367,54 @@ export function twoBone(root, tip, L1, L2, faceRest){
   return {t:root.t+a*u[0]+h*K[0], n:root.n+a*u[1]+h*K[1], z:root.z+a*u[2]+h*K[2], bend:h, d};
 }
 
+/* WHERE A KNEE POINTS — the `faceRest` every leg's twoBone is solved with, and since
+   04/10/2026 (Session 31) not always where the pelvis faces.
+
+   One expression, because until that day it was written out as anterior(pose.hipYaw)
+   at twenty-two call sites across the renderer and eleven checkers, every one of them
+   free to disagree with the drawing the moment the rule changed.
+
+   THE RULE. A skater's knee goes out over a turned-out foot: the turnout comes from the
+   hip rotating the whole leg, and the knee is part of the leg. So for a foot with STEEL
+   ON THE ICE (an edge or a skid — runnersDown's set) the knee follows the foot's turn
+   off the pelvis, as far as a weight-bearing hip can rotate it: HIP_OUT outward,
+   HIP_IN inward. Past that the hip has run out and what is left is the shin twisting
+   under a bent knee, which is KNEE_TWIST's allowance and which tools/turnout.mjs
+   already holds the total to. The knee stops; the foot may go on.
+
+   WHY IT MATTERS, measured first (tools/knee.mjs). With the knee held to the pelvis, a
+   bent knee over a blade turned fifty-five degrees off it leans the shin ACROSS the
+   boot: 23° across and 9° forward on the T at pushOffT's first key, 28° across on the
+   T-stop's trailing blade. Following the foot turns that into lean over the toe (8°
+   across, 19° forward), which is what a boot's flex is built for and, the part that
+   decides depth, what moving the foot under the hip can take back out. Under the old
+   rule no placement of the feet got the T-stop below a hip of 92 inside shin.mjs's 28°;
+   under this one 12 cm along the blades reaches 88.
+
+   WHICH FEET, AND WHY NOT THE OTHERS.
+     a runner    its heading is the tracing plus an authored yaw, independent of the leg,
+                 so the knee can be told to follow it
+     a free foot its boot is BUILT from the shin (bootDir's free rule), so its heading is
+                 an output of the knee and following it would be circular; it keeps the
+                 pelvis, as every free leg in this guide was authored against
+     a pick      its direction comes from the reach and its leg is near straight behind,
+                 where the knee's direction barely shows; not measured, so not changed
+     a boot on   the lunge's trailing leg, turned out by its roll rather than a yaw;
+     its side    likewise not measured, so not changed
+
+   Verified against a coach: NO. The rule is anatomy ("knees over toes" is the coaching
+   line), the limits are the existing HIP_OUT and HIP_IN read off a study. */
+export const kneeFace = (pose, which) => {
+  const on = onIceOf(pose, which);
+  if (on !== 'blade' && on !== 'skid') return anterior(pose.hipYaw);
+  let turn = (dirOf(pose, which) === 'F' ? 0 : 180) + (pose[which].yaw || 0) - pose.hipYaw;
+  while (turn > 180) turn -= 360;
+  while (turn <= -180) turn += 360;
+  const side = which === 'L' ? 1 : -1;               // + = the toe away from the midline
+  const follow = Math.max(-HIP_IN, Math.min(HIP_OUT, side * turn));
+  return anterior(pose.hipYaw + side * follow);
+};
+
 export const shoulderJoint = (pose, side) => {           // side −1 = left, +1 = right
   const R = lateral(pose.shYaw);
   return {t:pose.sh.t + R[0]*SHOULDER_HALF*side, n:pose.sh.n + R[1]*SHOULDER_HALF*side, z:pose.sh.z};

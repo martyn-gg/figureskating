@@ -65,7 +65,7 @@
        node tools/continuity.mjs --break=uncentre
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, onIceOf,
+import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, onIceOf,
          pinRuns, pinnedAt, PIN_AGREE } from '../src/lib/rig-math.js';
 
 const unit = v => { const l = Math.hypot(...v) || 1; return v.map(c => c / l); };
@@ -174,7 +174,7 @@ for (const [key, m] of Object.entries(MOVES)) {
              camera components square to one and the glyph is the view down
              whichever is largest. A tie is two of them within TIE of each other. */
           const q = pose[foot], down = onIceOf(pose, foot) != null;
-          const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
+          const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, kneeFace(pose, foot));
           const bd = bootDir(pose, foot, kn, q);
           const ank = ankleOf(pose, foot, bd, [kn.t - q.t, kn.n - q.n, kn.z - q.z]);
           const toA = [ank.t - q.t, ank.n - q.n, ank.z - q.z];
@@ -243,7 +243,7 @@ for (const [key, m] of Object.entries(MOVES)) {
     for (let i = 0; i < path.length; i++) {
       const pose = poseAt(m, i / (path.length - 1));
       const q = pose[w], down = onIceOf(pose, w) != null;
-      const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
+      const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, kneeFace(pose, w));
       const bd = bootDir(pose, w, kn, q);
       if (p) {
         const a = Math.acos(Math.max(-1, Math.min(1, bd[0] * p.bd[0] + bd[1] * p.bd[1] + bd[2] * p.bd[2]))) * 180 / Math.PI;

@@ -18,7 +18,7 @@
  * looks like.
  */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, D2R, ANKLE_MAX, ANKLE_POINT, anterior, twoBone, bootDir,
+import { THIGH, SHIN, D2R, ANKLE_MAX, ANKLE_POINT, anterior, twoBone, kneeFace, bootDir,
          ankleOf, poseAt } from '../src/lib/rig-math.js';
 
 /* SAME SIGN AS freefoot.mjs, WHICH OWNS THE LIMIT — 20/09/2026. This read
@@ -32,7 +32,7 @@ import { THIGH, SHIN, D2R, ANKLE_MAX, ANKLE_POINT, anterior, twoBone, bootDir,
    to want the sign rather than the magnitude would have got it backwards. */
 const elevOf = (pose, w) => {
   const q = pose[w], hip = { t:0, n:0, z:pose.hipZ };
-  const k0 = twoBone(hip, q, THIGH, SHIN, anterior(pose.hipYaw));
+  const k0 = twoBone(hip, q, THIGH, SHIN, kneeFace(pose, w));
   const bd = bootDir(pose, w, k0, q);
   return Math.asin(Math.max(-1, Math.min(1, bd[2]))) / D2R;
 };

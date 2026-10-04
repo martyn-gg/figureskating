@@ -68,7 +68,7 @@
  * a header is worse than no count.
  */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, poseAt } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, poseAt } from '../src/lib/rig-math.js';
 import { lobeSense } from '../src/lib/skating.js';
 
 const BREAK = (process.argv.find(a => a.startsWith('--break')) || '').split('=')[1] || null;
@@ -110,10 +110,10 @@ const isSpin = m => m.path.every(s => s.kind === 'arc')
 
 const kneeOf = (pose, which) => {
   const q = pose[which], hip = { t: 0, n: 0, z: pose.hipZ };
-  const k0 = twoBone(hip, q, THIGH, SHIN, anterior(pose.hipYaw));
+  const k0 = twoBone(hip, q, THIGH, SHIN, kneeFace(pose, which));
   const bd = bootDir(pose, which, k0, q);
   const an = ankleOf(pose, which, bd, [k0.t - q.t, k0.n - q.n, k0.z - q.z]);
-  return twoBone(hip, an, THIGH, SHIN, anterior(pose.hipYaw));
+  return twoBone(hip, an, THIGH, SHIN, kneeFace(pose, which));
 };
 
 const freeOf = p => (p.skate === 'L' ? 'R' : 'L');

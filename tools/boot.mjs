@@ -48,7 +48,7 @@
        node tools/boot.mjs
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, edgeOf } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, edgeOf } from '../src/lib/rig-math.js';
 import { rigFor, walk } from './_dom.mjs';
 
 /* A stiff boot allows about 28 deg of lean (tools/shin.mjs), and seen end-on the
@@ -125,7 +125,7 @@ for (const [key, m] of Object.entries(MOVES)) {
 
         /* 2 — the roll, expected from where the model put the ankle */
         const q = pose[which];
-        const kn0 = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
+        const kn0 = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, kneeFace(pose, which));
         const bd = bootDir(pose, which, kn0, q);
         const ank = ankleOf(pose, which, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
         const up = [ank.t - q.t, ank.n - q.n, ank.z - q.z];

@@ -1948,7 +1948,7 @@ to 9 degrees of ankle, which is not the thirty the pose is short by. **The secon
 the question is the one that lands.** The sweep finds no legal hockey stop, and what it has
 actually found is that THIS RIG cannot hold one: a hockey stop is made of the shoulders and
 hips counter-rotating against each other with the upper body leaning away from the travel,
-and the model has one hip yaw, a knee that faces wherever that yaw points, and no spine. So
+and the model has one hip yaw, a knee that faces wherever that yaw points (since Session 31, wherever its foot points, within the hip's rotation), and no spine. So
 the reason recorded in `tools/drawn.mjs` says the rig, not the skater.
 
 `tools/turnout.mjs` asserts it per pose, blades only. Reading a boot's heading against the
@@ -2098,12 +2098,81 @@ is the one mark in the guide a reader is meant to take as a record of what the b
 skid without saying so — and now saying so is what tells the renderer to smear the mark.
 
 **A snowplough needs forty degrees of toe-in on each foot, and bent knees to buy them.**
+(Thirty-five since Session 31, when the knees began following the feet: see *Where a knee
+points*.)
 Toes-in is the expensive direction; a weight-bearing hip gives twenty. A knee bent 31°
 adds twenty-two more, so the widest plough the constants allow comes out sunk, with both
 shins at the 28° limit at once. That is how a snowplough is taught, and nobody authored it.
 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
+
+## Where a knee points — measured, specified and built 04/10/2026, Session 31
+
+Every leg's knee was solved toward `anterior(hipYaw)`, the way the pelvis faces, and the
+expression was written out at twenty-two call sites across the renderer and eleven
+checkers. A skater's knee goes out over a turned-out foot ("knees over toes"), so a bent
+knee over a blade turned off the pelvis drew the shin leaning across its boot, and
+`shin.mjs` held the T in `pushOffT` to a hip of 92.
+
+**Measured before changing anything** (`npm run knee`, `tools/knee.mjs`, which imports
+`shin.mjs`'s own expression rather than re-deriving it). Split in the boot's frame, at the
+poses as they stood:
+
+| shin, forward / across the boot | knee to the pelvis | knee follows the foot |
+|---|---|---|
+| T at pushOffT's first key, pushing blade, hip 92 | 9° / 23° | 19° / 8° |
+| T-stop, trailing blade, hip 94 | 5° / −28° | 12° / −18° |
+
+So the hypothesis was right about the direction: the old rule put the lean across the boot.
+It was wrong about the size: the TOTAL lean, which is what `shin.mjs` limits, barely moved
+(24° to 20° on the T at 92). The cap moved by two centimetres of hip, not ten. What the rule
+changes is what can be done about it. A lean over the toe comes out when the foot moves
+forward along its own blade; a lean across the boot does not. With the feet moved along
+their headings by δ, same poses:
+
+| worst lean, both feet | knee to pelvis, δ 0 / 6 / 12 | knee follows, δ 0 / 6 / 12 |
+|---|---|---|
+| T, hip 86 | 32 / 29 / 27 | 28 / 22 / 17 |
+| T-stop, hip 88 | 38 / 36 / 33 | 35 / 31 / 26 |
+
+**The rule — `kneeFace(pose, which)` in `rig-math.js`, one expression for every caller.**
+For a foot with steel on the ice (an edge or a skid, `runnersDown`'s set) the knee follows
+the foot's turn off the pelvis as far as a weight-bearing hip rotates: `HIP_OUT` (40°)
+outward, `HIP_IN` (20°) inward. Past that the hip has run out, the knee stops, and what is
+left is the shin twisting under a bent knee, `KNEE_TWIST`'s allowance, which
+`turnout.mjs` already holds the total to. A free foot keeps the pelvis (its boot is built
+from the shin, so its heading is an output of the knee and following it would be
+circular). A pick and a boot on its side keep the pelvis too, because neither was measured.
+
+**What it moved.** 68 of 86 moves by frame hash; the 18 that did not are exactly the moves
+whose runners never point off the pelvis (the spins, the glides, the dip, the slaloms, the
+slip step, the drag, the teapot). Largest knee displacement per move: pushOffT 16 cm,
+tStop 13, pushOff 10, scooterPushes 9, the salchow, flip, Lutz, toe loop and loop families
+4–5 at take-off (the hips pre-rotating against the edge), backStroke 4, the ploughs 3, the
+two-foot turns 2, the waltz and the Axel 2, spirals 1.6, every three turn and bracket 1.4.
+
+**What it broke, and how each was answered.** Three moves went over `shin.mjs` the moment
+the rule landed, all of them feet turned IN or out with the knee now following:
+
+- **Snowplough**: knees turned in over toes turned in leaned the shins 32° inward. No hip
+  height held both `shin.mjs` and `turnout.mjs` at forty degrees of toe-in: high enough for
+  the shin straightens the knee out of the twist the toe-in needs. Now 35° of toe-in, hip
+  93 (was 90), feet 4 cm narrower each. Some of that inward lean is really the boot tipping
+  onto its inside edge, which `shin.mjs` cannot see because it measures against a level
+  boot. A coach's question before a model one.
+- **Backward snowplough**: 45° out at a hip of 90 leaned the shins 36°. Now 40° out at 93.
+- **Flip take-off** (and the five moves built from it): 28.9° on the skating shin at the
+  vault. Hip 96 → 97 on that one key.
+
+**Then the T was deepened**, which was the point: `pushOffT` hip 92 → 86 with the pushing
+blade 3 cm further out along its own line, and `tStop` hip 94 → 88 with the gliding blade
+12 cm ahead of the hip and the trailing blade 6 cm further out along its heading. The T-stop's
+hip now sits behind the gliding blade, which is where a braking skater's weight goes; how far
+is unverified, and `docs/handoffs/2026-09-24-Session-22.md` is the standing note that fore-aft
+balance is asserted nowhere.
+
+Verified against a coach: NO, for the rule, its limits, and all five re-authored poses.
 
 ## A crossed step behind does not always hold its edge — found 03/10/2026, by the dances
 

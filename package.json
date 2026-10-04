@@ -39,6 +39,7 @@
     "check": "npm run check:harness && npm run check:rig-names && npm run check:reach && npm run check:shin && npm run check:blade && npm run check:boot && npm run check:arms && npm run check:lean && npm run check:twofoot && npm run check:continuity && npm run check:tracing && npm run check:spin && npm run check:gather && npm run check:contrast && npm run check:syllabus && npm run check:foundations && npm run check:dance && npm run check:jumps && npm run build && npm run check:links && npm run check:countries && npm run check:search && npm run check:seo && npm run check:prose && npm run check:sections && npm run check:crumbs && npm run check:office && npm run check:house && npm run check:drawn && npm run check:underice && npm run check:freefoot && npm run check:turnout",
     "gen:derived": "node tools/gen-derived.mjs",
     "ankle": "node tools/ankle.mjs",
+    "knee": "node tools/knee.mjs",
     "drift": "node tools/drift.mjs",
     "check:drawn": "node tools/drawn.mjs",
     "check:underice": "node tools/underice.mjs",

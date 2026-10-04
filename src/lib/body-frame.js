@@ -5,7 +5,7 @@
 import { MOVES } from './moves.js';
 import {
   D2R, anterior, THIGH, SHIN, UPPER, FORE,
-  ankleOf, twoBone, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
+  ankleOf, twoBone, kneeFace, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
   contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf, BLADE_FRONT, BLADE_BACK,
 } from './rig-math.js';
 
@@ -530,7 +530,7 @@ function viewTop(svg, move, path, frames, SHOW){
       const contact = onIceOf(pose, which), down = contact != null;
       if(!SHOW.free && !down) continue;
       const q=pose[which], pos=pinDrawn[idx]?.[which] ?? rel(q);
-      const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
+      const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, kneeFace(pose, which));
       const bd0 = bootDir(pose, which, kn0, q);
       /* data-boot, data-foot and data-heading, on the same argument that put them
          on the profile glyphs: role, side and orientation are facts the renderer
@@ -700,10 +700,10 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
       if(!SHOW.free && !onIce) continue;
       const q=pose[which];
       // two passes: the boot direction needs a shin, the shin needs an ankle
-      const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
+      const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, kneeFace(pose, which));
       const bd  = bootDir(pose, which, kn0, q);
       const ank = ankleOf(pose, which, bd, [kn0.t - q.t, kn0.n - q.n, kn0.z - q.z]);
-      const kn  = twoBone({t:0,n:0,z:pose.hipZ}, ank, THIGH, SHIN, anterior(pose.hipYaw));
+      const kn  = twoBone({t:0,n:0,z:pose.hipZ}, ank, THIGH, SHIN, kneeFace(pose, which));
       const pt  = {x:ax(ank), y:H(ank.z)};                 // the leg ends at the ankle
       const kp  = {x:ax(kn), y:H(kn.z)};
       const bootPt = {x:ax(q), y:H(q.z)};                  // the boot sits on the blade

@@ -66,7 +66,7 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { HIP_OUT, HIP_IN, SKID_MIN_YAW, KNEE_TWIST_OUT, THIGH, SHIN, anterior,
-         twoBone, bootDir, ankleOf, turnoutAllowed, kneeFlex,
+         twoBone, kneeFace, bootDir, ankleOf, turnoutAllowed, kneeFlex,
          runnersDown, dirOf, onIceOf, edgeOf, cuspAt, buildPath, poseAt } from '../src/lib/rig-math.js';
 import { lobeSense } from '../src/lib/skating.js';
 
@@ -152,7 +152,7 @@ for (const [key, m] of Object.entries(MOVES))
          the pose the way every other limit in this repository now is. */
       const fq = { ...q, yaw };
       const kk = { ...k, [w]: fq }, hip = { t: 0, n: 0, z: k.hipZ };
-      const k0 = twoBone(hip, fq, THIGH, SHIN, anterior(k.hipYaw));
+      const k0 = twoBone(hip, fq, THIGH, SHIN, kneeFace(kk, w));
       const bd = bootDir(kk, w, k0, fq);
       const an = ankleOf(kk, w, bd, [k0.t - fq.t, k0.n - fq.n, k0.z - fq.z]);
       const d = Math.hypot(an.t, an.n, an.z - k.hipZ);
@@ -246,7 +246,7 @@ for (const [key, m] of Object.entries(MOVES)) {
         `line it is cutting, inside a ${cu.u.toFixed(2)} of the way through a turn — a gripping blade runs along its tracing`);
     }
     const turn = wrap(heading - pose.hipYaw), out = (w === 'L' ? 1 : -1) * turn;
-    const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, pose[w], THIGH, SHIN, anterior(pose.hipYaw));
+    const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, pose[w], THIGH, SHIN, kneeFace(pose, w));
     const bd = bootDir(pose, w, kn, pose[w]);
     const an = ankleOf(pose, w, bd, [kn.t - pose[w].t, kn.n - pose[w].n, kn.z - pose[w].z]);
     const allow = turnoutAllowed(Math.hypot(an.t, an.n, an.z - pose.hipZ));
@@ -325,7 +325,7 @@ for (const [key, m] of Object.entries(MOVES)) {
       pickFrames++;
       const q = BREAK === 'pickin' ? { ...k[w], yaw: (k[w].yaw || 0) + (w === 'L' ? -70 : 70) } : k[w];
       const kk = { ...k, [w]: q }, hip = { t: 0, n: 0, z: k.hipZ };
-      const k0 = twoBone(hip, q, THIGH, SHIN, anterior(k.hipYaw));
+      const k0 = twoBone(hip, q, THIGH, SHIN, kneeFace(kk, w));
       const bd = bootDir(kk, w, k0, q);
       const an = ankleOf(kk, w, bd, [k0.t - q.t, k0.n - q.n, k0.z - q.z]);
       const allow = turnoutAllowed(Math.hypot(an.t, an.n, an.z - k.hipZ));

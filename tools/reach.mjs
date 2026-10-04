@@ -1,7 +1,7 @@
 /* Every foot must be within the leg's reach, measured to the ankle inside the
    boot — not to the blade. Out of reach means the leg visibly detaches. */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, onIceOf, buildPath, poseAt } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, onIceOf, buildPath, poseAt } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 
@@ -13,7 +13,7 @@ for (const [key, m] of Object.entries(MOVES))
   for (const k of m.keys)
     for (const w of ['L', 'R']) {
       const q = k[w], on = onIceOf(k, w);
-      const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
+      const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, kneeFace(k, w));
       const bd = bootDir(k, w, k0, q);   // planted or free — bootDir reads the pose
       const an = ankleOf(k, w, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       const d = Math.hypot(an.t, an.n, an.z - k.hipZ);
@@ -54,7 +54,7 @@ for (const [key, m0] of Object.entries(MOVES)) {
       if (onIceOf(k, w) !== 'pick') continue;
       pickFrames++;
       const q = k[w];
-      const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, anterior(k.hipYaw));
+      const k0 = twoBone({ t: 0, n: 0, z: k.hipZ }, q, THIGH, SHIN, kneeFace(k, w));
       const bd = bootDir(k, w, k0, q);
       const an = ankleOf(k, w, bd, [k0.t-q.t, k0.n-q.n, k0.z-q.z]);
       const pct = 100 * Math.hypot(an.t, an.n, an.z - k.hipZ) / REACH;

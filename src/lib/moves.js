@@ -1102,12 +1102,22 @@ export const MOVES = {
      a curve — so the top-down view smears the mark here instead of drawing the
      confident thin line it draws everywhere else.
 
-     FORTY DEGREES OF TOE-IN EACH, and it took bent knees to buy them. Toes-in is
-     the expensive direction — a weight-bearing hip gives twenty — and a knee bent
-     thirty-one degrees adds twenty-two more. So the pose comes out sunk, which is
-     how a snowplough is taught and is not what anybody authored here: the sweep
-     was for the most toe-in the constants would allow and this is where it landed,
-     against the shin's 28 degrees of lean on both legs at once.
+     THIRTY-FIVE DEGREES OF TOE-IN EACH, and it took bent knees to buy them. Toes-in
+     is the expensive direction — a weight-bearing hip gives twenty — and a bent knee
+     adds up to twenty-five more. So the pose comes out sunk, which is how a
+     snowplough is taught and is not what anybody authored here: the sweep was for
+     the most toe-in the constants would allow, against the shin's 28 degrees of lean
+     on both legs at once.
+
+     IT WAS FORTY UNTIL SESSION 31, when the knees started following the feet
+     (kneeFace in rig-math.js). Knees turned in over toes turned in lean the shins
+     inward across the boots, 32° at the old hip of 90, and no hip height satisfied
+     both shin.mjs and turnout.mjs at forty: high enough for the shin straightens the
+     knee out of the twist the toe-in needs. Thirty-five, a hip of 93 and the feet
+     four centimetres narrower each is the nearest pose that holds both. Some of that
+     inward lean is really the boot tipping onto its inside edge, which shin.mjs
+     cannot see (it measures against a level boot); a question for a coach before it
+     is a question for the model.
 
      Held rather than animated. A stop is a loss of speed and the path runs at one,
      so this is the pose mid-scrape and not the stopping of it. */
@@ -1117,12 +1127,12 @@ export const MOVES = {
     path:[{kind:'line', len:150}],
     radius:200, duration:2.6,
     keys:[
-      {t:0.00, ph:'Both blades turned in and pressed', hipZ:90, hipYaw:0, shYaw:0,
-       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:0.50, ph:'Scraping: the knees driving the blades down', hipZ:90, hipYaw:0, shYaw:0,
-       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:1.00, ph:'Held: the scrape taking the speed off', hipZ:90, hipYaw:0, shYaw:0,
-       sh:P(0,0,143), L:SKID(8,-34,0,-40,'I'), R:SKID(8,34,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:0.00, ph:'Both blades turned in and pressed', hipZ:93, hipYaw:0, shYaw:0,
+       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:0.50, ph:'Scraping: the knees driving the blades down', hipZ:93, hipYaw:0, shYaw:0,
+       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:1.00, ph:'Held: the scrape taking the speed off', hipZ:93, hipYaw:0, shYaw:0,
+       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
     ]},
 
   /* A BACKWARD SNOWPLOUGH STOP — the forward one's mirror in everything except
@@ -1131,19 +1141,24 @@ export const MOVES = {
      the hip, forty degrees against twenty. The forward plough has to buy its
      toes-in with a bent knee; this one does not, which is a fact about hips and
      not about difficulty. Everything else a skater finds hard about it is that the
-     weight has to move forward while the stop pushes them back. */
+     weight has to move forward while the stop pushes them back.
+
+     FORTY DEGREES OUT, and a hip of 93, since Session 31: it was forty-five at 90.
+     With the knees following the feet (kneeFace), forty-five at 90 leaned the shins
+     36°, and raising the hip enough to fix that straightened the knees past the bend
+     the extra five degrees needed. Forty is what the hip gives with no bend at all. */
   ploughBack: {
     name:'Backward snowplough stop',
     note:'both blades skidding, travelling backwards · toes turned out, inside edges',
     path:[{kind:'line', len:140}],
     radius:200, duration:2.6,
     keys:[
-      {t:0.00, ph:'Both blades pressed out and flat', hipZ:90, hipYaw:180, shYaw:180,
-       sh:P(0,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
-      {t:0.50, ph:'Scraping: the weight held forward against the stop', hipZ:90, hipYaw:180, shYaw:180,
-       sh:P(2,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
-      {t:1.00, ph:'Held: the feet finishing wider than they started', hipZ:90, hipYaw:180, shYaw:180,
-       sh:P(3,0,143), L:SKID(-8,-34,0,45,'I'), R:SKID(-8,34,0,-45,'I'), skate:'L', edge:'I', dir:'B'},
+      {t:0.00, ph:'Both blades pressed out and flat', hipZ:93, hipYaw:180, shYaw:180,
+       sh:P(0,0,146), L:SKID(-8,-34,0,40,'I'), R:SKID(-8,34,0,-40,'I'), skate:'L', edge:'I', dir:'B'},
+      {t:0.50, ph:'Scraping: the weight held forward against the stop', hipZ:93, hipYaw:180, shYaw:180,
+       sh:P(2,0,146), L:SKID(-8,-34,0,40,'I'), R:SKID(-8,34,0,-40,'I'), skate:'L', edge:'I', dir:'B'},
+      {t:1.00, ph:'Held: the feet finishing wider than they started', hipZ:93, hipYaw:180, shYaw:180,
+       sh:P(3,0,146), L:SKID(-8,-34,0,40,'I'), R:SKID(-8,34,0,-40,'I'), skate:'L', edge:'I', dir:'B'},
     ]},
 
   /* A T-STOP — the rig for t-stop, and the first thing in this file that SKIDS.
@@ -1163,6 +1178,16 @@ export const MOVES = {
      toward the trailing foot. None of that was authored; the constants chose it,
      and it is what a T-stop actually looks like.
 
+     DEEPER SINCE SESSION 31: hip 94 to 88, the gliding blade 12 cm ahead of the hip
+     and the trailing one 6 cm further out along its own heading. While every knee
+     faced the pelvis the trailing shin leaned 28° ACROSS its boot at a hip of 94 and
+     no placement of the feet could take it out, because moving a foot along its
+     blade moves it along the wrong axis. With the knee following the foot
+     (kneeFace) the lean is over the toe, and a foot moved forward under the hip
+     takes it back out: tools/knee.mjs has the tables. The hip sits behind the
+     gliding blade, which is where a braking skater's weight goes (a stop pushes the
+     feet ahead of the body), but how far is a coach's question; Verified: NO.
+
      Held rather than animated, like the other probes: a stop is a loss of speed and
      the path runs at one. This is the braking instant. */
   tStop: {
@@ -1171,12 +1196,12 @@ export const MOVES = {
     path:[{kind:'arc', foot:'R', edge:'O', dir:'F', sweep:40}],
     radius:400, duration:3.0,
     keys:[
-      {t:0.00, ph:'The trailing blade set down across the glide', hipZ:94, hipYaw:35, shYaw:40,
-       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
-      {t:0.45, ph:'Weight easing onto it, the outside edge shaving', hipZ:94, hipYaw:35, shYaw:42,
-       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held: the glide holding its line, the trailing blade scraping', hipZ:94, hipYaw:35, shYaw:44,
-       sh:P(-2,0,147), R:P(0,-20,0,-0.5), L:SKID(-22,-14,0,90,'O'), skate:'R', edge:'O', dir:'F'},
+      {t:0.00, ph:'The trailing blade set down across the glide', hipZ:88, hipYaw:35, shYaw:40,
+       sh:P(-2,0,141), R:P(12,-20,0,-0.5), L:SKID(-22,-20,0,90,'O'), skate:'R', edge:'O', dir:'F'},
+      {t:0.45, ph:'Weight easing onto it, the outside edge shaving', hipZ:88, hipYaw:35, shYaw:42,
+       sh:P(-2,0,141), R:P(12,-20,0,-0.5), L:SKID(-22,-20,0,90,'O'), skate:'R', edge:'O', dir:'F'},
+      {t:1.00, ph:'Held: the glide holding its line, the trailing blade scraping', hipZ:88, hipYaw:35, shYaw:44,
+       sh:P(-2,0,141), R:P(12,-20,0,-0.5), L:SKID(-22,-20,0,90,'O'), skate:'R', edge:'O', dir:'F'},
     ]},
 
   /* A TWO-FOOT TURN — the rig for two-foot-turn, and the first element in this
@@ -1352,18 +1377,19 @@ export const MOVES = {
      the reference blade hands over on the ice (buildPath displaces the path so the hip
      does not move), and the old gliding foot turns out under the body into the next T.
 
-     HOW BENT THE T CAN BE IS LIMITED BY THE KNEE, NOT THE BOOT. The rig points every knee
-     where the pelvis faces (twoBone's anterior(hipYaw)); a skater's knee follows a
-     turned-out foot. So a bent knee over a blade turned ninety degrees leans the shin
-     sideways in its boot, and shin.mjs stops it at a hip of 92 (measured, Session 29). The
-     fix is a knee that tracks its own foot, which is its own piece of work. The pelvis
+     HOW BENT THE T CAN BE WAS LIMITED BY THE KNEE, NOT THE BOOT. The rig pointed every
+     knee where the pelvis faces, so a bent knee over a blade turned ninety degrees leaned
+     the shin sideways in its boot and shin.mjs stopped it at a hip of 92 (Session 29).
+     Since Session 31 the knee follows its own foot as far as the hip can turn it
+     (kneeFace in rig-math.js), the lean is over the toe instead, and the T sits at a
+     hip of 86 with the pushing blade 3 cm further out along its own line. The pelvis
      opens 35 degrees to let the blade turn the full ninety, the way a T-stop does.
      Verified against a coach: NO. */
   pushOffT: (() => {
     const at = (o, s) => k => ({ ...k, t: +(o + k.t * s).toFixed(4) });
     const stroke = [
-      {t:0.00, ph:'The T, knees bent: the pushing blade behind the gliding heel, square across it', hipZ:92, hipYaw:-35, shYaw:-12, arm:[50,32,26],
-       sh:P(-2,0,145), L:P(14,12,0,-0.5), R:PUSH(-2,14,0,-90), skate:'L', edge:'O', dir:'F'},
+      {t:0.00, ph:'The T, knees bent: the pushing blade behind the gliding heel, square across it', hipZ:86, hipYaw:-35, shYaw:-12, arm:[50,32,26],
+       sh:P(-2,0,139), L:P(14,12,0,-0.5), R:PUSH(-2,17,0,-90), skate:'L', edge:'O', dir:'F'},
       {t:0.22, ph:'Pushing out against the inside edge', hipZ:92, hipYaw:-20, shYaw:-8, arm:[50,32,26],
        sh:P(-2,0,145), L:P(8,9,0,-0.5), R:PUSH(-8,25,0,-60), skate:'L', edge:'O', dir:'F'},
       {t:0.40, ph:'The push at full extension, the pushing leg straight', hipZ:94, hipYaw:0, shYaw:-4, arm:[50,32,26],
@@ -2383,7 +2409,7 @@ const comboOf = (A, B, name, note) => {
       ...upTo,
       {arm:[56,12,19], t:0.555, ph:'The right toe pick goes in behind', hipZ:84, hipYaw:178, shYaw:196,
        sh:P(-5,0,136), L:P(-16,16,0,-0.5), R:{...PIN(40,-10,0,50), yaw:-35}, skate:'L', edge:'I', dir:'B'},
-      {arm:[40,20,8], t:0.58, ph:'Takeoff: vaulting off the pick', hipZ:96, hipYaw:198, shYaw:250,
+      {arm:[40,20,8], t:0.58, ph:'Takeoff: vaulting off the pick', hipZ:97, hipYaw:198, shYaw:250,
        sh:P(-2,0,152), L:P(-4,8,2,3), R:{...PIN(36.7,-11.1,0,43), yaw:-16}, skate:'L', edge:'I', dir:'B'},
       {arm:[30,16,10], t:0.604, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
        sh:P(-2,0,170), L:P(-6,-12,32,0,NEUTRAL), R:P(12,-4,32,0,NEUTRAL), skate:null},
