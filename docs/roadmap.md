@@ -61,7 +61,8 @@ guide and tell us what is wrong with it.
 
 **A contact pinned to the ice** (`docs/spec-anchor.md`). Unlocks the toe loop, flip and Lutz,
 their doubles, 19 undrawn combinations, the pivot and the bunny hop. Agreed with Martyn
-04/10/2026.
+04/10/2026. *Steps 1 and 2 done 04/10/2026, Session 29*: the pin and the reach for the pick,
+on `toePick`, now a movement. Next is step 3, the toe loop.
 
 ## Also on the list, unordered
 

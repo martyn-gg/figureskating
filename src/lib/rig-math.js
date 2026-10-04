@@ -219,6 +219,14 @@ export const contactAlongOf = (pose, which, bd) => {
      middle is as honest a place to pivot as any. Where a side contact differs from
      every other is ACROSS the boot, and that is not an offset here: the authored point
      stays the blade's reference and soleEdgeZ below is what holds the roll to the ice. */
+  /* A FOOT REACHING FOR ITS PICK, or leaving it — 04/10/2026, Session 29. Its authored
+     point is the blade's middle while it is free and the teeth once it is in, so what
+     the point MEANS changes at the contact. Stepping it there moved the whole boot
+     PICK_ALONG along itself in one frame, which on a boot stood on end is 17.8 cm
+     straight up. So it moves over the span either side of the pick (`c`, below),
+     which is the whole of the reach rather than only its last quarter second. */
+  const ar = pose[which] && pose[which].arrival;
+  if (!c && ar && ar.on === 'pick') return PICK_ALONG * ar.c;
   return c === 'blade' ? contactAlong(pitchOf(bd)) : c === 'pick' ? PICK_ALONG : 0;
 };
 
@@ -632,6 +640,20 @@ export function bootDir(pose, which, knee, foot){
      Lerp and renormalise rather than a slerp: it stays on the sphere, it is
      continuous, and it is not constant-speed — which no checker asks for and
      tools/continuity.mjs is the file that would object if it mattered. */
+  if (foot.arrival && foot.arrival.on === 'pick') {
+    /* Toward the picked rule, by time (PICK_REACH, below). The target is the pick's
+       own construction with the pitch of the key it is arriving at, so at w = 1 this
+       is the frame after exactly. */
+    const w = foot.arrival.w, h = Math.hypot(foot.t, foot.n);
+    if (w > 0 && h > 1e-6) {
+      const pp = foot.arrival.pitch * D2R;
+      const q = [foot.t/h*Math.cos(pp), foot.n/h*Math.cos(pp), -Math.sin(pp)];
+      const v = [free[0] + (q[0]-free[0])*w, free[1] + (q[1]-free[1])*w, free[2] + (q[2]-free[2])*w];
+      const vl = Math.hypot(...v) || 1;
+      return [v[0]/vl, v[1]/vl, v[2]/vl];
+    }
+    return free;
+  }
   if (foot.arrival) {
     const w = Math.min(1, Math.max(0, 1 - (foot.z / CLEAR)));
     if (w > 0) {
@@ -971,7 +993,7 @@ export function buildPath(move){
   const n = pts.length;
   let held = {t:0, n:0}, src = null, dx = 0, dy = 0;
   for(let i=0;i<n;i++){
-    const po = poseAt(move, i/(n-1));
+    const po = poseFree(move, i/(n-1));
     const down = po.skate && onIceOf(po, po.skate) ? po.skate : null;
     /* A BLADE TAKING THE ICE, not a DIFFERENT blade — 03/10/2026, Session 26. This
        read `down !== src`, and `src` was never cleared while nothing was on the ice, so
@@ -1058,14 +1080,41 @@ const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(
    are quantities and lpP is already interpolating them toward the target key, so by
    the moment of contact the two constructions in bootDir are being handed the same
    numbers. `dir` is a state and carries, so it has to be fetched. */
-const arrivalOf = (a, b, which) => {
+const arrivalOf = (a, b, which, move, t, u) => {
   const onA = onIceOf(a, which), onB = onIceOf(b, which);
-  if (!onA && onB) return { phase: 'arriving',  dir: (b[which] && b[which].dir) || b.dir };
-  if (onA && !onB) return { phase: 'departing', dir: (a[which] && a[which].dir) || a.dir };
+  if (!onA && onB) return { phase: 'arriving',  dir: (b[which] && b[which].dir) || b.dir,
+                            ...pickReach(onB, b[which], (b.t - t) * (move.duration || 1), u) };
+  if (onA && !onB) return { phase: 'departing', dir: (a[which] && a[which].dir) || a.dir,
+                            ...pickReach(onA, a[which], (t - a.t) * (move.duration || 1), 1 - u) };
   return null;
 };
 
-export function poseAt(move, t){
+/* REACHING FOR THE PICK, AND LEAVING IT — 04/10/2026, Session 29, docs/spec-anchor.md
+   part B. A blade arriving on the ice blends over the last CLEAR centimetres of
+   HEIGHT, because a blade comes down flat and the height is where its rule changes.
+   A pick does not come down flat: the boot is near vertical, the toe is the only
+   thing that touches, and the free rule (square to the shin) and the picked rule
+   (along the reach) can point the toe's horizontal part a hundred and fifty degrees
+   apart while both are nearly straight down. So a foot reaching for a pick blends
+   over a fixed TIME before the contact, PICK_REACH seconds, and the same after it
+   comes out. A time and not a fraction of the span, so the blend does not change
+   with the clip's length.
+
+   Only for a pick, and only as extra fields on the arrival: a blade's arrival
+   object is exactly what it was, so every move drawn before today is unchanged. */
+export const PICK_REACH = 0.25;                     // seconds
+const pickReach = (on, foot, dtSeconds, near) => on !== 'pick' ? {} : {
+  on: 'pick', pitch: foot.pitch || 0,
+  w: S3(Math.min(1, Math.max(0, 1 - dtSeconds / PICK_REACH))),
+  /* How far the authored point has moved from the blade's middle to the teeth: over
+     the whole span (`near` is poseFree's eased u, 1 at the pick), not over PICK_REACH.
+     The direction comes round in the last quarter second; the point cannot, because a
+     boot stood on end with its point still at the blade's middle has its teeth 10 cm
+     under the ice. Looked at, 04/10/2026: toePick at 0.38 and 0.66. */
+  c: near,
+};
+
+function poseFree(move, t){
   const K = move.keys;
   let i = 0; while(i < K.length-2 && K[i+1].t <= t) i++;
   const a = K[i], b = K[Math.min(i+1,K.length-1)];
@@ -1087,7 +1136,7 @@ export function poseAt(move, t){
   const foot = which => {
     const f = lpP(a[which], b[which], u);
     if (!f) return f;
-    const ar = arrivalOf(a, b, which);
+    const ar = arrivalOf(a, b, which, move, t, u);
     return ar ? { ...f, arrival: ar, ...(u > 0 ? { onIce: null } : {}) } : f;
   };
   const pose = {
@@ -1111,6 +1160,102 @@ export function poseAt(move, t){
     pose[pose.skate] = { ...q, t: q.t + cu.dt, n: q.n + cu.dn,
                          yaw: cu.psi - (past ? cu.sense * 180 : 0) };
     pose.edge = st.edge; pose.dir = st.dir;
+  }
+  return pose;
+}
+
+/* ═══ a contact pinned to the ice ════════════════════════════════
+   04/10/2026, Session 29. docs/spec-anchor.md, part A.
+
+   Every foot is authored relative to the hip in the track frame, and only the
+   reference blade is pinned to the path. A gliding blade travels with the skater, so
+   that cost nothing until the pick: a pick stays where it went in while the body goes
+   past it. Authored hip-relative, a pick held through real travel has to sweep
+   backwards by however far the hip went, so until today a pick could only be a held
+   position.
+
+   A foot key may now declare `pin: true`. Over a run of consecutive keys that all
+   declare it, the foot is FIXED IN THE WORLD:
+
+     1. at the run's first key its world point is computed once, from the path's
+        point, heading and hip offset at that time and the authored t, n;
+     2. on every time inside the run its t, n are recomputed from that world point
+        and that time's own hip and heading;
+     3. z, pitch and everything else stay as poseFree interpolates them.
+
+   The authored t, n of the run's later keys are not used for position. They say where
+   the foot ends up, which is worth reading in a move, and tools/continuity.mjs holds
+   them to the pinned value within PIN_AGREE, so they cannot quietly drift from it.
+
+   WHERE IT LIVES, and the one departure from the spec. The spec put the pass "after
+   buildPath and poseAt, in the one place that turns a pose into world coordinates".
+   There is no one place: body-frame.js does it per view, and eleven checkers call
+   poseAt directly and never see a view. A pass the renderer ran and the checkers did
+   not would be the second copy this repository keeps a list of. So it lives here,
+   inside poseAt, and everything that reads poseAt sees the same pinned foot.
+   poseFree is the old poseAt, still a function of the clock alone, and buildPath
+   reads it: the path is built from the unpinned pose and the pin is read off the
+   path, so nothing is circular. That is safe because the pin may not be on the
+   reference blade (asserted below): the path's root is the reference blade's, so a
+   pin on any other foot cannot move it.
+
+   A MOVE THAT DECLARES NO PIN gets poseFree's own object back, untouched, which is
+   what keeps every move drawn before today byte-identical. tools/frame-hash.mjs
+   proves it, every frame of every move. */
+export const PIN_AGREE = 1;                          // cm, an authored pinned key against the pin
+const pinCache = new WeakMap();
+
+/** The hip's world position and heading at time t, interpolated along the path's
+    samples. At a sample's own time this is exactly the sample. */
+const hipOnPath = (path, t) => {
+  const x = Math.min(1, Math.max(0, t)) * (path.length - 1);
+  const i = Math.min(path.length - 2, Math.floor(x)), f = x - i;
+  const a = path[i], b = path[i + 1], L = (u, v) => u + (v - u) * f;
+  const th = L(a.th, b.th), ot = L(a.ot || 0, b.ot || 0), on = L(a.on || 0, b.on || 0);
+  const T = [Math.cos(th), Math.sin(th)], N = [-Math.sin(th), Math.cos(th)];
+  return { x: L(a.x, b.x) - T[0]*ot - N[0]*on, y: L(a.y, b.y) - T[1]*ot - N[1]*on, T, N };
+};
+
+/** The pinned runs of a move: per foot, each maximal run of consecutive keys whose
+    foot declares `pin`, with the world point it is pinned to. Cached per move. */
+export function pinRuns(move){
+  if (pinCache.has(move)) return pinCache.get(move);
+  const K = move.keys || [], runs = [];
+  if (K.some(k => ['L', 'R'].some(w => k[w] && k[w].pin))) {
+    const path = buildPath(move);
+    for (const w of ['L', 'R']) {
+      for (let i = 0; i < K.length; i++) {
+        if (!(K[i][w] && K[i][w].pin)) continue;
+        let j = i;
+        while (j + 1 < K.length && K[j + 1][w] && K[j + 1][w].pin) j++;
+        for (let k = i; k <= j; k++)
+          if (K[k].skate === w)
+            throw new Error(`pin on the reference blade (${w} at t=${K[k].t}): the path is ` +
+              `rooted on it, so it cannot also be read off the path`);
+        const h = hipOnPath(path, K[i].t), q = K[i][w];
+        runs.push({ foot: w, from: K[i].t, to: K[j].t, keys: [i, j],
+                    x: h.x + h.T[0]*q.t + h.N[0]*q.n, y: h.y + h.T[1]*q.t + h.N[1]*q.n, path });
+        i = j;
+      }
+    }
+  }
+  pinCache.set(move, runs);
+  return runs;
+}
+
+/** Where a pinned foot is, hip-relative in the track frame, at time t. */
+export const pinnedAt = (run, t) => {
+  const h = hipOnPath(run.path, t), dx = run.x - h.x, dy = run.y - h.y;
+  return { t: dx*h.T[0] + dy*h.T[1], n: dx*h.N[0] + dy*h.N[1] };
+};
+
+export function poseAt(move, t){
+  const pose = poseFree(move, t);
+  const runs = move.keys ? pinRuns(move) : [];
+  if (!runs.length) return pose;
+  for (const r of runs) {
+    if (t < r.from || t > r.to) continue;
+    pose[r.foot] = { ...pose[r.foot], ...pinnedAt(r, t), pin: true };
   }
   return pose;
 }

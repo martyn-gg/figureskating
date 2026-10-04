@@ -164,7 +164,7 @@ for (const [id, m] of Object.entries(MOVES))
 
    Interpolated quantities are checked at the keyframe's own t, where the
    interpolation is an identity; states are checked across the span they hold. */
-const FOOT_FIELDS = ['onIce', 'dir', 'edge', 'yaw', 'pitch', 'point'];
+const FOOT_FIELDS = ['onIce', 'dir', 'edge', 'yaw', 'pitch', 'point', 'pin'];
 let carried = 0;
 for (const [id, m] of Object.entries(MOVES))
   for (const k of m.keys)

@@ -64,9 +64,10 @@ const unpublished = {
   twoFoot:     'a two-foot EDGE on a lobe, and the guide has no element page for one. '
              + 'skills-1-exercise-4 names that gap in notCovered; two-foot-glide is a '
              + 'straight line and draws its own trace. Reachable on /rig.',
-  toePick:     'a held pose showing where the pick is set, not a movement — moves.js '
-             + 'says why the entry is not drawn. The one element that would mount it, '
-             + 'pivot, needs an anchor the rig has not got, and drawn.mjs excuses it.',
+  toePick:     'the probe for a pick pinned to the ice (Session 29): glide, sink, pick, '
+             + 'ride past, release. Not an element: the toe loop is what will mount a pick, '
+             + 'and it needs its own keys from the loop. The pivot needs the reference '
+             + 'blade circling a pinned pick, which pinRuns does not allow yet.',
   spiralCheck: 'the spiral with its arms checked, cloned from MOVES.spiral rather than '
              + 'authored — a variation of one element, not a second one. The spiral '
              + 'page mounts `spiral`.',

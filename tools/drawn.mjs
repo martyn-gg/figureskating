@@ -60,7 +60,7 @@ const cannotDraw = {
      a hockey boot's extra 5 to 9 degrees of ankle is not the missing 30. */
   'hockey-stop':                 'no legal pose in THIS rig: it wants counter-rotation and '
                                + 'a free upper body, and the model has one hip yaw and no spine',
-  'pivot':                       'the pick is fixed to the ice and the rig has no anchor',
+  'pivot':                       'not yet authored: a pick can be pinned since Session 29, and the pivot is the circling blade round one',
   /* NOT YET AUTHORED, AND SAID SO — 03/10/2026. Every contact the hop needs exists
      (an edge, flight, a pick, as the waltz jump and toePick show), so this is a pose
      nobody has written, not a capability the rig lacks. It falls outside the rig

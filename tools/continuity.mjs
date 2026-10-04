@@ -65,7 +65,8 @@
        node tools/continuity.mjs --break=uncentre
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, onIceOf } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt, onIceOf,
+         pinRuns, pinnedAt, PIN_AGREE } from '../src/lib/rig-math.js';
 
 const unit = v => { const l = Math.hypot(...v) || 1; return v.map(c => c / l); };
 const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
@@ -187,7 +188,11 @@ for (const [key, m] of Object.entries(MOVES)) {
         }
 
         const k = `${view}:${foot}`, p = prev[k];
-        const landing = p && p.down !== (onIceOf(pose, foot) != null);
+        /* A PICK IS NOT A LANDING HERE ANY MORE — 04/10/2026, Session 29. The foot reaching
+           for it blends onto the picked rule over PICK_REACH (rig-math.js), so the rule
+           change at a pick is held to the ordinary bound. A blade still gets 95. */
+        const pickSeam = p && (p.on === 'pick' || onIceOf(pose, foot) === 'pick');
+        const landing = p && p.down !== (onIceOf(pose, foot) != null) && !pickSeam;
         if (p && orient !== null && p.orient !== null) {
           checked++;
           const d = dAng(orient, p.orient);
@@ -223,7 +228,7 @@ for (const [key, m] of Object.entries(MOVES)) {
             fail(`${key} ${view} ${foot}: the glyph slides ${(travel * 100).toFixed(0)}% of the ` +
               `view between frames ${i - 1} and ${i}`);
         }
-        prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) != null };
+        prev[k] = { orient, pos, branch, down: onIceOf(pose, foot) != null, on: onIceOf(pose, foot) };
       }
       prevSkate = pose.skate && onIceOf(pose, pose.skate) ? pose.skate : null;
     }
@@ -242,12 +247,12 @@ for (const [key, m] of Object.entries(MOVES)) {
       const bd = bootDir(pose, w, kn, q);
       if (p) {
         const a = Math.acos(Math.max(-1, Math.min(1, bd[0] * p.bd[0] + bd[1] * p.bd[1] + bd[2] * p.bd[2]))) * 180 / Math.PI;
-        const rule = p.down !== down;
+        const rule = p.down !== down && p.on !== 'pick' && onIceOf(pose, w) !== 'pick';
         if (a > (rule ? SPIN_LANDING : SPIN))
           fail(`${key} ${w}: the boot's 3D direction turns ${a.toFixed(0)}° between frames ` +
             `${i - 1} and ${i}${rule ? ' (bootDir changes rule at a landing)' : ''}`);
       }
-      p = { bd, down };
+      p = { bd, down, on: onIceOf(pose, w) };
     }
   }
 
@@ -300,6 +305,84 @@ for (const [key, m] of Object.entries(MOVES)) {
   }
 }
 
+/* ── 5: A PICK DOES NOT MOVE ON THE ICE ─────────────────────────────────
+   04/10/2026, Session 29, docs/spec-anchor.md part C. The strictest assertion in the
+   file, and its expectation does not come from the pin: it is that a toe pick in the
+   ice stays where it went in, which is true of a pick whether or not anything in the
+   model says so. So it runs on EVERY pair of adjacent frames where a foot is on its
+   pick in both, pinned or not, and measures the foot's position in the world (the
+   path's hip plus the foot's track-frame offset) and in the top view as drawn.
+
+   Before the pin a pick could only be a held position, and held hip-relative through
+   real travel it swept backwards 168 cm over toePick's arc: this assertion is the one
+   that would have said so. Also held here: the authored t, n of a run's later keys
+   agree with the pin within PIN_AGREE.
+
+   Mutation counts, 04/10/2026:
+       --break=unpin   the pin taken off every key; the pick slides with the hip ..... 125
+       --break=late    the pin's world point taken a frame late; it jumps ............ 2 */
+const STILL = 0.01;          // cm, world; and the same in the top view's own units
+let pinFrames = 0, pinKeys = 0;
+const brkPin = m => {
+  if (BREAK === 'unpin')
+    return { ...m, keys: m.keys.map(k => Object.fromEntries(Object.entries(k).map(([f, v]) =>
+      [f, v && typeof v === 'object' && v.pin ? (({ pin, ...rest }) => rest)(v) : v]))) };
+  if (BREAK === 'late') {
+    const i = m.keys.findIndex(k => ['L', 'R'].some(w => k[w] && k[w].pin));
+    if (i < 0) return m;
+    const k = m.keys[i], w = ['L', 'R'].find(x => k[x] && k[x].pin);
+    const { pin, ...held } = k[w];
+    const later = { ...k, t: k.t + 1 / ((m.frames ?? 320) - 1) };
+    return { ...m, keys: [...m.keys.slice(0, i), { ...k, [w]: held }, later, ...m.keys.slice(i + 1)] };
+  }
+  return m;
+};
+for (const key of Object.keys(MOVES)) {
+  const orig = MOVES[key];
+  if (!orig.keys.some(k => ['L', 'R'].some(w => k[w] && k[w].onIce === 'pick'))) continue;
+  const m = brkPin(orig);
+  MOVES[key] = m;                                     // the renderer reads MOVES by name
+  try {
+    const path = buildPath(m);
+    const world = (pose, w, i) => {
+      const p = path[i], q = pose[w];
+      const T = [Math.cos(p.th), Math.sin(p.th)], N = [-Math.sin(p.th), Math.cos(p.th)];
+      const hx = p.x - T[0] * (p.ot || 0) - N[0] * (p.on || 0), hy = p.y - T[1] * (p.ot || 0) - N[1] * (p.on || 0);
+      return [hx + T[0] * q.t + N[0] * q.n, hy + T[1] * q.t + N[1] * q.n];
+    };
+    const { rig, byView } = rigFor(key, ['top']);
+    const prevW = {}, prevD = {};
+    for (let i = 0; i < path.length; i++) {
+      const pose = poseAt(m, i / (path.length - 1));
+      rig.seek(i);
+      const drawn = Object.fromEntries(findAll(byView.top, n => n.attrs['data-boot'])
+        .map(g => [g.attrs['data-foot'], num(g.attrs.transform, /translate\(([-\d.]+) ([-\d.]+)\)/)]));
+      for (const w of ['L', 'R']) {
+        if (onIceOf(pose, w) !== 'pick') { delete prevW[w]; delete prevD[w]; continue; }
+        const at = world(pose, w, i), d = drawn[w];
+        if (prevW[w]) {
+          pinFrames++;
+          const moved = Math.hypot(at[0] - prevW[w][0], at[1] - prevW[w][1]);
+          if (moved > STILL)
+            fail(`${key} ${w}: the pick moves ${moved.toFixed(2)} cm on the ice between frames ${i - 1} and ${i} ` +
+              `— a toe pick stays where it went in${pose[w].pin ? '' : ' (this foot is not pinned)'}`);
+          if (d && prevD[w] && Math.hypot(d[0] - prevD[w][0], d[1] - prevD[w][1]) > STILL)
+            fail(`${key} ${w}: the pick is drawn moving in the top view between frames ${i - 1} and ${i}`);
+        }
+        prevW[w] = at; prevD[w] = d;
+      }
+    }
+    for (const r of pinRuns(m)) {
+      const k = m.keys[r.keys[1]], at = pinnedAt(r, r.to), q = k[r.foot];
+      pinKeys++;
+      const off = Math.hypot(at.t - q.t, at.n - q.n);
+      if (off > PIN_AGREE)
+        fail(`${key} ${r.foot} t=${k.t}: authored at (${q.t}, ${q.n}) but pinned at ` +
+          `(${at.t.toFixed(1)}, ${at.n.toFixed(1)}), ${off.toFixed(1)} cm apart against ${PIN_AGREE}`);
+    }
+  } finally { MOVES[key] = orig; }
+}
+
 console.log(`\n${checked} adjacent-frame comparisons across ${Object.keys(MOVES).length} moves, three views`);
 console.log(`  ${bodyChecked} on the body's own motion: worst speed change ${worstLurch.toFixed(2)} cm ` +
   `(bound ${LURCH}), worst change of turn ${worstWrench.toFixed(2)}° (bound ${WRENCH})`);
@@ -315,6 +398,7 @@ if (seams.length) {
 }
 if (zones.length && VERBOSE) for (const z of zones) console.log(`  ${z}`);
 else if (zones.length) console.log(`  ${zones.length} view-move pairs spend frames in a degenerate zone (--verbose to list)`);
+console.log(`  ${pinFrames} adjacent frames with a foot on its pick, every one still on the ice; ${pinKeys} pinned run${pinKeys === 1 ? '' : 's'} agreeing with its authored end`);
 console.log(bad
   ? `\n${bad} discontinuit${bad === 1 ? 'y' : 'ies'} — a glyph that jumps is a projection that has degenerated, or a pose nothing could skate`
   : 'nothing drawn jumps: every glyph turns and travels smoothly between frames,\nand the body they are drawn from neither lurches nor is wrenched round');

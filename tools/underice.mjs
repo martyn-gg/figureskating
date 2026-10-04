@@ -133,6 +133,20 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
  * line for the same reason the last frames before an arrival do — the interpolation out
  * of a key whose foot is at z 0. One fault, two directions, one list. */
 const handover = {
+  /* A PICK GOES INTO THE ICE, 04/10/2026, Session 29. The picked glyph draws its teeth
+     2.7 cm into the ice (--break=blind shows it on every frame of the pick, and on every
+     frame of the held probe before it), which is where a pick is: in it. A foot reaching
+     for the pick and leaving it carries that drawing for its first and last frames,
+     because direction and contact point arrive exactly at the picked boot (rig-math.js,
+     PICK_REACH). Measured: these are the depths. */
+  toePick: [
+    { foot: 'L', from: 0.25, to: 0.42, cm: 1.4,
+      why: 'the last frames of the left foot reaching for its pick, carrying the '
+         + 'picked glyph\'s teeth into the ice' },
+    { foot: 'L', from: 0.62, to: 0.72, cm: 1.7,
+      why: 'the first frames after the pick comes out, the teeth still in the ice they '
+         + 'have just left' },
+  ],
   changeFootSpin: [
     { foot: 'R', from: 0.49, to: 0.51, cm: 0,
       why: 'the one frame where the arriving right foot is at z 0 and has not '
@@ -294,7 +308,11 @@ for (const id of Object.keys(MOVES)) {
          a person can act on. */
       for (const b of findAll(svg, n => n.attrs['data-boot'] !== undefined)) {
         const role = b.attrs['data-boot'], w = b.attrs['data-foot'];
-        if (role !== 'free' && BREAK !== 'blind') continue;
+        /* A CONTACT ENDS A RUN — 04/10/2026, Session 29. A run used to survive a frame
+           on the ice, because a skipped glyph neither extended nor flushed it, so a foot
+           that reached for its pick and came out of it again read as one run from the
+           arrival to the release, longer than either window and so excused by neither. */
+        if (role !== 'free' && BREAK !== 'blind') { flush(view + w); continue; }
         glyphs++;
         const s = parse(b.attrs.transform)[3] || 1;         // px per cm in this view
         const cm = (lowest(b, [1, 0, 0, 1, 0, 0]) - iceY) / s;

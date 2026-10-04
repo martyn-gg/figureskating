@@ -1,7 +1,13 @@
 # Spec: a contact pinned to the ice
 
 Written 04/10/2026, Session 28, for the next session (Martyn: yes, make the anchor the next
-job, starting with a short spec). Nothing here is built yet.
+job, starting with a short spec).
+
+**Built 04/10/2026, Session 29: parts A, B and C, order of work steps 1 and 2.** Two
+departures, both in the handoff: the pin lives inside `poseAt` (over `poseFree`) because
+eleven checkers read `poseAt` and no single world transform exists; and part B needed a
+second blend, the contact point moving from the blade's middle to the teeth over the whole
+span, as well as the direction over `PICK_REACH`.
 
 ## The problem
 

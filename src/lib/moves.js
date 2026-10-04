@@ -95,6 +95,11 @@ const ON = (t,n,z,pitch=0,dir=null) => ({t,n,z,pitch,point:ANKLE_POINT,onIce:'bl
    which is exactly what the `pick: true` keyframe flag this replaces had become.
    freefoot.mjs asserts that nobody writes one. */
 const PICK = (t,n,z,pitch) => ({t,n,z,pitch,onIce:'pick'});
+/* A PICK PINNED TO THE ICE — 04/10/2026, Session 29 (docs/spec-anchor.md). Over a run
+   of keys that all say PIN, the foot stays where the run's first key put it while the
+   body goes past; rig-math.js, *a contact pinned to the ice*. The t, n of the run's
+   later keys are where it ends up, held to the pin within PIN_AGREE. */
+const PIN = (t,n,z,pitch) => ({...PICK(t,n,z,pitch), pin:true});
 
 /* A BOOT LYING ON ITS SIDE — 20/09/2026. The fifth kind of contact, and the one the
    lunge has been waiting for since Session 14 and the drag since this morning. The
@@ -1497,39 +1502,53 @@ export const MOVES = {
      drops — the same fact that shapes the teapot and the sit spin, arriving here
      for the third time.
 
-     IT IS A HELD POSITION AND NOT A MOVEMENT, and the reason is the pick itself.
-     Every foot in this file is authored relative to the HIP, and only the reference
-     blade is pinned to the path. A gliding blade travels with the skater so that
-     costs nothing — but A PICK IS FIXED TO THE ICE, the first contact in this model
-     that is. Held through a real span of travel its hip-relative position would have
-     to sweep backwards by however far the hip went, which is 168 cm over this arc
-     and out of reach within the first centimetres. So the pick is drawn where it is
-     set and the arc beneath it is where the skating blade is going, not a claim that
-     the toe is sliding along with it. Expressing a contact that stays put needs an
-     anchor the rig has not got, and that is a bigger change than this one.
+     A MOVEMENT SINCE 04/10/2026, Session 29 (docs/spec-anchor.md). Until then it was a
+     held position, because every foot is authored relative to the hip and a pick is
+     the first contact FIXED TO THE ICE: held hip-relative through real travel it swept
+     backwards 168 cm over this arc. The pick is now pinned (PIN, rig-math.js *a contact
+     pinned to the ice*): from 0.42 to 0.62 the toe stays where it went in and the body
+     rides past it, 33 cm of the hip's travel, the pick going from 56 cm behind the hip
+     to 27. The end key's t, n are what the pin computes, and continuity.mjs holds them
+     to it.
 
-     The ENTRY is not drawn either, and that was tried first. As a movement — glide,
-     sink, reach, pick — it failed twice, and both failures were real: the free boot
-     descending onto the pick reaches 78° from level over 92 frames, because a boot
-     square to a shin that steep points at the ice, and the top-down glyph turns 155°
-     in the single frame where bootDir changes rule, against the 95 continuity.mjs
-     allows across a landing. Neither is a defect in the pick. They say the frames
-     between "free" and "picked" are a state the model has not got — the foot is
-     neither hanging nor planted — and inventing one to make a probe animate would be
-     authoring pose data to satisfy a checker. twoFoot does not draw stepping onto two
-     feet either, and for the same reason. */
+     THE RUN IS AS LONG AS THE ANKLE ALLOWS, NOT THE REACH. Measured before authoring
+     (Session 29's handoff has the tables): at a hip of 54 a picked boot is legal from
+     about 60 cm behind the hip down to about 20, pitched 76 to 89. Reach is never the
+     limit on this side of the pick: the leg is at its longest when the toe goes in and
+     shortens as the hip comes over it. What ends the run is the ankle, which goes past
+     the boot's 30 degrees once the hip is within 20 cm of the pick, and freefoot.mjs
+     now measures it on every frame on a pick (--break=long carries the pin 0.1 further
+     and fails). Under the hip and beyond it there is a second band of legal pitches, but
+     with the toe pointed back along the travel: a toe drag, not a pick.
+
+     THE ENTRY AND THE RELEASE ARE DRAWN, which failed twice as a held pose. The free
+     boot reaching for the pick blends onto the picked rule over PICK_REACH seconds
+     (rig-math.js), direction and contact point together, so the glyph no longer turns
+     155 degrees in one frame and continuity holds it to the ordinary 30. The free foot
+     travels at 26 cm with the ankle pointed 30 until the last reach: below about 20 cm
+     a free boot behind a hip this low cannot be under 60 degrees from level, and
+     freefoot.mjs excuses that only for a foot heading for its pick, for at most half a
+     second.
+
+     Verified against a coach: NO. */
   toePick: {
     name:'Toe pick',
-    note:'RBO edge · sunk into the skating knee · the left toe pick set behind',
+    note:'RBO edge · sinking into the skating knee · the left toe pick set behind and ridden past',
     path:[{kind:'arc', foot:'R', edge:'O', dir:'B', sweep:64}],
     radius:150, duration:3.4,
     keys:[
-      {t:0.00, ph:'The pick set behind, the edge running', hipZ:54, hipYaw:176, shYaw:160,
-       sh:P(0,0,104), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:0.35, ph:'Shoulders checking against the toe', hipZ:54, hipYaw:176, shYaw:157,
-       sh:P(2,0,104), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:1.00, ph:'Held: loaded against the toe, ready to vault', hipZ:54, hipYaw:176, shYaw:154,
-       sh:P(3,0,103), L:PICK(40,-16,0,80), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.00, ph:'Gliding back on the right outside edge, the free leg extended', hipZ:62, hipYaw:176, shYaw:166,
+       sh:P(0,0,110), L:P(46,-16,30,0,30), R:P(-30,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.25, ph:'Sinking into the skating knee, reaching back', hipZ:54, hipYaw:176, shYaw:162,
+       sh:P(2,0,104), L:P(58,-23,26,0,30), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.42, ph:'The toe pick going in behind', hipZ:54, hipYaw:176, shYaw:160,
+       sh:P(2,0,104), L:PIN(56,-24,0,84), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.62, ph:'Riding past the pick, loaded against the toe', hipZ:54, hipYaw:176, shYaw:156,
+       sh:P(3,0,103), L:PIN(27.4,-7,0,82), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.72, ph:'The pick out, the toe lifting', hipZ:55, hipYaw:176, shYaw:158,
+       sh:P(3,0,104), L:P(24,-12,22,0,30), R:P(-33,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:1.00, ph:'Rising onto the edge', hipZ:60, hipYaw:176, shYaw:164,
+       sh:P(1,0,109), L:P(30,-14,32,0,30), R:P(-30,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
 
   /* THE GLIDES, THE DIP, THE SLALOMS AND THE TWO-FOOT CHANGE OF EDGE — 03/10/2026,

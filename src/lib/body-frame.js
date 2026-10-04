@@ -372,6 +372,30 @@ function viewTop(svg, move, path, frames, SHOW){
 
   const live=el('g'); root.appendChild(live);
   const body=el('g'); root.appendChild(body);
+
+  /* A PINNED FOOT STAYS PUT IN THIS VIEW TOO — 04/10/2026, Session 29. The pin is
+     made in true centimetres (rig-math.js, *a contact pinned to the ice*), and this
+     view draws the body BS times life against a true-scale tracing, so a foot placed
+     at hip + BS·q would slide by (BS − 1) of however far the hip went, 0.2 of it.
+     The point of a pin is that the toe does not move, so while a run lasts the foot
+     is drawn where it was drawn on the run's first frame. What gives instead is the
+     enlargement, which no reader measures: the foot is (BS − 1) of the hip's travel
+     nearer the hip than BS·q would put it. No move without a pin reaches this. */
+  const pinDrawn = frames.map(() => ({}));
+  for (const w of ['L', 'R']) {
+    let anchor = null;
+    frames.forEach((fr, i) => {
+      const q = fr.pose[w];
+      if (!(q && q.pin)) { anchor = null; return; }
+      if (!anchor) {
+        const { p } = fr, ot = p.ot || 0, on = p.on || 0;
+        const T = { x: Math.cos(p.th), y: Math.sin(p.th) }, Nv = { x: -Math.sin(p.th), y: Math.cos(p.th) };
+        anchor = { x: p.x + (T.x * (q.t - ot) + Nv.x * (q.n - on)) * BS,
+                   y: p.y + (T.y * (q.t - ot) + Nv.y * (q.n - on)) * BS };
+      }
+      pinDrawn[i][w] = anchor;
+    });
+  }
   // BS is hoisted above the fit, which needs it to measure the body's overhang.
   // Deliberately ~4× life: at true scale a skater is a speck against a four-metre
   // lobe, and rotation — the whole point of this view — becomes unreadable. The
@@ -505,7 +529,7 @@ function viewTop(svg, move, path, frames, SHOW){
          boolean: three values, and the glyph reads them apart. */
       const contact = onIceOf(pose, which), down = contact != null;
       if(!SHOW.free && !down) continue;
-      const q=pose[which], pos=rel(q);
+      const q=pose[which], pos=pinDrawn[idx]?.[which] ?? rel(q);
       const kn0 = twoBone({t:0,n:0,z:pose.hipZ}, q, THIGH, SHIN, anterior(pose.hipYaw));
       const bd0 = bootDir(pose, which, kn0, q);
       /* data-boot, data-foot and data-heading, on the same argument that put them
