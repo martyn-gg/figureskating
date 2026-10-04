@@ -2108,6 +2108,51 @@ shins at the 28° limit at once. That is how a snowplough is taught, and nobody 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
 
+## The second tracing — specified 04/10/2026, Session 32, before it was built
+
+The top view draws one line, the reference blade's: the path is that blade's tracing by
+construction (buildPath), and every other blade on the ice leaves no mark. That is wrong in
+three ways now visible. The half-swizzle pumps draw no scallops outside the circle. Marching
+draws one line that jumps sideways at every change of foot, because at a handover the path
+is displaced so the hip does not move and the polyline joins the old blade's contact to the
+new one's. And the swizzles, the backward wiggles and the cross strokes are excused in
+`drawn.mjs` on exactly this.
+
+What the second tracing is:
+
+1. **One line per foot, not per role.** Wherever a foot has a runner on the ice (a blade or
+   a skid; a pick is a point and leaves none) it leaves a mark. For the reference foot that
+   mark is the path, already drawn. For the other foot it is new, and it is computed the way
+   the renderer places the foot: the hip's position on the path plus the foot's own (t, n),
+   in the path frame at that frame.
+2. **True scale, as the reference line is.** The body in this view is drawn at BS = 1.2
+   times life around the hip and the tracing at life size, so a second blade's glyph sits
+   (BS − 1) of its offset from the reference blade away from its own line: 11 cm on a
+   snowplough's 56. The pin made the same choice (the mark is the record; the enlargement
+   gives).
+3. **The line follows the foot through a handover.** When the reference passes from one
+   foot to the other on the ice, the foot that had it goes on as a second line from where
+   its tracing was, and the foot that takes it ends its second line at the path. The path
+   itself is broken at the handover, faint and live alike, so the displacement draws no
+   line across the gap between the feet.
+4. **Its own edge and its own state.** Coloured by the foot's own edge (`edgeOf`), smeared
+   into a band where the foot skids (the band's half-width the blade's length by the sine of
+   the angle between the boot and the line the contact is actually travelling, measured from
+   successive contacts), solid where it grips.
+5. **Faint whole, live so far**, as the reference line is.
+
+What it does not do yet: give the second blade an edge of its own. Its edge is still derived
+as though it shared the reference's circle, which is why the swizzles stay excused; the line
+will show where that derivation is wrong rather than fix it.
+
+**Built the same session** in `viewTop` (body-frame.js): `secondRuns` per foot, `pathRuns`
+breaking the path at handovers, the band's width from successive contacts. Frame hashes moved
+on 25 moves, every one of them a move with a second runner on the ice at some frame or a
+handover (marching, the change-foot spin), and on nothing else: no jump, no pick, no pivot.
+Looked at on eight: the pumps draw their scallops outside the circle, the snowplough two
+bands, the two-foot spin two spirals, marching two short tracks where the zigzag was, the
+slalom two lines 12 cm apart that at this scale read as one line in two colours.
+
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
 `shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the

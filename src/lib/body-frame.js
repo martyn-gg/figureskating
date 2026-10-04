@@ -368,7 +368,53 @@ function viewTop(svg, move, path, frames, SHOW){
   const d = pts => pts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
   /* The whole tracing, faint, so the part not yet skated is still legible as the
      shape the move makes. It was thin enough to disappear at phone size. */
-  root.appendChild(el('path',{d:d(path),fill:'none',stroke:'var(--ink)',opacity:.16,'stroke-width':3/s}));
+  /* THE SECOND TRACING — 04/10/2026, Session 32. docs/model.md, *The second tracing*, has
+     the specification. Every foot with a runner on the ice leaves a line, the reference
+     foot's being the path. The other foot's contact is placed the way the foot itself is,
+     off the hip, but at true scale: `p + (q − offset)`, where the glyph is drawn at BS.
+
+     A HANDOVER BREAKS THE PATH. When the reference passes from one foot to the other on the
+     ice, buildPath displaces the path so the hip does not move, and a polyline drawn
+     straight through would join the old blade's contact to the new one's: the sideways
+     zigzag marching drew. Broken there, the two feet's lines carry on as their own. */
+  const handover = i => i > 0 && frames[i].pose.skate && frames[i - 1].pose.skate
+    && frames[i].pose.skate !== frames[i - 1].pose.skate;
+  const isRunner = (po, w) => { const c = onIceOf(po, w); return c === 'blade' || c === 'skid'; };
+  const isRef = (i, w) => frames[i].pose.skate === w && isRunner(frames[i].pose, w);
+  const contactAt = (i, w) => {
+    const { p, pose } = frames[i], q = pose[w], ot = p.ot || 0, on = p.on || 0;
+    const T = [Math.cos(p.th), Math.sin(p.th)], N = [-Math.sin(p.th), Math.cos(p.th)];
+    return { x: p.x + T[0] * (q.t - ot) + N[0] * (q.n - on), y: p.y + T[1] * (q.t - ot) + N[1] * (q.n - on), i };
+  };
+  /* Runs of a foot's SECOND line up to frame `upto`: consecutive frames where it has a
+     runner down and is not the reference, each extended by one point into a neighbouring
+     frame where the same foot IS the reference, so the line meets the path at a handover. */
+  const secondRuns = (w, upto) => {
+    const out = []; let cur = null;
+    for (let i = 0; i <= upto; i++) {
+      const po = frames[i].pose, sec = po[w] && isRunner(po, w) && !isRef(i, w);
+      if (sec) {
+        if (!cur) { cur = []; if (i > 0 && isRef(i - 1, w)) cur.push(contactAt(i - 1, w)); }
+        cur.push(contactAt(i, w));
+      } else if (cur) {
+        if (isRef(i, w)) cur.push(contactAt(i, w));
+        out.push(cur); cur = null;
+      }
+    }
+    if (cur) out.push(cur);
+    return out.filter(r => r.length > 1);
+  };
+  const pathRuns = upto => {
+    const out = []; let cur = [];
+    for (let i = 0; i <= upto; i++) { if (handover(i)) { out.push(cur); cur = []; } cur.push(path[i]); }
+    out.push(cur);
+    return out.filter(r => r.length > 1);
+  };
+  const last = frames.length - 1;
+  for (const r of pathRuns(last))
+    root.appendChild(el('path',{d:d(r),fill:'none',stroke:'var(--ink)',opacity:.16,'stroke-width':3/s}));
+  for (const w of ['L', 'R']) for (const r of secondRuns(w, last))
+    root.appendChild(el('path',{d:d(r),fill:'none',stroke:'var(--ink)',opacity:.16,'stroke-width':3/s,'data-trace':'second'}));
 
   const live=el('g'); root.appendChild(live);
   const body=el('g'); root.appendChild(body);
@@ -492,6 +538,8 @@ function viewTop(svg, move, path, frames, SHOW){
       }} };
     for(let i=0;i<=idx;i++){
       const st=stateOf(frames[i]), k2=keyOf(st);
+      /* The reference line breaks at a handover; the second lines below carry each foot on. */
+      if(runKey!==null && handover(i)){ flush(); runKey=k2; run=[path[i]]; run.st=st; run.yaws=[st.yaw]; continue; }
       /* The yaw travels with the point now, because the band's width is per-point.
          Carrying it on the run instead — which is what the bucket key amounted to —
          is the thing that made a sweeping skid draw as a row of discs. */
@@ -501,6 +549,47 @@ function viewTop(svg, move, path, frames, SHOW){
       else { run.push(path[i]); run.yaws.push(st.yaw); }
     }
     flush();
+
+    /* THE SECOND LINES SO FAR, each foot's own: solid in its own edge's colour where it
+       grips, a band where it skids. The band's half-width is the runner's length by the
+       sine of the angle between where the boot points and where the contact is actually
+       going, read off successive contacts, because a second blade's direction of travel is
+       not the path's (docs/model.md, *The second tracing*). */
+    for (const w of ['L', 'R']) for (const r of secondRuns(w, idx)) {
+      const stOf = pt => { const po = frames[pt.i].pose;
+        return { skid: onIceOf(po, w) === 'skid', edge: edgeOf(po, w) }; };
+      const travel = k => { const a = r[Math.max(0, k - 1)], b = r[Math.min(r.length - 1, k + 1)];
+        return Math.atan2(b.y - a.y, b.x - a.x); };
+      const heading = pt => { const { p: pp, pose: po } = frames[pt.i], q = po[w];
+        const dir = (q && q.dir) || po.dir;
+        return pp.th + (dir === 'B' ? Math.PI : 0) - (q.yaw || 0) * D2R; };
+      let sub = [], key = null;
+      const out = (pts, st) => {
+        if (pts.length < 2) return;
+        if (st.skid) {
+          const lo = [], hi = [];
+          pts.forEach(pt => {
+            const k = r.indexOf(pt), tv = travel(k);
+            const h = Math.max(2.1 / s, Math.abs(Math.sin(heading(pt) - tv)) * (BLADE_FRONT - BLADE_BACK) / 2);
+            const nx = -Math.sin(tv), ny = Math.cos(tv);
+            lo.push(`${pt.x + nx * h} ${pt.y + ny * h}`); hi.push(`${pt.x - nx * h} ${pt.y - ny * h}`);
+          });
+          live.appendChild(el('path',{d:`M ${lo.join(' L ')} L ${hi.reverse().join(' L ')} Z`,
+            fill:edgeCol(st.edge),stroke:'none',opacity:.32,'data-trace':'second'}));
+        } else {
+          live.appendChild(el('path',{d:d(pts),fill:'none','stroke-width':4.2/s,'stroke-linecap':'round',
+            stroke:edgeCol(st.edge),'data-trace':'second'}));
+        }
+      };
+      let st0 = null;
+      for (const pt of r) {
+        const st = stOf(pt), k2 = `${st.skid ? 's' : 'e'}${st.edge}`;
+        if (key === null) { key = k2; st0 = st; sub = [pt]; }
+        else if (k2 !== key) { out(sub, st0); const keep = sub[sub.length - 1]; sub = [keep, pt]; key = k2; st0 = st; }
+        else sub.push(pt);
+      }
+      out(sub, st0);
+    }
 
     const T={x:Math.cos(p.th),y:Math.sin(p.th)}, Nv={x:-Math.sin(p.th),y:Math.cos(p.th)};
     const at=(t,n)=>({x:p.x+T.x*t*BS+Nv.x*n*BS, y:p.y+T.y*t*BS+Nv.y*n*BS});
