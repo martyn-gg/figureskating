@@ -74,7 +74,8 @@ const handRank = e => {
      each first jump in learning order. Keyed on what the page is, not its name. */
   if (k === 'combo') {
     const c = e.data.combo;
-    const i = ALL_COMBOS.findIndex(x => x.first.key === c?.first && x.second.key === c?.second && x.count === c?.count);
+    const i = ALL_COMBOS.findIndex(x => x.first.key === c?.first && x.second.key === c?.second
+      && (x.third?.key ?? null) === (c?.third ?? null) && x.count === c?.count);
     if (i < 0) throw new Error(`element-groups: the combination "${e.data.name}" is not in ALL_COMBOS`);
     return i;
   }
@@ -316,7 +317,7 @@ export const SECTION_NOTE = {
   clusters:    'Turns run together, where each one\'s exit is the next one\'s entry.',
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
   jump:        'The waltz jump, the six singles and their doubles, in the order they are usually learned.',
-  combo:       'Two jumps, the second taking off from the edge the first lands on: a toe loop or a loop.',
+  combo:       'Jumps joined edge to edge: a toe loop or a loop after any jump, or a Salchow or flip through an Euler.',
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The two-foot spin, the three basic positions, and the two ways of joining them: a change of foot and a combination.',
   sequence:    'Step sequences and choreographic sequences: runs of turns, steps and movements judged as one element.',

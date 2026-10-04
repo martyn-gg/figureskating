@@ -25,4 +25,4 @@ the jump began.
 
 It shares its takeoff with the double toe loop, and seen from above the two leave from the
 same curve. From the side, one has a pick going in. The landing is the back outside edge
-every jump here lands on, which is also the edge the loop leaves from.
+every jump here but the Euler lands on, which is also the edge the loop leaves from.

@@ -75,6 +75,8 @@ const elements = defineCollection({
     combo: z.object({
       first: z.string(),
       second: z.string(),
+      /* A third jump, after an Euler as the second. Added the same day. */
+      third: z.string().optional(),
       count: z.number().int().default(1),
     }).optional(),
     /* OTHER NAMES THE SAME MOVEMENT GOES BY.

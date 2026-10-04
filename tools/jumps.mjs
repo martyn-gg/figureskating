@@ -28,7 +28,7 @@
  *   node tools/jumps.mjs
  *   node tools/jumps.mjs --break=name    double pages named as singles: fails 6
  *   node tools/jumps.mjs --break=turn    doubles a turn and a degree round: fails 32 checks
- *   node tools/jumps.mjs --break=combo   every second jump read as a flip: fails 52 (26 pages, 26 combinations unpaged)
+ *   node tools/jumps.mjs --break=combo   every second jump read as a flip: fails 104 (52 pages, 52 combinations unpaged)
  *   node tools/jumps.mjs --break=join    second jumps a degree further round: fails 132
  */
 import { readdirSync, readFileSync } from 'node:fs';
@@ -62,7 +62,7 @@ for (const p of pages) {
   const want = [
     ['name', name, m.name],
     ['takeoff', label(j.takeoff), label(m.takeoff)],
-    ['landing', label(j.landing), 'RBO'],
+    ['landing', label(j.landing), label(m.landing)],
     ['assisted', j.assisted, m.assisted],
     ['rotations', j.rotations, m.rotations],
   ];
@@ -104,11 +104,11 @@ for (const p of combos) {
   const second = brk === 'combo' ? 'flip' : c0.second;
   checks++;
   let c;
-  try { c = comboAt(c0.first, second, count); } catch (e) { fail(`${p.id}: ${e.message}`); continue; }
+  try { c = comboAt(c0.first, second, count, c0.third ?? null); } catch (e) { fail(`${p.id}: ${e.message}`); continue; }
   const want = [
     ['name', p.name, c.name],
     ['ISU code', (p.aliases || []).find(a => a.includes('+')) ?? null, c.code],
-    ['prerequisites', (p.prerequisites || []).join(', '), [c.first, c.second].map(j => pageOfJump(j)?.id).join(', ')],
+    ['prerequisites', (p.prerequisites || []).join(', '), c.jumps.map(j => pageOfJump(j)?.id).join(', ')],
   ];
   for (const [what, got, exp] of want) { checks++; if (got !== exp) fail(`${p.id}: ${what} is ${got}, the model says ${exp}`); }
   if (seenC.has(c.key)) fail(`${p.id}: a second page for ${c.name} (first: ${seenC.get(c.key)})`);
@@ -124,7 +124,9 @@ const cap = w => w.charAt(0).toUpperCase() + w.slice(1);
 const rigOfJump = j => (j.count === 2 ? `double${cap(j.key)}` : j.key);
 for (const p of combos) {
   const c0 = p.combo || {};
-  let c; try { c = comboAt(c0.first, c0.second, c0.count ?? 1); } catch { continue; }
+  let c; try { c = comboAt(c0.first, c0.second, c0.count ?? 1, c0.third ?? null); } catch { continue; }
+  /* No three-jump combination is drawn: the Euler has no rig. */
+  if (c.third) { checks++; if (p.rig) fail(`${p.id}: drawn, but the Euler has no rig`); continue; }
   const A = MOVES[rigOfJump(c.first)], B = MOVES[rigOfJump(c.second)];
   const name = `${rigOfJump(c.first)}${cap(rigOfJump(c.second))}`;
   checks++;

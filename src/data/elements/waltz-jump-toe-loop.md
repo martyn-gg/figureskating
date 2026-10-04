@@ -11,7 +11,7 @@ verified: { checked: false }
 ---
 
 The waltz jump is often the first jump a skater puts in front of another. Its half turn
-lands on the same back outside edge as every jump here, an edge the skater has already
+lands on the same back outside edge as almost every jump here, an edge the skater has already
 practised.
 
 The waltz jump lands RBO and the toe loop takes off from RBO:

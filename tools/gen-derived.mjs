@@ -133,7 +133,7 @@ Holding it deep is the harder half. The free hip wants to open, and the moment i
 lobe flattens out. Most of the work is on the free side of the body rather than the
 skating side — a theme that runs through everything in this guide.`,
 
-  BO: `The edge every jump in the guide lands on, which is reason enough to spend time on
+  BO: `The edge almost every jump in the guide lands on, which is reason enough to spend time on
 it for its own sake. Travelling backwards on the outside of the blade, leaning into the
 circle, with the difficulty that you cannot see where you are going and the instinct is to
 sit away from it.
@@ -1339,7 +1339,7 @@ for (const [key_, j] of Object.entries(JUMPS)) {
    thing written by hand. The slug is the single's with "double-" in front, and the
    prerequisite is the single, because a double is that jump with one more turn. */
 const DOUBLE_RIG = { salchow: 'doubleSalchow', loop: 'doubleLoop', axel: 'doubleAxel' };
-const SINGLE_SLUG = { waltz: 'waltz-jump', salchow: 'salchow', toeLoop: 'toe-loop', loop: 'loop', flip: 'flip', lutz: 'lutz', axel: 'axel' };
+const SINGLE_SLUG = { waltz: 'waltz-jump', salchow: 'salchow', toeLoop: 'toe-loop', loop: 'loop', euler: 'euler', flip: 'flip', lutz: 'lutz', axel: 'axel' };
 const DOUBLE_TEXT = {
   salchow: `The Salchow with a second turn in the air. The entry, the three turn, the back inside
 edge and the swing of the free leg are the single's, and so is the landing. What changes is
@@ -1360,7 +1360,7 @@ Skaters often learn it alongside the double Salchow, and coaches differ on which
 first. The trap carries over from the single and gets worse: lean back onto the pick and the
 jump loses the height a second turn needs.
 
-The landing is the one every jump in the guide shares, on a back outside edge. It is the same
+The landing is the one every jump in the guide but the Euler shares, on a back outside edge. It is the same
 edge the toe loop leaves from, so a clean, held exit from the single is the best preparation
 there is.`,
   loop: `The loop with a second turn, and still nothing to help: no pick to vault off and no swing
@@ -1373,7 +1373,7 @@ the jump began.
 
 It shares its takeoff with the double toe loop, and seen from above the two leave from the
 same curve. From the side, one has a pick going in. The landing is the back outside edge
-every jump here lands on, which is also the edge the loop leaves from.`,
+every jump here but the Euler lands on, which is also the edge the loop leaves from.`,
   flip: `The flip with a second turn. The back inside edge, the pick placed behind and the vault are
 the single's, and so is the rule that matters most: the rotation goes with the curve you are
 on.
@@ -1445,10 +1445,10 @@ const cap = w => w.charAt(0).toUpperCase() + w.slice(1);
 const rigOf = j => (j.count === 2 ? `double${cap(j.key)}` : j.key);
 const FIRST_INTO = {
   waltz: `The waltz jump is often the first jump a skater puts in front of another. Its half turn
-lands on the same back outside edge as every jump here, an edge the skater has already
+lands on the same back outside edge as almost every jump here, an edge the skater has already
 practised.`,
-  salchow: `The Salchow swings off a back inside edge and lands on the back outside edge like every
-jump here. Landing it with the knee bent and the free leg held back leaves the speed and the
+  salchow: `The Salchow swings off a back inside edge and lands on the back outside edge like almost
+every jump here. Landing it with the knee bent and the free leg held back leaves the speed and the
 balance for the next jump.`,
   toeLoop: `The toe loop lands on the edge it took off from, so the free foot reaches back and the toe
 goes in again almost at once, with no time to settle between the two.`,
@@ -1476,8 +1476,49 @@ const COUNT_NOTE = {
   2: `At double the margin is small: the first jump has to leave enough speed for the second to
 find two full turns, and a second jump that comes up short is marked as under-rotated.`,
 };
+/* THREE-JUMP COMBINATIONS THROUGH AN EULER — added the same day. The Euler lands on the
+   other foot's back inside edge, which is where the Salchow and the flip take off. */
+const THIRD_AFTER = {
+  salchow: `The Salchow here has no three turn in front of it. The Euler has already put the
+skater on the back inside edge, so the free leg swings through and the jump goes up from the
+landing.`,
+  flip: `The flip here has no turn in front of it. The Euler lands on its takeoff edge, and the
+free foot's toe goes in behind straight away.`,
+};
+const COUNT_NOTE3 = {
+  1: '',
+  2: `At double the margin is small: the first jump has to leave enough speed to carry through
+the Euler into two full turns, and a last jump that comes up short is marked as under-rotated.`,
+};
 for (const c of ALL_COMBOS) {
   const a = c.first, b = c.second;
+  if (c.third) {
+    const t = c.third;
+    const how = j => (j.assisted ? 'off the pick' : 'off the edge');
+    const lower = j => (j.count === 1 && j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));
+    const edgePara = `The ${lower(a)} lands ${label(LANDING)} and the Euler takes off from it, turns once
+and lands ${label(b.landing)} on the other foot, where the ${lower(t)} takes off. Nothing comes between
+them, and the Euler counts only here, between two jumps, as a single.`;
+    files.push({
+      id: `${slugOf(a)}-euler-${slugOf(t)}`,
+      front: [
+        `name: ${c.name}`,
+        `kind: combo`,
+        `summary: ${a.name} (${label(a.takeoff)}, ${how(a)}) through an Euler into a ${lower(t)} ` +
+          `(${label(t.takeoff)}, ${how(t)}), ${c.rotations} rotations in all.`,
+        ...(c.code ? [`aliases: [${c.code}]`] : []),
+        `prerequisites: [${slugOf(a)}, euler, ${slugOf(t)}]`,
+        `combo:`,
+        `  first: ${a.key}`,
+        `  second: euler`,
+        `  third: ${t.key}`,
+        `  count: ${c.count}`,
+      ],
+      body: [FIRST_INTO[a.key], edgePara, THIRD_AFTER[t.key], COUNT_NOTE3[c.count]]
+        .filter(Boolean).join('\n\n'),
+    });
+    continue;
+  }
   const rig = `${rigOf(a)}${cap(rigOf(b))}`;
   const how = j => (j.assisted ? 'off the pick' : 'off the edge');
   const lower = j => (j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));

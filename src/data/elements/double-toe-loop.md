@@ -22,6 +22,6 @@ Skaters often learn it alongside the double Salchow, and coaches differ on which
 first. The trap carries over from the single and gets worse: lean back onto the pick and the
 jump loses the height a second turn needs.
 
-The landing is the one every jump in the guide shares, on a back outside edge. It is the same
+The landing is the one every jump in the guide but the Euler shares, on a back outside edge. It is the same
 edge the toe loop leaves from, so a clean, held exit from the single is the best preparation
 there is.

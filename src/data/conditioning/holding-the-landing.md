@@ -1,13 +1,13 @@
 ---
 name: Holding the landing
-summary: "The one position every jump lands in, held for longer than a landing lasts."
+summary: "The one position the jumps land in, held for longer than a landing lasts."
 capacity: [single-leg strength, balance, carriage]
 prepares: [waltz-jump, salchow, toe-loop, loop, flip, lutz, axel]
 source: "Written for the guide from what each element asks of the body. No governing body's material."
 verified: { checked: false }
 ---
 
-Every jump in the guide lands in the same position: one leg bent under the body, the
+Every jump in the guide but the Euler lands in the same position: one leg bent under the body, the
 other stretched behind and turned out, the arms open and the shoulders checked against the
 turn that has just finished. A jump that lands and cannot hold that shape for a few
 seconds has not really landed.

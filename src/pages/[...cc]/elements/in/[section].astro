@@ -18,7 +18,7 @@ import EdgeThumb from '../../../../components/EdgeThumb.astro';
 import PathThumb from '../../../../components/PathThumb.astro';
 import HoldStrip from '../../../../components/HoldStrip.astro';
 import { elementGroups, canonicalOf } from '../../../../lib/element-groups.js';
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, ALL_COMBOS, SECONDS, JUMPS, LANDING } from '../../../../lib/skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, ALL_COMBOS, SECONDS, AFTER_EULER, JUMPS, LANDING } from '../../../../lib/skating.js';
 const { cc } = Astro.params;
 const url = p => curl(cc, p);
 
@@ -294,30 +294,36 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
       chains. A cell is the ISU code where there is one. */}
   {section === 'combo' && (<>
     <p class="note">
-      Every jump here lands on {label(LANDING)}, and only the toe loop and the loop take off
-      from it, so those are the two jumps that can come second. Pick the first jump on the
+      Every jump here but the Euler lands on {label(LANDING)}, and only the toe loop and the loop take off
+      from it, so those are the two jumps that can come last. Pick the first jump on the
       left and the second along the top.
     </p>
-    {[1, 2].map(count => {
-      const rows = [...new Map(ALL_COMBOS.filter(c => c.count === count).map(c => [c.first.key, c.first])).values()];
+    {[[1, null], [2, null], [1, 'euler'], [2, 'euler']].map(([count, via]) => {
+      const set = ALL_COMBOS.filter(c => c.count === count && (via ? c.third : !c.third));
+      const rows = [...new Map(set.map(c => [c.first.key, c.first])).values()];
+      const cols = via ? AFTER_EULER : SECONDS;
       const pageOf = c => allElements.find(e => e.data.kind === 'combo' && e.data.combo.first === c.first.key
-        && e.data.combo.second === c.second.key && e.data.combo.count === count);
+        && e.data.combo.second === c.second.key && (e.data.combo.third ?? null) === (c.third?.key ?? null)
+        && e.data.combo.count === count);
       return (
         <>
-          <h2>{count === 1 ? 'Singles' : 'Doubles'}</h2>
+          <h2>{via ? `Three jumps, through an Euler: ${count === 1 ? 'singles' : 'doubles'}` : count === 1 ? 'Singles' : 'Doubles'}</h2>
+          {via && count === 1 && <p class="note">The <a href={url('elements/euler/')}>Euler</a> lands on the
+            other foot's back inside edge, where the Salchow and the flip take off. It counts only here,
+            between two jumps, and always as a single.</p>}
           <div class="scroller">
             <table class="grid combos">
-              <thead><tr><th scope="col">First jump</th>{SECONDS.map(k => (
-                <th scope="col">then {count === 2 ? 'double ' : ''}{JUMPS[k].name.toLowerCase()}</th>))}</tr></thead>
+              <thead><tr><th scope="col">First jump</th>{cols.map(k => (
+                <th scope="col">then {via ? 'Euler, ' : ''}{count === 2 ? 'double ' : ''}{JUMPS[k].eponym ? JUMPS[k].name : JUMPS[k].name.toLowerCase()}</th>))}</tr></thead>
               <tbody>
                 {rows.map(a => (
                   <tr>
                     <th scope="row">{a.name}</th>
-                    {SECONDS.map(k => {
-                      const c = ALL_COMBOS.find(x => x.count === count && x.first.key === a.key && x.second.key === k);
+                    {cols.map(k => {
+                      const c = set.find(x => x.first.key === a.key && (via ? x.third.key : x.second.key) === k);
                       const el = c && pageOf(c);
                       return <td>{el
-                        ? <a href={url(`elements/${el.id}/`)} title={el.data.name}>{c.code ?? `+ ${c.second.name.toLowerCase()}`}</a>
+                        ? <a href={url(`elements/${el.id}/`)} title={el.data.name}>{c.code ?? `+ ${c.jumps.slice(1).map(j => (j.eponym ? j.name : j.name.toLowerCase())).join(' + ')}`}</a>
                         : <span class="gap">none</span>}</td>;
                     })}
                   </tr>

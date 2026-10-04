@@ -11,8 +11,8 @@ combo:
 verified: { checked: false }
 ---
 
-The Salchow swings off a back inside edge and lands on the back outside edge like every
-jump here. Landing it with the knee bent and the free leg held back leaves the speed and the
+The Salchow swings off a back inside edge and lands on the back outside edge like almost
+every jump here. Landing it with the knee bent and the free leg held back leaves the speed and the
 balance for the next jump.
 
 The Salchow lands RBO and the toe loop takes off from RBO:

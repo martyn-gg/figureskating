@@ -7,7 +7,7 @@ prerequisites: [backward-stroking, backward-one-foot-glide]
 verified: { checked: false }
 ---
 
-The edge every jump in the guide lands on, which is reason enough to spend time on
+The edge almost every jump in the guide lands on, which is reason enough to spend time on
 it for its own sake. Travelling backwards on the outside of the blade, leaning into the
 circle, with the difficulty that you cannot see where you are going and the instinct is to
 sit away from it.

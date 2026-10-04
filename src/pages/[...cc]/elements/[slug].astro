@@ -14,7 +14,7 @@ import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
 import BodyFrame from '../../../components/BodyFrame.astro';
 import { DANCE_KEY, stepLink, patternBeats } from '../../../lib/dance.js';
 import Edge from '../../../components/Edge.astro';
-import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableAt, jumpAt, maxCount, comboAt, ALL_COMBOS, SECONDS } from '../../../lib/skating.js';
+import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableAt, jumpAt, maxCount, comboAt, ALL_COMBOS, SECONDS, AFTER_EULER } from '../../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -94,7 +94,10 @@ const inText = j => (j.count === 1 && j.eponym) ? j.name : j.name[0].toLowerCase
    jump is made of. */
 const sharesDetail = shares.map(j => ({
   name: inText(j),
-  differsBy: j.assisted !== d.jump.assisted ? 'the pick' : 'the number of rotations',
+  /* A third answer since the Euler (04/10/2026): the loop and the Euler share the takeoff,
+     the rotations and the lack of a pick, and differ only in which foot they land on. */
+  differsBy: j.assisted !== d.jump.assisted ? 'the pick'
+    : j.rotations !== d.jump.rotations ? 'the number of rotations' : 'the foot they land on',
 }));
 /* THE SAME JUMP AT THE OTHER COUNT — 04/10/2026. A double is its single with one more
    turn, so each page names the other and links it; the slug is gen-derived.mjs's
@@ -106,16 +109,21 @@ const allElements = await getCollection('elements');
 /* A JUMP COMBINATION — 04/10/2026, Session 28. Everything about it is comboAt's; the
    page stores the two jump keys and the count. Its two jumps' pages are found by `of`
    and count, like the sibling above. */
-const combo = d.combo ? comboAt(d.combo.first, d.combo.second, d.combo.count) : null;
+const combo = d.combo ? comboAt(d.combo.first, d.combo.second, d.combo.count, d.combo.third ?? null) : null;
 const jumpPage = j => allElements.find(e => e.data.kind === 'jump' && e.data.jump.of === j.key && e.data.jump.count === j.count);
-const comboParts = combo ? [combo.first, combo.second].map(j => ({ j, el: jumpPage(j) })) : [];
+const comboParts = combo ? combo.jumps.map(j => ({ j, el: jumpPage(j) })) : [];
 /* On a jump page: the combinations it starts at this count, and, for the toe loop and
    the loop, the fact that every jump can lead into it. */
 const comboPage = c => allElements.find(e => e.data.kind === 'combo' && e.data.combo.first === c.first.key
-  && e.data.combo.second === c.second.key && e.data.combo.count === c.count);
-const startsCombos = jumpKey ? ALL_COMBOS.filter(c => c.first.key === jumpKey && c.first.count === count)
+  && e.data.combo.second === c.second.key && (e.data.combo.third ?? null) === (c.third?.key ?? null)
+  && e.data.combo.count === c.count);
+const startsCombos = jumpKey ? ALL_COMBOS.filter(c => !c.third && c.first.key === jumpKey && c.first.count === count)
   .map(c => ({ c, el: comboPage(c) })).filter(x => x.el) : [];
 const isSecond = jumpKey ? SECONDS.includes(jumpKey) : false;
+/* The Salchow and the flip can follow an Euler; the Euler page lists what it connects. */
+const afterEuler = jumpKey && AFTER_EULER.includes(jumpKey);
+const viaEuler = jumpKey === 'euler'
+  ? ALL_COMBOS.filter(c => c.third && c.count === 1).map(c => ({ c, el: comboPage(c) })).filter(x => x.el).slice(0, 4) : [];
 /* OFF THE ICE — 04/10/2026. The conditioning entries that name this element. Their
    pages are not copied per country, and curl sends the link to the single copy. */
 const offIce = (await getCollection('conditioning')).filter(c => c.data.prepares.some(r => r.id === entry.id));
@@ -244,8 +252,8 @@ const crumbs = [
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
     {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
     {combo && <span class="chip">takeoff <b><Edge state={combo.first.takeoff} /></b></span>}
-    {combo && <span class="chip">between <b><Edge state={LANDING} /></b></span>}
-    {combo && <span class="chip">landing <b><Edge state={LANDING} /></b></span>}
+    {combo && combo.jumps.slice(0, -1).map(j => <span class="chip">between <b><Edge state={j.landing} /></b></span>)}
+    {combo && <span class="chip">landing <b><Edge state={combo.landing} /></b></span>}
     {combo && <span class="chip"><b>{combo.rotations}</b> rotations</span>}
   </div>
   {/* The reader's own tick, kept in their browser. Base.astro wires it up and
@@ -343,25 +351,27 @@ const crumbs = [
       middle one is a single edge, so it is drawn once. */}
   {combo && (
     <figure class="jumptrace">
-      <div class="jt-pair jt-three">
+      <div class={`jt-pair jt-${combo.jumps.length + 1}`}>
         <div>
           <EdgeThumb entry={combo.first.takeoff} />
           <b>{label(combo.first.takeoff)}</b><span>takes off</span>
         </div>
+        {combo.jumps.slice(0, -1).map(j => (
+          <div>
+            <EdgeThumb entry={j.landing} />
+            <b>{label(j.landing)}</b><span>lands, takes off</span>
+          </div>
+        ))}
         <div>
-          <EdgeThumb entry={LANDING} />
-          <b>{label(LANDING)}</b><span>lands, takes off</span>
-        </div>
-        <div>
-          <EdgeThumb entry={LANDING} />
-          <b>{label(LANDING)}</b><span>lands</span>
+          <EdgeThumb entry={combo.landing} />
+          <b>{label(combo.landing)}</b><span>lands</span>
         </div>
       </div>
       <figcaption>
-        The edges, drawn: the {inText(combo.first)}'s takeoff, the edge between the two
-        jumps, and the {inText(combo.second)}'s landing. The middle edge is one edge: the
-        first jump lands on it and the second leaves from it.
-        {!d.rig && <> The body is not drawn yet, because the {inText(combo.second.key !== 'loop' ? combo.second : combo.first)} is not drawn on its own page either.</>}
+        The edges, drawn: the {inText(combo.first)}'s takeoff, the edge between each jump and
+        the next, and the {inText(combo.jumps[combo.jumps.length - 1])}'s landing. Each edge in
+        between is one edge: one jump lands on it and the next leaves from it.
+        {!d.rig && <> The body is not drawn yet{combo.third ? ', because the Euler is not drawn on its own page either' : <>, because the {inText(combo.second.key !== 'loop' ? combo.second : combo.first)} is not drawn on its own page either</>}.</>}
       </figcaption>
     </figure>
   )}
@@ -455,7 +465,7 @@ const crumbs = [
       <p>{[
         `Takes off ${label(d.jump.takeoff)} and lands ${label(d.jump.landing)}`,
         label(d.jump.landing) === label(LANDING)
-          ? ', the same edge every jump in this guide lands on, so the takeoff is what tells them apart.'
+          ? ', the same edge every jump in this guide but the Euler lands on, so the takeoff is what tells them apart.'
           : '.',
         d.jump.assisted ? ' The toe pick provides the vault.' : ' The spring comes from the edge, with no pick.',
       ].join('')}</p>
@@ -475,27 +485,37 @@ const crumbs = [
       <p>Lands on {label(LANDING)}, where the toe loop and the loop take off, so it can start a
         combination: {startsCombos.map(({ c, el }, i) => <>{i > 0 ? ' or ' : ''}<a href={url(`elements/${el.id}/`)}>{c.first.count === 1 && c.first.eponym ? el.data.name : el.data.name[0].toLowerCase() + el.data.name.slice(1)}</a></>)}.</p>
     )}
+    {afterEuler && (
+      <p>Takes off from {label(JUMPS.euler.landing)}, where the <a href={url('elements/euler/')}>Euler</a> lands, so it
+        can come third in a combination with an Euler in the middle.</p>
+    )}
+    {jumpKey === 'euler' && (
+      <p>Lands on {label(JUMPS.euler.landing)}, where the Salchow and the flip take off. The ISU counts it only in a
+        combination, between two jumps: for example {viaEuler.map(({ el }, i) => <>{i > 0 ? (i === viaEuler.length - 1 ? ' or ' : ', ') : ''}<a href={url(`elements/${el.id}/`)}>{el.data.name}</a></>)}.
+        All of them are in <a href={url('elements/in/combo/')}>jump combinations</a>.</p>
+    )}
     {isSecond && (
-      <p>Takes off from {label(LANDING)}, the edge every jump here lands on, so it can follow any of
+      <p>Takes off from {label(LANDING)}, the edge every other jump here lands on, so it can follow any of
         them in a <a href={url('elements/in/combo/')}>jump combination</a>.</p>
     )}
     {combo && (
       <p>{[
         `The ${inText(combo.first)} takes off ${label(combo.first.takeoff)} `,
         combo.first.assisted ? 'off the pick' : 'off the edge',
-        ` and lands ${label(LANDING)}; the ${inText(combo.second)} takes off from that same edge `,
-        combo.second.assisted ? 'off the pick' : 'with no pick',
-        ` and lands ${label(LANDING)} again. ${combo.rotations} rotations in all`,
+        ` and lands ${label(combo.first.landing)}`,
+        ...combo.jumps.slice(1).map(j => `; the ${inText(j)} takes off from that same edge ` +
+          `${j.assisted ? 'off the pick' : 'with no pick'} and lands ${label(j.landing)}`),
+        `. ${combo.rotations} rotations in all`,
         combo.code ? `, written ${combo.code} on a protocol sheet.` : '. The waltz jump has no ISU code.',
       ].join('')}</p>
     )}
     {comboParts.length > 0 && (
-      <p>Made of the {comboParts.map(({ j, el }, i) => <>{i > 0 ? ' and the ' : ''}{el ? <a href={url(`elements/${el.id}/`)}>{inText(j)}</a> : inText(j)}</>)}.
-        Nothing here is stored on the page beyond the two jumps and the count.</p>
+      <p>Made of the {comboParts.map(({ j, el }, i) => <>{i > 0 ? (i === comboParts.length - 1 ? ' and the ' : ', the ') : ''}{el ? <a href={url(`elements/${el.id}/`)}>{inText(j)}</a> : inText(j)}</>)}.
+        Nothing here is stored on the page beyond the {combo.jumps.length === 2 ? 'two' : 'three'} jumps and the count.</p>
     )}
     {combo && (
       <p>A skater who rotates clockwise takes off <b>{label(mirror(combo.first.takeoff))}</b> and
-        lands both jumps on <b>{label(mirror(LANDING))}</b>: the same combination, mirrored.</p>
+        lands on <b>{label(mirror(combo.landing))}</b>: the same combination, mirrored.</p>
     )}
     {mirrored && <p>A skater who rotates the other way does the same thing from <b>{label(mirrored)}</b>. Same element, mirrored.</p>}
     {mirrorJump && (

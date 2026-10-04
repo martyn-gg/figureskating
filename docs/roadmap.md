@@ -29,8 +29,8 @@ guide and tell us what is wrong with it.
    *Jump combinations*, a grid of first jump against second. Seven drawn by `comboOf` in
    `moves.js` (the four rigged firsts into a loop, the three rigged doubles into a double
    loop), the two rigs joined on the landing edge. `tools/jumps.mjs` holds pages and rigs
-   to the model. Not held: mixed counts (2A+1T), three-jump combinations, which need the
-   Euler, and jump sequences.
+   to the model. Not held: mixed counts (2A+1T) and jump sequences. *Three-jump combinations
+   through an Euler done 04/10/2026* (26 more, 52 in all).
 2. **The National tests.** British Ice Skating's free-skating ladder, the second of its two.
    Only the Skills tests are written out. The championship entry table in
    `gaps-competition.md` already names National 4, 6, 7 and 8; they need the syllabus

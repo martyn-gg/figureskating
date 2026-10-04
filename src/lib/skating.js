@@ -362,11 +362,23 @@ export function describeTurn(entry, turnKey) {
    rotation an Axel is built out of, and a Lutz is a flip fought against its own
    edge — so it lives here, where every page that lists jumps can inherit it,
    rather than in each page's own sort. */
+/** Every listed jump lands here, which is why the takeoff is the whole story. The one
+    exception is the Euler, which exists to connect two jumps and lands on the other foot. */
+export const LANDING = { foot: 'R', edge: 'O', dir: 'B' };
+
 export const JUMPS = {
   waltz:    { name: 'Waltz jump', takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 0.5 },
   salchow:  { name: 'Salchow',   takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: false, rotations: 1,   code: 'S',  eponym: true },
   toeLoop:  { name: 'Toe loop',  takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1,   code: 'T' },
   loop:     { name: 'Loop',      takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: false, rotations: 1,   code: 'Lo' },
+  /* THE EULER — 04/10/2026, Session 28. A loop that lands on the other foot: off the
+     back outside edge, one turn, down on the LEFT back inside edge. That landing is the
+     takeoff of the Salchow and the flip, which is all it is for: the ISU counts it only
+     inside a combination, between two listed jumps, and only as a single. So it has its
+     own `landing`, `single` (no double) and `between` (never first or last). Formerly
+     the half loop. */
+  euler:    { name: 'Euler',     takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: false, rotations: 1,   code: 'Eu', eponym: true,
+              landing: { foot: 'L', edge: 'I', dir: 'B' }, single: true, between: true },
   flip:     { name: 'Flip',      takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: true,  rotations: 1,   code: 'F' },
   lutz:     { name: 'Lutz',      takeoff: { foot: 'L', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1,   code: 'Lz', eponym: true },
   axel:     { name: 'Axel',      takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 1.5, code: 'A',  eponym: true },
@@ -385,7 +397,7 @@ export const JUMPS = {
 export const COUNTS = { 1: 'Single', 2: 'Double' };
 
 /** The highest count the guide holds for a jump: 1, or 2 for any jump of a full turn or more. */
-export const maxCount = key => (JUMPS[key].rotations >= 1 ? 2 : 1);
+export const maxCount = key => (JUMPS[key].single ? 1 : JUMPS[key].rotations >= 1 ? 2 : 1);
 
 /** A jump at a count: its name, its rotations and everything it shares with the single. */
 export function jumpAt(key, count = 1) {
@@ -393,7 +405,7 @@ export function jumpAt(key, count = 1) {
   if (!j) throw new Error(`jumpAt: no jump "${key}"`);
   if (!(count >= 1 && count <= maxCount(key))) throw new Error(`jumpAt: ${j.name} has no count ${count}`);
   return {
-    ...j, key, count,
+    ...j, key, count, landing: j.landing ?? LANDING,
     name: count === 1 ? j.name : `${COUNTS[count]} ${j.eponym ? j.name : j.name.toLowerCase()}`,
     rotations: j.rotations + count - 1,
     code: j.code ? (count === 1 ? '' : String(count)) + j.code : null,
@@ -407,8 +419,6 @@ export const ALL_JUMPS = [1, 2].flatMap(c => Object.keys(JUMPS).filter(k => maxC
 export const jumpOrder = name =>
   Object.values(JUMPS).findIndex(j => j.name.toLowerCase() === String(name).toLowerCase());
 
-/** Every jump in the list lands here, which is why the takeoff is the whole story. */
-export const LANDING = { foot: 'R', edge: 'O', dir: 'B' };
 
 /** Jumps sharing a takeoff edge — the pairs that get confused with each other. Singles. */
 export function confusableWith(jumpKey) {
@@ -439,36 +449,52 @@ export function confusableAt(jumpKey, count = 1) {
    at different counts and the pages for the two counts already say what each is.
 
    A three-jump combination can carry an Euler (a half loop, landing back inside on the
-   other foot) in the middle, which opens the Salchow and the flip as a third jump. The
-   guide does not hold the Euler yet, so it holds no three-jump combinations; when it
-   does, SECONDS below is the line that changes. */
+   other foot) in the middle, which opens the Salchow and the flip as a third jump. Added
+   later the same day: AFTER_EULER and the three-jump half of ALL_COMBOS. */
 
-/** The jumps that take off where every jump lands: the only ones that can come second. */
-export const SECONDS = Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(LANDING));
+/** The jumps that take off where every listed jump lands and can end a combination:
+    the toe loop and the loop. The Euler takes off there too, but never comes last. */
+export const SECONDS = Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(LANDING) && !JUMPS[k].between);
+/** The jumps that take off where the Euler lands, so can come after one: the Salchow and the flip. */
+export const AFTER_EULER = Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(JUMPS.euler.landing) && !JUMPS[k].between);
 
-/** Two jumps as a combination: names, ISU code and everything about each jump. */
-export function comboAt(firstKey, secondKey, count = 1) {
+const lowerName = j => (j.count === 1 && j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));
+
+/** A combination: names, ISU code and everything about each jump. Two jumps, or three
+    with the Euler in the middle (`third` given, `second` the Euler). Every jump must take
+    off on the edge the one before it landed on, and the Euler is always a single. */
+export function comboAt(firstKey, secondKey, count = 1, thirdKey = null) {
   const a = jumpAt(firstKey, Math.min(count, maxCount(firstKey)));
-  const b = jumpAt(secondKey, count);
-  if (label(b.takeoff) !== label(LANDING))
-    throw new Error(`comboAt: ${b.name} takes off ${label(b.takeoff)}, not where ${a.name} lands (${label(LANDING)})`);
-  if (a.count !== b.count && !(a.key === 'waltz' && b.count === 1))
+  const keys = thirdKey ? [secondKey, thirdKey] : [secondKey];
+  const rest = keys.map(k => jumpAt(k, JUMPS[k]?.single ? 1 : count));
+  const jumps = [a, ...rest];
+  if (a.between) throw new Error(`comboAt: the ${a.name} cannot start a combination`);
+  if (jumps[jumps.length - 1].between) throw new Error(`comboAt: the ${jumps[jumps.length - 1].name} cannot end a combination`);
+  if (thirdKey && !JUMPS[secondKey].between) throw new Error('comboAt: a three-jump combination here has the Euler in the middle');
+  for (let i = 1; i < jumps.length; i++)
+    if (label(jumps[i].takeoff) !== label(jumps[i - 1].landing))
+      throw new Error(`comboAt: ${jumps[i].name} takes off ${label(jumps[i].takeoff)}, not where ${jumps[i - 1].name} lands (${label(jumps[i - 1].landing)})`);
+  const counted = jumps.filter(j => !j.single);
+  if (counted.some(j => j.count !== count) && !(a.key === 'waltz' && count === 1))
     throw new Error(`comboAt: ${a.name} has no count ${count}`);
-  const lower = j => (j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));
+  const [, b] = jumps;
   return {
-    first: a, second: b, count,
-    key: `${firstKey}+${secondKey}@${count}`,
-    name: `${a.name} + ${lower(b)}`,
-    /* The ISU writes a combination as its jumps' codes joined by "+", 2S+2T, and a
+    jumps, first: a, second: b, third: jumps[2] ?? null, count,
+    key: `${jumps.map(j => j.key).join('+')}@${count}`,
+    name: `${a.name} + ${jumps.slice(1).map(lowerName).join(' + ')}`,
+    /* The ISU writes a combination as its jumps' codes joined by "+", 2A+1Eu+2S, and a
        single as 1S. The waltz jump has no code, so a combination with it has none. */
-    code: a.code !== null && b.code !== null
-      ? [a, b].map(j => (j.count === 1 ? '1' : '') + j.code).join('+') : null,
-    rotations: a.rotations + b.rotations,
+    code: jumps.every(j => j.code !== null)
+      ? jumps.map(j => (j.count === 1 ? '1' : '') + j.code).join('+') : null,
+    rotations: jumps.reduce((n, j) => n + j.rotations, 0),
+    landing: jumps[jumps.length - 1].landing,
   };
 }
 
-/** Every combination the guide holds: singles (the waltz jump first), then the doubles,
-    each first jump in JUMPS order, each followed by the seconds in JUMPS order. */
-export const ALL_COMBOS = [1, 2].flatMap(c => Object.keys(JUMPS)
-  .filter(k => maxCount(k) >= c)
-  .flatMap(k => SECONDS.map(s => comboAt(k, s, c))));
+/** Every combination the guide holds: the two-jump ones (singles with the waltz jump first,
+    then doubles), then the three-jump ones through an Euler, in the same order. */
+const STARTERS = c => Object.keys(JUMPS).filter(k => maxCount(k) >= c && !JUMPS[k].between);
+export const ALL_COMBOS = [
+  ...[1, 2].flatMap(c => STARTERS(c).flatMap(k => SECONDS.map(s => comboAt(k, s, c)))),
+  ...[1, 2].flatMap(c => STARTERS(c).flatMap(k => AFTER_EULER.map(t => comboAt(k, 'euler', c, t)))),
+];
