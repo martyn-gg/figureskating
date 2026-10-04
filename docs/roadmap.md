@@ -20,8 +20,9 @@ guide and tell us what is wrong with it.
 1. **Doubles and jump combinations.** Done. *Doubles done 04/10/2026*: six double pages
    (2S, 2T, 2Lo, 2F, 2Lz, 2A) from `jumpAt(key, 2)` in `skating.js`, the double Salchow,
    loop and Axel drawn by `doubleOf` in `moves.js` (the single with one more turn in the
-   air), held to the model by `tools/jumps.mjs`. The toe loop, flip and Lutz have no rig
-   as singles either; their doubles draw the two edges like the singles do.
+   air), held to the model by `tools/jumps.mjs`. The flip and Lutz have no rig
+   as singles either (the toe loop has had one since 04/10/2026, Session 29); their doubles
+   draw the two edges like the singles do.
    *Combinations done 04/10/2026*: `comboAt` and `ALL_COMBOS` in `skating.js`. Every jump
    lands RBO, so the second jump is whichever takes off there (`SECONDS`: the toe loop and
    the loop), derived rather than listed. 26 pages, every jump into each second at the
@@ -62,7 +63,9 @@ guide and tell us what is wrong with it.
 **A contact pinned to the ice** (`docs/spec-anchor.md`). Unlocks the toe loop, flip and Lutz,
 their doubles, 19 undrawn combinations, the pivot and the bunny hop. Agreed with Martyn
 04/10/2026. *Steps 1 and 2 done 04/10/2026, Session 29*: the pin and the reach for the pick,
-on `toePick`, now a movement. Next is step 3, the toe loop.
+on `toePick`, now a movement. *The toe loop drawn the same day*, after Martyn corrected
+which way a picking toe points. Next: the double toe loop and its combinations, then the
+flip and the Lutz.
 
 ## Also on the list, unordered
 

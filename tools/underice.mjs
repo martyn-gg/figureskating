@@ -133,20 +133,10 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
  * line for the same reason the last frames before an arrival do — the interpolation out
  * of a key whose foot is at z 0. One fault, two directions, one list. */
 const handover = {
-  /* A PICK GOES INTO THE ICE, 04/10/2026, Session 29. The picked glyph draws its teeth
-     2.7 cm into the ice (--break=blind shows it on every frame of the pick, and on every
-     frame of the held probe before it), which is where a pick is: in it. A foot reaching
-     for the pick and leaving it carries that drawing for its first and last frames,
-     because direction and contact point arrive exactly at the picked boot (rig-math.js,
-     PICK_REACH). Measured: these are the depths. */
-  toePick: [
-    { foot: 'L', from: 0.25, to: 0.42, cm: 1.4,
-      why: 'the last frames of the left foot reaching for its pick, carrying the '
-         + 'picked glyph\'s teeth into the ice' },
-    { foot: 'L', from: 0.62, to: 0.72, cm: 1.7,
-      why: 'the first frames after the pick comes out, the teeth still in the ice they '
-         + 'have just left' },
-  ],
+  /* toePick had two entries here for an hour on 04/10/2026, Session 29: the picked boot
+     drawn 1.4 and 1.7 cm into the ice either side of its pick. They went STALE the same
+     day, when the pick's toe was turned to point back towards the skater, and were
+     deleted, which is what the STALE check is for. */
   changeFootSpin: [
     { foot: 'R', from: 0.49, to: 0.51, cm: 0,
       why: 'the one frame where the arriving right foot is at z 0 and has not '

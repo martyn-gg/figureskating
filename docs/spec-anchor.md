@@ -78,14 +78,14 @@ needed: the target is the ordinary 30.
    and pin, ride past it, release. Measure reach along the run before authoring anything.
 2. The reaching blend, on the same move, until continuity passes at 30.
 3. The toe loop: `loop`'s keys from the bend with a pick replacing the bent free leg, sunk to
-   a hip of 62 or below (`toePick`'s band). Then the flip (from the Salchow's three turn), then
+   a hip of 62 or below (`toePick`'s band; *no longer true*, see the corrected pick rule). Then the flip (from the Salchow's three turn), then
    the Lutz (a long back outside edge).
 4. `doubleOf` the three. `comboOf` draws the toe-loop seconds once the toe loop exists.
 5. The pivot and the bunny hop.
 
 ## Risks, said plainly
 
-- The sunk hip a pick needs (62 cm or less, from `ankle.mjs`'s three bands) makes the entry
+- *Withdrawn 04/10/2026: the bands came from a pick rule pointing the toe the wrong way.* The sunk hip a pick needs (62 cm or less, from `ankle.mjs`'s three bands) makes the entry
   deep. The toe loop's real takeoff may need the pick only briefly, so most of the run may be
   shorter than step 1 suggests. Measure before authoring.
 - The Lutz's long outside edge into a pick behind is the hardest pose in the set. It may need

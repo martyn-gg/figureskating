@@ -1811,6 +1811,14 @@ all**, at any pitch or reach; **at 78 and above only 4 to 12° survives**, barel
 ice is to tilt the whole leg, and the only way to do that is to sink** — which is what a
 skater does before they pick. Nobody authored that; the constraint did.
 
+**Corrected 04/10/2026, Session 29.** The three bands were wrong, and so was the sentence
+after them. `bootDir` pointed a picked toe away from the hip, along the reach, with the heel
+nearest the body. Martyn, who skates: the toe points back towards the skater, heel up and
+furthest away. A leg reaching back at θ from vertical carries a boot square to the shin that
+points forward and down by θ, and the ankle adds up to `ANKLE_MAX`; pointing it away would
+take 90 − θ of plantarflexion. With the toe turned, `npm run ankle` prints a smooth slope
+(about 65° at a takeoff height, 60° standing) and a pick is legal without sinking.
+
 **And a pick is the first contact in this model that is fixed to the ice.** Every foot is
 authored relative to the hip, and only the reference blade is pinned to the path. A gliding
 blade travels with the skater, so this has never cost anything; a pick stays where it was

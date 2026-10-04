@@ -1,6 +1,7 @@
 ---
 name: Toe loop
 kind: jump
+rig: toeLoop
 summary: RBO takeoff, off the pick, 1 rotation to RBO.
 jump:
   of: toeLoop

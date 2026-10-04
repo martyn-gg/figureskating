@@ -574,11 +574,23 @@ export function bootDir(pose, which, knee, foot){
     return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
   };
   if(on === 'pick'){
-    /* Along the reach. Foot coordinates are already relative to the hip, so the
-       horizontal part of the foot vector IS the reach; a pick under the hip has no
-       reach to speak of and falls back to the tracing rather than dividing by it. */
+    /* BACK ALONG THE REACH, TOWARD THE HIP — corrected 04/10/2026, Session 29. Foot
+       coordinates are already relative to the hip, so the horizontal part of the foot
+       vector is the reach; a pick under the hip has no reach to speak of and falls back
+       to the tracing rather than dividing by it.
+
+       From 30/08/2026 this pointed the toe AWAY from the hip, along the reach, so the
+       heel sat nearest the body. Martyn, who skates, on 04/10/2026: the toe points back
+       towards the skater, heel up and furthest away, the boot tipped by the ankle. Which
+       is also the only way a stiff boot can do it: a leg reaching back at θ from vertical
+       carries a boot square to the shin pointing forward and down by θ, the ankle adds
+       up to ANKLE_MAX, and pointing the toe away would need 90 − θ of plantarflexion that
+       no skating boot has. The old sense is why a pick was legal only with the hip sunk to
+       62 or the boot nearly flat: the model was asking the ankle for the impossible pose
+       and finding the few corners where it fitted. It is also why the free foot reaching
+       for a pick swung its toe 155 degrees at the contact: the free rule had it right. */
     const h = Math.hypot(foot.t, foot.n);
-    if(h > 1e-6) return [foot.t/h*Math.cos(p), foot.n/h*Math.cos(p), -Math.sin(p)];
+    if(h > 1e-6) return [-foot.t/h*Math.cos(p), -foot.n/h*Math.cos(p), -Math.sin(p)];
   }
   if(on){
     /* PLANTED: ALONG THE TRACING, PLUS WHATEVER THE SKATER HAS TURNED THE FOOT —
@@ -646,8 +658,14 @@ export function bootDir(pose, which, knee, foot){
        is the frame after exactly. */
     const w = foot.arrival.w, h = Math.hypot(foot.t, foot.n);
     if (w > 0 && h > 1e-6) {
+      /* A lerp of the two directions, renormalised. Under the old pick rule the two
+         pointed the toe opposite ways and this passed near vertical, where the top
+         view's heading is noise (61 degrees in one frame on the toe loop); a heading
+         blend was tried and failed the other way, on a free boot near vertical whose
+         own heading is noise. With the toe pointing back towards the skater the two
+         rules agree in heading and the lerp is short. */
       const pp = foot.arrival.pitch * D2R;
-      const q = [foot.t/h*Math.cos(pp), foot.n/h*Math.cos(pp), -Math.sin(pp)];
+      const q = [-foot.t/h*Math.cos(pp), -foot.n/h*Math.cos(pp), -Math.sin(pp)];
       const v = [free[0] + (q[0]-free[0])*w, free[1] + (q[1]-free[1])*w, free[2] + (q[2]-free[2])*w];
       const vl = Math.hypot(...v) || 1;
       return [v[0]/vl, v[1]/vl, v[2]/vl];
@@ -1083,9 +1101,11 @@ const lpP = (a,b,u)=>({t:lp(a.t,b.t,u),n:lp(a.n,b.n,u),z:lp(a.z,b.z,u),pitch:lp(
 const arrivalOf = (a, b, which, move, t, u) => {
   const onA = onIceOf(a, which), onB = onIceOf(b, which);
   if (!onA && onB) return { phase: 'arriving',  dir: (b[which] && b[which].dir) || b.dir,
-                            ...pickReach(onB, b[which], (b.t - t) * (move.duration || 1), u) };
+                            ...pickReach(onB, b[which], (b.t - t) * (move.duration || 1), u,
+                                         (b.t - a.t) * (move.duration || 1)) };
   if (onA && !onB) return { phase: 'departing', dir: (a[which] && a[which].dir) || a.dir,
-                            ...pickReach(onA, a[which], (t - a.t) * (move.duration || 1), 1 - u) };
+                            ...pickReach(onA, a[which], (t - a.t) * (move.duration || 1), 1 - u,
+                                         (b.t - a.t) * (move.duration || 1)) };
   return null;
 };
 
@@ -1103,9 +1123,13 @@ const arrivalOf = (a, b, which, move, t, u) => {
    Only for a pick, and only as extra fields on the arrival: a blade's arrival
    object is exactly what it was, so every move drawn before today is unchanged. */
 export const PICK_REACH = 0.25;                     // seconds
-const pickReach = (on, foot, dtSeconds, near) => on !== 'pick' ? {} : {
+/* The window is PICK_REACH or the whole span, whichever is shorter, so the blend always
+   starts from nothing at the span's far key. A toe loop's pick comes out a twelfth of a
+   second before the blade leaves, and a quarter-second window there would have started
+   the departure three quarters blended: a step at the key. */
+const pickReach = (on, foot, dtSeconds, near, spanSeconds) => on !== 'pick' ? {} : {
   on: 'pick', pitch: foot.pitch || 0,
-  w: S3(Math.min(1, Math.max(0, 1 - dtSeconds / PICK_REACH))),
+  w: S3(Math.min(1, Math.max(0, 1 - dtSeconds / Math.min(PICK_REACH, spanSeconds)))),
   /* How far the authored point has moved from the blade's middle to the teeth: over
      the whole span (`near` is poseFree's eased u, 1 at the pick), not over PICK_REACH.
      The direction comes round in the last quarter second; the point cannot, because a

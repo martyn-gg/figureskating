@@ -1484,71 +1484,50 @@ export const MOVES = {
      from a loop and a flip from a Salchow, and until today nothing in the guide
      could draw it.
 
-     THE HIP HEIGHT IS THE POSE. A picked boot's direction is authored rather than
-     taken off the shin, so the ANKLE ANGLE is a consequence of where the pose puts
-     the foot, and the boot allows ANKLE_MAX of it. Measured over the space by
-     `npm run ankle`, and it is three bands rather than a slope: at a hip of 62 and
-     below the boot reaches 89°, standing on end; between 64 and 76 there is no legal
-     pick at all, at any pitch or reach; at a standing 78 and above only 4 to 12°
-     survives, which is barely past the 3.5° a blade already has — a scuff and not a
-     jab. So this pose sits at a hip of 54. None of that was authored: the only
-     way to tilt the boot further with the toe on the ice is to tilt the whole leg,
-     and the only way to tilt the leg is to sink. Which is what a skater does before
-     they pick. freefoot.mjs asserts it, and it is the first time ANKLE_MAX has bitten
-     on a pose rather than on a number somebody typed.
-
-     Sinking is not free either. shin.mjs will not have a deep knee with the blade
-     under the hip, so the skating foot has to travel out from under it as the hip
-     drops — the same fact that shapes the teapot and the sit spin, arriving here
-     for the third time.
+     THE ANKLE DECIDES WHERE A PICK CAN GO. A picked boot's direction is authored rather
+     than taken off the shin, so the ANKLE ANGLE is a consequence of where the pose puts
+     the foot, and the boot allows ANKLE_MAX of it; freefoot.mjs asserts it on every frame
+     on a pick. Until 04/10/2026 this pose was sunk to a hip of 54 because `npm run ankle`
+     printed three bands, nothing legal between 64 and 76. That was the toe pointing the
+     wrong way (rig-math.js bootDir, the pick branch): turned to point back towards the
+     skater, the steepest legal boot falls smoothly as the hip rises, and the probe sits
+     at 82, a working knee bend.
 
      A MOVEMENT SINCE 04/10/2026, Session 29 (docs/spec-anchor.md). Until then it was a
      held position, because every foot is authored relative to the hip and a pick is
      the first contact FIXED TO THE ICE: held hip-relative through real travel it swept
      backwards 168 cm over this arc. The pick is now pinned (PIN, rig-math.js *a contact
      pinned to the ice*): from 0.42 to 0.62 the toe stays where it went in and the body
-     rides past it, 33 cm of the hip's travel, the pick going from 56 cm behind the hip
-     to 27. The end key's t, n are what the pin computes, and continuity.mjs holds them
-     to it.
-
-     THE RUN IS AS LONG AS THE ANKLE ALLOWS, NOT THE REACH. Measured before authoring
-     (Session 29's handoff has the tables): at a hip of 54 a picked boot is legal from
-     about 60 cm behind the hip down to about 20, pitched 76 to 89. Reach is never the
-     limit on this side of the pick: the leg is at its longest when the toe goes in and
-     shortens as the hip comes over it. What ends the run is the ankle, which goes past
-     the boot's 30 degrees once the hip is within 20 cm of the pick, and freefoot.mjs
-     now measures it on every frame on a pick (--break=long carries the pin 0.1 further
-     and fails). Under the hip and beyond it there is a second band of legal pitches, but
-     with the toe pointed back along the travel: a toe drag, not a pick.
+     rides past it, the pick going from 56 cm behind the hip to 29, its pitch easing from
+     55 to 40 as the leg comes upright. The end key's t, n are what the pin computes, and
+     continuity.mjs holds them to it. The skating foot sits 19 cm ahead of the hip, where
+     shin.mjs allows a knee this deep.
 
      THE ENTRY AND THE RELEASE ARE DRAWN, which failed twice as a held pose. The free
-     boot reaching for the pick blends onto the picked rule over PICK_REACH seconds
-     (rig-math.js), direction and contact point together, so the glyph no longer turns
-     155 degrees in one frame and continuity holds it to the ordinary 30. The free foot
-     travels at 26 cm with the ankle pointed 30 until the last reach: below about 20 cm
-     a free boot behind a hip this low cannot be under 60 degrees from level, and
-     freefoot.mjs excuses that only for a foot heading for its pick, for at most half a
-     second.
+     boot reaching for the pick blends onto the picked rule over PICK_REACH seconds and
+     its authored point moves from the blade's middle to the teeth over the span
+     (rig-math.js), so nothing turns more than continuity's ordinary 30 degrees a frame
+     and the teeth never go under the ice.
 
      Verified against a coach: NO. */
   toePick: {
     name:'Toe pick',
-    note:'RBO edge · sinking into the skating knee · the left toe pick set behind and ridden past',
+    note:'RBO edge · the left toe pick set behind and ridden past',
     path:[{kind:'arc', foot:'R', edge:'O', dir:'B', sweep:64}],
     radius:150, duration:3.4,
     keys:[
-      {t:0.00, ph:'Gliding back on the right outside edge, the free leg extended', hipZ:62, hipYaw:176, shYaw:166,
-       sh:P(0,0,110), L:P(46,-16,30,0,30), R:P(-30,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:0.25, ph:'Sinking into the skating knee, reaching back', hipZ:54, hipYaw:176, shYaw:162,
-       sh:P(2,0,104), L:P(58,-23,26,0,30), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:0.42, ph:'The toe pick going in behind', hipZ:54, hipYaw:176, shYaw:160,
-       sh:P(2,0,104), L:PIN(56,-24,0,84), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:0.62, ph:'Riding past the pick, loaded against the toe', hipZ:54, hipYaw:176, shYaw:156,
-       sh:P(3,0,103), L:PIN(27.4,-7,0,82), R:P(-34,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:0.72, ph:'The pick out, the toe lifting', hipZ:55, hipYaw:176, shYaw:158,
-       sh:P(3,0,104), L:P(24,-12,22,0,30), R:P(-33,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
-      {t:1.00, ph:'Rising onto the edge', hipZ:60, hipYaw:176, shYaw:164,
-       sh:P(1,0,109), L:P(30,-14,32,0,30), R:P(-30,7,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.00, ph:'Gliding back on the right outside edge, the free leg extended', hipZ:88, hipYaw:176, shYaw:166,
+       sh:P(0,0,138), L:P(46,-16,24,0,NEUTRAL), R:P(-12,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.25, ph:'Bending the skating knee, reaching back', hipZ:82, hipYaw:176, shYaw:162,
+       sh:P(2,0,132), L:P(56,-23,16,0,NEUTRAL), R:P(-19,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.42, ph:'The toe pick going in behind', hipZ:82, hipYaw:176, shYaw:160,
+       sh:P(2,0,132), L:PIN(56,-24,0,55), R:P(-19,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.62, ph:'Riding past the pick, loaded against the toe', hipZ:82, hipYaw:176, shYaw:156,
+       sh:P(3,0,131), L:PIN(28.9,-10.2,0,40), R:P(-19,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:0.72, ph:'The pick out, the toe lifting', hipZ:83, hipYaw:176, shYaw:158,
+       sh:P(3,0,132), L:P(24,-12,14,0,NEUTRAL), R:P(-19,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
+      {t:1.00, ph:'Rising onto the edge', hipZ:88, hipYaw:176, shYaw:164,
+       sh:P(1,0,138), L:P(30,-14,22,0,NEUTRAL), R:P(-12,12,0,-0.5), skate:'R', edge:'O', dir:'B'},
     ]},
 
   /* THE GLIDES, THE DIP, THE SLALOMS AND THE TWO-FOOT CHANGE OF EDGE — 03/10/2026,
@@ -2080,8 +2059,9 @@ Object.assign(MOVES, {
    first landing left them. The link's arc turns at the mean of the two rates either
    side of it, so the skater's speed does not step.
 
-   ONLY THE LOOP CAN BE DRAWN SECOND: the toe loop has no rig as a single either. So
-   the combinations drawn are the four rigged firsts into a loop and the three rigged
+   ONLY THE LOOP IS DRAWN SECOND, for now. The toe loop has had a rig since Session 29,
+   but no combination is drawn through it yet (spec-anchor.md step 4). So the
+   combinations drawn are the four rigged firsts into a loop and the three rigged
    doubles into a double loop.
 
    THE CLIP IS LONGER THAN EITHER JUMP, so it gets more frames. buildPath samples a move
@@ -2187,6 +2167,49 @@ const comboOf = (A, B, name, note) => {
   }
   return { name, note, path, radius: A.radius, duration, frames, keys, combo: { first: A.name, second: B.name, land, bend, turn } };
 };
+/* THE TOE LOOP — 04/10/2026, Session 29, docs/spec-anchor.md step 3. The loop with a pick:
+   takeoff RBO, the left toe pick set behind, one rotation, landing RBO. Everything from the
+   top of the flight on is the loop's own keys, copied, so the two jumps land identically,
+   which is what they do.
+
+   THE PICK IS A JAB, which is what the element page says and what the pin made drawable:
+   it goes in at 0.44, 42 cm behind the hip and pitched 50, and comes out at 0.465 as the
+   hip rises into the takeoff, a seventh of a second. Pinned, so the toe stays where it
+   went in while the body goes over it. The free leg reaches back for it along the line
+   of the tracing and the boot's toe points back towards the skater, heel up: the pick
+   rule Martyn settled on 04/10/2026 (rig-math.js bootDir). Under the rule it replaced, a
+   pick at a takeoff height was legal only nearly flat and close behind the skating foot,
+   and the first draft of this jump was drawn that way: a toe tap, not a toe loop.
+
+   The free foot leaves the pick a seventh of a second before the air key rather than
+   with the blade, so its boot comes round within continuity's 30 degrees a frame.
+
+   Verified against a coach: NO. */
+{
+  const L = MOVES.loop, K = L.keys;
+  MOVES.toeLoop = {
+    name:'Toe loop',
+    note:'RBO takeoff, off the left toe pick · one rotation · RBO landing',
+    path: L.path.map(g => ({ ...g })), radius: L.radius, duration: L.duration,
+    keys:[
+      {arm:[60,6,18], t:0.00, ph:'Gliding on the back outside edge, the free leg extended behind', hipZ:92, hipYaw:178, shYaw:166,
+       sh:P(-2,0,144), R:P(-6,15,0,-0.5), L:P(34,8,24,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.18, ph:'The edge running, the shoulders checked', hipZ:90, hipYaw:178, shYaw:170,
+       sh:P(-4,0,140), R:P(-10,15,0,-0.5), L:P(36,8,22,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching back', hipZ:84, hipYaw:176, shYaw:168,
+       sh:P(-6,0,132), R:P(-20,16,0,-1), L:P(40,10,18,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[56,11,19], t:0.40, ph:'The free leg reaching for the ice', hipZ:84, hipYaw:178, shYaw:184,
+       sh:P(-5,0,133), R:P(-17,15,0,-0.5), L:P(42,10,15,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[54,12,19], t:0.44, ph:'The toe pick goes in behind', hipZ:86, hipYaw:180, shYaw:196,
+       sh:P(-4,0,136), R:P(-14,15,0,0), L:PIN(42,10,0,50), skate:'R', edge:'O', dir:'B'},
+      {arm:[40,20,8], t:0.465, ph:'Takeoff: vaulting off the pick', hipZ:96, hipYaw:198, shYaw:250,
+       sh:P(-2,0,152), R:P(-4,8,2,3), L:PIN(38,8.4,0,47), skate:'R', edge:'O', dir:'B'},
+      {arm:[30,16,10], t:0.49, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
+       sh:P(-2,0,170), R:P(-4,6,32,0,NEUTRAL), L:P(12,6,32,0,NEUTRAL), skate:null},
+      ...K.filter(k => k.t >= 0.5).map(copyKey),
+    ]};
+}
+
 Object.assign(MOVES, {
   waltzLoop: comboOf(MOVES.waltz, MOVES.loop, 'Waltz jump + loop',
     'LFO takeoff · half rotation · RBO landing, held · loop: one rotation · RBO landing'),

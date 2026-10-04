@@ -90,6 +90,11 @@ rejected the pose, and then dictated the next one. To hold a boot pitched steepl
 the toe to reach the ice, the hip has to be at 62 cm or below — so the skater has to be sunk,
 which is exactly what a skater does before they pick.
 
+**And then it was wrong, which is the other half of the lesson (04/10/2026).** The 62 came from
+`bootDir` pointing a picked toe the wrong way. A checker that dictates a pose is only as right
+as the model underneath it, and a constraint that forces something surprising is worth one
+question to someone who does the thing before it is believed. Martyn answered it in a line.
+
 **That is the difference between a checker and a test.** It was not confirming something
 known; it was the only thing in the repository that knew it. Prefer assertions on quantities
 the pose IMPLIES over assertions on quantities the pose STATES — a stated number can only ever

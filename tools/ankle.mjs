@@ -135,8 +135,9 @@ for (const hipZ of [46, 50, 54, 58, 62, 64, 66, 70, 74, 76, 78, 82, 86, 90, 94])
     ? `boot up to ${String(b.p).padStart(2)}deg   (reach ${b.ft} cm, ankle ${b.a.toFixed(0)}deg)`
     : 'no legal pick at any pitch or reach'));
 }
-console.log('\n   A blade needs 3.5deg of pitch before the teeth reach the ice at all, so');
-console.log('   the bottom of that column is not "a shallow pick" — it is no pick. The');
-console.log('   only way to tilt the boot further with the toe down is to tilt the whole');
-console.log('   leg, and the only way to do that is to sink. Which is what a skater does');
-console.log('   before they pick: nobody authored it, this did.');
+console.log('\n   The steepest boot falls as the hip rises, and it falls smoothly. Until');
+console.log('   04/10/2026 this printed three bands, with nothing legal between a hip of');
+console.log('   64 and 76: the picked boot\'s toe pointed away from the skater, a pose a');
+console.log('   stiff boot cannot make, and the table was the few corners where it fitted.');
+console.log('   With the toe back towards the skater (bootDir, Martyn) a pick is legal at');
+console.log('   a takeoff height, steep enough to be a jab rather than a scuff.');

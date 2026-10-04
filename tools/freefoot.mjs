@@ -31,15 +31,16 @@
 
    This is the only place ANKLE_MAX bites on a pose rather than on a number
    somebody typed, and it turned out to decide the shape of the only picked pose
-   in the file. What a picked boot can be pitched to is set almost entirely by how
-   low the hip is, and `npm run ankle` prints it as three bands rather than a slope:
-   89° from a hip of 62 down, NOTHING legal between 64 and 76, and only 4 to 12° at a
-   standing height — barely past the 3.5° a blade already has. The only way to tilt
-   the boot further with the toe on the ice is to tilt the whole leg, and the only way
-   to do that is to sink. Which is what a skater does before they pick. Broken on purpose (counts from 04/10/2026, when toePick
-   became a movement and the pick check went per frame): the picked pose's hip raised
-   20 cm, 64 frames; an ankle angle written onto a picked foot, 2 keys; the pin
-   carried into the release key, 12 frames; a keyframe authored at point 45, 1 foot.
+   in the file. What a picked boot can be pitched to falls as the hip rises, and
+   `npm run ankle` prints it: up to 89 degrees with the hip sunk, about 65 at a normal
+   takeoff height, 60 standing. It printed three bands, with nothing legal between a hip
+   of 64 and 76, until 04/10/2026, when the pick's toe was turned to point back towards
+   the skater (rig-math.js bootDir, Martyn): the bands were the ankle being asked for an
+   impossible pose and finding the few corners where it fitted.
+
+   Broken on purpose (counts from 04/10/2026, Session 29): the picked poses' hips raised
+   30 cm, 4 frames; an ankle angle written onto a picked foot, 4 keys; the pin carried
+   into the release key, 2 frames; a keyframe authored at point 45, 1 foot.
 
    The 60° limit is still a coach's call and so is ANKLE_MAX. What changed is that
    there is now something to author instead of a constant to move: `npm run ankle`
@@ -52,21 +53,17 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, D2R, ANKLE_MAX, anterior, twoBone, bootDir, ankleOf, buildPath, poseAt,
-         onIceOf, contactsDown, PICK_REACH } from '../src/lib/rig-math.js';
+         onIceOf, contactsDown } from '../src/lib/rig-math.js';
 
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const LIMIT = 60;
-/* A FOOT REACHING FOR ITS PICK IS POINTED AT THE ICE, AND MEANS TO BE — 04/10/2026,
-   Session 29. A free foot behind a hip sunk to 54 has a shin near level, so a boot
-   square to it points down at 70 to 80 degrees whatever the ankle does, at any height
-   under about 20 cm (measured, every reach from 30 to 80 cm behind). That is not a
-   pointe: it is the toe going into the ice, and the pick it arrives at is pitched 84.
-   So a free foot is excused while its neighbouring key is a pick (`arrival.on`) AND
-   it is within PICK_LOW of the ice. From the other side, the excuse is bounded in
-   time: a run of excused frames longer than PICK_EXEMPT seconds is a foot hanging
-   pointed near the ice, which is what this file exists to catch, and it fails. */
-const PICK_LOW = 20, PICK_EXEMPT = 2 * PICK_REACH;
-let bad = 0, glyphs = 0, excused = 0;
+/* NO EXCUSE FOR A FOOT REACHING FOR ITS PICK — 04/10/2026, Session 29. For an hour this
+   file excused a free foot below 20 cm next to a pick, because every such foot measured
+   70 to 80 degrees from level. That was the pick rule pointing the toe the wrong way
+   (rig-math.js bootDir): with the toe back towards the skater the reach is the free leg's
+   ordinary 40 to 55, and the excuse was taken out the same day. Written here so it is not
+   put back for the same symptom. */
+let bad = 0, glyphs = 0;
 /* --break=long carries the pin on into the release key, so the pick is held while the
    hip goes on past it — the pose a skater cannot make, and the per-frame ankle below
    must say so. */
@@ -93,7 +90,6 @@ for (const [key, m] of Object.entries(MOVES)) {
   };
 
   for (const w of ['L', 'R']) {
-    let hang = 0, hung = false;
     for (let i = 0; i < path.length; i++) {
       const f = i / (path.length - 1);
       const pose = poseAt(m, f);
@@ -103,18 +99,9 @@ for (const [key, m] of Object.entries(MOVES)) {
          limit and report a pointe on a foot that is flat on the ice; asking
          `=== 'blade'` would do the same to a picked foot, which IS pointed steeply
          past this limit, deliberately, because that is what a pick is. */
-      if (onIceOf(pose, w)) { flush(); hang = 0; hung = false; continue; }
+      if (onIceOf(pose, w)) { flush(); continue; }
       glyphs++;
       const q = pose[w];
-      if (q.arrival && q.arrival.on === 'pick' && q.z < PICK_LOW) {
-        excused++; flush();
-        if (++hang * m.duration / (path.length - 1) > PICK_EXEMPT && !hung) {
-          bad++; hung = true;
-          console.log(`  HANGING ${key.padEnd(12)} ${w} pointed at the ice beside its pick for more than ${PICK_EXEMPT} s, at f=${f.toFixed(3)}`);
-        }
-        continue;
-      }
-      hang = 0; hung = false;
       const kn = twoBone({ t: 0, n: 0, z: pose.hipZ }, q, THIGH, SHIN, anterior(pose.hipYaw));
       const bd = bootDir(pose, w, kn, q);
       const el = Math.asin(Math.max(-1, Math.min(1, bd[2]))) * 180 / Math.PI;
@@ -144,13 +131,13 @@ for (const [key, m] of Object.entries(MOVES)) {
    is not interpolated, it is wherever the ice holds it while the hip goes past, and
    the ankle that leaves is the constraint that ends the run. So every frame on a pick
    is measured, and a run held too long fails here. --break=long, the pin carried into
-   the release key: 12 frames. */
+   the release key: 2 frames. */
 let steep = 0, picks = 0;
 for (const [key, m0] of Object.entries(MOVES)) {
   const m = brkLong(m0), N = buildPath(m).length;
   for (let i = 0; i < N; i++) {
     const k = poseAt(m, i / (N - 1));
-    const hipZ = BREAK === 'standing' ? k.hipZ + 20 : k.hipZ;
+    const hipZ = BREAK === 'standing' ? k.hipZ + 30 : k.hipZ;
     for (const w of contactsDown(k)) {
       if (onIceOf(k, w) !== 'pick') continue;
       picks++;
@@ -198,7 +185,7 @@ for (const [key, m] of Object.entries(MOVES))
       }
     }
 
-console.log(`\n${glyphs} free-boot frames measured (${excused} excused, reaching for a pick), ${authored} authored ankle angles, ${picks} frames on a pick`);
+console.log(`\n${glyphs} free-boot frames measured, ${authored} authored ankle angles, ${picks} frames on a pick`);
 console.log(bad
   ? `${bad} stretch${bad === 1 ? '' : 'es'} of frames too steep — raise or extend the foot, not the constant`
   : 'every free boot sits at a plausible angle, in every frame');
