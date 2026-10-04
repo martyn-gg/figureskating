@@ -1,6 +1,7 @@
 ---
 name: Lutz + toe loop
 kind: combo
+rig: lutzToeLoop
 summary: Lutz (LBO, off the pick) straight into a toe loop (RBO, off the pick), 2 rotations in all.
 aliases: [1Lz+1T]
 prerequisites: [lutz, toe-loop]

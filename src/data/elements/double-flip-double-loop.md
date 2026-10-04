@@ -1,6 +1,7 @@
 ---
 name: Double flip + double loop
 kind: combo
+rig: doubleFlipDoubleLoop
 summary: Double flip (LBI, off the pick) straight into a double loop (RBO, off the edge), 4 rotations in all.
 aliases: [2F+2Lo]
 prerequisites: [double-flip, double-loop]

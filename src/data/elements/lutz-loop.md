@@ -1,6 +1,7 @@
 ---
 name: Lutz + loop
 kind: combo
+rig: lutzLoop
 summary: Lutz (LBO, off the pick) straight into a loop (RBO, off the edge), 2 rotations in all.
 aliases: [1Lz+1Lo]
 prerequisites: [lutz, loop]

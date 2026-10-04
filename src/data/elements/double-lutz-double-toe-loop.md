@@ -1,6 +1,7 @@
 ---
 name: Double Lutz + double toe loop
 kind: combo
+rig: doubleLutzDoubleToeLoop
 summary: Double Lutz (LBO, off the pick) straight into a double toe loop (RBO, off the pick), 4 rotations in all.
 aliases: [2Lz+2T]
 prerequisites: [double-lutz, double-toe-loop]

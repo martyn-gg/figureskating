@@ -1,6 +1,7 @@
 ---
 name: Flip + loop
 kind: combo
+rig: flipLoop
 summary: Flip (LBI, off the pick) straight into a loop (RBO, off the edge), 2 rotations in all.
 aliases: [1F+1Lo]
 prerequisites: [flip, loop]

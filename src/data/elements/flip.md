@@ -1,6 +1,7 @@
 ---
 name: Flip
 kind: jump
+rig: flip
 summary: "A toe jump from a back inside edge: the Lutz's near neighbour, and its usual impostor."
 jump:
   of: flip

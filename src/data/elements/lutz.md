@@ -1,6 +1,7 @@
 ---
 name: Lutz
 kind: jump
+rig: lutz
 summary: The only jump that takes off from a back outside edge curving against its own rotation, and the one most often done wrong.
 jump:
   of: lutz

@@ -1,6 +1,7 @@
 ---
 name: Double flip + double toe loop
 kind: combo
+rig: doubleFlipDoubleToeLoop
 summary: Double flip (LBI, off the pick) straight into a double toe loop (RBO, off the pick), 4 rotations in all.
 aliases: [2F+2T]
 prerequisites: [double-flip, double-toe-loop]

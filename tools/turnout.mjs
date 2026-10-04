@@ -307,7 +307,7 @@ for (const [key, m] of Object.entries(MOVES)) {
    off the boot direction bootDir actually builds, and from the outward side as well:
    a pick that comes in turned IN is the fault, and one turned out past the hip is too.
 
-     --break=pickin  every pick turned 70° in ...................... 14 runs, one per move
+     --break=pickin  every pick turned 70° in ...................... 16 runs, one per move
 
    Seventy and not less: a bent knee gives a picking leg up to 45° of toe-in, so the
    mutation has to be the size of a real fault, and 45 or 60 passed. */

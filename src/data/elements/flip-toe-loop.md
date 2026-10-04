@@ -1,6 +1,7 @@
 ---
 name: Flip + toe loop
 kind: combo
+rig: flipToeLoop
 summary: Flip (LBI, off the pick) straight into a toe loop (RBO, off the pick), 2 rotations in all.
 aliases: [1F+1T]
 prerequisites: [flip, toe-loop]

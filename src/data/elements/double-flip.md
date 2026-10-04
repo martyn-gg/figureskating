@@ -1,6 +1,7 @@
 ---
 name: Double flip
 kind: jump
+rig: doubleFlip
 summary: LBI takeoff, off the pick, 2 rotations to RBO.
 aliases: [2F]
 prerequisites: [flip]

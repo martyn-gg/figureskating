@@ -2059,9 +2059,10 @@ Object.assign(MOVES, {
    first landing left them. The link's arc turns at the mean of the two rates either
    side of it, so the skater's speed does not step.
 
-   BOTH SECONDS ARE DRAWN since Session 29, when the toe loop got its rig: every rigged
-   first (waltz jump, Salchow, toe loop, loop, Axel) into a loop and into a toe loop, and
-   the four rigged doubles into a double loop and a double toe loop. Eighteen in all.
+   EVERY TWO-JUMP COMBINATION IS DRAWN since Session 29, when the toe loop, the flip and
+   the Lutz got their rigs: all seven singles into a loop and into a toe loop, and all six
+   doubles into a double loop and a double toe loop. Twenty-six. The three-jump ones wait
+   for an Euler rig.
 
    THE CLIP IS LONGER THAN EITHER JUMP, so it gets more frames. buildPath samples a move
    at 320 points however long it lasts, and a combination drawn at 320 would turn twice
@@ -2227,8 +2228,83 @@ const comboOf = (A, B, name, note) => {
       ...K.filter(k => k.t >= 0.5).map(copyKey),
     ]};
 }
+/* THE FLIP — 04/10/2026, Session 29. Takeoff LBI off the RIGHT toe pick, one rotation,
+   landing RBO (skating.js JUMPS). The Salchow's entry and its landing: the forward outside
+   three turn onto the back inside edge, the knee bending with the free leg reaching back,
+   and from the top of the flight the Salchow's own keys, copied. In between, where the
+   Salchow swings its free leg round, the flip puts the right pick in.
+
+   CHECKED AGAINST COACHES' TEACHING (the guidance, not their words): out of the three turn
+   the free leg reaches straight back behind its own hip, or a little inside the circle,
+   and never across behind the skating foot (that is the Lutz's position, and the edge
+   call a flip gets for it). The picking toe lands near behind the skating heel and the
+   hips stay level. So the pick goes in 40 cm behind and 10 to the skater's right, turned
+   out like the toe loop's, and pivots with the body as it comes round.
+
+   Verified against a coach: NO. */
+{
+  const S = MOVES.salchow, K = S.keys;
+  const upTo = K.filter(k => k.t <= 0.48).map(copyKey);
+  MOVES.flip = {
+    name:'Flip',
+    note:'LBI takeoff out of a three turn, off the right toe pick · one rotation · RBO landing',
+    path: S.path.map(g => ({ ...g })), radius: S.radius, duration: S.duration,
+    keys:[
+      ...upTo,
+      {arm:[56,12,19], t:0.555, ph:'The right toe pick goes in behind', hipZ:84, hipYaw:178, shYaw:196,
+       sh:P(-5,0,136), L:P(-16,16,0,-0.5), R:{...PIN(40,-10,0,50), yaw:-35}, skate:'L', edge:'I', dir:'B'},
+      {arm:[40,20,8], t:0.58, ph:'Takeoff: vaulting off the pick', hipZ:96, hipYaw:198, shYaw:250,
+       sh:P(-2,0,152), L:P(-4,8,2,3), R:{...PIN(36.7,-11.1,0,43), yaw:-16}, skate:'L', edge:'I', dir:'B'},
+      {arm:[30,16,10], t:0.604, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
+       sh:P(-2,0,170), L:P(-6,-12,32,0,NEUTRAL), R:P(12,-4,32,0,NEUTRAL), skate:null},
+      ...K.filter(k => k.t > 0.62).map(copyKey),
+    ]};
+}
+/* THE LUTZ — 04/10/2026, Session 29. Takeoff LBO off the RIGHT toe pick, one rotation,
+   landing RBO. The one counter-rotated jump: a long back outside edge curving one way and
+   a jump turning the other, so the tracing changes the side it curves at the takeoff.
+   From the top of the flight it is the loop's keys, copied, like every RBO landing here.
+
+   CHECKED AGAINST COACHES' TEACHING (the guidance, not their words): the back outside
+   edge is held long and on the outside all the way into the pick; the feet stay close;
+   the picking foot reaches behind and across the skating foot, so the pick goes in close
+   to the skating foot on its own tracing. That is the difference from the flip, whose
+   pick goes in behind its own hip. The entry edge is the toe loop's mirrored onto the
+   left foot, on a wider circle.
+
+   Verified against a coach: NO. */
+{
+  const L = MOVES.loop;
+  MOVES.lutz = {
+    name:'Lutz',
+    note:'LBO takeoff off a long edge, off the right toe pick · one rotation · RBO landing',
+    path:[ {kind:'arc',  foot:'L', edge:'O', dir:'B', sweep:56, span:0.48, radius:280},
+           ...L.path.slice(1).map(g => ({ ...g })) ],
+    radius: L.radius, duration: L.duration,
+    keys:[
+      {arm:[60,6,18], t:0.00, ph:'Gliding on the long back outside edge, the free leg extended behind', hipZ:92, hipYaw:182, shYaw:194,
+       sh:P(-2,0,144), L:P(-6,-15,0,-0.5), R:P(34,-8,24,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[62,8,18], t:0.18, ph:'The edge held on the outside, the shoulders checked', hipZ:90, hipYaw:182, shYaw:190,
+       sh:P(-4,0,140), L:P(-10,-15,0,-0.5), R:P(36,-10,22,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching behind and across', hipZ:84, hipYaw:184, shYaw:192,
+       sh:P(-6,0,132), L:P(-20,-16,0,-1), R:P(40,-12,16,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[56,11,19], t:0.40, ph:'The free leg reaching for the ice', hipZ:84, hipYaw:182, shYaw:186,
+       sh:P(-5,0,133), L:P(-17,-15,0,-0.5), R:P(42,-12,15,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[54,12,19], t:0.44, ph:'The right toe pick goes in, close behind the skating foot', hipZ:86, hipYaw:180, shYaw:196,
+       sh:P(-4,0,136), L:P(-14,-15,0,0), R:{...PIN(42,-12,0,50), yaw:-36}, skate:'L', edge:'O', dir:'B'},
+      {arm:[40,20,8], t:0.465, ph:'Takeoff: vaulting off the pick against the curve', hipZ:98, hipYaw:198, shYaw:250,
+       sh:P(-2,0,152), L:P(-4,-8,2,3), R:{...PIN(37.7,-7.6,0,43), yaw:-13}, skate:'L', edge:'O', dir:'B'},
+      {arm:[30,16,10], t:0.49, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
+       sh:P(-2,0,170), L:P(-4,-6,32,0,NEUTRAL), R:P(12,-4,32,0,NEUTRAL), skate:null},
+      ...L.keys.filter(k => k.t >= 0.5).map(copyKey),
+    ]};
+}
 MOVES.doubleToeLoop = doubleOf(MOVES.toeLoop, 'Double toe loop',
   'RBO takeoff, off the left toe pick · two rotations · RBO landing');
+MOVES.doubleFlip = doubleOf(MOVES.flip, 'Double flip',
+  'LBI takeoff out of a three turn, off the right toe pick · two rotations · RBO landing');
+MOVES.doubleLutz = doubleOf(MOVES.lutz, 'Double Lutz',
+  'LBO takeoff off a long edge, off the right toe pick · two rotations · RBO landing');
 
 Object.assign(MOVES, {
   waltzLoop: comboOf(MOVES.waltz, MOVES.loop, 'Waltz jump + loop',
@@ -2268,6 +2344,23 @@ Object.assign(MOVES, {
     'LFO takeoff · two and a half rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
   doubleToeLoopDoubleLoop: comboOf(MOVES.doubleToeLoop, MOVES.doubleLoop, 'Double toe loop + double loop',
     'RBO takeoff off the pick · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+/* Session 29: the flip and the Lutz as firsts. */
+  flipLoop: comboOf(MOVES.flip, MOVES.loop, 'Flip + loop',
+    'LBI takeoff off the right pick · one rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  flipToeLoop: comboOf(MOVES.flip, MOVES.toeLoop, 'Flip + toe loop',
+    'LBI takeoff off the right pick · one rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  doubleFlipDoubleLoop: comboOf(MOVES.doubleFlip, MOVES.doubleLoop, 'Double flip + double loop',
+    'LBI takeoff off the right pick · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+  doubleFlipDoubleToeLoop: comboOf(MOVES.doubleFlip, MOVES.doubleToeLoop, 'Double flip + double toe loop',
+    'LBI takeoff off the right pick · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
+  lutzLoop: comboOf(MOVES.lutz, MOVES.loop, 'Lutz + loop',
+    'LBO takeoff off the right pick · one rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  lutzToeLoop: comboOf(MOVES.lutz, MOVES.toeLoop, 'Lutz + toe loop',
+    'LBO takeoff off the right pick · one rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  doubleLutzDoubleLoop: comboOf(MOVES.doubleLutz, MOVES.doubleLoop, 'Double Lutz + double loop',
+    'LBO takeoff off the right pick · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+  doubleLutzDoubleToeLoop: comboOf(MOVES.doubleLutz, MOVES.doubleToeLoop, 'Double Lutz + double toe loop',
+    'LBO takeoff off the right pick · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
 });
 
 for(const m of Object.values(MOVES)) for(const k of m.keys){

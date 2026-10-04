@@ -1,6 +1,7 @@
 ---
 name: Double Lutz
 kind: jump
+rig: doubleLutz
 summary: LBO takeoff, off the pick, 2 rotations to RBO.
 aliases: [2Lz]
 prerequisites: [lutz]
