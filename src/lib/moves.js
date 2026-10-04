@@ -1102,9 +1102,9 @@ export const MOVES = {
      a curve — so the top-down view smears the mark here instead of drawing the
      confident thin line it draws everywhere else.
 
-     THIRTY-FIVE DEGREES OF TOE-IN EACH, and it took bent knees to buy them. Toes-in
-     is the expensive direction — a weight-bearing hip gives twenty — and a bent knee
-     adds up to twenty-five more. So the pose comes out sunk, which is how a
+     FORTY DEGREES OF TOE-IN EACH (the history is below), and it took bent knees to
+     buy them. Toes-in is the expensive direction — a weight-bearing hip gives
+     twenty — and a bent knee adds up to twenty-five more. So the pose comes out sunk, which is how a
      snowplough is taught and is not what anybody authored here: the sweep was for
      the most toe-in the constants would allow, against the shin's 28 degrees of lean
      on both legs at once.
@@ -1119,6 +1119,19 @@ export const MOVES = {
      cannot see (it measures against a level boot); a question for a coach before it
      is a question for the model.
 
+     FORTY AGAIN SINCE SESSION 32, and over the middle of the blade. Martyn's two
+     corrections: a little more knee to allow the rotation, and the body has to line
+     up over the middle of the blade. Measured with Winter's segment fractions (the
+     rig has no mass; a scratch measurement, not a checker), the pose above had its
+     mass 6 cm behind the blades' midpoints, and moving the feet forward to buy the
+     bend put it 19 cm behind. Over the middle, a lower hip leans the shin forward
+     over the toe and nowhere else, which the single 28° cone in shin.mjs refused;
+     the split (32° forward, 28° across) lets it bend. So: hip 92, feet 2 cm
+     narrower each, the knees bent 33° (were 25°), which lets the hip and knee turn
+     each toe in 43°, and the shoulders 14 cm forward of the hip, about fifteen
+     degrees of trunk lean, to bring the mass back over the blades. A starter move,
+     so deliberately not sunk further. Verified against a coach: NO.
+
      Held rather than animated. A stop is a loss of speed and the path runs at one,
      so this is the pose mid-scrape and not the stopping of it. */
   snowplough: {
@@ -1127,12 +1140,12 @@ export const MOVES = {
     path:[{kind:'line', len:150}],
     radius:200, duration:2.6,
     keys:[
-      {t:0.00, ph:'Both blades turned in and pressed', hipZ:93, hipYaw:0, shYaw:0,
-       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:0.50, ph:'Scraping: the knees driving the blades down', hipZ:93, hipYaw:0, shYaw:0,
-       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
-      {t:1.00, ph:'Held: the scrape taking the speed off', hipZ:93, hipYaw:0, shYaw:0,
-       sh:P(0,0,146), L:SKID(8,-30,0,-35,'I'), R:SKID(8,30,0,35,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:0.00, ph:'Both blades turned in and pressed', hipZ:92, hipYaw:0, shYaw:0,
+       sh:P(14,0,143), L:SKID(8,-28,0,-40,'I'), R:SKID(8,28,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:0.50, ph:'Scraping: the knees driving the blades down', hipZ:92, hipYaw:0, shYaw:0,
+       sh:P(14,0,143), L:SKID(8,-28,0,-40,'I'), R:SKID(8,28,0,40,'I'), skate:'L', edge:'I', dir:'F'},
+      {t:1.00, ph:'Held: the scrape taking the speed off', hipZ:92, hipYaw:0, shYaw:0,
+       sh:P(14,0,143), L:SKID(8,-28,0,-40,'I'), R:SKID(8,28,0,40,'I'), skate:'L', edge:'I', dir:'F'},
     ]},
 
   /* A BACKWARD SNOWPLOUGH STOP — the forward one's mirror in everything except

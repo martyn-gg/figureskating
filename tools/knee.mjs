@@ -21,7 +21,10 @@
 import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, HIP_OUT, HIP_IN, anterior, twoBone, kneeFace, bootDir, ankleOf,
          turnoutAllowed, kneeFlex, runnersDown, dirOf } from '../src/lib/rig-math.js';
-import { shinLean, LIMIT } from './shin.mjs';
+import { shinInBoot, bootFill, LIMIT, FORWARD } from './shin.mjs';
+/* Over the boot means shin.mjs's own test since Session 32: forward lean against
+   FORWARD, across against LIMIT. The cells still print total lean. */
+const legOf = (k, w, face) => { const s = shinInBoot(k, w, face); return { v: s.lean, over: bootFill(s) > 1 + 1e-9 }; };
 
 const wrap = a => { while (a > 180) a -= 360; while (a <= -180) a += 360; return a; };
 const sideOf = w => (w === 'L' ? 1 : -1);
@@ -52,16 +55,16 @@ const HIPS = [96, 94, 92, 90, 88, 86, 84, 82, 80, 78];
 for (const c of CASES) {
   const base = MOVES[c.move].keys[c.at];
   console.log(`\n${c.label} (${c.move}, hipYaw ${base.hipYaw}°, authored hip ${base.hipZ}): worst shin lean over both feet on the ice, ` +
-    `limit ${LIMIT}°\n  * = over the limit, ! = the hip and knee cannot turn the foot this far`);
+    `limit ${FORWARD}° forward, ${LIMIT}° across\n  * = over the limit, ! = the hip and knee cannot turn the foot this far`);
   for (const yaw of c.yaws) {
     console.log(`\n  ${c.foot} foot yawed ${yaw}°`);
     console.log('   hip  ' + Object.keys(RULES).map(r => r.padStart(12)).join('') + '   flex  out/allowed');
     for (const hipZ of HIPS) {
       const k = { ...base, hipZ, [c.foot]: { ...base[c.foot], yaw } };
       const cells = Object.keys(RULES).map(r => {
-        const leans = runnersDown(k).map(w => [w, shinLean(k, w, faceBy(r, k, w))]);
-        const [w, v] = leans.reduce((a, b) => (b[1] > a[1] ? b : a));
-        return `${v.toFixed(0).padStart(3)}° ${w}${v > LIMIT ? '*' : ' '}`.padStart(12);
+        const legs = runnersDown(k).map(w => ({ w, ...legOf(k, w, faceBy(r, k, w)) }));
+        const { w, v } = legs.reduce((a, b) => (b.v > a.v ? b : a)), over = legs.some(l => l.over);
+        return `${v.toFixed(0).padStart(3)}° ${w}${over ? '*' : ' '}`.padStart(12);
       });
       const d = flexOf(k, c.foot), allow = turnoutAllowed(d), out = outOf(k, c.foot);
       const ok = out <= allow.out + 1e-9 && -out <= allow.in + 1e-9;
@@ -73,7 +76,6 @@ for (const c of CASES) {
 
 /* WHICH WAY THE SHIN LEANS IN ITS BOOT, at the authored hip and four deeper. Forward
    is over the toe, across is toward the boot's own right (+) or left (−). */
-import { shinInBoot } from './shin.mjs';
 console.log('\n\nthe same shins split in the boot frame: forward over the toe / across the boot, degrees');
 for (const c of CASES) {
   const base = MOVES[c.move].keys[c.at];
@@ -101,7 +103,7 @@ const along = (k, w, dlt) => {
   return { ...k[w], t: k[w].t + a[0] * dlt, n: k[w].n + a[1] * dlt };
 };
 const DELTAS = [0, 3, 6, 9, 12];
-console.log(`\n\nfeet moved along their own heading by δ cm: worst shin lean over both feet, limit ${LIMIT}°`);
+console.log(`\n\nfeet moved along their own heading by δ cm: worst shin lean over both feet, limit ${FORWARD}° forward, ${LIMIT}° across`);
 for (const c of CASES) {
   const base = MOVES[c.move].keys[c.at];
   for (const r of ['pelvis', 'hip']) {
@@ -112,8 +114,9 @@ for (const c of CASES) {
       const cells = DELTAS.map(dlt => {
         const kk = { ...k };
         for (const w of runnersDown(k)) kk[w] = along(k, w, dlt);
-        const v = Math.max(...runnersDown(kk).map(w => shinLean(kk, w, faceBy(r, kk, w))));
-        return `${v.toFixed(0)}°${v > LIMIT ? '*' : ' '}`.padStart(8);
+        const legs = runnersDown(kk).map(w => legOf(kk, w, faceBy(r, kk, w)));
+        const v = Math.max(...legs.map(l => l.v)), over = legs.some(l => l.over);
+        return `${v.toFixed(0)}°${over ? '*' : ' '}`.padStart(8);
       });
       console.log(`   ${String(hipZ).padStart(3)} ${cells.join('')}`);
     }

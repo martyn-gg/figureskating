@@ -192,8 +192,9 @@ believing any sequence that turns.
 ## Constraints the checkers enforce
 
 - A foot must be within `THIGH + SHIN` of the hip, measured **to the ankle**.
-- Shin lean inside the boot must stay under about 28°. A skating boot is stiff; if a
-  pose needs more, the foot is in the wrong place under the hip, not the ankle.
+- Shin lean inside the boot must stay under about 32° forward over the toe and 28° across
+  or back (an ellipse in the boot's frame, since Session 32). A skating boot is stiff; if
+  a pose needs more, the foot is in the wrong place under the hip, not the ankle.
 - A skating foot's blade sits at `z = 0`. This is inviolable — an automated fix that
   lifts it to satisfy some other constraint has broken the pose, not solved it.
 - **Every blade claimed on the ice is within 3 cm of it, and every foot not claimed on the
@@ -2106,6 +2107,40 @@ shins at the 28° limit at once. That is how a snowplough is taught, and nobody 
 
 The second blade's scrape is still not drawn, because no second blade's tracing ever is —
 the same one-path limit that keeps the swizzles out.
+
+## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
+
+`shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the
+toe and a shin across the boot answered to the same number. A boot is made to flex
+forward and to resist rolling. The limit is now an ellipse in the boot's frame:
+forward lean against `FORWARD` (32°), across lean against `LIMIT` (28°), and a shin
+with no forward part reads exactly as before. `bootFill` in `shin.mjs` is the one
+expression; `knee.mjs` uses it. Before the change no shin in the guide leaned forward
+past 28° (the most was 27.2°, the two-foot turn), so the frame hashes moved on one
+move only, the snowplough. Verified against a coach or a boot maker: NO.
+
+The snowplough found it. Martyn asked for a little more knee to allow the toe-in,
+and then pointed out the body has to line up over the middle of the blade. The rig
+has no mass, so a scratch measurement with Winter's segment fractions (trunk, head
+and arms 0.678 at 0.626 of hip to shoulder; thigh 0.100 at 0.433 of hip to knee;
+shank 0.0465 at 0.433 of knee to ankle; foot and boot 0.03 at the blade) put the
+Session 31 pose's mass 6 cm behind the blades' midpoints. Moving the feet forward to
+buy bend put it 19 cm behind. With the mass held over the middle, a lower hip leans
+the shin forward and nowhere else, which the cone refused below a hip of 93.
+
+| | toe-in | hip | feet | knee | toe-in allowed | shin forward / across | mass vs mid-blade |
+|---|---|---|---|---|---|---|---|
+| Session 31 | 35° | 93 | ±30, 8 ahead | 25° | 38° | 23.9° / 14.2° | 6 cm behind |
+| Session 32 | 40° | 92 | ±28, 8 ahead | 33° | 43° | 28.0° / 10.2° | within 1 cm |
+
+The shoulders sit 14 cm ahead of the hip, about fifteen degrees of trunk lean, which
+is what brings the mass back over the blades. A starter move, so deliberately not
+sunk further; the sweep had 40° balanced down to a hip of 90.
+
+Balance is still asserted nowhere. Where the mass should sit is not one place: over
+the middle of the blade on a glide, forward toward the rocker's sweet spot for turns
+and spins, behind the feet in a braking stop. A checker needs that target per phase
+before it can say anything.
 
 ## Where a knee points — measured, specified and built 04/10/2026, Session 31
 
