@@ -4,8 +4,9 @@
    curve could).
 
    A figure blade is usually ground to more than one radius: a long, flat main rocker,
-   then a tighter spin rocker towards the front, then a tighter curve still running up
-   to the pick. This draws one common profile of that kind, chained arc to arc with no
+   then a tighter spin rocker towards the front, and on a three-radius blade a tighter
+   curve still running up to the pick. Two-radius blades are also sold (a retailer's
+   blade guide lists two of each, read 04/10/2026). This draws one common profile of that kind, chained arc to arc with no
    kink, from the lowest point outwards. The radii and the lengths are illustrative:
    profiles differ from blade to blade, and the page says so.
 
@@ -89,9 +90,10 @@ const pickTop = pickPts[pickPts.length - 1];
     <text x={X(heel[0]) + 2} y={GROUND + 52} text-anchor="start">heel</text>
   </svg>
   <figcaption>
-    Heel on the left, toe on the right, height drawn {EX} times taller than it is. One common
-    profile: {Math.round(ROCKER / 30.48)} ft along most of the blade, 27 in for the spin rocker and 12 in up to
-    the pick. Profiles differ from blade to blade. The skaters drawn elsewhere in this guide
+    Heel on the left, toe on the right, height drawn {EX} times taller than it is. One
+    three-radius profile: {Math.round(ROCKER / 30.48)} ft along most of the blade, 27 in for the spin rocker and 12 in up to
+    the pick. A two-radius blade has no separate third curve, and profiles differ from
+    blade to blade. The skaters drawn elsewhere in this guide
     stand on a simpler blade, the {Math.round(ROCKER / 30.48)} ft curve all the way along.
   </figcaption>
 </figure>
