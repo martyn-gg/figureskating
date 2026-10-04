@@ -1,6 +1,7 @@
 ---
 name: Tap toe jump
 kind: basic
+rig: tapToeJump
 summary: "A half turn off the toe pick from a back edge, landing toe to toe and pushing straight off onto the other foot."
 aliases: ["tap-toe jump", "toe to toe jump"]
 prerequisites: [half-flip]

@@ -1,6 +1,7 @@
 ---
 name: Power change of edge pulls
 kind: basic
+rig: powerCoePulls
 summary: "One foot changing edge after edge down the rink, forwards for one length and backwards for the next."
 aliases: ["change of edge pulls"]
 prerequisites: [two-foot-change-of-edge, one-foot-glide]

@@ -106,9 +106,44 @@ if (bad) { console.log(`\n${bad} expectations of the mass model broken`); proces
 const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
 const TURN_IDS = ['threeTurn', 'lfiThree', 'lboThree', 'lbiThree', 'lfoBracket', 'lfiBracket', 'lboBracket', 'lbiBracket',
   'rfoThree', 'rfiThree', 'rboThree', 'rbiThree', 'rfoBracket', 'rfiBracket', 'rboBracket', 'rbiBracket'];
-const TARGETS = [{ family: 'one-foot turns', ids: TURN_IDS,
-  entry: { along: [-2, 2] }, turn: { onBlade: [4, 8] }, settle: { along: [-2, 2] },
-  exit: { along: [-2, 2], onBlade: [-3, 0] } }];
+/* Each family says how its frames divide into phases, read off the move. */
+const NF = 320;
+const turnPhases = mv => {
+  const inWin = [];
+  for (let i = 0; i < NF; i++) inWin.push(!!cuspAt(mv, i / (NF - 1)));
+  const wEnd = inWin.lastIndexOf(true) / (NF - 1);
+  /* The key at the window's far edge is the turn's last pose, so the exit starts at the one after it. */
+  const exitFrom = (mv.keys.find(k => k.t > wEnd + 2 / (NF - 1)) || { t: 1 }).t;
+  return i => inWin[i] ? 'turn' : inWin.indexOf(true) > i ? 'entry' : i / (NF - 1) < exitFrom ? 'settle' : 'exit';
+};
+/* A spin's held phase is every segment that claims a position or a wind-up (spin.mjs's
+   own definition of centred); the rest is the edge in and the edge out. */
+const spinPhases = mv => {
+  const spans = mv.path.map(g => g.span ?? 1), sum = spans.reduce((a, b) => a + b, 0);
+  let c = 0; const ends = spans.map(x => (c += x) / sum);
+  return i => { const t = i / (NF - 1), j = ends.findIndex(e => t <= e + 1e-9);
+    const g = mv.path[Math.max(0, j)]; return g.position || g.windup ? 'held' : 'edge'; };
+};
+const TARGETS = [
+  { family: 'one-foot turns', ids: TURN_IDS, phases: turnPhases,
+    entry: { along: [-2, 2] }, turn: { onBlade: [4, 8] }, settle: { along: [-2, 2] },
+    exit: { along: [-2, 2], onBlade: [-3, 0] } },
+  /* Martyn, Session 33: a centred spin on the front of the rocker, +6 to +10, the mass
+     over the contact; and every glide, on any move, the mass over the contact ±2. */
+  { family: 'spins', ids: ['backSpin'], phases: spinPhases,
+    held: { along: [-2, 2], onBlade: [6, 10] }, edge: { along: [-2, 2] } },
+  { family: 'glides', ids: ['powerCoePulls'], phases: () => () => 'glide',
+    glide: { along: [-2, 2] } },
+  /* The half jumps: the glide into the pick and the glide out of the landing. Between the
+     first key with a foot on a pick and the first key after the last one, the skater is
+     vaulting, in the air or landing, and nothing is held. */
+  { family: 'half jumps', ids: ['halfFlip', 'tapToeJump'], phases: mv => {
+      const picked = mv.keys.filter(k => ['L', 'R'].some(w => k[w] && k[w].onIce === 'pick'));
+      const from = picked[0].t, last = picked[picked.length - 1].t;
+      const to = (mv.keys.find(k => k.t > last + 1e-9) || { t: 1 }).t;
+      return i => { const t = i / (NF - 1); return t < from || t >= to ? 'glide' : 'vault'; };
+    }, glide: { along: [-2, 2] }, vault: {} },
+];
 const mutate = (m) => {
   if (!BREAK) return m;
   return { ...m, keys: m.keys.map(k => { const w = k.skate, q = k[w]; if (!w) return k;
@@ -122,17 +157,12 @@ for (const T of TARGETS) {
   for (const id of T.ids) {
     const mv = mutate(MOVES[id]);
     if (!MOVES[id]) { bad++; console.log(`  FAIL ${T.family}: ${id} is not a move`); continue; }
-    const NF = 320, inWin = [];
-    for (let i = 0; i < NF; i++) inWin.push(!!cuspAt(mv, i / (NF - 1)));
-    const wEnd = inWin.lastIndexOf(true) / (NF - 1);
-    /* The key at the window's far edge is the turn's last pose, so the exit starts at the one after it. */
-    const exitFrom = (mv.keys.find(k => k.t > wEnd + 2 / (NF - 1)) || { t: 1 }).t;
+    const phaseOf = T.phases(mv);
     let worst = null;
     for (let i = 0; i < NF; i++) {
       const t = i / (NF - 1), b = balanceOf(poseAt(mv, t));
       if (!b) continue;
-      const ph = inWin[i] ? 'turn' : inWin.indexOf(true) > i ? 'entry' : t < exitFrom ? 'settle' : 'exit';
-      const want = T[ph];
+      const ph = phaseOf(i), want = T[ph];
       phaseFrames++;
       for (const [q, [lo, hi]] of Object.entries(want)) {
         const v = q === 'along' ? b.along : b.contactOnBlade;
@@ -178,4 +208,4 @@ for (const r of rows)
     (r.share ? `  ${(r.share * 100).toFixed(0)}%` : ''));
 const m = rows.map(r => r.mean);
 console.log(`\n${rows.length} moves: ${m.filter(x => Math.abs(x) <= 5).length} within 5 cm on average, ` +
-  `${m.filter(x => x < -5).length} behind, ${m.filter(x => x > 5).length} ahead. Targets set for the one-foot turns only (above).`);
+  `${m.filter(x => x < -5).length} behind, ${m.filter(x => x > 5).length} ahead. Targets set for the families above; everything else is reported.`);

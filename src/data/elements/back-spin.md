@@ -1,6 +1,7 @@
 ---
 name: Back spin
 kind: spin
+rig: backSpin
 summary: "An upright spin on a back edge with the free leg crossed over the skating leg, left on a back outside edge."
 aliases: ["backspin", "back cross foot spin", "back one foot spin", "backward upright spin", "upright back spin"]
 prerequisites: [upright-spin, pivot]

@@ -1,6 +1,7 @@
 ---
 name: Half flip
 kind: basic
+rig: halfFlip
 summary: "A half turn in the air off the toe pick from a back inside edge, landing on the other foot's toe and stepping forwards."
 aliases: ["half toe Salchow", "split jump without the split"]
 prerequisites: [bunny-hop, waltz-jump]

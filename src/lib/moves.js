@@ -15,7 +15,7 @@
    touching, which is most of what distinguishes one edge from another. A foot that
    really is on the picks says so with PICK() below, not with a pitch nobody flagged. */
 
-import { anterior, lateral, ANKLE_POINT, buildPath } from './rig-math.js';
+import { anterior, lateral, ANKLE_POINT, buildPath, pinRuns, pinnedAt } from './rig-math.js';
 
 /* `point` is how hard the free foot is pointed, in degrees from the right angle
    you stand at, and it is clamped to the boot's allowance in bootDir. It is
@@ -835,6 +835,51 @@ export const MOVES = {
        sh:P(0,0,149), L:P(0,12,0,2.2), R:P(-8,6,14), skate:'L', edge:'I', dir:'B'},
       {arm:[52,8,18], t:1.0000, ph:'Exit - opening out and stepping off', hipZ:96, hipYaw:180, shYaw:176,
        sh:P(0,0,146), L:P(0,15,0,1.6), R:P(-18,20,20), skate:'L', edge:'I', dir:'B'},
+    ]}),
+
+  /* THE BACK SPIN — 04/10/2026, Session 33. The upright spin's machinery on the other
+     foot: a right back outside edge, which turns the same way round as the upright spin's
+     left back inside (both lobeSense +1, anticlockwise), so the same arcs and the same
+     rates carry it. The free leg is crossed over the skating leg, in front of its shin,
+     and the exit is the back outside edge it spun on, the free leg extending behind.
+
+     WHICH FOOT IS THIS GUIDE'S CHOICE. None of the documents behind the page names the
+     foot or the edge it turns on (the page says so); what they agree on is the exit, a
+     back outside edge. For a skater who turns anticlockwise that is the right foot, the
+     foot every jump here lands on, and the spin is drawn on it throughout.
+
+     The blade is pitched 2.2° through the centred phases, 8 cm forward of its middle,
+     inside Martyn's spin target (+6 to +10), and the shoulders sit 5 cm back toward the
+     heels so the mass is over that contact (the upright spin's numbers read 3 to 4 cm
+     toward the toe of it); balance.mjs holds both.
+
+     Verified against a coach: NO. */
+  backSpin: spinMove({
+    name:'Back spin',
+    note:'right back outside edge: entered, centred with the free leg crossed, wound up and stepped out',
+    path:[
+      at(0.70, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.30, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:250, radius:R_TIGHT}),
+      at(1.80, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:400, radius:R_SPIN, position:'upright'}),
+      at(2.10, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:400, radius:R_SPIN, position:'upright'}),
+      at(2.90, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:560, radius:R_SPIN, windup:true}),
+      at(1.40, {kind:'arc', foot:'R', edge:'O', dir:'B', sweep:150, radius:R_OUT}),
+    ],
+    keys:[
+      {arm:[70,10,16], t:0.0000, ph:'Back outside edge, still travelling, the free leg out', hipZ:96, hipYaw:180, shYaw:166,
+       sh:P(7,0,146), R:P(0,16,0,1.6), L:P(-28,-10,22), skate:'R', edge:'O', dir:'B'},
+      {arm:[64,9,17], t:0.2200, ph:'The circle tightening, the free leg coming round', hipZ:96, hipYaw:180, shYaw:170,
+       sh:P(7,0,146), R:P(0,15,0,1.9), L:P(-24,0,24), skate:'R', edge:'O', dir:'B'},
+      {arm:[54,8,18], t:0.3800, ph:'Centred - the hip stops travelling', hipZ:96, hipYaw:180, shYaw:174,
+       sh:P(5,0,146), R:P(0,12,0,2.2), L:P(-14,10,30), skate:'R', edge:'O', dir:'B'},
+      {arm:[44,6,18], t:0.5800, ph:'The free leg crossed over the skating leg', hipZ:97, hipYaw:180, shYaw:178,
+       sh:P(5,0,147), R:P(0,12,0,2.2), L:P(-8,15,32), skate:'R', edge:'O', dir:'B'},
+      {arm:[34,4,18], t:0.7400, ph:'Held - spinning, the legs crossed', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(5,0,148), R:P(0,12,0,2.2), L:P(-6,16,30), skate:'R', edge:'O', dir:'B'},
+      {arm:[18,2,12], t:0.9100, ph:'Wind-up - everything to the axis, and it quickens', hipZ:99, hipYaw:180, shYaw:180,
+       sh:P(5,0,149), R:P(0,12,0,2.2), L:P(-5,15,26), skate:'R', edge:'O', dir:'B'},
+      {arm:[60,8,18], t:1.0000, ph:'Exit - the free leg extending behind on the back outside edge', hipZ:96, hipYaw:180, shYaw:176,
+       sh:P(3,0,146), R:P(0,15,0,1.6), L:P(28,-4,22), skate:'R', edge:'O', dir:'B'},
     ]}),
 
   /* A TWO-FOOT SPIN — 04/10/2026, Session 32. Both blades on the ice, turning on the
@@ -2370,6 +2415,119 @@ MOVES.backwardWiggles = {
   note: 'both blades on the ice, travelling backwards, the feet swinging side to side together under still shoulders',
   duration: 4.4, ...wigglesMove(),
 };
+
+/* POWER CHANGE OF EDGE PULLS — 04/10/2026, Session 33. One foot down the rink, inside
+   edge to outside and back, each change of edge a pull: the knee bends into the curve and
+   drives through the change (U.S. Figure Skating Pre-Bronze, focus power). Forwards on the
+   left foot, six lobes; the second length (backwards, after a change of feet) is the same
+   movement the other way round and is not drawn.
+
+   It is the two-foot change of edge on one foot, and keyed as the slaloms are: the edge
+   letter goes to null where the lean brings the blade back under the hip, and the next
+   edge picks up on the other side. On one foot there is no stance to straddle, so the
+   flat is the hip over the blade (lean.mjs's flat route, within BOOT_HALF_W), and on an
+   edge the blade is out from under the hip on the outside of the lobe, 7 cm here.
+
+   Verified against a coach: NO. */
+const pullsMove = () => {
+  const path = [{kind:'arc', foot:'L', edge:'I', dir:'F', sweep:30, span:1}];
+  for (let i = 0; i < 4; i++) path.push({kind:'arc', foot:'L', edge: i % 2 ? 'I' : 'O', dir:'F', sweep:60, span:2});
+  path.push({kind:'arc', foot:'L', edge:'O', dir:'F', sweep:30, span:1});
+  const units = 10, side = { I: -7, O: 7 };
+  const free = P(-6, 9, 20, 0, NEUTRAL);
+  const key = (u, edge, n, hipZ, ph) => ({ t: +(u / units).toFixed(5), ph, hipZ, hipYaw: 0, shYaw: edge === 'O' ? 6 : edge === 'I' ? -6 : 0,
+    arm: [62, 8, 16], sh: P(2, 0, hipZ + 53), L: P(4.5, n, 0, -0.5), R: free, skate: 'L', edge, dir: 'F' });
+  const keys = [key(0, 'I', side.I, 90, 'Pressing into the inside edge, the knee bent')];
+  let edge = 'I';
+  keys.push(key(0.5, 'I', side.I, 89, 'The inside edge at its deepest'));
+  for (let b = 1; b <= 9; b += 2) {
+    const next = edge === 'I' ? 'O' : 'I';
+    keys.push(key(b - 0.3, null, 0, 94, 'Rising through the change, the blade flat under the hip'));
+    keys.push(key(b + 0.4, next, side[next], 92, next === 'O' ? 'Driving onto the outside edge' : 'Driving onto the inside edge'));
+    if (b < 9) keys.push(key(b + 1, next, side[next], 89, 'Knee bent into the curve, the pull'));
+    edge = next;
+  }
+  keys.push(key(10, edge, side[edge], 91, 'Running out on the edge'));
+  return { path, radius: 260, keys };
+};
+MOVES.powerCoePulls = {
+  name: 'Power change of edge pulls',
+  note: 'LFI and LFO alternating down a straight, each change a pull from the knee · forwards, one foot',
+  duration: 6.0, ...pullsMove(),
+};
+
+/* THE HALF JUMPS — 04/10/2026, Session 33: the half flip and the tap toe jump. Both, in
+   Ice Skating Australia's words, take off from a back edge with the other foot's toe pick,
+   turn half way in the air, land on the toe of the foot that did NOT pick and then put the
+   picking foot down going forwards. One construction draws both; they differ in the edge
+   they leave from and in which way the turn goes relative to the pick, and for a skater
+   who turns anticlockwise both of those come out of which foot picks:
+
+     half flip      from LBI, right pick, turning away from it   (lands left toe, steps RFI)
+     tap toe jump   from RBO, left pick, turning toward it       (lands right toe, pushes LFO)
+
+   Both turns are anticlockwise, so the same hip numbers serve both. The tap toe jump's edge
+   is left to the skater in Australia's text; the back outside edge is this guide's choice,
+   the one the toe loop leaves from. The half flip's three turn after the step is its own
+   page and is not drawn here, nor is the tap toe jump's run of steps after the push.
+
+   THE TAKE-OFF PICK is the toe loop's: pinned, reaching back as far as the leg goes, toe
+   back toward the skater. THE LANDING PICK is the bunny hop's: pinned, pointing along the
+   travel (dir F, the skater now facing forwards), the hip passing over it. Each pinned
+   run's later keys are read back off the pin (pinnedAt) rather than written by hand, so
+   they say where the foot is and continuity.mjs holds them to it.
+
+   Verified against a coach: NO. */
+const halfJump = ({ name, note, skate, edge, step, stepEdge }) => {
+  const pick = skate === 'L' ? 'R' : 'L';
+  const path = [{kind:'arc', foot:skate, edge, dir:'B', sweep:50, span:0.40},
+                {kind:'line', len:70, span:0.22},
+                {kind:'arc', foot:pick, edge:stepEdge, dir:'F', sweep:40, span:0.38}];
+  const F = (t, n, z) => P(t, n, z, 0, NEUTRAL);
+  const k = (t, ph, hipZ, hipYaw, shYaw, sh, feet, ref, arm) =>
+    ({ t, ph, hipZ, hipYaw, shYaw, sh, arm, [skate]: feet[0], [pick]: feet[1], ...ref });
+  const onT = { skate, edge, dir:'B' }, air = { skate:null }, onS = { skate:pick, edge:stepEdge, dir:'F' };
+  const draft = { name, note, path, radius:150, duration:3.6, keys:[
+    k(0.00, `Gliding on the back ${edge === 'I' ? 'inside' : 'outside'} edge`, 94, 180, 176, P(-2,0,146),
+      [P(-1,14,0,-0.5), F(30,6,18)], onT, [60,6,18]),
+    k(0.18, 'Skating knee bends, the free leg reaching back', 88, 180, 180, P(-16,0,134),
+      [P(-5,15,0,-1), F(48,6,12)], onT, [58,10,20]),
+    k(0.27, 'The toe pick goes in behind', 89, 180, 186, P(-16,0,136),
+      [P(-5,15,0,-0.5), {...PIN(48,6,0,48), yaw:20}], onT, [54,12,19]),
+    k(0.36, 'Vaulting off the pick, the turn starting', 96, 214, 240, P(-2,0,150),
+      [P(-4,10,2,3), {...PIN(0,0,0,40), yaw:30}], onT, [40,20,8]),
+    k(0.40, 'In the air, turning half way', 112, 260, 290, P(0,0,166),
+      [F(0,6,26), F(4,4,28)], air, [32,16,10]),
+    k(0.48, 'Coming down, facing forwards', 104, 340, 352, P(0,0,156),
+      [F(6,8,10), F(-2,0,24)], air, [44,16,14]),
+    k(0.53, `The ${skate === 'L' ? 'left' : 'right'} toe pick lands first`, 88, 360, 360, P(4,0,142),
+      [{...PIN(6,8,0,24), dir:'F'}, F(-6,0,18)], air, [52,14,16]),
+    k(0.58, `Over the pick, the ${pick === 'L' ? 'left' : 'right'} foot coming down`, 85, 360, 360, P(4,0,140),
+      [{...PIN(0,0,0,26), dir:'F'}, F(6,10,8)], air, [54,12,18]),
+    k(0.62, `Onto the ${pick === 'L' ? 'left' : 'right'} blade going forwards`, 91, 360, 360, P(4,0,142),
+      [{...PIN(0,0,0,24), dir:'F'}, P(2,14,0,-1)], onS, [56,10,20]),
+    k(0.70, 'The pick out, the free foot lifting behind', 90, 360, 360, P(2,0,142),
+      [F(-24,6,12), P(2,14,0,-0.5)], onS, [58,8,20]),
+    k(1.00, `Gliding on the forward ${stepEdge === 'I' ? 'inside' : 'outside'} edge`, 94, 360, 360, P(2,0,146),
+      [F(-34,6,18), P(0,14,0,-0.5)], onS, [60,8,20]),
+  ]};
+  /* The pinned runs' later keys read back off their pins. */
+  const keys = draft.keys.map(x => ({ ...x }));
+  /* The hands are filled in by the loop at the foot of this file, after this runs, and
+     poseFree interpolates them; stand-ins here, since only the feet place the path. */
+  const probe = { ...draft, keys: draft.keys.map(x => ({ ...x, LH: x.sh, RH: x.sh })) };
+  for (const r of pinRuns(probe)) for (let i = r.keys[0] + 1; i <= r.keys[1]; i++) {
+    const at = pinnedAt(r, keys[i].t);
+    keys[i] = { ...keys[i], [r.foot]: { ...keys[i][r.foot], t: +at.t.toFixed(2), n: +at.n.toFixed(2) } };
+  }
+  return { ...draft, keys };
+};
+MOVES.halfFlip = halfJump({ name:'Half flip',
+  note:'LBI · right toe pick · half turn away from it · left toe lands · step forwards onto RFI',
+  skate:'L', edge:'I', stepEdge:'I' });
+MOVES.tapToeJump = halfJump({ name:'Tap toe jump',
+  note:'RBO · left toe pick · half turn toward it · right toe lands · push off onto LFO',
+  skate:'R', edge:'O', stepEdge:'O' });
 
 /* MARCHING — 04/10/2026, Session 32. Walking on the ice, each foot lifted clear in turn
    (Ice Skating Australia: eight to ten steps, every foot lifted). Four steps here,

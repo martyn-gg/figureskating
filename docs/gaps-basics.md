@@ -38,8 +38,8 @@ missing.
 |---|---|---|
 | **Getting moving** | forward stroking | yes — a rig |
 | | backward stroking | yes — a rig, 20/09/2026 |
-| | swizzle, backward swizzle | **no** |
-| | half-swizzle pumps, backward half-swizzle pumps | **no** |
+| | swizzle, backward swizzle | yes — a rig each, 04/10/2026, the second blade on its own path |
+| | half-swizzle pumps, backward half-swizzle pumps | yes — a rig each, 04/10/2026 |
 | **Gliding** | two-foot glide, backward two-foot glide | yes |
 | | one-foot glide, backward one-foot glide | yes |
 | | dip | yes, and the most worthwhile of them |
@@ -50,7 +50,7 @@ missing.
 | **Turning and changing edge** | two-foot turn, backward two-foot turn | yes — a rig each, and the first use of the skid on an element |
 | | slalom, backward slalom | yes |
 | | two-foot change of edge | yes |
-| | pivot | **no — the pick has no anchor** |
+| | pivot | yes — a rig, 04/10/2026, a compass about a pinned pick |
 
 Eight of twenty-two, on the day this was written. **Sixteen of twenty-two now**, and the
 count and the reasons are held by `tools/drawn.mjs` rather than by this table — read them
@@ -93,6 +93,13 @@ blades are turned out against the travel), both half-swizzle pumps (the pushing 
 angled across the circle), the hockey stop (counter-rotation and a spine), the pivot (the
 pick has no anchor), and the drag. The drag and the lunge want the same missing rotation — a boot
 that can roll onto its side — which is a different one from what the camel change wants.
+
+**Session 33, 04/10/2026.** The pumps, the pivot and marching came in
+Session 32; the swizzles needed the second path the paragraph above names, and got it as a
+second blade with its own track (`docs/model.md`, *A second blade on its own circle*). The
+backward wiggles were excused as a swizzle and turned out not to be one: both feet curve
+together, as on the slalom. What is left is the hockey stop and falling and getting up, and
+`tools/drawn.mjs` holds the reasons.
 
 ## The turns, and what a sweeping yaw cost — 19/09/2026, later the same day
 

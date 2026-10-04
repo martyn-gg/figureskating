@@ -2195,6 +2195,48 @@ opposite ways. The guide's own page, and all three programmes' words, have the f
 to the same side together under still shoulders: the backward slalom's two blades on one
 curve, small and quick, with the twist added. So they draw with the derived edge.
 
+## Balance targets per phase — 04/10/2026, Session 33
+
+`balance.mjs` reported and asserted nothing about poses until today. Martyn set the targets
+phase by phase, and they are asserted now (`check:balance`), family by family:
+
+- **One-foot turns** (the sixteen threes and brackets): the mass over the blade's contact,
+  ±2 cm, on the glides either side; the contact on the front of the rocker, +4 to +8 cm, through
+  the cusp window; on the exit edge once the check holds, the contact at the middle or just
+  behind it, −3 to 0. Between the window and the next key the blade rocks back and only the
+  mass is held. Inside the window the mass is not held along the blade, because the blade is
+  square across the circle at the apex and the number there is the lean.
+- **Spins** (the back spin so far): centred, the contact +6 to +10 and the mass over it; the
+  edges in and out, the mass over the contact.
+- **Glides** on any move (Martyn: every glide): the mass over the contact ±2. The power change
+  of edge pulls, and the half jumps outside their vault.
+
+The phases are read off the move (`cuspAt`, a segment's `position` or `windup`, the keys with a
+foot on a pick), never authored a second time. Meeting them moved every key of the turns: the
+glides read 5 to 10 cm behind the contact, so the skating blade went back under the hip
+(`TURN_PITCH` 1.6° and the solved offsets in `moves.js`), and the knee-bend keys rose a
+centimetre to keep the shin inside the boot. The toe loop's entry three turn is `rfiThree`'s
+keys, so the toe loop family moved with it. The Salchow's three is a jump entry and kept its
+own. Mutations: `--break=turns` 4768, `--break=rock` 352.
+
+The upright spin reads 3 to 4 cm toward the toe of its contact and is not in a family yet;
+neither are the jumps or the stops. Those are the next to set.
+
+## Four of the pages that said "not yet drawn" — 04/10/2026, Session 33
+
+- **The back spin** is the upright spin's arcs on a right back outside edge (the same lobe
+  sense, so the same rates), the free leg crossed in front of the skating shin. Which foot is
+  the guide's choice: no source names it, and the exit they agree on is a back outside edge.
+- **Power change of edge pulls** are the slalom's keying on one foot: the edge to null where
+  the blade comes back under the hip, the knee bending into each lobe. Forwards only; the
+  backward length is the same movement on the other foot.
+- **The half flip and the tap toe jump** are one construction: the toe loop's pinned pick
+  behind for the take-off, a half turn anticlockwise, the bunny hop's forward pick for the
+  landing on the take-off foot's toe, then the picking foot down going forwards. For an
+  anticlockwise skater the half flip leaves LBI and turns away from its right pick, the tap
+  toe jump leaves RBO and turns toward its left pick, and both come out of which foot picks.
+  The landing pick's later keys are read back off the pin rather than written by hand.
+
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
 `shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the
