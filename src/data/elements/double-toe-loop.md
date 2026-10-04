@@ -1,6 +1,7 @@
 ---
 name: Double toe loop
 kind: jump
+rig: doubleToeLoop
 summary: RBO takeoff, off the pick, 2 rotations to RBO.
 aliases: [2T]
 prerequisites: [toe-loop]

@@ -1,6 +1,7 @@
 ---
 name: Double Axel + double toe loop
 kind: combo
+rig: doubleAxelDoubleToeLoop
 summary: Double Axel (LFO, off the edge) straight into a double toe loop (RBO, off the pick), 4.5 rotations in all.
 aliases: [2A+2T]
 prerequisites: [double-axel, double-toe-loop]

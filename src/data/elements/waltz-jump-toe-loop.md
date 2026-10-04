@@ -1,6 +1,7 @@
 ---
 name: Waltz jump + toe loop
 kind: combo
+rig: waltzToeLoop
 summary: Waltz jump (LFO, off the edge) straight into a toe loop (RBO, off the pick), 1.5 rotations in all.
 prerequisites: [waltz-jump, toe-loop]
 combo:

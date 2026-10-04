@@ -1,6 +1,7 @@
 ---
 name: Double Salchow + double toe loop
 kind: combo
+rig: doubleSalchowDoubleToeLoop
 summary: Double Salchow (LBI, off the edge) straight into a double toe loop (RBO, off the pick), 4 rotations in all.
 aliases: [2S+2T]
 prerequisites: [double-salchow, double-toe-loop]

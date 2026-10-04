@@ -64,8 +64,8 @@ guide and tell us what is wrong with it.
 their doubles, 19 undrawn combinations, the pivot and the bunny hop. Agreed with Martyn
 04/10/2026. *Steps 1 and 2 done 04/10/2026, Session 29*: the pin and the reach for the pick,
 on `toePick`, now a movement. *The toe loop drawn the same day*, after Martyn corrected
-which way a picking toe points. Next: the double toe loop and its combinations, then the
-flip and the Lutz.
+which way a picking toe points, then the double toe loop and eleven more combinations
+(18 drawn). Next: the flip and the Lutz, then the pivot.
 
 ## Also on the list, unordered
 

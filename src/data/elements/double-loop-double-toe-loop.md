@@ -1,6 +1,7 @@
 ---
 name: Double loop + double toe loop
 kind: combo
+rig: doubleLoopDoubleToeLoop
 summary: Double loop (RBO, off the edge) straight into a double toe loop (RBO, off the pick), 4 rotations in all.
 aliases: [2Lo+2T]
 prerequisites: [double-loop, double-toe-loop]

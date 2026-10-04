@@ -2059,10 +2059,9 @@ Object.assign(MOVES, {
    first landing left them. The link's arc turns at the mean of the two rates either
    side of it, so the skater's speed does not step.
 
-   ONLY THE LOOP IS DRAWN SECOND, for now. The toe loop has had a rig since Session 29,
-   but no combination is drawn through it yet (spec-anchor.md step 4). So the
-   combinations drawn are the four rigged firsts into a loop and the three rigged
-   doubles into a double loop.
+   BOTH SECONDS ARE DRAWN since Session 29, when the toe loop got its rig: every rigged
+   first (waltz jump, Salchow, toe loop, loop, Axel) into a loop and into a toe loop, and
+   the four rigged doubles into a double loop and a double toe loop. Eighteen in all.
 
    THE CLIP IS LONGER THAN EITHER JUMP, so it gets more frames. buildPath samples a move
    at 320 points however long it lasts, and a combination drawn at 320 would turn twice
@@ -2101,6 +2100,7 @@ const copyKey = k => {
   return o;
 };
 const lerp = (a, b, f) => a + (b - a) * f;
+const freeBehind = (a, b, f) => ({ t: lerp(a.t, b.t, f), n: lerp(a.n, b.n, f), z: lerp(a.z, b.z, f) + 2 });
 const comboOf = (A, B, name, note) => {
   const deepest = (keys, from, to) => {
     let best = from;
@@ -2145,8 +2145,19 @@ const comboOf = (A, B, name, note) => {
   };
   const keys = [
     ...A.keys.slice(0, land + 1).map(k => ({ ...copyKey(k), t: k.t * A.duration / duration })),
+    /* INTO A TOE LOOP THE FREE LEG STAYS BEHIND — 04/10/2026, Session 29. Into a loop it
+       comes through and crosses in front, because that is where the loop's bend has it.
+       The toe loop's bend has it extended behind, reaching for the pick, so it never
+       comes through: it eases from where the landing left it to where the bend wants it,
+       held clear of the ice. Every combination drawn before today goes into a loop and
+       takes the first branch unchanged. */
+    ...(b.L.t > 0 ? [
+      mid(1 / 3, 'The landing edge running, the free leg held behind', freeBehind(a.L, b.L, 1 / 3)),
+      mid(2 / 3, 'The free leg reaching back for the pick', freeBehind(a.L, b.L, 2 / 3)),
+    ] : [
     mid(1 / 3, 'The landing edge running, the free leg coming in', { t: 26, n: 11, z: 18 }),
     mid(2 / 3, 'The free leg passing the skating foot', { t: -8, n: 7, z: 22 }),
+    ]),
     ...B.keys.slice(bend).map(k => {
       const o = copyKey(k);
       o.t = (tA + LINK + (k.t - b.t) * B.duration) / duration;
@@ -2209,6 +2220,8 @@ const comboOf = (A, B, name, note) => {
       ...K.filter(k => k.t >= 0.5).map(copyKey),
     ]};
 }
+MOVES.doubleToeLoop = doubleOf(MOVES.toeLoop, 'Double toe loop',
+  'RBO takeoff, off the left toe pick · two rotations · RBO landing');
 
 Object.assign(MOVES, {
   waltzLoop: comboOf(MOVES.waltz, MOVES.loop, 'Waltz jump + loop',
@@ -2225,6 +2238,29 @@ Object.assign(MOVES, {
     'RBO takeoff · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
   doubleAxelDoubleLoop: comboOf(MOVES.doubleAxel, MOVES.doubleLoop, 'Double Axel + double loop',
     'LFO takeoff · two and a half rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+  /* Session 29: the toe loop as first and second. */
+  waltzToeLoop: comboOf(MOVES.waltz, MOVES.toeLoop, 'Waltz jump + toe loop',
+    'LFO takeoff · half rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  salchowToeLoop: comboOf(MOVES.salchow, MOVES.toeLoop, 'Salchow + toe loop',
+    'LBI takeoff · one rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  toeLoopToeLoop: comboOf(MOVES.toeLoop, MOVES.toeLoop, 'Toe loop + toe loop',
+    'RBO takeoff off the pick · one rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  loopToeLoop: comboOf(MOVES.loop, MOVES.toeLoop, 'Loop + toe loop',
+    'RBO takeoff · one rotation · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  axelToeLoop: comboOf(MOVES.axel, MOVES.toeLoop, 'Axel + toe loop',
+    'LFO takeoff · one and a half rotations · RBO landing, held · toe loop: off the pick, one rotation · RBO landing'),
+  toeLoopLoop: comboOf(MOVES.toeLoop, MOVES.loop, 'Toe loop + loop',
+    'RBO takeoff off the pick · one rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  doubleSalchowDoubleToeLoop: comboOf(MOVES.doubleSalchow, MOVES.doubleToeLoop, 'Double Salchow + double toe loop',
+    'LBI takeoff · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
+  doubleToeLoopDoubleToeLoop: comboOf(MOVES.doubleToeLoop, MOVES.doubleToeLoop, 'Double toe loop + double toe loop',
+    'RBO takeoff off the pick · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
+  doubleLoopDoubleToeLoop: comboOf(MOVES.doubleLoop, MOVES.doubleToeLoop, 'Double loop + double toe loop',
+    'RBO takeoff · two rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
+  doubleAxelDoubleToeLoop: comboOf(MOVES.doubleAxel, MOVES.doubleToeLoop, 'Double Axel + double toe loop',
+    'LFO takeoff · two and a half rotations · RBO landing, held · double toe loop: off the pick, two rotations · RBO landing'),
+  doubleToeLoopDoubleLoop: comboOf(MOVES.doubleToeLoop, MOVES.doubleLoop, 'Double toe loop + double loop',
+    'RBO takeoff off the pick · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
 });
 
 for(const m of Object.values(MOVES)) for(const k of m.keys){

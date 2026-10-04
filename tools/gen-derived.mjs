@@ -1338,7 +1338,7 @@ for (const [key_, j] of Object.entries(JUMPS)) {
 /* THE DOUBLES — 04/10/2026. Every field from jumpAt(key, 2); the prose is the only
    thing written by hand. The slug is the single's with "double-" in front, and the
    prerequisite is the single, because a double is that jump with one more turn. */
-const DOUBLE_RIG = { salchow: 'doubleSalchow', loop: 'doubleLoop', axel: 'doubleAxel' };
+const DOUBLE_RIG = { salchow: 'doubleSalchow', toeLoop: 'doubleToeLoop', loop: 'doubleLoop', axel: 'doubleAxel' };
 const SINGLE_SLUG = { waltz: 'waltz-jump', salchow: 'salchow', toeLoop: 'toe-loop', loop: 'loop', euler: 'euler', flip: 'flip', lutz: 'lutz', axel: 'axel' };
 const DOUBLE_TEXT = {
   salchow: `The Salchow with a second turn in the air. The entry, the three turn, the back inside

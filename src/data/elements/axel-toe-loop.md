@@ -1,6 +1,7 @@
 ---
 name: Axel + toe loop
 kind: combo
+rig: axelToeLoop
 summary: Axel (LFO, off the edge) straight into a toe loop (RBO, off the pick), 2.5 rotations in all.
 aliases: [1A+1T]
 prerequisites: [axel, toe-loop]

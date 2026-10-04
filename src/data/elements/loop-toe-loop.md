@@ -1,6 +1,7 @@
 ---
 name: Loop + toe loop
 kind: combo
+rig: loopToeLoop
 summary: Loop (RBO, off the edge) straight into a toe loop (RBO, off the pick), 2 rotations in all.
 aliases: [1Lo+1T]
 prerequisites: [loop, toe-loop]
