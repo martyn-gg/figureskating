@@ -29,7 +29,7 @@ const elements = defineCollection({
        most of them are two-foot or straight, and the derived machinery keys off
        `entry` — so a basic is written rather than generated, and that is the point
        of it being its own kind rather than an edge with a missing field. */
-    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance', 'hold', 'basic', 'sequence']),
+    kind: z.enum(['edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'spin', 'position', 'step', 'dance', 'hold', 'basic', 'sequence', 'combo']),
     summary: z.string(),
     entry: z.object({ foot, edge, dir }).optional(),
     /* One-foot turns first, then the two-foot ones. A mohawk and a choctaw change
@@ -66,6 +66,16 @@ const elements = defineCollection({
       landing: z.object({ foot, edge, dir }),
       assisted: z.boolean().describe('true for toe jumps, false for edge jumps'),
       rotations: z.number(),
+    }).optional(),
+    /* A JUMP COMBINATION — 04/10/2026, Session 28. Two jumps, the second taking off
+       from the edge the first lands on. Only the two jump keys and the count are
+       stored; names, edges, rotations and the ISU code are skating.js's comboAt, and
+       tools/jumps.mjs holds every `combo` page to it. Its own kind, `combo`, because a
+       `combination` is a run of turns (a cluster) and has been since the beginning. */
+    combo: z.object({
+      first: z.string(),
+      second: z.string(),
+      count: z.number().int().default(1),
     }).optional(),
     /* OTHER NAMES THE SAME MOVEMENT GOES BY.
 

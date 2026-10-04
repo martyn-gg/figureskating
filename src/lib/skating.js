@@ -423,3 +423,52 @@ export function confusableAt(jumpKey, count = 1) {
   const j = jumpAt(jumpKey, count);
   return ALL_JUMPS.filter(o => o.count === count && o.key !== jumpKey && label(o.takeoff) === label(j.takeoff));
 }
+
+/* JUMP COMBINATIONS — 04/10/2026, Session 28, the second half of the roadmap's first
+   item. A combination is two jumps where the landing of the first is the takeoff of the
+   second: no step, no change of foot, no turn between them. So which jumps can come
+   second is not a list but a question this file can already answer. Every jump here
+   lands on LANDING, the right back outside edge, and the jumps that take off from it
+   are the toe loop and the loop. Nothing else qualifies, and if a jump with another
+   takeoff were ever written into JUMPS it would not become a second jump by accident.
+
+   Which combinations the guide holds is derived too (Martyn, 04/10/2026: the derived
+   set, same count): every jump into each possible second jump at the same count, the
+   waltz jump with the singles because it has no double. Mixed counts (a double Axel
+   into a single toe loop, say) are legal and skated, but they are the same two jumps
+   at different counts and the pages for the two counts already say what each is.
+
+   A three-jump combination can carry an Euler (a half loop, landing back inside on the
+   other foot) in the middle, which opens the Salchow and the flip as a third jump. The
+   guide does not hold the Euler yet, so it holds no three-jump combinations; when it
+   does, SECONDS below is the line that changes. */
+
+/** The jumps that take off where every jump lands: the only ones that can come second. */
+export const SECONDS = Object.keys(JUMPS).filter(k => label(JUMPS[k].takeoff) === label(LANDING));
+
+/** Two jumps as a combination: names, ISU code and everything about each jump. */
+export function comboAt(firstKey, secondKey, count = 1) {
+  const a = jumpAt(firstKey, Math.min(count, maxCount(firstKey)));
+  const b = jumpAt(secondKey, count);
+  if (label(b.takeoff) !== label(LANDING))
+    throw new Error(`comboAt: ${b.name} takes off ${label(b.takeoff)}, not where ${a.name} lands (${label(LANDING)})`);
+  if (a.count !== b.count && !(a.key === 'waltz' && b.count === 1))
+    throw new Error(`comboAt: ${a.name} has no count ${count}`);
+  const lower = j => (j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));
+  return {
+    first: a, second: b, count,
+    key: `${firstKey}+${secondKey}@${count}`,
+    name: `${a.name} + ${lower(b)}`,
+    /* The ISU writes a combination as its jumps' codes joined by "+", 2S+2T, and a
+       single as 1S. The waltz jump has no code, so a combination with it has none. */
+    code: a.code !== null && b.code !== null
+      ? [a, b].map(j => (j.count === 1 ? '1' : '') + j.code).join('+') : null,
+    rotations: a.rotations + b.rotations,
+  };
+}
+
+/** Every combination the guide holds: singles (the waltz jump first), then the doubles,
+    each first jump in JUMPS order, each followed by the seconds in JUMPS order. */
+export const ALL_COMBOS = [1, 2].flatMap(c => Object.keys(JUMPS)
+  .filter(k => maxCount(k) >= c)
+  .flatMap(k => SECONDS.map(s => comboAt(k, s, c))));

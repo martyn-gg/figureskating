@@ -17,14 +17,20 @@ guide and tell us what is wrong with it.
 
 ## The order
 
-1. **Doubles and jump combinations.** *Doubles done 04/10/2026*: six double pages
+1. **Doubles and jump combinations.** Done. *Doubles done 04/10/2026*: six double pages
    (2S, 2T, 2Lo, 2F, 2Lz, 2A) from `jumpAt(key, 2)` in `skating.js`, the double Salchow,
    loop and Axel drawn by `doubleOf` in `moves.js` (the single with one more turn in the
    air), held to the model by `tools/jumps.mjs`. The toe loop, flip and Lutz have no rig
-   as singles either; their doubles draw the two edges like the singles do. **Next:
-   combinations**, because a combination is two jumps and the landing edge of the first is
-   the take-off of the second. Every jump in the guide lands RBO, so a combination's second
-   jump is a toe loop or a loop, and the model can say so.
+   as singles either; their doubles draw the two edges like the singles do.
+   *Combinations done 04/10/2026*: `comboAt` and `ALL_COMBOS` in `skating.js`. Every jump
+   lands RBO, so the second jump is whichever takes off there (`SECONDS`: the toe loop and
+   the loop), derived rather than listed. 26 pages, every jump into each second at the
+   same count, the waltz jump with the singles; their own kind, `combo`, and section,
+   *Jump combinations*, a grid of first jump against second. Seven drawn by `comboOf` in
+   `moves.js` (the four rigged firsts into a loop, the three rigged doubles into a double
+   loop), the two rigs joined on the landing edge. `tools/jumps.mjs` holds pages and rigs
+   to the model. Not held: mixed counts (2A+1T), three-jump combinations, which need the
+   Euler, and jump sequences.
 2. **The National tests.** British Ice Skating's free-skating ladder, the second of its two.
    Only the Skills tests are written out. The championship entry table in
    `gaps-competition.md` already names National 4, 6, 7 and 8; they need the syllabus

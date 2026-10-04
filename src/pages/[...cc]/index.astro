@@ -25,7 +25,7 @@ const myGrades = here
    listed the exclusions, so the twenty-four twizzles added on 29/08/2026 fell
    through it and landed alphabetically in amongst the jumps — a new kind should
    not be able to appear here by not having been thought of. */
-const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'position',
+const KINDS = ['basic', 'edge', 'turn', 'twizzle', 'transition', 'combination', 'jump', 'combo', 'position',
                'spin', 'step', 'sequence', 'hold', 'dance'];
 const counts = Object.fromEntries(KINDS.map(k => [k, byKind(k).length]));
 /* How many element pages draw the body as well as the tracing — counted, not claimed.
@@ -129,7 +129,8 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
         That is a {three.data.name.toLowerCase()}, and there are{' '}
         <a href={url('elements/')}>{counts.turn - 1} more turns</a> where it came from,
         plus {counts.basic} basics, {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
-        {counts.combination} clusters, {counts.jump} jumps, {counts.spin} spins and{' '}
+        {counts.combination} clusters, {counts.jump} jumps, {counts.combo} jump combinations,{' '}
+        {counts.spin} spins and{' '}
         {counts.position} positions. Across all of them, {rigged} draw the skater's body in three
         views as well as the tracing.
       </p>
@@ -146,7 +147,8 @@ const three = byKind('turn').find(e => e.data.turn === 'three' && label(e.data.e
             transitions" before they were. */}
         {counts.basic} basics, {counts.edge} edges, {counts.turn} turns,{' '}
         {counts.twizzle} twizzles, {counts.transition} transitions,{' '}
-        {counts.combination} clusters, {counts.jump} jumps, {counts.spin} spins,{' '}
+        {counts.combination} clusters, {counts.jump} jumps, {counts.combo} jump combinations,{' '}
+        {counts.spin} spins,{' '}
         {counts.position} positions, {counts.step + counts.sequence} steps and sequences{' '}
         and {counts.dance} pattern dances with the {counts.hold} holds they use
       </span>

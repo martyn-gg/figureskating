@@ -18,7 +18,7 @@ import EdgeThumb from '../../../../components/EdgeThumb.astro';
 import PathThumb from '../../../../components/PathThumb.astro';
 import HoldStrip from '../../../../components/HoldStrip.astro';
 import { elementGroups, canonicalOf } from '../../../../lib/element-groups.js';
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS } from '../../../../lib/skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, ALL_COMBOS, SECONDS, JUMPS, LANDING } from '../../../../lib/skating.js';
 const { cc } = Astro.params;
 const url = p => curl(cc, p);
 
@@ -286,7 +286,49 @@ import { SECTION_NOTE } from '../../../../lib/element-groups.js';
       most of why they read as an appendix to it. A jump carries its takeoff edge
       and a held position carries its entry edge, so both can draw the curve they
       begin on for nothing — same EdgeThumb, same buildTrace, no script. */}
-  {restKinds.filter(k => k === section).map(k => (
+  {/* JUMP COMBINATIONS AS A TABLE — 04/10/2026. Twenty-six links in a list is a wall;
+      every combination is a first jump and a second, so it is a grid of the two, one
+      table per count, generated from ALL_COMBOS like the clusters are from their
+      chains. A cell is the ISU code where there is one. */}
+  {section === 'combo' && (<>
+    <p class="note">
+      Every jump here lands on {label(LANDING)}, and only the toe loop and the loop take off
+      from it, so those are the two jumps that can come second. Pick the first jump on the
+      left and the second along the top.
+    </p>
+    {[1, 2].map(count => {
+      const rows = [...new Map(ALL_COMBOS.filter(c => c.count === count).map(c => [c.first.key, c.first])).values()];
+      const pageOf = c => allElements.find(e => e.data.kind === 'combo' && e.data.combo.first === c.first.key
+        && e.data.combo.second === c.second.key && e.data.combo.count === count);
+      return (
+        <>
+          <h2>{count === 1 ? 'Singles' : 'Doubles'}</h2>
+          <div class="scroller">
+            <table class="grid combos">
+              <thead><tr><th scope="col">First jump</th>{SECONDS.map(k => (
+                <th scope="col">then {count === 2 ? 'double ' : ''}{JUMPS[k].name.toLowerCase()}</th>))}</tr></thead>
+              <tbody>
+                {rows.map(a => (
+                  <tr>
+                    <th scope="row">{a.name}</th>
+                    {SECONDS.map(k => {
+                      const c = ALL_COMBOS.find(x => x.count === count && x.first.key === a.key && x.second.key === k);
+                      const el = c && pageOf(c);
+                      return <td>{el
+                        ? <a href={url(`elements/${el.id}/`)} title={el.data.name}>{c.code ?? `+ ${c.second.name.toLowerCase()}`}</a>
+                        : <span class="gap">none</span>}</td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      );
+    })}
+  </>)}
+
+  {restKinds.filter(k => k === section && k !== 'combo').map(k => (
     <>
       <ul class="plain withthumb">
         {rest.filter(e => e.data.kind === k).map(e => {

@@ -11,7 +11,7 @@
    the collection as an argument instead of fetching it. Two pages computing their
    own groups would be two answers to "what is a twizzle family", and the second
    one would go stale. */
-import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, JUMPS } from './skating.js';
+import { label, exitState, describeEdge, chainStates, clusterOf, TURNS, STEPS, TRANSITIONS, TWIZZLES, ALL_TURNS, JUMPS, ALL_COMBOS } from './skating.js';
 
 /* LISTS ARE IN THE ORDER A SKATER LEARNS THEM — 02/10/2026, Martyn: review the list
    orders and present in learning order anything that should be.
@@ -69,6 +69,14 @@ const handRank = e => {
     const i = JUMP_ORDER.indexOf(e.data.jump?.of);
     if (i < 0) throw new Error(`element-groups: the jump "${e.data.name}" names no jump in JUMPS`);
     return (e.data.jump.count - 1) * JUMP_ORDER.length + i;
+  }
+  /* A jump combination sits where comboAt's ALL_COMBOS puts it: singles, then doubles,
+     each first jump in learning order. Keyed on what the page is, not its name. */
+  if (k === 'combo') {
+    const c = e.data.combo;
+    const i = ALL_COMBOS.findIndex(x => x.first.key === c?.first && x.second.key === c?.second && x.count === c?.count);
+    if (i < 0) throw new Error(`element-groups: the combination "${e.data.name}" is not in ALL_COMBOS`);
+    return i;
   }
   const list = LEARN[k];
   if (!list) return null;
@@ -200,6 +208,7 @@ export function elementGroups(elements, exercises = []) {
   const oneFoot = elements.filter(e => e.data.kind === 'turn' && TURN_KEYS.includes(e.data.turn));
   const twoFoot = elements.filter(e => e.data.kind === 'turn' && STEP_KEYS.includes(e.data.turn));
   const KIND_LABEL = k => k === 'position' ? 'Positions' : k === 'dance' ? 'Pattern dances'
+    : k === 'combo' ? 'Jump combinations'
     : `${k.charAt(0).toUpperCase()}${k.slice(1)}s`;
 
   /* THE ORDER OF THE SECTIONS IS THE ORDER A SKATER MEETS THEM — 19/09/2026,
@@ -237,7 +246,9 @@ export function elementGroups(elements, exercises = []) {
        nothing in it. A transition is how you get from one edge to the next; a step is
        a way of moving that changes neither. Both come before a skater turns. */
     basic: 1, edges: 2, transitions: 3, step: 4, 'one-foot': 5, 'two-foot': 6,
-    twizzles: 7, clusters: 8, position: 9, jump: 10, spin: 11,
+    twizzles: 7, clusters: 8, position: 9, jump: 10,
+    /* JUMP COMBINATIONS FOLLOW THE JUMPS — 04/10/2026. A combination is two of them. */
+    combo: 10.5, spin: 11,
     /* SEQUENCES COME LAST — 03/10/2026. A step or choreographic sequence is a run of
        everything above it, so it cannot be met before what it is made of. */
     sequence: 12,
@@ -282,7 +293,8 @@ export const SECTION_NOTE = {
   transitions: 'Getting from one edge to the next: crossovers, chassés, cross rolls, changes of edge, and the step wide and push back the Skills tests ask for.',
   clusters:    'Turns run together, where each one\'s exit is the next one\'s entry.',
   basic:       'The floor: the push, the glide, the swizzle, the stop, the two-foot turn.',
-  jump:        'The waltz jump and the six singles, in the order they are usually learned.',
+  jump:        'The waltz jump, the six singles and their doubles, in the order they are usually learned.',
+  combo:       'Two jumps, the second taking off from the edge the first lands on: a toe loop or a loop.',
   position:    'Held shapes: the spiral, the teapot, the extended edge.',
   spin:        'The two-foot spin, the three basic positions, and the two ways of joining them: a change of foot and a combination.',
   sequence:    'Step sequences and choreographic sequences: runs of turns, steps and movements judged as one element.',

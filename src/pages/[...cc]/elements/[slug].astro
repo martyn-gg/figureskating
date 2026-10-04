@@ -14,7 +14,7 @@ import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
 import BodyFrame from '../../../components/BodyFrame.astro';
 import { DANCE_KEY, stepLink, patternBeats } from '../../../lib/dance.js';
 import Edge from '../../../components/Edge.astro';
-import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableAt, jumpAt, maxCount } from '../../../lib/skating.js';
+import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableAt, jumpAt, maxCount, comboAt, ALL_COMBOS, SECONDS } from '../../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -103,6 +103,19 @@ const sibling = jumpKey && maxCount(jumpKey) > 1
   ? (await getCollection('elements')).find(e => e.data.jump && e.data.jump.of === jumpKey && e.data.jump.count === (count === 1 ? 2 : 1))
   : null;
 const allElements = await getCollection('elements');
+/* A JUMP COMBINATION — 04/10/2026, Session 28. Everything about it is comboAt's; the
+   page stores the two jump keys and the count. Its two jumps' pages are found by `of`
+   and count, like the sibling above. */
+const combo = d.combo ? comboAt(d.combo.first, d.combo.second, d.combo.count) : null;
+const jumpPage = j => allElements.find(e => e.data.kind === 'jump' && e.data.jump.of === j.key && e.data.jump.count === j.count);
+const comboParts = combo ? [combo.first, combo.second].map(j => ({ j, el: jumpPage(j) })) : [];
+/* On a jump page: the combinations it starts at this count, and, for the toe loop and
+   the loop, the fact that every jump can lead into it. */
+const comboPage = c => allElements.find(e => e.data.kind === 'combo' && e.data.combo.first === c.first.key
+  && e.data.combo.second === c.second.key && e.data.combo.count === c.count);
+const startsCombos = jumpKey ? ALL_COMBOS.filter(c => c.first.key === jumpKey && c.first.count === count)
+  .map(c => ({ c, el: comboPage(c) })).filter(x => x.el) : [];
+const isSecond = jumpKey ? SECONDS.includes(jumpKey) : false;
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
 
 /* WHAT THIS LEADS TO — 19/09/2026, Martyn: say how a basic prepares a skater for
@@ -141,7 +154,7 @@ const variations = familyKey
   : [];
 const others = variations.filter(e => e.id !== entry.id);
 
-const KIND_NEAR = ['basic', 'edge', 'position', 'transition', 'turn', 'twizzle', 'jump', 'spin', 'combination', 'sequence'];
+const KIND_NEAR = ['basic', 'edge', 'position', 'transition', 'turn', 'twizzle', 'jump', 'combo', 'spin', 'combination', 'sequence'];
 const leadsToAll = allElements
   .filter(e => e.id !== entry.id && (e.data.prerequisites || []).some(r => r.id === entry.id))
   .sort((a, b) => (KIND_NEAR.indexOf(a.data.kind) - KIND_NEAR.indexOf(b.data.kind))
@@ -215,6 +228,10 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     {d.jump && <span class="chip">landing <b><Edge state={d.jump.landing} /></b></span>}
     {d.jump && <span class="chip">{d.jump.assisted ? 'toe jump' : 'edge jump'}</span>}
     {d.jump && <span class="chip"><b>{d.jump.rotations}</b> rotation{d.jump.rotations === 1 ? '' : 's'}</span>}
+    {combo && <span class="chip">takeoff <b><Edge state={combo.first.takeoff} /></b></span>}
+    {combo && <span class="chip">between <b><Edge state={LANDING} /></b></span>}
+    {combo && <span class="chip">landing <b><Edge state={LANDING} /></b></span>}
+    {combo && <span class="chip"><b>{combo.rotations}</b> rotations</span>}
   </div>
   {/* The reader's own tick, kept in their browser. Base.astro wires it up and
       unhides it; without JavaScript it stays hidden. */}
@@ -306,6 +323,34 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     </figure>
   )}
 
+  {/* A COMBINATION HAS THREE EDGES ON THE ICE: the first takeoff, the one edge the
+      first jump lands on and the second leaves from, and the second landing. The
+      middle one is a single edge, so it is drawn once. */}
+  {combo && (
+    <figure class="jumptrace">
+      <div class="jt-pair jt-three">
+        <div>
+          <EdgeThumb entry={combo.first.takeoff} />
+          <b>{label(combo.first.takeoff)}</b><span>takes off</span>
+        </div>
+        <div>
+          <EdgeThumb entry={LANDING} />
+          <b>{label(LANDING)}</b><span>lands, takes off</span>
+        </div>
+        <div>
+          <EdgeThumb entry={LANDING} />
+          <b>{label(LANDING)}</b><span>lands</span>
+        </div>
+      </div>
+      <figcaption>
+        The edges, drawn: the {inText(combo.first)}'s takeoff, the edge between the two
+        jumps, and the {inText(combo.second)}'s landing. The middle edge is one edge: the
+        first jump lands on it and the second leaves from it.
+        {!d.rig && <> The body is not drawn yet, because the {inText(combo.second.key !== 'loop' ? combo.second : combo.first)} is not drawn on its own page either.</>}
+      </figcaption>
+    </figure>
+  )}
+
   {d.kind === 'hold' && (
     <div class="holdviews"><HoldDiagram slug={entry.id} /><HoldRear slug={entry.id} /></div>
   )}
@@ -369,7 +414,7 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       and the slip step have neither — so for 23 pages this printed a heading over an
       empty box. Ask the same question the paragraphs ask before printing either.
       tools/sections.mjs asserts it against the built page. */}
-  {(d.entry || d.jump) && (<>
+  {(d.entry || d.jump || combo) && (<>
   <h2>Derived</h2>
   <div class="derived">
     {(d.entry || d.jump) && (
@@ -411,6 +456,32 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
     {sibling && (count === 1
       ? <p>The <a href={url(`elements/${sibling.id}/`)}>{inText(jumpAt(jumpKey, 2))}</a> is this jump with one more turn in the air: the same takeoff and the same landing.</p>
       : <p>The <a href={url(`elements/${sibling.id}/`)}>{inText(jumpAt(jumpKey, 1))}</a> with one more turn in the air: the same takeoff and the same landing.</p>)}
+    {startsCombos.length > 0 && (
+      <p>Lands on {label(LANDING)}, where the toe loop and the loop take off, so it can start a
+        combination: {startsCombos.map(({ c, el }, i) => <>{i > 0 ? ' or ' : ''}<a href={url(`elements/${el.id}/`)}>{c.first.count === 1 && c.first.eponym ? el.data.name : el.data.name[0].toLowerCase() + el.data.name.slice(1)}</a></>)}.</p>
+    )}
+    {isSecond && (
+      <p>Takes off from {label(LANDING)}, the edge every jump here lands on, so it can follow any of
+        them in a <a href={url('elements/in/combo/')}>jump combination</a>.</p>
+    )}
+    {combo && (
+      <p>{[
+        `The ${inText(combo.first)} takes off ${label(combo.first.takeoff)} `,
+        combo.first.assisted ? 'off the pick' : 'off the edge',
+        ` and lands ${label(LANDING)}; the ${inText(combo.second)} takes off from that same edge `,
+        combo.second.assisted ? 'off the pick' : 'with no pick',
+        ` and lands ${label(LANDING)} again. ${combo.rotations} rotations in all`,
+        combo.code ? `, written ${combo.code} on a protocol sheet.` : '. The waltz jump has no ISU code.',
+      ].join('')}</p>
+    )}
+    {comboParts.length > 0 && (
+      <p>Made of the {comboParts.map(({ j, el }, i) => <>{i > 0 ? ' and the ' : ''}{el ? <a href={url(`elements/${el.id}/`)}>{inText(j)}</a> : inText(j)}</>)}.
+        Nothing here is stored on the page beyond the two jumps and the count.</p>
+    )}
+    {combo && (
+      <p>A skater who rotates clockwise takes off <b>{label(mirror(combo.first.takeoff))}</b> and
+        lands both jumps on <b>{label(mirror(LANDING))}</b>: the same combination, mirrored.</p>
+    )}
     {mirrored && <p>A skater who rotates the other way does the same thing from <b>{label(mirrored)}</b>. Same element, mirrored.</p>}
     {mirrorJump && (
       <p>A skater who rotates clockwise takes off <b>{label(mirrorJump.takeoff)}</b> and lands

@@ -757,7 +757,10 @@ const cuspFor = (move, t, pose) => {
 
 /* ═══ path ════════════════════════════════════════════════════ */
 export function buildPath(move){
-  const TOTAL = 320, pts = [];
+  /* `frames` is optional and defaults to 320, so every move without one draws as it
+     did. A jump combination is twice as long as a jump and sets it, so that it turns
+     no further between frames than its jumps do on their own (moves.js, comboOf). */
+  const TOTAL = move.frames ?? 320, pts = [];
   let x=0, y=0, th=0;
   pts.push({x,y,th});
   const spans = move.path.map(s => s.span ?? 1/move.path.length);

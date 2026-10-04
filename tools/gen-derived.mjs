@@ -17,15 +17,20 @@
 
        node tools/gen-derived.mjs            write only what is missing
        node tools/gen-derived.mjs --force    overwrite everything it generates
+       node tools/gen-derived.mjs --kind=combo   overwrite the files of one kind
 */
 
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lobeSense, label, exitState, chainStates, TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, ALL_JUMPS, LANDING, ALL_TURNS, halves } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, chainStates, TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, ALL_JUMPS, ALL_COMBOS, LANDING, ALL_TURNS, halves } from '../src/lib/skating.js';
+import { MOVES } from '../src/lib/moves.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
+/* --kind=<kind> overwrites the files of one kind and leaves the rest alone, so the
+   prose of one family can be rewritten without regenerating 280 pages. 04/10/2026. */
+const kindArg = (process.argv.find(a => a.startsWith('--kind=')) || '').slice(7);
 
 const FEET = ['L', 'R'];
 const DIRS = ['F', 'B'];
@@ -1426,12 +1431,86 @@ for (const j of ALL_JUMPS.filter(j => j.count === 2)) {
   });
 }
 
+/* THE COMBINATIONS — 04/10/2026, Session 28. Every field from comboAt in skating.js;
+   the prose is assembled from three passages written by hand, one about the first
+   jump, one about the second and one about the count, so twenty-six pages cost
+   eleven passages. The edge between the two jumps is said by the model, not by them.
+
+   The slug is the two jumps' slugs joined, and the prerequisites are the two jumps
+   at that count. The rig is named for its two moves (salchow and loop make
+   salchowLoop) and is written only if moves.js has built it, so a combination is
+   drawn the moment its rig exists and not before. */
+const slugOf = j => (j.count === 2 ? 'double-' : '') + SINGLE_SLUG[j.key];
+const cap = w => w.charAt(0).toUpperCase() + w.slice(1);
+const rigOf = j => (j.count === 2 ? `double${cap(j.key)}` : j.key);
+const FIRST_INTO = {
+  waltz: `The waltz jump is often the first jump a skater puts in front of another. Its half turn
+lands on the same back outside edge as every jump here, an edge the skater has already
+practised.`,
+  salchow: `The Salchow swings off a back inside edge and lands on the back outside edge like every
+jump here. Landing it with the knee bent and the free leg held back leaves the speed and the
+balance for the next jump.`,
+  toeLoop: `The toe loop lands on the edge it took off from, so the free foot reaches back and the toe
+goes in again almost at once, with no time to settle between the two.`,
+  loop: `The loop lands on the edge it took off from, so the first jump hands the second its takeoff
+directly. With no pick anywhere, everything depends on landing the first on an edge that is
+still curving cleanly.`,
+  flip: `The flip leaves a back inside edge, vaulting off the toe of the free foot, and lands on the
+back outside edge the second jump takes off from.`,
+  lutz: `The Lutz is entered on a long back outside edge curving against its rotation, and lands on
+a back outside edge curving the normal way. The second jump takes off from that landing.`,
+  axel: `The Axel is the one jump here with a forward takeoff, so the first jump turns the skater
+from forwards to backwards. Its extra half turn means the landing has to be checked quickly
+to keep the speed.`,
+};
+const SECOND_AFTER = {
+  toeLoop: `The toe loop is the usual second jump. The landing edge is already its takeoff, so the
+free foot reaches back, the toe goes in behind, and the pick gives the lift that the
+remaining speed cannot.`,
+  loop: `The loop is the harder second jump. With no pick, the skater holds the landing edge, brings
+the free leg through to cross in front and springs off the same edge. Its base value is
+higher than a toe loop's.`,
+};
+const COUNT_NOTE = {
+  1: '',
+  2: `At double the margin is small: the first jump has to leave enough speed for the second to
+find two full turns, and a second jump that comes up short is marked as under-rotated.`,
+};
+for (const c of ALL_COMBOS) {
+  const a = c.first, b = c.second;
+  const rig = `${rigOf(a)}${cap(rigOf(b))}`;
+  const how = j => (j.assisted ? 'off the pick' : 'off the edge');
+  const lower = j => (j.eponym ? j.name : j.name.charAt(0).toLowerCase() + j.name.slice(1));
+  const edgePara = `The ${lower(a)} lands ${label(LANDING)} and the ${lower(b)} takes off from ${label(LANDING)}:
+one edge, held, with no step or turn on it. In a jump sequence the skater may hop or step
+between the jumps; in a combination there is nothing between them.`;
+  files.push({
+    id: `${slugOf(a)}-${slugOf(b)}`,
+    front: [
+      `name: ${c.name}`,
+      `kind: combo`,
+      ...(MOVES[rig] ? [`rig: ${rig}`] : []),
+      `summary: ${a.name} (${label(a.takeoff)}, ${how(a)}) straight into a ${lower(b)} ` +
+        `(${label(b.takeoff)}, ${how(b)}), ${c.rotations} rotations in all.`,
+      ...(c.code ? [`aliases: [${c.code}]`] : []),
+      `prerequisites: [${slugOf(a)}, ${slugOf(b)}]`,
+      `combo:`,
+      `  first: ${a.key}`,
+      `  second: ${b.key}`,
+      `  count: ${c.count}`,
+    ],
+    body: [FIRST_INTO[a.key], edgePara, SECOND_AFTER[b.key], COUNT_NOTE[c.count]]
+      .filter(Boolean).join('\n\n'),
+  });
+}
+
 mkdirSync(OUT, { recursive: true });
 let wrote = 0, kept = 0;
 
 for (const f of files) {
   const path = join(OUT, `${f.id}.md`);
-  if (existsSync(path) && !force) { kept++; continue; }
+  const mine = kindArg && f.front.includes(`kind: ${kindArg}`);
+  if (existsSync(path) && !force && !mine) { kept++; continue; }
   writeFileSync(path,
     ['---', ...f.front, 'verified: { checked: false }', '---', '', f.body.trim(), ''].join('\n'));
   wrote++;

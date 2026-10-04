@@ -231,6 +231,9 @@ const alternates = hasCopies ? [
       font-family:ui-sans-serif,-apple-system,sans-serif;font-size:.86rem;
       color:var(--ink-soft);line-height:1.5}
     @media (max-width:420px){ .jt-pair{max-width:17rem;gap:.7rem 1rem} }
+    /* A jump combination draws three edges (Session 28, 04/10/2026). */
+    .jt-pair.jt-three{grid-template-columns:repeat(3,minmax(0,1fr));max-width:30rem}
+    @media (max-width:420px){ .jt-pair.jt-three{max-width:none;gap:.7rem .6rem} }
 
     .derived{background:var(--ice);border:1px solid var(--ice-line);border-radius:10px;
       padding:1rem 1.15rem;font-size:.92rem}

@@ -2043,6 +2043,148 @@ Object.assign(MOVES, {
     'LFO takeoff · two and a half rotations · RBO landing'),
 });
 
+/* THE COMBINATIONS, BY JOINING TWO JUMPS — 04/10/2026, Session 28. Martyn: draw the
+   loop combinations. A combination is two jumps where the landing of the first is the
+   takeoff of the second (skating.js, comboAt), so its rig is the two jumps' rigs
+   joined at that edge and is derived, the way the doubles are, rather than authored.
+
+   Three parts, and the rules are the whole derivation:
+   - the first jump, key for key, up to its deepest landing key (the knee absorbing),
+     where its path is cut;
+   - LINK seconds on the landing edge, in which the free leg comes in from behind,
+     passes the skating foot and crosses in front, with two keys of its own;
+   - the second jump, key for key, from its own deepest key before the takeoff (the
+     skating knee bent, the free leg crossed in front), where its path is cut too.
+   Both jumps are on the right back outside edge at the join, so the tracing is one
+   curve from the first landing to the second takeoff. The second jump's hips and
+   shoulders are a whole number of turns further round, so the skater faces the way the
+   first landing left them. The link's arc turns at the mean of the two rates either
+   side of it, so the skater's speed does not step.
+
+   ONLY THE LOOP CAN BE DRAWN SECOND: the toe loop has no rig as a single either. So
+   the combinations drawn are the four rigged firsts into a loop and the three rigged
+   doubles into a double loop.
+
+   THE CLIP IS LONGER THAN EITHER JUMP, so it gets more frames. buildPath samples a move
+   at 320 points however long it lasts, and a combination drawn at 320 would turn twice
+   as far between frames as its jumps do on their own pages (continuity.mjs bounds that
+   at 30 degrees). `frames` keeps the finer of the two jumps' frame rates.
+
+   Verified against a coach: NO. How quickly the free leg comes through between the two
+   jumps is the part most worth a coach's eye. */
+const LINK = 0.9;
+const secsPath = m => {
+  const total = m.path.reduce((x, g) => x + g.span, 0);
+  return m.path.map(g => ({ ...g, radius: g.radius ?? m.radius, span: g.span / total * m.duration }));
+};
+/* Split a move's path at a fraction t of its clock. Only a plain arc may be split. */
+const cutPath = (m, t) => {
+  const segs = secsPath(m), at = t * m.duration, before = [], after = [];
+  let s0 = 0;
+  for (const g of segs) {
+    const s1 = s0 + g.span;
+    if (s1 <= at + 1e-9) before.push(g);
+    else if (s0 >= at - 1e-9) after.push(g);
+    else {
+      if (g.kind !== 'arc' || g.turn) throw new Error(`comboOf: ${m.name} cannot be cut inside a ${g.turn || g.kind}`);
+      const f = (at - s0) / g.span;
+      before.push({ ...g, sweep: g.sweep * f, span: g.span * f });
+      after.push({ ...g, sweep: g.sweep * (1 - f), span: g.span * (1 - f) });
+    }
+    s0 = s1;
+  }
+  return [before, after];
+};
+const copyKey = k => {
+  const o = { ...k };
+  for (const f of ['sh', 'L', 'R', 'LH', 'RH']) if (o[f]) o[f] = { ...o[f] };
+  if (o.arm) o.arm = [...o.arm];
+  return o;
+};
+const lerp = (a, b, f) => a + (b - a) * f;
+const comboOf = (A, B, name, note) => {
+  const deepest = (keys, from, to) => {
+    let best = from;
+    for (let i = from; i < to; i++) if (keys[i].hipZ < keys[best].hipZ) best = i;
+    return best;
+  };
+  const down = A.keys.findIndex((k, i) => i > 0 && k.skate !== null && A.keys[i - 1].skate === null);
+  const land = deepest(A.keys, down, A.keys.length);
+  const air = B.keys.findIndex(k => k.skate === null);
+  const bend = deepest(B.keys, 0, air);
+  const a = A.keys[land], b = B.keys[bend];
+  if (a.skate !== b.skate || a.edge !== b.edge || a.dir !== b.dir)
+    throw new Error(`comboOf: ${A.name} lands ${a.skate}${a.dir}${a.edge}, ${B.name} bends on ${b.skate}${b.dir}${b.edge}`);
+  if (a.skate !== 'R') throw new Error('comboOf: the link keys assume a right-foot landing');
+  const turn = 360 * Math.round((a.hipYaw - b.hipYaw) / 360);
+
+  const [pa] = cutPath(A, a.t), [, pb] = cutPath(B, b.t);
+  const rate = g => g.sweep / g.span;
+  const linkRate = (rate(pa[pa.length - 1]) + rate(pb[0])) / 2;
+  const path = [...pa,
+    { kind: 'arc', foot: a.skate, edge: a.edge, dir: a.dir, sweep: linkRate * LINK, span: LINK, radius: A.radius },
+    ...pb];
+  const tA = a.t * A.duration, tB = b.t * B.duration;
+  const duration = tA + LINK + (B.duration - tB);
+
+  /* The link. Hips, shoulders, the skating foot and the arms move straight from the
+     first landing to the second bend; the free foot comes in low from behind and passes
+     the skating foot with daylight between them before it crosses in front. */
+  const mid = (f, ph, L) => {
+    const o = copyKey(a);
+    o.t = (tA + f * LINK) / duration;
+    o.ph = ph;
+    for (const q of ['hipZ']) o[q] = lerp(a[q], b[q], f);
+    o.hipYaw = lerp(a.hipYaw, b.hipYaw + turn, f);
+    o.shYaw = lerp(a.shYaw, b.shYaw + turn, f);
+    o.sh = { ...a.sh, t: lerp(a.sh.t, b.sh.t, f), n: lerp(a.sh.n, b.sh.n, f), z: lerp(a.sh.z, b.sh.z, f) };
+    o.R = { ...a.R, t: lerp(a.R.t, b.R.t, f), n: lerp(a.R.n, b.R.n, f), z: lerp(a.R.z, b.R.z, f) };
+    o.L = { ...a.L, ...L };
+    if (a.arm && b.arm) o.arm = a.arm.map((v, i) => lerp(v, b.arm[i], f));
+    delete o.LH; delete o.RH;
+    return o;
+  };
+  const keys = [
+    ...A.keys.slice(0, land + 1).map(k => ({ ...copyKey(k), t: k.t * A.duration / duration })),
+    mid(1 / 3, 'The landing edge running, the free leg coming in', { t: 26, n: 11, z: 18 }),
+    mid(2 / 3, 'The free leg passing the skating foot', { t: -8, n: 7, z: 22 }),
+    ...B.keys.slice(bend).map(k => {
+      const o = copyKey(k);
+      o.t = (tA + LINK + (k.t - b.t) * B.duration) / duration;
+      o.hipYaw += turn; o.shYaw += turn;
+      return o;
+    }),
+  ];
+  /* A key that sat on a segment boundary in its own jump sits on it exactly here,
+     spinMove's and turnMove's rule: the boundary is the only statement of where it is. */
+  const frames = Math.round(Math.max(320 / A.duration, 320 / B.duration) * duration);
+  const total = path.reduce((x, g) => x + g.span, 0);
+  let c = 0;
+  const bounds = [0, ...path.map(g => (c += g.span) / total)];
+  const SNAP = 0.5 / frames;
+  for (const k of keys) {
+    const at = bounds.find(g => Math.abs(g - k.t) < SNAP);
+    if (at !== undefined) k.t = at;
+  }
+  return { name, note, path, radius: A.radius, duration, frames, keys, combo: { first: A.name, second: B.name, land, bend, turn } };
+};
+Object.assign(MOVES, {
+  waltzLoop: comboOf(MOVES.waltz, MOVES.loop, 'Waltz jump + loop',
+    'LFO takeoff · half rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  salchowLoop: comboOf(MOVES.salchow, MOVES.loop, 'Salchow + loop',
+    'LBI takeoff · one rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  loopLoop: comboOf(MOVES.loop, MOVES.loop, 'Loop + loop',
+    'RBO takeoff · one rotation · RBO landing, held · loop: one rotation · RBO landing'),
+  axelLoop: comboOf(MOVES.axel, MOVES.loop, 'Axel + loop',
+    'LFO takeoff · one and a half rotations · RBO landing, held · loop: one rotation · RBO landing'),
+  doubleSalchowDoubleLoop: comboOf(MOVES.doubleSalchow, MOVES.doubleLoop, 'Double Salchow + double loop',
+    'LBI takeoff · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+  doubleLoopDoubleLoop: comboOf(MOVES.doubleLoop, MOVES.doubleLoop, 'Double loop + double loop',
+    'RBO takeoff · two rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+  doubleAxelDoubleLoop: comboOf(MOVES.doubleAxel, MOVES.doubleLoop, 'Double Axel + double loop',
+    'LFO takeoff · two and a half rotations · RBO landing, held · double loop: two rotations · RBO landing'),
+});
+
 for(const m of Object.values(MOVES)) for(const k of m.keys){
   const R = lateral(k.shYaw), F = anterior(k.shYaw);
   // [out from the shoulder centre, forward, drop] in cm. Default is arms held
