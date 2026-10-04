@@ -4,6 +4,7 @@ kind: jump
 aliases: [three jump]
 summary: The first jump, and the only one with a forward takeoff apart from the Axel it grows into.
 jump:
+  of: waltz
   takeoff: { foot: L, edge: O, dir: F }
   landing: { foot: R, edge: O, dir: B }
   assisted: false

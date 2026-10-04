@@ -4,6 +4,7 @@ kind: jump
 rig: loop
 summary: RBO takeoff, off the edge, 1 rotation to RBO.
 jump:
+  of: loop
   takeoff: { foot: R, edge: O, dir: B }
   landing: { foot: R, edge: O, dir: B }
   assisted: false

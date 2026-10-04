@@ -4,6 +4,7 @@ kind: jump
 rig: axel
 summary: LFO takeoff, off the edge, 1.5 rotations to RBO.
 jump:
+  of: axel
   takeoff: { foot: L, edge: O, dir: F }
   landing: { foot: R, edge: O, dir: B }
   assisted: false

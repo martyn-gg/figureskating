@@ -57,6 +57,11 @@ const elements = defineCollection({
                            'coe', 'crossroll',
                            'twizzle', 'twizzle15', 'twizzle2', 'twizzle25'])).optional(),
     jump: z.object({
+      /* Which jump in skating.js's JUMPS this is, and at what count (2 for a double).
+         Everything else in this block is jumpAt(of, count) written out, and
+         tools/jumps.mjs holds every page to it. 04/10/2026. */
+      of: z.string(),
+      count: z.number().int().default(1),
       takeoff: z.object({ foot, edge, dir }),
       landing: z.object({ foot, edge, dir }),
       assisted: z.boolean().describe('true for toe jumps, false for edge jumps'),

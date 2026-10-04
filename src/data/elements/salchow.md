@@ -3,6 +3,7 @@ name: Salchow
 kind: jump
 summary: LBI takeoff, off the edge, 1 rotation to RBO.
 jump:
+  of: salchow
   takeoff: { foot: L, edge: I, dir: B }
   landing: { foot: R, edge: O, dir: B }
   assisted: false

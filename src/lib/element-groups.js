@@ -60,13 +60,15 @@ export const LEARN = {
     'yankee-polka', 'tango-romantica', 'viennese-waltz', 'westminster-waltz'
   ],
 };
-const JUMP_ORDER = Object.values(JUMPS).map(j => j.name.toLowerCase());
+/* Singles in JUMPS order, then the doubles in the same order: the order a skater
+   meets them in. Keyed on the page's `of`, not its name, since 04/10/2026. */
+const JUMP_ORDER = Object.keys(JUMPS);
 const handRank = e => {
   const k = e.data.kind;
   if (k === 'jump') {
-    const i = JUMP_ORDER.indexOf(e.data.name.toLowerCase());
-    if (i < 0) throw new Error(`element-groups: the jump "${e.data.name}" is not in JUMPS`);
-    return i;
+    const i = JUMP_ORDER.indexOf(e.data.jump?.of);
+    if (i < 0) throw new Error(`element-groups: the jump "${e.data.name}" names no jump in JUMPS`);
+    return (e.data.jump.count - 1) * JUMP_ORDER.length + i;
   }
   const list = LEARN[k];
   if (!list) return null;

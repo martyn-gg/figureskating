@@ -22,7 +22,7 @@
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lobeSense, label, exitState, chainStates, TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, LANDING, ALL_TURNS, halves } from '../src/lib/skating.js';
+import { lobeSense, label, exitState, chainStates, TURNS, STEPS, TRANSITIONS, TWIZZLES, CLUSTERS, JUMPS, ALL_JUMPS, LANDING, ALL_TURNS, halves } from '../src/lib/skating.js';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'elements');
 const force = process.argv.includes('--force');
@@ -1320,12 +1320,109 @@ for (const [key_, j] of Object.entries(JUMPS)) {
       `summary: ${label(t)} takeoff, ${j.assisted ? 'off the pick' : 'off the edge'}, ` +
         `${j.rotations} rotation${j.rotations === 1 ? '' : 's'} to ${label(x)}.`,
       `jump:`,
+      `  of: ${key_}`,
       `  takeoff: { foot: ${t.foot}, edge: ${t.edge}, dir: ${t.dir} }`,
       `  landing: { foot: ${x.foot}, edge: ${x.edge}, dir: ${x.dir} }`,
       `  assisted: ${j.assisted}`,
       `  rotations: ${j.rotations}`,
     ],
     body: JUMP_TEXT[key_],
+  });
+}
+
+/* THE DOUBLES — 04/10/2026. Every field from jumpAt(key, 2); the prose is the only
+   thing written by hand. The slug is the single's with "double-" in front, and the
+   prerequisite is the single, because a double is that jump with one more turn. */
+const DOUBLE_RIG = { salchow: 'doubleSalchow', loop: 'doubleLoop', axel: 'doubleAxel' };
+const SINGLE_SLUG = { waltz: 'waltz-jump', salchow: 'salchow', toeLoop: 'toe-loop', loop: 'loop', flip: 'flip', lutz: 'lutz', axel: 'axel' };
+const DOUBLE_TEXT = {
+  salchow: `The Salchow with a second turn in the air. The entry, the three turn, the back inside
+edge and the swing of the free leg are the single's, and so is the landing. What changes is
+how fast you turn once you leave the ice: about the same time in the air has to hold twice
+the rotation, so the arms and the free leg come in tight and early.
+
+It is often the first double a skater lands, because the edge and the swing give a lot of
+help and there is no pick to mistime. That help is also the usual fault: swing the free leg
+round wide and the rotation leaks out before the jump has left the ice.
+
+A double Salchow that will not go round is usually a single Salchow that was not quite
+right. Land the single with a clean, checked exit first.`,
+  toeLoop: `The toe loop with a second turn. The back outside edge, the pick placed behind and the
+vault are the single's. The difference is that the pull-in has to happen straight off the
+pick, because a double leaves no time to settle into the rotation later.
+
+Skaters often learn it alongside the double Salchow, and coaches differ on which should come
+first. The trap carries over from the single and gets worse: lean back onto the pick and the
+jump loses the height a second turn needs.
+
+The landing is the one every jump in the guide shares, on a back outside edge. It is the same
+edge the toe loop leaves from, so a clean, held exit from the single is the best preparation
+there is.`,
+  loop: `The loop with a second turn, and still nothing to help: no pick to vault off and no swing
+to borrow rotation from. Everything comes from the edge and from how quickly you pull in once
+you are off it.
+
+That makes it a test of the takeoff edge more than of the air. A double loop that falls short
+usually left the ice on an edge that was already turning, so the rotation was spent before
+the jump began.
+
+It shares its takeoff with the double toe loop, and seen from above the two leave from the
+same curve. From the side, one has a pick going in. The landing is the back outside edge
+every jump here lands on, which is also the edge the loop leaves from.`,
+  flip: `The flip with a second turn. The back inside edge, the pick placed behind and the vault are
+the single's, and so is the rule that matters most: the rotation goes with the curve you are
+on.
+
+The pull-in comes straight off the pick, arms and legs tight, because two turns in the time of
+one leave nothing to spare. A double flip that turns early usually began turning in the three
+turn that delivers it, before the pick went in.
+
+It shares its takeoff edge with the double Salchow, and the pick tells them apart. It is also
+the double Lutz's near neighbour: a Lutz that rolls onto the inside edge before the takeoff is
+a flip, which is why both jumps can carry an edge call on a protocol sheet.`,
+  lutz: `The Lutz with a second turn. The long back outside edge, the pick placed behind and the vault
+are the single's, and so is what makes it hard: the rotation runs against the curve you have
+been tracing.
+
+With two turns to find, the temptation is to start turning before the pick goes in. Let the
+shoulders come round early and the edge rolls from outside to inside, and the jump becomes a
+double flip whatever it was meant to be. The fault shows in the shoulder line long before the
+takeoff.
+
+That is why both the Lutz and the flip can carry an edge call on a protocol sheet. Hold the
+outside edge to the moment the pick goes in, and the jump stays a Lutz.`,
+  axel: `The Axel with a second full turn: two and a half rotations, from a forward takeoff to a
+backward landing. The entry edge, the swing and the landing are the single Axel's, and the
+single's are the waltz jump's, so the whole family rests on one forward outside edge.
+
+It is usually the last double to come. The extra turn has to fit into about the same time in
+the air, which asks for a fast, tight pull-in straight after the takeoff, and a takeoff that
+goes up before it goes round.
+
+Most double Axels that fall short were single Axels that never quite closed. A clean, checked
+single, landed on a held back outside edge, is what the double is built on.`,
+};
+for (const j of ALL_JUMPS.filter(j => j.count === 2)) {
+  const t = j.takeoff, x = LANDING;
+  files.push({
+    id: `double-${SINGLE_SLUG[j.key]}`,
+    front: [
+      `name: ${j.name}`,
+      `kind: jump`,
+      ...(DOUBLE_RIG[j.key] ? [`rig: ${DOUBLE_RIG[j.key]}`] : []),
+      `summary: ${label(t)} takeoff, ${j.assisted ? 'off the pick' : 'off the edge'}, ` +
+        `${j.rotations} rotations to ${label(x)}.`,
+      `aliases: [${j.code}]`,
+      `prerequisites: [${SINGLE_SLUG[j.key]}]`,
+      `jump:`,
+      `  of: ${j.key}`,
+      `  count: 2`,
+      `  takeoff: { foot: ${t.foot}, edge: ${t.edge}, dir: ${t.dir} }`,
+      `  landing: { foot: ${x.foot}, edge: ${x.edge}, dir: ${x.dir} }`,
+      `  assisted: ${j.assisted}`,
+      `  rotations: ${j.rotations}`,
+    ],
+    body: DOUBLE_TEXT[j.key],
   });
 }
 

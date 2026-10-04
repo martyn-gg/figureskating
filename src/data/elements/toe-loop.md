@@ -3,6 +3,7 @@ name: Toe loop
 kind: jump
 summary: RBO takeoff, off the pick, 1 rotation to RBO.
 jump:
+  of: toeLoop
   takeoff: { foot: R, edge: O, dir: B }
   landing: { foot: R, edge: O, dir: B }
   assisted: true

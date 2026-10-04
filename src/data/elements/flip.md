@@ -3,6 +3,7 @@ name: Flip
 kind: jump
 summary: "A toe jump from a back inside edge: the Lutz's near neighbour, and its usual impostor."
 jump:
+  of: flip
   takeoff: { foot: L, edge: I, dir: B }
   landing: { foot: R, edge: O, dir: B }
   assisted: true

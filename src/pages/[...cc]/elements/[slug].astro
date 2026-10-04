@@ -14,7 +14,7 @@ import { FOUNDATIONS, reasonFor } from '../../../lib/foundations.js';
 import BodyFrame from '../../../components/BodyFrame.astro';
 import { DANCE_KEY, stepLink, patternBeats } from '../../../lib/dance.js';
 import Edge from '../../../components/Edge.astro';
-import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableWith } from '../../../lib/skating.js';
+import { label, mirror, describeTurn, describeChain, describeEdge, exitState, chainStates, chainReturns, lobeContinues, lobeSense, LANDING, JUMPS, ALL_TURNS, confusableAt, jumpAt, maxCount } from '../../../lib/skating.js';
 
 export async function getStaticPaths() {
   const elements = await getCollection('elements');
@@ -82,16 +82,26 @@ const mirrorJump = d.jump ? { takeoff: mirror(d.jump.takeoff), landing: mirror(d
    page's own frontmatter and keyed on the jump's NAME — which is the shape this
    repository keeps getting caught by: two expressions of one fact, drifting apart
    the first time one of them is edited. Look the key up, then ask the model. */
-const jumpKey = d.jump ? Object.keys(JUMPS).find(k => JUMPS[k].name.toLowerCase() === d.name.toLowerCase()) : null;
-const shares = jumpKey ? confusableWith(jumpKey) : [];
+const jumpKey = d.jump ? d.jump.of : null;
+const count = d.jump ? d.jump.count : 1;
+const shares = jumpKey ? confusableAt(jumpKey, count) : [];
+/* A jump's name in the middle of a sentence: lower case, except the three named after
+   a skater, which keep their capital ("the double Salchow", "the toe loop"). */
+const inText = j => (j.count === 1 && j.eponym) ? j.name : j.name[0].toLowerCase() + j.name.slice(1);
 /* What separates a pair that share a takeoff edge, derived rather than written:
    either one uses the pick and the other does not, or they differ in rotations.
    There is no third answer, because the takeoff edge is the only other thing a
    jump is made of. */
-const sharesDetail = shares.map(k => ({
-  name: JUMPS[k].name.toLowerCase(),
-  differsBy: JUMPS[k].assisted !== d.jump.assisted ? 'the pick' : 'the number of rotations',
+const sharesDetail = shares.map(j => ({
+  name: inText(j),
+  differsBy: j.assisted !== d.jump.assisted ? 'the pick' : 'the number of rotations',
 }));
+/* THE SAME JUMP AT THE OTHER COUNT — 04/10/2026. A double is its single with one more
+   turn, so each page names the other and links it; the slug is gen-derived.mjs's
+   ("double-" and the single's slug), found by `of` and count rather than by name. */
+const sibling = jumpKey && maxCount(jumpKey) > 1
+  ? (await getCollection('elements')).find(e => e.data.jump && e.data.jump.of === jumpKey && e.data.jump.count === (count === 1 ? 2 : 1))
+  : null;
 const allElements = await getCollection('elements');
 const prereqs = d.prerequisites.map(r => allElements.find(e => e.id === r.id)).filter(Boolean);
 
@@ -391,13 +401,16 @@ clusters.sort((a, b) => SR.ofElement(a.id) - SR.ofElement(b.id) || a.data.turns.
       ].join('')}</p>
     )}
     {d.jump && shares.length > 0 && (
-      <p>Shares its takeoff edge with the {shares.map(k => JUMPS[k].name.toLowerCase()).join(' and the ')}:
+      <p>Shares its takeoff edge with the {shares.map(inText).join(' and the ')}:
         the pair that get mistaken for each other.</p>
     )}
     {d.jump && shares.length === 0 && (
-      <p>No other jump takes off from {label(d.jump.takeoff)}. That is exactly why it drifts:
+      <p>No other {count === 1 ? 'jump' : 'double'} takes off from {label(d.jump.takeoff)}. That is exactly why it drifts:
         roll onto the other edge and it becomes a different jump entirely.</p>
     )}
+    {sibling && (count === 1
+      ? <p>The <a href={url(`elements/${sibling.id}/`)}>{inText(jumpAt(jumpKey, 2))}</a> is this jump with one more turn in the air: the same takeoff and the same landing.</p>
+      : <p>The <a href={url(`elements/${sibling.id}/`)}>{inText(jumpAt(jumpKey, 1))}</a> with one more turn in the air: the same takeoff and the same landing.</p>)}
     {mirrored && <p>A skater who rotates the other way does the same thing from <b>{label(mirrored)}</b>. Same element, mirrored.</p>}
     {mirrorJump && (
       <p>A skater who rotates clockwise takes off <b>{label(mirrorJump.takeoff)}</b> and lands

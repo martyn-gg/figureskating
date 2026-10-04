@@ -3,6 +3,7 @@ name: Lutz
 kind: jump
 summary: The only jump that takes off from a back outside edge curving against its own rotation, and the one most often done wrong.
 jump:
+  of: lutz
   takeoff: { foot: L, edge: O, dir: B }
   landing: { foot: R, edge: O, dir: B }
   assisted: true

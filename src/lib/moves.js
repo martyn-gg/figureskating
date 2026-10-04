@@ -1975,6 +1975,74 @@ Object.assign(MOVES, {
     'RBI · the blade turning half a circle against the curve, the cusp pointing out · RFO'),
 });
 
+/* THE DOUBLES, by adding a turn in the air — 04/10/2026, Martyn: doubles next, the
+   first item on docs/roadmap.md. A double is its single with one more rotation and
+   nothing else: the same entry, the same takeoff, the same landing on the same back
+   outside edge. So it is derived, the way the right-foot turns are, and cannot drift
+   from the single it is built on.
+
+   The extra 360 degrees go where a skater finds them, in the part of the flight
+   between leaving the ice and opening out. Three rules, and they are the whole
+   derivation:
+   - every key up to the one where the blade leaves the ice is untouched;
+   - every key from touchdown on is the single's key a turn further round, which
+     leaves its track-frame feet where they were because the skater faces the same way;
+   - an air key within OPEN degrees of touchdown keeps its distance from the landing,
+     so the opening out and the reach for the ice are the single's; every air key
+     before that takes a share of the extra turn (see `spread`). The legs are together
+     and under the hip there, where their track-frame position does not depend on
+     which way the skater faces.
+   THE FLIGHT IS AIR TIMES AS LONG, in time and in distance, so the skater's speed across
+   the ice does not change at the takeoff or the landing and the body turns about as
+   far in each frame as the single's does. A real double spends only a little longer
+   in the air than a single and turns much faster; drawn at the single's time it turned
+   up to 65 degrees between two frames, and continuity.mjs's bound of 30 is what a
+   reader's eye can follow. At 3 the doubles turn at most 22 to 28 degrees a frame,
+   the singles' own range (18 to 28). Every clip here already runs slower than life, so this is
+   the same slow motion applied a little more to the part that needs it. Everything on
+   the ice keeps its own time, and the move gets longer by the extra flight.
+
+   Verified against a coach: NO. */
+const OPEN = 90, AIR = 3;
+const doubleOf = (m, name, note) => {
+  const air = m.keys.map(k => k.skate === null);
+  const first = air.indexOf(true), down = air.indexOf(false, first);
+  if (first < 1 || down < 0) throw new Error(`doubleOf: ${m.name} has no flight to add a turn to`);
+  const g = m.keys[first], d = m.keys[down];
+  /* The extra turn is added in time, slowly at first and fastest just before the
+     opening: (fraction of the way from leaving to opening out) squared. Spread evenly,
+     the hips took most of a turn while the free leg was still forward from the
+     takeoff, and the free boot went past freefoot.mjs's 60 degrees on the Axel. */
+  const o = m.keys.findIndex((k, i) => i > first && i < down && k.hipYaw > d.hipYaw - OPEN);
+  const tOpen = m.keys[o < 0 ? down : o].t;
+  const spread = (k, f) => k[f] > d[f] - OPEN ? k[f] + 360
+    : k[f] + 360 * ((k.t - g.t) / (tOpen - g.t)) ** 2;
+  /* Stretch the flight: the one line segment of a jump's path. */
+  const li = m.path.findIndex(g => g.kind === 'line');
+  /* Spans are relative (buildPath divides by their total), keys' t are fractions of
+     the whole move, so the flight's place on the clock is its span over the total. */
+  const spans = m.path.map(g => g.span), total = spans.reduce((x, y) => x + y, 0);
+  const f = spans[li] / total, a = spans.slice(0, li).reduce((x, y) => x + y, 0) / total;
+  const b = a + f, grow = 1 + (AIR - 1) * f;
+  const at = t => (t <= a ? t : t < b ? a + AIR * (t - a) : t + (AIR - 1) * f) / grow;
+  const path = m.path.map((g, i) => (i === li ? { ...g, span: AIR * g.span, len: AIR * g.len } : { ...g }));
+  return { ...m, name, note, path, duration: m.duration * grow, keys: m.keys.map((k, i) => {
+    const o = { ...k, t: at(k.t) };
+    for (const f of ['sh','L','R','LH','RH']) if (o[f]) o[f] = { ...o[f] };
+    if (i >= down) { o.hipYaw += 360; o.shYaw += 360; }
+    else if (i > first) { o.hipYaw = spread(k, 'hipYaw'); o.shYaw = spread(k, 'shYaw'); }
+    return o;
+  }) };
+};
+Object.assign(MOVES, {
+  doubleSalchow: doubleOf(MOVES.salchow, 'Double Salchow',
+    'LBI takeoff out of a three turn, no pick · two rotations · RBO landing'),
+  doubleLoop: doubleOf(MOVES.loop, 'Double loop',
+    'RBO takeoff, no pick · two rotations · RBO landing'),
+  doubleAxel: doubleOf(MOVES.axel, 'Double Axel',
+    'LFO takeoff · two and a half rotations · RBO landing'),
+});
+
 for(const m of Object.values(MOVES)) for(const k of m.keys){
   const R = lateral(k.shYaw), F = anterior(k.shYaw);
   // [out from the shoulder centre, forward, drop] in cm. Default is arms held

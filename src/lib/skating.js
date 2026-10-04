@@ -364,13 +364,44 @@ export function describeTurn(entry, turnKey) {
    rather than in each page's own sort. */
 export const JUMPS = {
   waltz:    { name: 'Waltz jump', takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 0.5 },
-  salchow:  { name: 'Salchow',   takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: false, rotations: 1 },
-  toeLoop:  { name: 'Toe loop',  takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1 },
-  loop:     { name: 'Loop',      takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: false, rotations: 1 },
-  flip:     { name: 'Flip',      takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: true,  rotations: 1 },
-  lutz:     { name: 'Lutz',      takeoff: { foot: 'L', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1 },
-  axel:     { name: 'Axel',      takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 1.5 },
+  salchow:  { name: 'Salchow',   takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: false, rotations: 1,   code: 'S',  eponym: true },
+  toeLoop:  { name: 'Toe loop',  takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1,   code: 'T' },
+  loop:     { name: 'Loop',      takeoff: { foot: 'R', edge: 'O', dir: 'B' }, assisted: false, rotations: 1,   code: 'Lo' },
+  flip:     { name: 'Flip',      takeoff: { foot: 'L', edge: 'I', dir: 'B' }, assisted: true,  rotations: 1,   code: 'F' },
+  lutz:     { name: 'Lutz',      takeoff: { foot: 'L', edge: 'O', dir: 'B' }, assisted: true,  rotations: 1,   code: 'Lz', eponym: true },
+  axel:     { name: 'Axel',      takeoff: { foot: 'L', edge: 'O', dir: 'F' }, assisted: false, rotations: 1.5, code: 'A',  eponym: true },
 };
+
+/* DOUBLES — 04/10/2026, Martyn: doubles next. A double is the same jump with one more
+   rotation: the same takeoff, the same landing, the same pick or none. So it is not a
+   new entry in JUMPS but a COUNT on one, and everything about it is derived here.
+
+   Which jumps double is derived too. A jump of less than one rotation is a teaching
+   jump: the waltz jump exists to teach the Axel's takeoff and nobody doubles it. `code`
+   is the ISU's abbreviation, which is how a protocol sheet, a coach's notes and a
+   commentator's graphic all write a jump (2S is a double Salchow); the waltz jump has
+   none. `eponym` marks the three named after a skater (Ulrich Salchow, Alois Lutz,
+   Axel Paulsen), which keep their capital in the middle of a name. */
+export const COUNTS = { 1: 'Single', 2: 'Double' };
+
+/** The highest count the guide holds for a jump: 1, or 2 for any jump of a full turn or more. */
+export const maxCount = key => (JUMPS[key].rotations >= 1 ? 2 : 1);
+
+/** A jump at a count: its name, its rotations and everything it shares with the single. */
+export function jumpAt(key, count = 1) {
+  const j = JUMPS[key];
+  if (!j) throw new Error(`jumpAt: no jump "${key}"`);
+  if (!(count >= 1 && count <= maxCount(key))) throw new Error(`jumpAt: ${j.name} has no count ${count}`);
+  return {
+    ...j, key, count,
+    name: count === 1 ? j.name : `${COUNTS[count]} ${j.eponym ? j.name : j.name.toLowerCase()}`,
+    rotations: j.rotations + count - 1,
+    code: j.code ? (count === 1 ? '' : String(count)) + j.code : null,
+  };
+}
+
+/** Every jump at every count the guide holds, singles first in learning order, then the doubles. */
+export const ALL_JUMPS = [1, 2].flatMap(c => Object.keys(JUMPS).filter(k => maxCount(k) >= c).map(k => jumpAt(k, c)));
 
 /** Where a jump sits in the learning order, by name. −1 for anything not a jump. */
 export const jumpOrder = name =>
@@ -379,11 +410,16 @@ export const jumpOrder = name =>
 /** Every jump in the list lands here, which is why the takeoff is the whole story. */
 export const LANDING = { foot: 'R', edge: 'O', dir: 'B' };
 
-/** Jumps sharing a takeoff edge — the pairs that get confused with each other. */
+/** Jumps sharing a takeoff edge — the pairs that get confused with each other. Singles. */
 export function confusableWith(jumpKey) {
-  const j = JUMPS[jumpKey];
-  if (!j) return [];
-  return Object.entries(JUMPS)
-    .filter(([k, o]) => k !== jumpKey && label(o.takeoff) === label(j.takeoff))
-    .map(([k]) => k);
+  return confusableAt(jumpKey, 1).map(j => j.key);
+}
+
+/** The same question at a count: the jumps of that count that leave from the same edge.
+    A double is confused with the other doubles off its edge, which is the comparison a
+    skater and a judge make; the single of itself differs in a turn, and the page says
+    that separately. */
+export function confusableAt(jumpKey, count = 1) {
+  const j = jumpAt(jumpKey, count);
+  return ALL_JUMPS.filter(o => o.count === count && o.key !== jumpKey && label(o.takeoff) === label(j.takeoff));
 }
