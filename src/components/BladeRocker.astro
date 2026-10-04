@@ -12,11 +12,11 @@
    the caption makes in numbers. */
 import { ROCKER, BLADE_FRONT, BLADE_BACK, PICK_ALONG, MAX_BLADE_PITCH, contactAlong, bladeZone } from '../lib/rig-math.js';
 
-const EX = 10;                       // vertical exaggeration
+const EX = 5;                        // vertical exaggeration (Martyn, 04/10/2026: 10 read too curved)
 const PX = 16;                       // px per cm along the blade
 const sag = x => ROCKER - Math.sqrt(ROCKER * ROCKER - x * x);   // cm above the lowest point
 const x0 = BLADE_BACK - 3, x1 = PICK_ALONG + 3;
-const W = (x1 - x0) * PX, H = 245, GROUND = 175;
+const W = (x1 - x0) * PX, H = 180, GROUND = 110;
 const X = x => (x - x0) * PX;
 const Y = h => GROUND - h * EX * PX;        // EX times the true height
 
@@ -38,7 +38,7 @@ const curve = (a, b) => {
    into it. That is the model's own claim, drawn: tilt the foot forward far enough and
    the circle brings the pick to the ice. The top edge is flat at a height chosen for
    the picture, not measured. */
-const TOP = 20;
+const TOP = Math.min(GROUND - 70, Y(sag(PICK_ALONG)) - 12);
 const pickPts = [];
 const NT = 4;
 for (let i = 0; i <= NT * 2; i++) {
