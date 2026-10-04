@@ -2192,6 +2192,13 @@ const comboOf = (A, B, name, note) => {
    pick at a takeoff height was legal only nearly flat and close behind the skating foot,
    and the first draft of this jump was drawn that way: a toe tap, not a toe loop.
 
+   THE PICK IS TURNED OUT AND PIVOTS. Checked against coaches' teaching (the guidance,
+   not their words): the toe goes in slightly turned out, not square, and the pick mark
+   is a small hook because the boot turns on the pick as the skater comes round. So the
+   pick's yaw is 35 going in and 52 coming out: about 21 degrees of turnout against the
+   pelvis throughout, the boot turning 19 degrees on the pick with the body. Pitch eases
+   to 43 so the ankle stays inside the boot's 30 as the hip rises over it.
+
    The free foot leaves the pick a seventh of a second before the air key rather than
    with the blade, so its boot comes round within continuity's 30 degrees a frame.
 
@@ -2212,9 +2219,9 @@ const comboOf = (A, B, name, note) => {
       {arm:[56,11,19], t:0.40, ph:'The free leg reaching for the ice', hipZ:84, hipYaw:178, shYaw:184,
        sh:P(-5,0,133), R:P(-17,15,0,-0.5), L:P(42,10,15,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
       {arm:[54,12,19], t:0.44, ph:'The toe pick goes in behind', hipZ:86, hipYaw:180, shYaw:196,
-       sh:P(-4,0,136), R:P(-14,15,0,0), L:PIN(42,10,0,50), skate:'R', edge:'O', dir:'B'},
+       sh:P(-4,0,136), R:P(-14,15,0,0), L:{...PIN(42,10,0,50), yaw:35}, skate:'R', edge:'O', dir:'B'},
       {arm:[40,20,8], t:0.465, ph:'Takeoff: vaulting off the pick', hipZ:96, hipYaw:198, shYaw:250,
-       sh:P(-2,0,152), R:P(-4,8,2,3), L:PIN(38,8.4,0,47), skate:'R', edge:'O', dir:'B'},
+       sh:P(-2,0,152), R:P(-4,8,2,3), L:{...PIN(38,8.4,0,43), yaw:52}, skate:'R', edge:'O', dir:'B'},
       {arm:[30,16,10], t:0.49, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
        sh:P(-2,0,170), R:P(-4,6,32,0,NEUTRAL), L:P(12,6,32,0,NEUTRAL), skate:null},
       ...K.filter(k => k.t >= 0.5).map(copyKey),

@@ -30,11 +30,11 @@
    heading against the pelvis is only hip rotation while the leg is somewhere near
    under the skater. Extend the leg behind and a toe pointing away from the body
    is hip EXTENSION with a pointed ankle, and the plan angle reads as a hundred and
-   fifty degrees of rotation that nobody is doing — `toePick`'s pick does exactly
-   that. The same failure shape as shin.mjs measuring lean against world up at
-   eighty degrees of pitch. A pick takes its direction from the reach and never
-   reads `yaw`, so excluding it is honest rather than convenient; a free foot is
-   not on the ice at all.
+   fifty degrees of rotation that nobody is doing — `toePick`'s pick did exactly
+   that while its toe pointed away from the hip. The same failure shape as shin.mjs
+   measuring lean against world up at eighty degrees of pitch. Since 04/10/2026 a
+   pick's toe points back towards the skater and reads `yaw`, and picks are held per
+   frame in their own section below; a free foot is not on the ice at all.
 
    AND YAW ON THE REFERENCE BLADE IS REFUSED. The reference blade is pinned to the
    path, and the path IS its tracing — so a reference blade turned off its own line
@@ -297,6 +297,48 @@ for (const [key, m] of Object.entries(MOVES)) {
     }
   });
 }
+
+/* A PICK IS TURNED BY THE HIP TOO — 04/10/2026, Session 29. This file left picks out
+   because the picked toe pointed away from the hip, so its plan heading against the
+   pelvis read as a hundred and fifty degrees of rotation nobody was doing. The toe now
+   points back towards the skater, roughly the way the pelvis faces, and a picking foot
+   goes in slightly turned out and pivots on the pick as the body comes round. So the
+   same allowance applies, read per frame (a pinned pick's position is not interpolated)
+   off the boot direction bootDir actually builds, and from the outward side as well:
+   a pick that comes in turned IN is the fault, and one turned out past the hip is too.
+
+     --break=pickin  every pick turned 70° in ...................... 14 runs, one per move
+
+   Seventy and not less: a bent knee gives a picking leg up to 45° of toe-in, so the
+   mutation has to be the size of a real fault, and 45 or 60 passed. */
+let pickFrames = 0, pickWorstOut = -Infinity, pickWorstIn = -Infinity;
+for (const [key, m] of Object.entries(MOVES)) {
+  if (!m.keys.some(k => onIceOf(k, 'L') === 'pick' || onIceOf(k, 'R') === 'pick')) continue;
+  const N = buildPath(m).length;
+  let run = null;
+  const flush = () => { if (run) { bad++; console.log(`  PICK    ${key.padEnd(13)} ${run.w} ${run.n} frames from f=${run.from.toFixed(3)}: ` +
+    `${run.worst.toFixed(0)}° ${run.dir}, and the hip gives ${run.allow.toFixed(0)}°`); run = null; } };
+  for (let i = 0; i < N; i++) {
+    const k = poseAt(m, i / (N - 1));
+    for (const w of ['L', 'R']) {
+      if (onIceOf(k, w) !== 'pick') continue;
+      pickFrames++;
+      const q = BREAK === 'pickin' ? { ...k[w], yaw: (k[w].yaw || 0) + (w === 'L' ? -70 : 70) } : k[w];
+      const kk = { ...k, [w]: q }, hip = { t: 0, n: 0, z: k.hipZ };
+      const k0 = twoBone(hip, q, THIGH, SHIN, anterior(k.hipYaw));
+      const bd = bootDir(kk, w, k0, q);
+      const an = ankleOf(kk, w, bd, [k0.t - q.t, k0.n - q.n, k0.z - q.z]);
+      const allow = turnoutAllowed(Math.hypot(an.t, an.n, an.z - k.hipZ));
+      const out = (w === 'L' ? 1 : -1) * wrap(Math.atan2(-bd[1], bd[0]) / (Math.PI / 180) - k.hipYaw);
+      pickWorstOut = Math.max(pickWorstOut, out); pickWorstIn = Math.max(pickWorstIn, -out);
+      const over = out > allow.out ? { dir: 'out', v: out, a: allow.out } : -out > allow.in ? { dir: 'in', v: -out, a: allow.in } : null;
+      if (over) { run ??= { w, from: i / (N - 1), n: 0, worst: 0, dir: over.dir, allow: over.a }; run.n++; run.worst = Math.max(run.worst, over.v); }
+      else flush();
+    }
+  }
+  flush();
+}
+console.log(`${pickFrames} frames on a pick, turned between ${(-pickWorstIn).toFixed(0)}° and ${pickWorstOut.toFixed(0)}° out against the pelvis`);
 
 console.log(`${cuspFrames} frames inside one-foot turns: ${still} either side of the apex, where a cusp has no tangent, and ` +
   `${unresolved} where the drawn tracing bends too fast to read one; worst blade off its own tracing ${worstAlong.toFixed(1)}° (bound ${ALONG})`);

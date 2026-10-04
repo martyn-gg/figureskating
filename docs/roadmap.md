@@ -97,6 +97,13 @@ No product, model or maker is named or recommended anywhere in the guide (Martyn
 has one. If a brand ever sponsors the site, it gets a badge spot for its logo and nothing
 in the content changes.
 
+## Standing rule: coaches' pages are a check, not a source
+
+Coaches' public pages and videos may be read to check a pose or a piece of technique, the way
+a coach would correct it at the rink (Martyn, 04/10/2026). Take the base guidance only: no
+wording, no quotes, no names, nothing that would need attribution. What changes in the guide
+is written in its own words, and the rig carries the number.
+
 ## Small and ready
 
 - **Share images**: a 1200 × 630 card per page, built at build time like the tracings, in
