@@ -4,6 +4,7 @@ kind: transition
 summary: "RBO to LBI: the free foot crosses in front of the skating foot onto the same lobe, still travelling backwards."
 entry: { foot: R, edge: O, dir: B }
 turn: crossover
+rig: rboCrossover
 prerequisites: [rbo, backward-half-swizzle-pumps]
 verified: { checked: false }
 ---

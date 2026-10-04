@@ -2450,6 +2450,35 @@ the buttons and nowhere else.
   entrance or is declared waiting (a declared one that gains an entrance fails); and every one
   ends on an exit. Mutations: edge 7, facing 7, splice 102, stale 1.
 
+## Backward crossovers — built 04/10/2026, Session 35
+
+The rig had no crossover, and every entrance the sources list first starts with back
+crossovers. `lboCrossover` (clockwise, the left foot inside on its back outside edge) is built
+by `crossoverMove` in `moves.js`; `rboCrossover`, anticlockwise, is its mirror. They draw on
+the `lbo-crossover` and `rbo-crossover` pages, beside the derived tracing those pages already
+had.
+
+- **What a crossover is**, from coaches' public teaching pages (base guidance only): the inside
+  foot on its back outside edge, the outside foot on its back inside edge; the outside foot
+  pushes out on its inside edge, crosses in front and takes the weight; the inside foot, now
+  behind and outside, pushes out under the body on its outside edge and is lifted round
+  behind back to the inside. Knees bent, shoulders square to the circle and still.
+- **One circle, both blades**, so the second blade's edge is derived and nothing new was
+  needed: the right foot down on a clockwise backward circle is RBI and the left LBO. The
+  reference hands over twice a crossover, and the path's segments carry the reference foot.
+- **The hip is inside both blades whenever both are down** (`lean.mjs`). The first draft put
+  the crossing foot down inside the hip and failed it; a foot that comes down "inside" the
+  other comes down between that foot and the hip, and the hip goes further in as it does.
+- **The weight moves over 0.14 to 0.17 s**, not at the handover instant: moving the hip 12 cm
+  across in the last fortieth of a second was a 12 cm lurch (`continuity.mjs`, 5).
+- Hip at 94: at 88 and 92 the gliding shin leaned 32 to 36° over the toe (`shin.mjs`, 32).
+- The frame after the pushing foot lifts sits a millimetre through the ice line, three times
+  each way, declared in `underice.mjs` as departures.
+- Three crossovers at 2.6 m/s on a 4 m circle, 1.2 s each, then a held glide.
+- Not yet: as an entrance (the Lutz, loop, Axel, waltz jump, spins), which needs each
+  crossover to end on the edge the element starts on; and the forward crossovers.
+  Verified against a coach: NO.
+
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
 `shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the

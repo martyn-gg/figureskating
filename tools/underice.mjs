@@ -146,6 +146,20 @@ const handover = {
          + 'the boot glyph still on the line it has just come off' },
   ],
 };
+/* Session 35, the backward crossovers: the frame after the outside foot leaves the end of
+   its push, three times, the boot glyph a millimetre through the line it has just come off.
+   The departure case above, on a blade that was pushing with its heel turned out. */
+const DEPART = 'the frame after the pushing blade lifts, still on the line it has just left';
+handover.lboCrossover = [
+    { foot: 'R', from: 0.054, to: 0.058, cm: 0.1, why: DEPART },
+    { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
+    { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
+];
+handover.rboCrossover = [
+    { foot: 'L', from: 0.054, to: 0.058, cm: 0.1, why: DEPART },
+    { foot: 'L', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
+    { foot: 'L', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
+];
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();
 

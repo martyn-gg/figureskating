@@ -2604,6 +2604,84 @@ const marchKeys = () => {
   };
 }
 
+/* BACKWARD CROSSOVERS — 04/10/2026, Session 35. The commonest entrance in the sport (the
+   Lutz, the loop, the Axel and waltz jump's step forward, the forward spins) and Learn to
+   Skate USA's Basic 4, four to six in a row each way. Drawn clockwise, on the left back
+   outside edge, for `lbo-crossover`; the right, anticlockwise, is its mirror.
+
+   WHAT A CROSSOVER IS, from coaches' public teaching pages (base guidance only): the inside
+   foot glides on its back outside edge and the outside foot on its back inside edge; the
+   outside foot pushes out on its inside edge, then crosses IN FRONT of the inside foot and
+   takes the weight on its inside edge; the inside foot, now behind and outside it, pushes
+   out under the body on its outside edge (the under-push) and is lifted back round behind to
+   the inside, where it takes the weight again. Knees bent throughout, the shoulders square to
+   the circle and still, the head looking where the skater is going.
+
+   ONE CIRCLE, BOTH BLADES. Every blade that is down is on the one circle, so the second
+   blade's edge is derived (secondFoot) and comes out right without being written: the right
+   foot down beside the left on a clockwise backward circle is RBI, the left beside the right
+   is LBO. The reference hands over twice a crossover, onto the right as it crosses and back
+   onto the left as it comes round (rig-math.js, the reference handover), and the path's
+   segments carry the reference foot.
+
+   THE HIP IS ALWAYS INSIDE BOTH BLADES THAT ARE DOWN (lean.mjs: a blade on an edge has the
+   body leaning over that edge, into the circle), so a foot that comes down "inside" the other
+   comes down between it and the hip, and the hip moves further in as it does.
+
+   HIP-RELATIVE, the hip slides across between the feet at each handover: a blade on the ice
+   cannot move along the ice sideways unless it is pushing, so the right foot's run from the
+   inside back out to the outside after the left comes down is its push, and the left's run
+   out after the right comes down is the under-push. Positions are the track's: +t is the
+   direction of travel (behind a skater going backwards), +n the travel's right, which on a
+   clockwise backward circle is toward its centre.
+
+   Verified against a coach: NO. */
+const crossoverMove = () => {
+  const N = 3, CYC = 1.2, END = 0.8, HZ = 94, R = 400, SPEED = 260;      // cm/s round the circle
+  const keys = [], path = [];
+  const base = { hipZ: HZ, hipYaw: 180, shYaw: 188, sh: P(-6, 0, HZ + 51), arm: [58, 10, 20], dir: 'B' };
+  const total = N * CYC + END, T = u => +(u / total).toFixed(5);
+  const deg = s => SPEED * s / R * 180 / Math.PI;
+  const HAND = 0.64;                                                      // fraction of a crossover on the left
+  for (let i = 0; i < N; i++) {
+    const c = i * CYC, at = f => T(c + f * CYC);
+    path.push({ kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(HAND * CYC), span: HAND * CYC });
+    path.push({ kind: 'arc', foot: 'R', edge: 'I', dir: 'B', sweep: deg((1 - HAND) * CYC), span: (1 - HAND) * CYC });
+    const onL = { skate: 'L', edge: 'O' }, onR = { skate: 'R', edge: 'I' };
+    keys.push({ ...base, ...onL, t: at(0), ph: i ? 'The weight onto the left foot, the right outside it' : 'Gliding on the left back outside edge, the right foot beside it',
+      L: P(0, -6, 0, -0.5), R: PUSH(-6, -18, 0, 20) });
+    keys.push({ ...base, ...onL, t: at(0.2), ph: 'The right foot pushing out on its inside edge',
+      L: P(-1, -6, 0, -0.5), R: PUSH(-14, -34, 0, 20) });
+    keys.push({ ...base, ...onL, t: at(0.3), ph: 'The right foot lifting at the end of the push',
+      L: P(-2, -7, 0, -0.5), R: P(-16, -30, 10, 0, NEUTRAL) });
+    keys.push({ ...base, ...onL, t: at(0.4), ph: 'Crossing in front of the left foot',
+      L: P(-2, -8, 0, -0.5), R: P(-16, -6, 13, 0, NEUTRAL) });
+    keys.push({ ...base, ...onL, t: at(0.5), ph: 'The right blade down inside, crossed in front',
+      L: P(-2, -10, 0, -0.5), R: ON(-11, -2, 0, -0.5) });
+    keys.push({ ...base, ...onR, t: at(HAND), ph: 'The weight onto the right back inside edge',
+      L: PUSH(-1, -14, 0, 8), R: P(-9, -6, 0, -0.5) });
+    keys.push({ ...base, ...onR, t: at(0.72), ph: 'The under-push: the left blade pressing out under the body',
+      L: PUSH(5, -28, 0, 8), R: P(-7, -5, 0, -0.5) });
+    keys.push({ ...base, ...onR, t: at(0.77), ph: 'The left foot lifting from the under-push',
+      L: P(9, -24, 9, 0, NEUTRAL), R: P(-6, -6, 0, -0.5) });
+    keys.push({ ...base, ...onR, t: at(0.82), ph: 'The left foot coming round behind to the inside',
+      L: P(10, -4, 11, 0, NEUTRAL), R: P(-5, -9, 0, -0.5) });
+    keys.push({ ...base, ...onR, t: at(0.87), ph: 'The left blade down inside the right',
+      L: ON(4, -2, 0, -0.5), R: P(-4, -14, 0, -0.5) });
+  }
+  path.push({ kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(END), span: END });
+  keys.push({ ...base, skate: 'L', edge: 'O', t: T(N * CYC), ph: 'The weight onto the left foot, the right outside it',
+    L: P(0, -6, 0, -0.5), R: PUSH(-6, -18, 0, 20) });
+  keys.push({ ...base, skate: 'L', edge: 'O', t: 1, ph: 'Held: gliding on the left back outside edge',
+    L: P(0, -6, 0, -0.5), R: ON(-6, -16, 0, -0.5) });
+  return { path, radius: R, duration: total, keys };
+};
+MOVES.lboCrossover = { name: 'Backward crossovers, clockwise',
+  note: 'left back outside edge inside, the right foot crossing in front onto its back inside edge, three times',
+  ...crossoverMove() };
+MOVES.rboCrossover = mirrorMove(MOVES.lboCrossover, 'Backward crossovers, anticlockwise',
+  'right back outside edge inside, the left foot crossing in front onto its back inside edge, three times');
+
 /* THE PIVOT — 04/10/2026, Session 32. One toe pick set in the ice at the centre while the
    other foot goes round it on a forward inside edge, one and a quarter turns (Ice Skating
    Australia: one to two, no pumping, the anchored foot's heel pointing at the foot going
