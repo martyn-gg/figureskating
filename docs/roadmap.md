@@ -65,8 +65,10 @@ their doubles, 19 undrawn combinations, the pivot and the bunny hop. Agreed with
 04/10/2026. *Steps 1 and 2 done 04/10/2026, Session 29*: the pin and the reach for the pick,
 on `toePick`, now a movement. *The toe loop drawn the same day*, after Martyn corrected
 which way a picking toe points, then the double toe loop and eleven more combinations
-(18 drawn), then the flip and the Lutz and every two-jump combination (26). Next: the pivot,
-then the Euler for the three-jump combinations.
+(18 drawn), then the flip and the Lutz and every two-jump combination (26). **Next session
+first:** Martyn's stroking corrections (side push for beginners, the T as the progression,
+alternating curves; Session 29 handoff), then push live. Then a knee that tracks its own foot,
+the pivot, and the Euler for the three-jump combinations.
 
 ## Also on the list, unordered
 
