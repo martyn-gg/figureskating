@@ -65,8 +65,27 @@ guide and tell us what is wrong with it.
   in a page or two.
 - **Pairs and dance tests**: BIS and US Figure Skating both run them. Read the syllabuses
   before sizing the pairs section.
+- **Equipment** (04/10/2026, from reading adultsskatetoo.com's guides for gaps). The
+  guide has nothing on kit. First the blade's rocker, drawn from the geometry the rig
+  already stands on (`blade.mjs`): the curve along the blade, the sweet spot, where a
+  spin and a back edge sit on it, where the pick begins. Then prose: boots (fit, and why
+  too stiff stops the knee bending), and care (guards on and off the ice, soakers, drying,
+  sharpening and the hollow). The questions of a skater's first month.
+- **Off-ice training** in the empty `conditioning` collection. What makes it ours is the
+  link to the ice: each exercise names the elements it prepares (a floor waltz jump for
+  the takeoff, a held landing position, spin-position balance and spotting), the way the
+  basics name what they lead to. Generic strength, stretching and cardio are better
+  covered elsewhere and are at most a line. Read US Figure Skating's off-ice training
+  page first. Warm-up and landing safety stated plainly, with no injury advice.
 - **Coach review.** The "not checked by a coach yet" notice is on every page. Closing it is
   people, not pages; a fuller guide makes it easier to ask.
+
+## Standing rule: brand-agnostic
+
+No product, model or maker is named or recommended anywhere in the guide (Martyn,
+04/10/2026). Equipment pages say what a rocker, a pick or a hollow does, never which blade
+has one. If a brand ever sponsors the site, it gets a badge spot for its logo and nothing
+in the content changes.
 
 ## Small and ready
 
