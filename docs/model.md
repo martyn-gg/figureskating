@@ -2222,6 +2222,17 @@ own. Mutations: `--break=turns` 4768, `--break=rock` 352.
 The upright spin reads 3 to 4 cm toward the toe of its contact and is not in a family yet;
 neither are the jumps or the stops. Those are the next to set.
 
+**Set 04/10/2026, Session 34, by Martyn**, for the next three families:
+
+- **Jumps.** The take-off edge's glide: mass over the contact ±2. An edge take-off (Salchow,
+  loop, Axel, waltz) as the knee drives up: the contact on the front of the rocker, +4 to +8.
+  A toe take-off: the mass between the pick and the skating blade. The landing touches down on
+  the toe, then, once the check holds, the turn exit's −3 to 0 with the mass over the contact
+  ±2.
+- **Stops.** Through the brake, the mass 3 to 8 cm behind the braking contact.
+- **Spins, all of them.** The back spin's numbers: centred, the contact +6 to +10 and the mass
+  over it.
+
 ## Four of the pages that said "not yet drawn" — 04/10/2026, Session 33
 
 - **The back spin** is the upright spin's arcs on a right back outside edge (the same lobe
@@ -2236,6 +2247,144 @@ neither are the jumps or the stops. Those are the next to set.
   anticlockwise skater the half flip leaves LBI and turns away from its right pick, the tap
   toe jump leaves RBO and turns toward its left pick, and both come out of which foot picks.
   The landing pick's later keys are read back off the pin rather than written by hand.
+
+## Three reads checked against coaches' public material — 04/10/2026, Session 34
+
+Session 33 left three choices for Martyn to judge, and he asked for coaches' public pages
+and videos to be checked first, on his rule: the base guidance only, never their text, and
+nothing that would need attribution. What was found, and what it changed (nothing in the rig):
+
+- **Backward wiggles: the feet curve together.** A coach's public lesson has the feet
+  parallel and hip-width apart, the skater turning side to side from the hips with the arms
+  working against them: forward wiggles run the other way. That is the drawn read. The coach
+  moves the arms against the hips where Ice Skating Australia keeps head and arms in place;
+  shoulders still in the world over swinging hips is both.
+- **The swizzle's lemon: the shape is confirmed, the size is not stated anywhere.** Heels
+  together, out on inside edges, toes in until they meet, and not so wide the feet run away.
+  No public page gives a length, width or toe angle. The drawn lemon (100 cm long, 37 cm
+  between the blades at the widest, toes 30° out) is inside every bound found: a coach's
+  practice square of about a metre, Australia's "a metre or more" for three to five at its
+  first level, and under shoulder width. Where the toes come round (a ninth of each swizzle)
+  is still a choice.
+- **The back spin: right foot, back outside edge, for an anticlockwise skater.** Three
+  coaches' teaching pages say so independently, and the exit on that edge with the free leg
+  extended behind. As drawn.
+
+Two things the same reading turned up, both for the entrances below: a back spin is taught
+from a standing pivot first, and from a step (left forward inside, then a push onto the right
+forward inside edge and a three turn) once it works; and one coach centres a forward spin on
+the forward outside three turn, where this rig spins on the back inside edge after it. The
+second is left alone: the rig's spins were specified against the ISU's positions, which do not
+name the edge, and the question is Martyn's.
+
+## Entrances and exits — specified 04/10/2026, Session 34, before it is built
+
+Martyn: every jump and every spin gets an entrance and an exit, probably with a choice of
+entrances. **Agreed with Martyn the same day**, as written below, with the cheap entrances
+built first (the splice, three turns, glides, the step forward, the pivot) and mohawks and
+crossovers after. His balance targets for the jumps, the stops and the spins are under
+*Balance targets per phase*.
+
+### What each has now
+
+| element | starts | ends |
+|---|---|---|
+| waltz, Axel, double Axel | a glide on LFO | RBO run-out |
+| Salchow, flip | LFO glide, LFO three turn, LBI | RBO run-out |
+| toe loop | RFI glide, RFI three turn, RBO | RBO run-out |
+| loop | RBO glide, free leg in front | RBO run-out |
+| Lutz | a long LBO glide | RBO run-out |
+| doubles | the single's start (`doubleOf`) | the single's end |
+| upright, sit, camel, combination, change of foot | LBI travelling, the circle closing | the circle opening, stepping off |
+| back spin | RBO travelling | RBO, free leg extended behind |
+| two-foot spin | two feet curving in | the right foot lifting |
+
+So the Salchow, flip and toe loop already carry an entrance (a three turn), the rest start on
+their take-off edge, and every element already ends on an exit edge held. What is missing is
+the part before: the run of steps that builds speed and sets the edge, which is what a coach
+means by an entrance.
+
+### What the sources give
+
+From coaches' public teaching pages and the programmes held in `sources/` (base guidance only):
+
+| element | entrances, commonest first |
+|---|---|
+| waltz jump | back crossovers, step forward onto LFO · a forward glide from a standstill |
+| Salchow | LFO three turn · mohawk RFI to LBI · back outside three turn then mohawk |
+| toe loop | RFI three turn · straight back on RBO from back crossovers |
+| loop | back crossovers, RBO with the free leg in front · RFI three turn |
+| flip | LFO three turn · mohawk RFI to LBI |
+| Lutz | back crossovers, then a long LBO glide into the corner |
+| Axel | back crossovers, step forward onto LFO · from the other direction's crossovers, edge change, step forward |
+| forward spins | back crossovers, step forward onto a deep LFO · forward inside three turn |
+| back spin | standing pivot · LFI step, push onto RFI, three turn onto RBO |
+| two-foot spin | from a standstill, wound up |
+
+Exits are less varied: a jump lands on RBO and holds the check, then the skater steps
+forward (in a programme, into whatever comes next); a forward spin steps out onto RBO, the
+free leg extended; the back spin rocks back and extends the free leg behind on RBO.
+
+### The shape proposed
+
+**An entrance is its own move, joined to the element at a named key.** `withEntry(core,
+entry)` splices them the way `comboOf` splices two jumps: the entry ends on the edge the core
+starts on, the join is the core's first key, and the clock runs straight through. One core,
+any number of entrances, and the doubles get every single's entrances for nothing, since
+`doubleOf` already reads the single's keys.
+
+```
+ENTRIES = {
+  salchow: [ { id:'three',  name:'Forward outside three turn', move:'lfoThreeIn' },
+             { id:'mohawk', name:'Mohawk',                     move:'rfiMohawkIn' } ],
+  ...
+}
+```
+
+The default is the first. Each variant is built into `MOVES` under `<core>@<id>`
+(`salchow@mohawk`), so every checker that walks `MOVES` holds every variant without being
+told, and the hash names a variant that moved.
+
+**The core is cut back to the take-off edge.** The Salchow, flip and toe loop lose their
+three turn from the core; it comes back as their default entrance, frame for frame the same
+move (the hash proves it). A core starts on its take-off (or centring) edge with one glide key
+the entrance lands on.
+
+**An exit is the element's last segment and keys**, as now, named `exit` so the page can
+mark the phase. One per element unless a source gives a second; none does yet.
+
+**On the page**: the body frame plays entrance, element and exit as one clock, with the
+phases marked on the scrubber, and a row of buttons under it naming the entrances, the default
+pressed. The tracing follows the variant. Text stays as written: the entrances are named on
+the buttons and nowhere else.
+
+**What the checkers hold**, in `entries.mjs`, new:
+
+1. The entry's last key and the core's first agree on foot, edge, direction and `hipYaw`
+   (mod 360) exactly, and every marker within 1 cm (`comboOf`'s throw, asserted).
+2. Every entrance named in `ENTRIES` builds, and its name is unique per element.
+3. The default variant of a three-turn core hashes identically to the move before the cut.
+4. `drawn.mjs`: an element whose core has a variant draws every variant.
+5. `balance.mjs`: entry glides hold the glide target (±2); entry three turns hold the turn
+   targets; and the new families below.
+
+`continuity.mjs`, `lean.mjs` and the rest walk the variants as moves and need nothing.
+
+### What it costs, in order
+
+1. **From what the rig holds** (the splice and the cut): three-turn entrances for the
+   Salchow, flip, toe loop and loop; a long glide into the Lutz; a step forward onto LFO for
+   the waltz and the Axel; a pivot into the back spin. The step forward is the slip step's
+   handover; the pivot exists.
+2. **Mohawks** (Salchow, flip): a step turn, forward to backward, heel to instep. Each
+   mohawk already has a derived page and tracing, and nothing in the rig hands the body over
+   from one foot going forwards to the other going backwards. New, but small: the two-foot
+   turn's half turn plus the slip step's handover.
+3. **Back crossovers** (Lutz, loop, Axel, waltz, the spins): the commonest entrance of all,
+   and the rig has no crossed step of any kind (crossovers and the dances' crossed steps are
+   derived tracings only). A crossover is a stroke, a cross in front and an under-push on a
+   circle, repeated. It is the largest piece here and also the
+   next basic the guide owes (Skills and Basic 4 both ask for it).
 
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 

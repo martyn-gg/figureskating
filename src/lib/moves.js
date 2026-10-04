@@ -848,12 +848,18 @@ export const MOVES = {
      back outside edge. For a skater who turns anticlockwise that is the right foot, the
      foot every jump here lands on, and the spin is drawn on it throughout.
 
+     CHECKED 04/10/2026, Session 34, against three coaches' public teaching pages (base
+     guidance only): all three put an anticlockwise skater's back spin on the right foot,
+     on a back outside edge, leaving on that edge with the free leg extended behind. The
+     choice stands as drawn.
+
      The blade is pitched 2.2° through the centred phases, 8 cm forward of its middle,
      inside Martyn's spin target (+6 to +10), and the shoulders sit 5 cm back toward the
      heels so the mass is over that contact (the upright spin's numbers read 3 to 4 cm
      toward the toe of it); balance.mjs holds both.
 
-     Verified against a coach: NO. */
+     Verified against a coach: the foot, the edge and the exit, from public teaching pages
+     (above). Not the pose. */
   backSpin: spinMove({
     name:'Back spin',
     note:'right back outside edge: entered, centred with the free leg crossed, wound up and stepped out',
@@ -2296,8 +2302,13 @@ MOVES.halfSwizzlePumpsBack = {
    line throughout, so hipYaw is the left blade's heading read back: the feet turn out
    and in under a pelvis that does not.
 
-   Verified against a coach: NO. The lemon's size (about a metre long and 40 cm across)
-   and how fast the toes come round are choices. */
+   Verified against a coach: partly, 04/10/2026, Session 34. Public teaching pages agree
+   on the shape: heels together to start, the feet pressed out on inside edges, the toes
+   brought in until they meet, and a warning against opening so wide the feet run away.
+   None gives a number. About a metre long per lemon sits inside a coach's practice square
+   of about a metre and inside Australia's "a metre or more" for three to five at the first
+   level; 37 cm between the blades at the widest is under shoulder width. The size and how
+   fast the toes come round stay choices, and nothing found contradicts them. */
 const swizzleMove = (dir) => {
   const s = dir === 'F' ? 1 : -1, B = dir === 'B';
   const A = 30, Rr = 100, G = 5, NSW = 4, ARC = 8, PIV = 1;
@@ -2377,8 +2388,12 @@ MOVES.swizzleBack = {
    the path's own heading read back (buildPath, at each key's time), so the shoulders do
    not turn in the world.
 
-   Verified against a coach: NO. That the feet curve together rather than apart is read
-   from the descriptions, which none of the three spells out. */
+   Verified against a coach: the feet, 04/10/2026, Session 34. A coach's public lesson
+   spells it out: the feet parallel and hip-width apart, the skater turning side to side
+   from the hips with the arms working against them, the backward version of forward
+   wiggles. So the feet do curve together, as drawn. The coach has the arms moving against
+   the hips where Australia keeps the head and arms in place; the shoulders held still in
+   the world while the hips swing is both at once, and is kept. */
 const wigglesMove = () => {
   const R = 35, path = [{kind:'arc', foot:'L', edge:'O', dir:'B', sweep:20, span:1}];
   for (let i = 0; i < 5; i++)
