@@ -9,14 +9,17 @@ sourceUrl: https://aussieskate.au/wp-content/uploads/2023/09/Aussie-Skate-Instru
 verified: { checked: false }
 ---
 
-You push with the inside edge of one blade and glide on the other, then bring the pushing foot
-back to the skating foot before the next push. Learn to Skate USA asks at its third level for
-stroking that shows correct use of the blade, and Ice Skating Australia says what that means:
-the push comes off the inside edge and never off the toe pick. Australia repeats that rule
-at two of its levels.
+Push with the inside edge of one blade and glide on the other, then bring the pushing foot
+back before the next push. The push comes off the inside edge, never off the toe pick, a rule
+Ice Skating Australia repeats.
 
-Australia starts the stroke from the T position, the pushing foot at right angles to the
-skating foot, so that the first push comes off the inside edge. New Zealand's 2008 badges
-describe the same push as from heel to instep. Each stroke then runs as far as the skater is tall, the free leg stretched out behind and turned out, and Australia wants at least six.
+Start each push from the T: the pushing blade behind the gliding heel and at right angles to
+it, turned as far as the hips allow. That is how stroking introduces edges. The push comes off
+an inside edge and the glide runs on an outside edge.
+
+Bend both knees, drive the pushing leg out until it is straight, then rise into the glide
+with the free leg stretched out behind. Bend again and set the next pushing blade down while
+already bent. Arms go forward in a low V, hands at about rib height, further forward while
+learning. Australia wants at least six strokes.
 
 Held on one foot round a curve, a stroke becomes an edge.

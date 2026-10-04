@@ -24,6 +24,9 @@
    coach's sign-off. */
 
 export const FOUNDATIONS = {
+  'pivot': [
+    { to: /^toe-loop$/, why: 'The back outside pivot, entered from a forward inside three turn, is the toe loop\'s entry and pick without the jump: the pick set behind on a back outside edge while the skating foot goes round it.' },
+  ],
   'swizzle': [
     { to: /^backward-swizzle$/, why: 'The same in-and-out movement on both feet, travelling backwards. Learn to Skate USA teaches it one level later.' },
     { to: /^forward-stroking$/, why: 'Learn to Skate USA teaches the swizzle at its first level and stroking at its third. Ice Skating Australia teaches half swizzles, one foot at a time, in between.' },

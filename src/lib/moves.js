@@ -1303,23 +1303,44 @@ export const MOVES = {
      skater who wants a wider push turns the pelvis instead — which is why a strong
      push looks like the whole body opening rather than a foot twisting.
 
-     A HELD POSITION, like twoFoot and toePick, and for a plainer reason than
-     either: a push is a change of weight, and the rig carries one hip height and
-     one reference blade per frame. Drawing the changeover means the reference blade
-     handing over mid-move, which the waltz does and which is a movement rather than
-     a probe. This holds the instant the push is at its widest. */
+     A MOVEMENT SINCE 04/10/2026, Session 29 (Martyn, who skates, against video). It was a
+     held pose at the push's widest. Stroking starts from a T: the pushing blade set behind
+     the gliding heel and square across it, which is what puts the push on an inside edge
+     from the start and the glide on an outside edge, so stroking is where edges are
+     learned. The blade can be turned the full ninety degrees, as far as the skater's hips
+     allow; the rig opens the pelvis 35 degrees to get it, the way a T-stop does. Then the
+     push drives out to full extension, the pushing leg straight; the foot leaves the ice,
+     the skater rises into the glide with the leg extended behind, then bends again and
+     brings the free foot back to place the next push while already bent (Martyn).
+
+     HOW BENT THE T CAN BE IS LIMITED BY THE KNEE, NOT THE BOOT. The rig points every knee
+     where the pelvis faces (twoBone's anterior(hipYaw)); a skater's knee follows a
+     turned-out foot. So a bent knee over a blade turned ninety degrees leans the shin
+     sideways in its boot, and shin.mjs stops it at a hip of 92 (measured, Session 29). The
+     fix is a knee that tracks its own foot, which is its own piece of work. Arms forward in a low V, the hands at about
+     rib height, between one and three o'clock (further forward for a beginner); the rig
+     uses half past one. The gliding knee bend was right as it was (Martyn).
+
+     One reference blade throughout: the left glides and the right pushes. Drawing the next
+     stroke on the other foot is the handover the waltz does, and is left for later. */
   pushOff: {
     name:'Push',
-    note:'forward outside edge · the other blade planted and turned thirty-five degrees out',
+    note:'from a T behind the gliding heel · the right blade pushing on its inside edge · rising into the glide, the free leg behind',
     path:[{kind:'arc', foot:'L', edge:'O', dir:'F', sweep:60}],
-    radius:300, duration:3.2,
+    radius:300, duration:3.6,
     keys:[
-      {t:0.00, ph:'Weight over the gliding blade, the push at its widest', hipZ:94, hipYaw:0, shYaw:-6,
+      {t:0.00, ph:'The T, knees bent: the pushing blade behind the gliding heel, square across it', hipZ:92, hipYaw:-35, shYaw:-12, arm:[50,32,26],
+       sh:P(-2,0,145), L:P(14,12,0,-0.5), R:PUSH(-2,14,0,-90), skate:'L', edge:'O', dir:'F'},
+      {t:0.22, ph:'Pushing out against the inside edge', hipZ:92, hipYaw:-20, shYaw:-8, arm:[50,32,26],
+       sh:P(-2,0,145), L:P(8,9,0,-0.5), R:PUSH(-8,25,0,-60), skate:'L', edge:'O', dir:'F'},
+      {t:0.40, ph:'The push at full extension, the pushing leg straight', hipZ:94, hipYaw:0, shYaw:-4, arm:[50,32,26],
        sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
-      {t:0.45, ph:'Still pushing, the shoulders squaring up', hipZ:94, hipYaw:0, shYaw:-4,
-       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
-      {t:1.00, ph:'Held: the push complete, the glide running', hipZ:94, hipYaw:0, shYaw:-2,
-       sh:P(-2,0,147), L:P(0,6,0,-0.5), R:PUSH(-14,34,0,-35), skate:'L', edge:'O', dir:'F'},
+      {t:0.52, ph:'The pushing foot leaving the ice', hipZ:95, hipYaw:0, shYaw:-2, arm:[50,32,26],
+       sh:P(-2,0,148), L:P(0,6,0,-0.5), R:P(-28,28,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:0.72, ph:'Rising into the glide on the outside edge, the free leg extended behind', hipZ:97, hipYaw:0, shYaw:-2, arm:[50,32,26],
+       sh:P(-2,0,150), L:P(0,6,0,-0.5), R:P(-50,14,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
+      {t:1.00, ph:'Bending again, the free foot coming back to place the next push', hipZ:92, hipYaw:-25, shYaw:-10, arm:[50,32,26],
+       sh:P(-2,0,145), L:P(12,12,0,-0.5), R:P(-6,16,8,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
     ]},
 
   /* BACKWARD STROKING — the rig for `backward-stroking`, and it is pushOff read
@@ -2067,7 +2088,7 @@ Object.assign(MOVES, {
    Three parts, and the rules are the whole derivation:
    - the first jump, key for key, up to its deepest landing key (the knee absorbing),
      where its path is cut;
-   - LINK seconds on the landing edge (a quarter of a second since Session 29, see RUSH
+   - LINK seconds on the landing edge (a tenth of a second since Session 29, see RUSH
      below), in which the free leg comes in from behind,
      passes the skating foot and crosses in front, with two keys of its own;
    - the second jump, key for key, from its own deepest key before the takeoff (the
@@ -2089,7 +2110,11 @@ Object.assign(MOVES, {
    at 30 degrees). `frames` keeps the finer of the two jumps' frame rates.
 
    Verified against a coach: NO. */
-const LINK = 0.25;
+const LINK_ONE = 0.1;
+/* Into a loop the free leg has to come from behind to crossed in front, eighty
+   centimetres, and in a tenth of a second the glyph jumped 7% of the view a frame
+   (continuity.mjs). A loop second gets three tenths. */
+const LINK_THROUGH = 0.3;
 /* HOW MUCH FASTER THE SECOND JUMP'S ENTRY RUNS IN A COMBINATION — 04/10/2026, Session 29.
    Until today the second jump was its single's keys from the deepest bend on, at the
    single's own speed, after 0.9 s on the landing edge: about two and a half seconds from
@@ -2098,11 +2123,13 @@ const LINK = 0.25;
    jump's, the free leg is already going round (into a toe loop) or already in front
    (into a loop), and the pick goes in as the skating leg is already straightening. So
    the link is a quarter of a second and the second jump's run from its bend to the pick
-   or the flight, whichever comes first, takes RUSH of its own time. The path is cut and
+   or the flight, whichever comes first, takes RUSH of its own time. Then quicker again
+   (Martyn, the same day, against video): the landing's compression is the spring for the
+   second jump, with no time to release it. LINK 0.25 to 0.1 s and RUSH 0.45 to 0.3. The path is cut and
    scaled with it, sweep and span together, so the skater's speed does not change; the
    pick and everything after it run at the single's own speed, so a pinned pick travels
    exactly as far as it does on the single's page. */
-const RUSH = 0.45;
+const RUSH = 0.3;
 const secsPath = m => {
   const total = m.path.reduce((x, g) => x + g.span, 0);
   return m.path.map(g => ({ ...g, radius: g.radius ?? m.radius, span: g.span / total * m.duration }));
@@ -2150,6 +2177,7 @@ const comboOf = (A, B, name, note) => {
   const turn = 360 * Math.round((a.hipYaw - b.hipYaw) / 360);
 
   const tA = a.t * A.duration, tB = b.t * B.duration;
+  const LINK = b.L.t > 0 ? LINK_ONE : LINK_THROUGH;
   /* Where the rush ends: the first pinned key after the bend, or the start of the
      flight, whichever is sooner. */
   const flightAt = (() => { let x = 0; for (const g of secsPath(B)) { if (g.kind === 'line') return x; x += g.span; } return B.duration; })();
@@ -2220,54 +2248,56 @@ const comboOf = (A, B, name, note) => {
   }
   return { name, note, path, radius: A.radius, duration, frames, keys, combo: { first: A.name, second: B.name, land, bend, turn } };
 };
-/* THE TOE LOOP — 04/10/2026, Session 29, docs/spec-anchor.md step 3. The loop with a pick:
-   takeoff RBO, the left toe pick set behind, one rotation, landing RBO. Everything from the
-   top of the flight on is the loop's own keys, copied, so the two jumps land identically,
-   which is what they do.
+/* THE TOE LOOP — 04/10/2026, Session 29, docs/spec-anchor.md step 3. Takeoff RBO off the
+   left toe pick, one rotation, landing RBO.
 
-   THE PICK IS A JAB, which is what the element page says and what the pin made drawable:
-   it goes in at 0.44, 42 cm behind the hip and pitched 50, and comes out at 0.465 as the
-   hip rises into the takeoff, a seventh of a second. Pinned, so the toe stays where it
-   went in while the body goes over it. The free leg reaches back for it along the line
-   of the tracing and the boot's toe points back towards the skater, heel up: the pick
-   rule Martyn settled on 04/10/2026 (rig-math.js bootDir). Under the rule it replaced, a
-   pick at a takeoff height was legal only nearly flat and close behind the skating foot,
-   and the first draft of this jump was drawn that way: a toe tap, not a toe loop.
+   THE ENTRY IS A RIGHT FORWARD INSIDE THREE TURN, HELD (Martyn, 04/10/2026, who skates it):
+   out of the three turn hold the back outside edge for a moment with the free leg extended,
+   as after any three turn, and only then lower the pick to the ice. Without the hold the jump
+   is spun off the turn and gets lost. So the three turn's keys are rfiThree's, on the
+   Salchow's clock and path shape (an RFI arc, the turn, a long RBO arc, the flight, the
+   landing), and from the top of the flight on the keys are the Salchow's, which land RBO
+   like every jump here.
 
-   THE PICK IS TURNED OUT AND PIVOTS. Checked against coaches' teaching (the guidance,
-   not their words): the toe goes in slightly turned out, not square, and the pick mark
-   is a small hook because the boot turns on the pick as the skater comes round. So the
-   pick's yaw is 35 going in and 52 coming out: about 21 degrees of turnout against the
-   pelvis throughout, the boot turning 19 degrees on the pick with the body. Pitch eases
-   to 43 so the ankle stays inside the boot's 30 as the hip rises over it.
+   THE PICK GOES IN AS FAR BACK AS THE LEG WILL REACH (Martyn): the leg nearly straight, the
+   weight still on the skating leg, ready to launch. It is pinned, so the toe stays where it
+   went in while the body comes back over it, and it comes out as the hip rises into the
+   takeoff. The boot is tipped about 50 degrees (Martyn: about right), its toe back towards
+   the skater (rig-math.js bootDir), turned out about 20 degrees against the pelvis and turning
+   on the pick with the body (coaches' teaching, guidance only).
 
-   The free foot leaves the pick a seventh of a second before the air key rather than
-   with the blade, so its boot comes round within continuity's 30 degrees a frame.
-
-   Verified against a coach: NO. */
+   Verified against a coach: NO. Checked by Martyn against video, 04/10/2026. */
 {
-  const L = MOVES.loop, K = L.keys;
-  MOVES.toeLoop = {
+  const T = MOVES.rfiThree.keys, S = MOVES.salchow;
+  const at = (k, t) => ({ ...copyKey(k), t });
+  MOVES.toeLoop = turnMove({
     name:'Toe loop',
-    note:'RBO takeoff, off the left toe pick · one rotation · RBO landing',
-    path: L.path.map(g => ({ ...g })), radius: L.radius, duration: L.duration,
+    note:'RFI three turn · RBO held · RBO takeoff, off the left toe pick · one rotation · RBO landing',
+    path:[ {kind:'arc',  foot:'R', edge:'I', dir:'F', sweep:60,  span:0.24},
+           {kind:'arc',  foot:'R', edge:'I', dir:'F', sweep:12,  span:0.048, turn:'three'},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:120, span:0.48},
+           {kind:'line', len:70,                                 span:0.10},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:56,  span:0.18},
+           {kind:'arc',  foot:'R', edge:'O', dir:'B', sweep:66,  span:0.24} ],
+    radius:130, duration:7.0,
     keys:[
-      {arm:[60,6,18], t:0.00, ph:'Gliding on the back outside edge, the free leg extended behind', hipZ:92, hipYaw:178, shYaw:166,
-       sh:P(-2,0,144), R:P(-6,15,0,-0.5), L:P(34,8,24,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
-      {arm:[62,8,18], t:0.18, ph:'The edge running, the shoulders checked', hipZ:90, hipYaw:178, shYaw:170,
-       sh:P(-4,0,140), R:P(-10,15,0,-0.5), L:P(36,8,22,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
-      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching back', hipZ:84, hipYaw:176, shYaw:168,
-       sh:P(-6,0,132), R:P(-20,16,0,-1), L:P(40,10,18,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
-      {arm:[56,11,19], t:0.40, ph:'The free leg reaching for the ice', hipZ:84, hipYaw:178, shYaw:184,
-       sh:P(-5,0,133), R:P(-17,15,0,-0.5), L:P(42,10,15,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
-      {arm:[54,12,19], t:0.44, ph:'The toe pick goes in behind', hipZ:86, hipYaw:180, shYaw:196,
-       sh:P(-4,0,136), R:P(-14,15,0,0), L:{...PIN(42,10,0,50), yaw:35}, skate:'R', edge:'O', dir:'B'},
-      {arm:[40,20,8], t:0.465, ph:'Takeoff: vaulting off the pick', hipZ:96, hipYaw:198, shYaw:250,
-       sh:P(-2,0,152), R:P(-4,8,2,3), L:{...PIN(38,8.4,0,43), yaw:52}, skate:'R', edge:'O', dir:'B'},
-      {arm:[30,16,10], t:0.49, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
+      at(T[0], 0), at(T[1], 0.0932), at(T[2], 0.1863), at(T[3], 0.2236),
+      {arm:[60,6,18], t:0.33, ph:'Held: the back outside edge, the free leg extended', hipZ:90, hipYaw:176, shYaw:160,
+       sh:P(2,0,142), R:P(-10,15,0,-0.5), L:P(38,6,22,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[60,8,18], t:0.43, ph:'Still holding the edge', hipZ:90, hipYaw:176, shYaw:162,
+       sh:P(0,0,142), R:P(-10,15,0,-0.5), L:P(42,7,22,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[58,10,20], t:0.50, ph:'Skating knee bends, the free leg reaching far back', hipZ:84, hipYaw:176, shYaw:168,
+       sh:P(-6,0,132), R:P(-20,16,0,-1), L:P(54,9,16,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[56,11,19], t:0.535, ph:'Lowering the pick to the ice', hipZ:85, hipYaw:178, shYaw:184,
+       sh:P(-5,0,133), R:P(-17,15,0,-0.5), L:P(52,10,14,0,NEUTRAL), skate:'R', edge:'O', dir:'B'},
+      {arm:[54,12,19], t:0.555, ph:'The toe pick goes in, as far back as the leg reaches', hipZ:86, hipYaw:180, shYaw:196,
+       sh:P(-4,0,136), R:P(-14,15,0,0), L:{...PIN(52,10,0,48), yaw:35}, skate:'R', edge:'O', dir:'B'},
+      {arm:[40,20,8], t:0.585, ph:'Takeoff: vaulting off the pick', hipZ:98, hipYaw:198, shYaw:250,
+       sh:P(-2,0,152), R:P(-4,8,2,3), L:{...PIN(39.8,12.5,0,43), yaw:52}, skate:'R', edge:'O', dir:'B'},
+      {arm:[30,16,10], t:0.604, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
        sh:P(-2,0,170), R:P(-4,6,32,0,NEUTRAL), L:P(12,6,32,0,NEUTRAL), skate:null},
-      ...K.filter(k => k.t >= 0.5).map(copyKey),
-    ]};
+      ...S.keys.filter(k => k.t > 0.62).map(copyKey),
+    ]});
 }
 /* THE FLIP — 04/10/2026, Session 29. Takeoff LBI off the RIGHT toe pick, one rotation,
    landing RBO (skating.js JUMPS). The Salchow's entry and its landing: the forward outside
@@ -2327,14 +2357,14 @@ const comboOf = (A, B, name, note) => {
        sh:P(-2,0,144), L:P(-6,-15,0,-0.5), R:P(34,-8,24,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
       {arm:[62,8,18], t:0.18, ph:'The edge held on the outside, the shoulders checked', hipZ:90, hipYaw:182, shYaw:190,
        sh:P(-4,0,140), L:P(-10,-15,0,-0.5), R:P(36,-10,22,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
-      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching behind and across', hipZ:84, hipYaw:184, shYaw:192,
-       sh:P(-6,0,132), L:P(-20,-16,0,-1), R:P(40,-12,16,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
-      {arm:[56,11,19], t:0.40, ph:'The free leg reaching for the ice', hipZ:84, hipYaw:182, shYaw:186,
-       sh:P(-5,0,133), L:P(-17,-15,0,-0.5), R:P(42,-12,15,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
-      {arm:[54,12,19], t:0.44, ph:'The right toe pick goes in, close behind the skating foot', hipZ:86, hipYaw:180, shYaw:196,
-       sh:P(-4,0,136), L:P(-14,-15,0,0), R:{...PIN(42,-12,0,50), yaw:-36}, skate:'L', edge:'O', dir:'B'},
+      {arm:[58,10,20], t:0.32, ph:'Skating knee bends, the free leg reaching far back and across', hipZ:84, hipYaw:184, shYaw:192,
+       sh:P(-6,0,132), L:P(-20,-16,0,-1), R:P(50,-12,16,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[56,11,19], t:0.385, ph:'Lowering the pick to the ice', hipZ:85, hipYaw:182, shYaw:186,
+       sh:P(-5,0,133), L:P(-17,-15,0,-0.5), R:P(50,-12,14,0,NEUTRAL), skate:'L', edge:'O', dir:'B'},
+      {arm:[54,12,19], t:0.425, ph:'The right toe pick goes in, as far back as the leg reaches', hipZ:86, hipYaw:180, shYaw:196,
+       sh:P(-4,0,136), L:P(-14,-15,0,0), R:{...PIN(50,-12,0,48), yaw:-36}, skate:'L', edge:'O', dir:'B'},
       {arm:[40,20,8], t:0.465, ph:'Takeoff: vaulting off the pick against the curve', hipZ:98, hipYaw:198, shYaw:250,
-       sh:P(-2,0,152), L:P(-4,-8,2,3), R:{...PIN(37.7,-7.6,0,43), yaw:-13}, skate:'L', edge:'O', dir:'B'},
+       sh:P(-2,0,152), L:P(-4,-8,2,3), R:{...PIN(37.2,-9.3,0,43), yaw:-13}, skate:'L', edge:'O', dir:'B'},
       {arm:[30,16,10], t:0.49, ph:'Pick and blade leave the ice', hipZ:118, hipYaw:250, shYaw:290,
        sh:P(-2,0,170), L:P(-4,-6,32,0,NEUTRAL), R:P(12,-4,32,0,NEUTRAL), skate:null},
       ...L.keys.filter(k => k.t >= 0.5).map(copyKey),
