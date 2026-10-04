@@ -1,6 +1,7 @@
 ---
 name: Two-foot spin
 kind: spin
+rig: twoFootSpin
 summary: Both feet on the ice, turning on the spot. The first spin every learn-to-skate programme teaches.
 aliases: ["two foot spin", "beginning two-foot spin"]
 prerequisites: [two-foot-turn]

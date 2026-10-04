@@ -828,6 +828,52 @@ export const MOVES = {
        sh:P(0,0,146), L:P(0,15,0,1.6), R:P(-18,20,20), skate:'L', edge:'I', dir:'B'},
     ]}),
 
+  /* A TWO-FOOT SPIN — 04/10/2026, Session 32. Both blades on the ice, turning on the
+     spot, the feet a hip's width apart (Ice Skating Australia: one revolution, then
+     two, then three; Learn to Skate USA up to four at its fourth level). Three here.
+
+     The upright spin's path and its centring with a second blade: the right is held
+     diametrically across the axis from the left, so while the left's lateral offset
+     comes down to R_SPIN the right's goes to -R_SPIN and the hip, between them, is on
+     the axis. drawn.mjs had it as not yet authored; nothing new was needed.
+
+     CLAIMED AS UPRIGHT, and that is a reading rather than a quotation: the ISU defines
+     its basic positions for one-foot spins, by the skating leg, and both legs here are
+     extended. spin.mjs holds it to that definition.
+
+     WHERE IT DIFFERS FROM AUSTRALIA'S: their spin finishes on a back outside edge on
+     the right foot. That hands the reference over inside the spin, and spin.mjs reads
+     any change of foot as a change-foot spin needing three revolutions either side, so
+     this one opens out on two feet and lifts the right. Verified against a coach: NO. */
+  twoFootSpin: spinMove({
+    name:'Two-foot spin',
+    note:'both blades on the ice, a hip\'s width apart: entered, centred, three turns with a wind-up, opened out',
+    path:[
+      at(0.70, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:180, radius:R_WIDE}),
+      at(1.30, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:250, radius:R_TIGHT}),
+      at(1.40, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:720, radius:R_SPIN, position:'upright'}),
+      at(2.00, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:360, radius:R_SPIN, windup:true}),
+      at(1.40, {kind:'arc', foot:'L', edge:'I', dir:'B', sweep:150, radius:R_OUT}),
+    ],
+    keys:[
+      {arm:[70,10,16], t:0.0000, ph:'Gliding backwards on two feet, the circle curving in', hipZ:95, hipYaw:180, shYaw:166,
+       sh:P(0,0,146), L:P(0,16,0,1.6), R:ON(0,-8,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[60,9,17], t:0.2400, ph:'The circle tightening, the arms gathering the rotation', hipZ:95, hipYaw:180, shYaw:172,
+       sh:P(0,0,146), L:P(0,14,0,1.9), R:ON(0,-10,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[44,6,18], t:0.3400, ph:'Centred: both blades turning on the spot', hipZ:96, hipYaw:180, shYaw:178,
+       sh:P(0,0,147), L:P(0,12,0,2.2), R:ON(0,-12,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[40,6,18], t:0.7703, ph:'Held: spinning on two feet', hipZ:97, hipYaw:180, shYaw:180,
+       sh:P(0,0,148), L:P(0,12,0,2.2), R:ON(0,-12,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[16,2,12], t:0.8600, ph:'Wind-up: the arms drawn in, and it quickens', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(0,0,149), L:P(0,12,0,2.2), R:ON(0,-12,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[18,2,12], t:0.9142, ph:'The last turn, still centred', hipZ:98, hipYaw:180, shYaw:180,
+       sh:P(0,0,149), L:P(0,12,0,2.2), R:ON(0,-12,0,0.5), skate:'L', edge:null, dir:'B'},
+      {arm:[56,8,18], t:0.9600, ph:'Opening out, the hip travelling again', hipZ:95, hipYaw:180, shYaw:176,
+       sh:P(0,0,146), L:P(0,15,0,1.6), R:ON(0,-7,0,0.5), skate:'L', edge:'I', dir:'B'},
+      {arm:[60,8,18], t:1.0000, ph:'The right foot lifting, gliding out', hipZ:95, hipYaw:180, shYaw:176,
+       sh:P(0,0,146), L:P(0,16,0,1.6), R:P(-22,-14,14), skate:'L', edge:'I', dir:'B'},
+    ]}),
+
   /* A SIT SPIN. The teapot, spun: same fold, same free leg forward, on a
      rotating path instead of a glide. hipYaw is 180 so the front of the body is
      at NEGATIVE t, which is why the free leg's t is the teapot's negated.

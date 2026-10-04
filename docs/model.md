@@ -2195,6 +2195,28 @@ From above, the single tracing jumps sideways at each change of foot, because it
 standing blade's line and the standing blade changes. The second tracing is what draws
 two short parallel tracks instead.
 
+## The two-foot spin is the upright spin with a second blade across the axis — 04/10/2026, Session 32
+
+Not yet authored, `drawn.mjs` said, and nothing new was needed: the upright spin's path
+and centring, with the right blade held diametrically across the axis from the left, so
+the left's lateral offset coming down to R_SPIN takes the right's to −R_SPIN and the hip
+sits between them on the axis.
+
+Two things the checkers settled. A second blade derives its edge as though it travels
+the reference's way round, and across the axis it travels the other way, so on an edge
+`lean.mjs` read it leaning out of its own lobe; the centred spin is on two flats, which
+`lean.mjs` holds to the hip between the blades. And the centring key sits just before the
+held segment, as the upright spin's does, because the path's radius is reached and not
+stepped (spin.mjs read 3 cm adrift otherwise). Claimed as `upright`: the ISU defines its
+positions for one-foot spins by the skating leg, and both legs here are extended.
+
+`gather.mjs` asked for a wind-up, which every spin here has to have: two held turns and a
+third with the arms drawn in at a higher rate.
+
+Australia finishes it on a right back outside edge, which hands the reference over inside
+the spin; `spin.mjs` reads any change of foot as a change-foot spin, so this one opens out
+on two feet and lifts the right.
+
 ## A pick that lands along the travel — 04/10/2026, Session 32, the bunny hop
 
 Every pick before today was a jab behind, and `pickDir` points its toe back along the
