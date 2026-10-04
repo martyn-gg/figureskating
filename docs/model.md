@@ -2162,6 +2162,33 @@ Where the mass should sit is not one place: over the middle of the blade on a gl
 forward toward the rocker's front for turns and spins, behind the feet in a braking
 stop. Those per-phase targets are what turns the report into a checker.
 
+## A pick that lands along the travel — 04/10/2026, Session 32, the bunny hop
+
+Every pick before today was a jab behind, and `pickDir` points its toe back along the
+reach toward the skater. The bunny hop lands forward onto the right pick and steps
+straight through onto the left, so its toe points the way the skater is going, heel up
+behind, and the hip passes over the pick while it is in. Read off the reach, that toe
+would swing half a turn as the reach crosses zero.
+
+So a pick may name a `dir`. With one, `bootDir` points it along the tracing like a
+planted blade, pitched by its own pitch and turned by its yaw (`alongDir`), and the
+arrival onto it blends toward the same construction (`pickReach` carries `along`).
+Without one a pick is what it was, and the frame hashes of every other move are
+unchanged.
+
+`twofoot.mjs` held that a pose with no reference blade is airborne. The bunny hop stands
+on its pick alone for a tenth of a second, so that assertion now allows a pose whose
+every contact is a pinned pick; a blade, a skid or an unpinned pick under a pose with
+no `skate` still fails.
+
+What the checkers asked for on the way: `freefoot.mjs` refused the first pitches (42°
+between shin and boot with the pick 14 cm ahead of the hip), and the pick landing under
+the hip at 24° of pitch, falling to the stepping-through, is what the boot allows.
+`underice.mjs` caught the left toe dipping 1 to 2 cm as it came through, cleared by
+landing it 16 cm ahead with the knee behind the foot. The glide keys hold the mass
+within 3 cm of the contact (`npm run balance`); the take-off and landing are dynamic and
+not held to it.
+
 ## Where a knee points — measured, specified and built 04/10/2026, Session 31
 
 Every leg's knee was solved toward `anterior(hipYaw)`, the way the pelvis faces, and the
@@ -2289,7 +2316,8 @@ falling as the hip passes it so it stays put on the ice) failed three checkers:
 
 These are the failures `toePick`'s comment records for its entry, and each needs the model
 changed: an arrival onto a pick, and a pick's ankle allowance or its height. So the toe jumps
-and the bunny hop wait for the freeze to lift.
+and the bunny hop wait for the freeze to lift. (The toe jumps were drawn in Session 29 and
+the bunny hop in Session 32: see *A pick that lands along the travel*.)
 
 ## A gripping blade turns at a cusp — specified and built 03/10/2026
 

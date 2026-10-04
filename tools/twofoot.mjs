@@ -123,7 +123,14 @@ for (const [id, m] of Object.entries(MOVES))
       fail(`${where(id, k)}: skate is ${k.skate}, which is not on the ice`);
     /* Any contact, not just a blade. A pick jabbed into the ice under a skater in
        mid-air is the same lie as a second blade there, and reads worse. */
-    if (!k.skate && touching.length)
+    /* ON A PICK ALONE — 04/10/2026, Session 32, the bunny hop. Its landing stands on the
+       right toe pick and nothing else for a tenth of a second, so the pose has no blade
+       to name as `skate` and is not airborne either. Allowed only where every contact is
+       a PINNED pick: a pick bearing the skater while the skater travels has to stay
+       where it went in, and the pin is what makes it (rig-math.js, pinRuns). A blade,
+       a skid or an unpinned pick under a pose with no reference blade still fails. */
+    const pickAlone = touching.length && touching.every(w => onIceOf(k, w) === 'pick' && k[w].pin);
+    if (!k.skate && touching.length && !pickAlone)
       fail(`${where(id, k)}: airborne, but ${touching.join(' and ')} claims contact with the ice`);
 
     for (const w of ['L', 'R']) {

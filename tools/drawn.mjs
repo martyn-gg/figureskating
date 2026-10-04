@@ -69,7 +69,6 @@ const cannotDraw = {
   'backward-wiggles':            'the zigzag turns both blades across the travel, as the swizzles do',
   'step-sequence':               'a run of elements, each drawn on its own page',
   'choreographic-sequence':      'a run of movements chosen by the skater, not one pose',
-  'bunny-hop':                   'it lands on a pick while travelling, and the rig cannot set one: docs/model.md, The moving pick',
   /* Both feet turned out about ninety degrees each, against the weight-bearing hip's
      forty plus the bent knee's eighteen that turnout.mjs allows. Whether a trained
      skater's hips are outside that study is a coach's question, asked in Session 26. */

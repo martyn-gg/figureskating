@@ -623,6 +623,21 @@ const pickDir = (foot, pitchDeg, yawDeg) => {
   return [(bt * c + bn * sn) * Math.cos(p), (-bt * sn + bn * c) * Math.cos(p), -Math.sin(p)];
 };
 
+/* A PICK THAT LANDS ALONG THE TRAVEL — 04/10/2026, Session 32, for the bunny hop.
+   Every pick until today was a jab behind: the toe jumps reach back and the toe points
+   back along the reach toward the skater (pickDir, above). The bunny hop lands FORWARD
+   onto its pick and steps straight through, so the toe points the way the skater is
+   going, heel up behind, and the hip passes over the pick while it is in. Read off the
+   reach, that direction would swing half a turn as the reach crosses zero.
+
+   So a pick may name a `dir`, and then it points along the tracing like a planted
+   blade, pitched toe down by its own pitch and turned by its own yaw. A pick without
+   one is exactly what it was, which is every pick written before today. */
+const alongDir = (dir, pitchDeg, yawDeg) => {
+  const y = ((dir === 'F' ? 0 : 180) + (yawDeg || 0)) * D2R, p = (pitchDeg || 0) * D2R;
+  return [Math.cos(y)*Math.cos(p), -Math.sin(y)*Math.cos(p), -Math.sin(p)];
+};
+
 export function bootDir(pose, which, knee, foot){
   const on = onIceOf(pose, which);
   const p = (foot.pitch || 0) * D2R;
@@ -651,6 +666,7 @@ export function bootDir(pose, which, knee, foot){
        62 or the boot nearly flat: the model was asking the ankle for the impossible pose
        and finding the few corners where it fitted. It is also why the free foot reaching
        for a pick swung its toe 155 degrees at the contact: the free rule had it right. */
+    if (foot.dir) return alongDir(foot.dir, foot.pitch, foot.yaw);
     const d = pickDir(foot, foot.pitch || 0, foot.yaw || 0);
     if(d) return d;
   }
@@ -718,15 +734,16 @@ export function bootDir(pose, which, knee, foot){
     /* Toward the picked rule, by time (PICK_REACH, below). The target is the pick's
        own construction with the pitch of the key it is arriving at, so at w = 1 this
        is the frame after exactly. */
-    const w = foot.arrival.w, h = Math.hypot(foot.t, foot.n);
-    if (w > 0 && h > 1e-6) {
+    const w = foot.arrival.w, h = Math.hypot(foot.t, foot.n), al = foot.arrival.along;
+    if (w > 0 && (al || h > 1e-6)) {
       /* A lerp of the two directions, renormalised. Under the old pick rule the two
          pointed the toe opposite ways and this passed near vertical, where the top
          view's heading is noise (61 degrees in one frame on the toe loop); a heading
          blend was tried and failed the other way, on a free boot near vertical whose
          own heading is noise. With the toe pointing back towards the skater the two
          rules agree in heading and the lerp is short. */
-      const q = pickDir(foot, foot.arrival.pitch, foot.arrival.yaw);
+      const q = al ? alongDir(al, foot.arrival.pitch, foot.arrival.yaw)
+                   : pickDir(foot, foot.arrival.pitch, foot.arrival.yaw);
       const v = [free[0] + (q[0]-free[0])*w, free[1] + (q[1]-free[1])*w, free[2] + (q[2]-free[2])*w];
       const vl = Math.hypot(...v) || 1;
       return [v[0]/vl, v[1]/vl, v[2]/vl];
@@ -1189,7 +1206,7 @@ export const PICK_REACH = 0.25;                     // seconds
    second before the blade leaves, and a quarter-second window there would have started
    the departure three quarters blended: a step at the key. */
 const pickReach = (on, foot, dtSeconds, near, spanSeconds) => on !== 'pick' ? {} : {
-  on: 'pick', pitch: foot.pitch || 0, yaw: foot.yaw || 0,
+  on: 'pick', pitch: foot.pitch || 0, yaw: foot.yaw || 0, along: foot.dir || null,
   w: S3(Math.min(1, Math.max(0, 1 - dtSeconds / Math.min(PICK_REACH, spanSeconds)))),
   /* How far the authored point has moved from the blade's middle to the teeth: over
      the whole span (`near` is poseFree's eased u, 1 at the pick), not over PICK_REACH.

@@ -1994,6 +1994,55 @@ export const MOVES = {
        sh:P(-1,0,148), L:P(0,-7,0,-0.5), R:ON(0,7,0,-0.5), skate:'L', edge:null, dir:'F'},
     ]},
 
+  /* THE BUNNY HOP — 04/10/2026, Session 32. Gliding forward on the left, spring off it,
+     land on the right toe pick and step straight through onto the left again (Ice
+     Skating Australia's description; Learn to Skate USA level 6). Nothing turns.
+
+     ITS PICK LANDS FORWARD, which no pick did before: the toe points the way the
+     skater is going, heel up, and the hip passes over it while it is in. A pick that
+     names a `dir` takes its direction from the tracing (alongDir in rig-math.js);
+     every toe jump's pick still points back along its reach. The pick is pinned, so
+     its hip-relative t falls by the path's speed (330 cm a unit of clock) between
+     its keys: 6, then -7.2, then -20.4.
+
+     THE MASS OVER THE CONTACT ON THE GLIDES, the first move written against
+     tools/balance.mjs: a glide's target is the middle of the blade, so the glide keys
+     hold the mass within 3 cm of the contact. The take-off and landing are dynamic and
+     not held to it.
+
+     Verified against a coach: NO. */
+  bunnyHop: {
+    name:'Bunny hop',
+    note:'LF glide · spring off the left · land on the right toe pick · step through onto the left',
+    path:[{kind:'line', len:330}],
+    radius:300, duration:4.4,
+    keys:[
+      {t:0.00, ph:'Gliding forward on the left foot, the right extended behind', hipZ:94, hipYaw:0, shYaw:0,
+       sh:P(2,0,146), L:P(0,-2,0,-0.5), R:P(-34,9,18,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {arm:[56,10,20], t:0.26, ph:'The skating knee bends', hipZ:86, hipYaw:0, shYaw:0,
+       sh:P(14,0,135), L:P(8,-2,0,-1), R:P(-38,9,14,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {arm:[52,14,16], t:0.35, ph:'The right leg swings through low', hipZ:87, hipYaw:0, shYaw:0,
+       sh:P(6,0,138), L:P(12,-2,0,-1), R:P(8,9,10,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {arm:[44,22,4], t:0.40, ph:'Springing forward off the left', hipZ:97, hipYaw:0, shYaw:0,
+       sh:P(2,0,149), L:P(0,-2,1,3), R:P(36,8,36,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {arm:[40,22,6], t:0.44, ph:'In the air, the right leg reaching forward', hipZ:108, hipYaw:0, shYaw:0,
+       sh:P(2,0,160), L:P(-28,-4,26,0,NEUTRAL), R:P(30,8,28,0,NEUTRAL), skate:null},
+      {arm:[46,18,10], t:0.48, ph:'Coming down onto the right toe', hipZ:100, hipYaw:0, shYaw:0,
+       sh:P(4,0,152), L:P(-30,-4,22,0,NEUTRAL), R:P(20,8,8,0,NEUTRAL), skate:null},
+      {arm:[52,14,16], t:0.51, ph:'The right toe pick lands', hipZ:86, hipYaw:0, shYaw:0,
+       sh:P(6,0,142), L:P(-28,-4,18,0,NEUTRAL), R:{...PIN(6,8,0,24), dir:'F'}, skate:null},
+      {arm:[54,12,18], t:0.55, ph:'Over the pick, the left foot coming through', hipZ:83, hipYaw:0, shYaw:0,
+       sh:P(6,0,140), L:P(12,-3,14,0,NEUTRAL), R:{...PIN(-7.2,8,0,26), dir:'F'}, skate:null},
+      {arm:[56,10,20], t:0.59, ph:'Stepping onto the left, gliding again', hipZ:85, hipYaw:0, shYaw:0,
+       sh:P(6,0,140), L:P(16,-2,0,-1), R:{...PIN(-20.4,8,0,24), dir:'F'}, skate:'L', edge:null, dir:'F'},
+      {arm:[58,8,20], t:0.65, ph:'The pick out, the right foot lifting behind', hipZ:90, hipYaw:0, shYaw:0,
+       sh:P(4,0,142), L:P(6,-2,0,-0.5), R:P(-24,9,12,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {t:0.82, ph:'Gliding forward on the left', hipZ:94, hipYaw:0, shYaw:0,
+       sh:P(2,0,146), L:P(0,-2,0,-0.5), R:P(-34,9,18,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {t:1.00, ph:'Held: the glide on the take-off foot', hipZ:94, hipYaw:0, shYaw:0,
+       sh:P(2,0,146), L:P(0,-2,0,-0.5), R:P(-34,9,18,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+    ]},
+
   /* SCOOTER PUSHES — 03/10/2026, Session 26. One foot glides while the other pushes,
      three times, which is Learn to Skate USA's count. pushOff held one push at its
      widest; this is that push made, released and made again: the right blade comes down

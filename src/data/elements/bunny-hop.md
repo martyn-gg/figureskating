@@ -1,6 +1,7 @@
 ---
 name: Bunny hop
 kind: basic
+rig: bunnyHop
 summary: A forward leap from one foot onto the toe pick of the other, straight back into a glide on the take-off foot.
 aliases: ["bunny jump", "forward bunny hop"]
 prerequisites: [one-foot-glide, two-foot-hop]
