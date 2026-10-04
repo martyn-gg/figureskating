@@ -6,7 +6,7 @@ import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url.js';
 import { KIT } from '../../lib/kit.js';
 ---
-<Base title="Kit" subtitle="The blade, the boot and how to look after them, without naming a single brand.">
+<Base title="Kit" subtitle="The blade, the boot, how to look after them, and what else goes in the bag.">
   <h1>Kit</h1>
   <p class="lede">
     What a figure skate is made of and why it is shaped the way it is, so that the rest
@@ -16,10 +16,10 @@ import { KIT } from '../../lib/kit.js';
   <ul class="plain">
     {KIT.map(k => <li><a href={url(`kit/${k.slug}/`)}>{k.name}</a><span>{k.summary}</span></li>)}
   </ul>
-  <p class="note">
-    The guide names no products, models or makers, here or anywhere else. What a rocker or
-    a hollow does is the same whoever grinds it. A skate shop or a coach can say which
-    boot and blade suit you.
+  <p>
+    For choosing a boot or a blade, ask a coach and a skate shop. They can see your feet,
+    your weight and how you skate, which no page can, and a good fitting is worth more than
+    anything written here.
   </p>
 
 </Base>

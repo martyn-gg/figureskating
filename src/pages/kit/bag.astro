@@ -1,0 +1,50 @@
+---
+/* THE KIT BAG — 04/10/2026, Session 28, Martyn: a water bottle, tissues, a lace puller
+   and hand sanitiser. A list, because it is one; each item says why it earns its place. */
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+import { kitPage } from '../../lib/kit.js';
+const crumbs = [{ name: 'Kit', href: url('kit/') }, { name: 'The kit bag' }];
+---
+<Base title="The kit bag" subtitle={kitPage('bag').summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('kit/')}>Kit</a></p></div>
+  <h1>The kit bag</h1>
+  <p class="lede">
+    Everything besides the skates that makes a session at a cold rink easier.
+  </p>
+
+  <h2>For the blades</h2>
+  <ul class="plain">
+    <li><b>Hard guards</b><span>For every step off the ice. Off before the first step on.</span></li>
+    <li><b>Soakers</b><span>For the journey home and storage, once the blades are dry.</span></li>
+    <li><b>A small towel or cloth</b><span>To dry the blades as you come off, and again when they fog up.</span></li>
+  </ul>
+
+  <h2>For the boots</h2>
+  <ul class="plain">
+    <li><b>A lace puller</b><span>A small hook for pulling laces tight across the foot and ankle
+      without cutting into your fingers, and for keeping the tension even. Most useful for a
+      parent lacing a child's skates, and for cold hands.</span></li>
+    <li><b>Spare laces</b><span>They wear where they run over the hooks, and a lace that breaks
+      at the rink ends the session.</span></li>
+    <li><b>Plasters or blister dressings</b><span>New boots rub, usually at the heel and the ankle
+      bones, and a dressing put on early saves the rest of the session.</span></li>
+  </ul>
+
+  <h2>For the skater</h2>
+  <ul class="plain">
+    <li><b>A water bottle</b><span>Rink air is cold and dry, and thirst is easy to miss when you
+      are not hot.</span></li>
+    <li><b>Tissues</b><span>Cold air makes noses run, and a pocket packet saves skating to the
+      barrier to find one.</span></li>
+    <li><b>Hand sanitiser</b><span>For when washing your hands is awkward: walking to the toilets
+      in skates and guards, or after holding the barrier and the gate.</span></li>
+    <li><b>Gloves and a warm layer</b><span>Thin gloves for the hands, and a layer that can come off
+      once you are moving. Gloves also protect the hands in a fall.</span></li>
+  </ul>
+
+  <p>
+    How to look after the blades and boots in the bag is on <a href={url('kit/care/')}>looking
+    after skates</a>.
+  </p>
+</Base>
