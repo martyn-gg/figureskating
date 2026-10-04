@@ -2233,6 +2233,32 @@ neither are the jumps or the stops. Those are the next to set.
 - **Spins, all of them.** The back spin's numbers: centred, the contact +6 to +10 and the mass
   over it.
 
+**Held the same session** (`balance.mjs`, families `jumps`, `spins`, `stops`):
+
+- **Jumps**, the seven singles, their doubles and the loop from a three. Phases off the keys:
+  the take-off edge is the segment before the flight; the glide runs to the key before the hip
+  drops 4 cm; the take-off from the last key on the ice to the flight; the landing from
+  touchdown to the key after the deepest, where the check holds; then the exit. Meeting them
+  moved the skating blade under the hip on the glides (the waltz jump's and Axel's set-up 18 cm,
+  the rest 2 to 11) and at the check (10 cm, on every jump, since the landings are shared);
+  the drive's pitch came down from 3° to 1.6° (11 cm forward on the rocker to 6). Where the
+  blade under the mass leaned the shin past the boot (`shin.mjs`), the hip rose 1 or 2 cm on
+  that key instead. On a pick, the mass was already between the pick and the blade (0.13 to
+  0.30 of the way to the pick) and is held there. The entrance before the take-off edge is not
+  in the family: the Salchow's forward outside glide reads 3 to 8 cm toward the heel, and
+  moving its blade broke the lean through its three turn in the combinations.
+- **Spins**: the upright, the back spin and the change of foot, the blade moved 2 to 4 cm under
+  the mass on every key. **Declared, not met** (`CANNOT`, asserted still out): the sit spin
+  and the combination's sit, whose hip this rig must put 34 cm behind the blade (`shin.mjs`),
+  leaving the mass 16 to 22 cm toward the heel; and the camel, 6 to 14 cm toward the toe,
+  whose blade solved under the mass moves the axis 13 to 16 cm and the free boot then slides
+  7% of the view a frame (`continuity.mjs`, 5).
+- **Stops**: the snowplough's feet 15 cm ahead of the hip (8 before), the mass 5 cm behind
+  them; the backward plough's feet 6 cm further along the travel and the shoulders 16 forward,
+  4 to 5 cm against the travel (it had been 7 to 8 toward it); the T-stop already read 5.
+  `behind` is measured against the direction of travel, so a backward stop is held to the same
+  words.
+
 ## Four of the pages that said "not yet drawn" — 04/10/2026, Session 33
 
 - **The back spin** is the upright spin's arcs on a right back outside edge (the same lobe
