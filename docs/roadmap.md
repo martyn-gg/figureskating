@@ -57,6 +57,12 @@ guide and tell us what is wrong with it.
 5. **Fully drawn lifts and throws**, only if readers ask. The rig assumes both blades are
    on the ice; a body in the air is new capability.
 
+## Next session
+
+**A contact pinned to the ice** (`docs/spec-anchor.md`). Unlocks the toe loop, flip and Lutz,
+their doubles, 19 undrawn combinations, the pivot and the bunny hop. Agreed with Martyn
+04/10/2026.
+
 ## Also on the list, unordered
 
 - **Competition dance elements**: dance lifts, dance spins and the choreographic elements.
