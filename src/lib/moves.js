@@ -333,12 +333,17 @@ const threeFrom = (...a) => turnFrom('three', ...a);
 const mirrorFoot = q => q && ({ ...q, n: -q.n,
   ...(q.yaw !== undefined ? { yaw: -q.yaw } : {}), ...(q.roll ? { roll: -q.roll } : {}) });
 const swapLR = w => w === 'L' ? 'R' : w === 'R' ? 'L' : w;
+/* A key's caption read in the mirror: left for right, clockwise for anticlockwise. Until
+   04/10/2026 (Session 35) the mirrored moves kept their source's captions, so the right three
+   turns and the anticlockwise crossovers told the reader about the left foot. */
+const mirrorText = s => s && s.replace(/\b(anti-?clockwise|clockwise|left|right|Left|Right)\b/g, w =>
+  ({ left: 'right', right: 'left', Left: 'Right', Right: 'Left', clockwise: 'anticlockwise' })[w] ?? 'clockwise');
 const mirrorMove = (m, name, note) => ({ ...m, name, note,
   path: m.path.map(g => g.foot ? { ...g, foot: swapLR(g.foot) } : { ...g }),
   keys: m.keys.map(k => ({ ...k, hipYaw: -k.hipYaw, shYaw: -k.shYaw, sh: mirrorFoot(k.sh),
     L: mirrorFoot(k.R), R: mirrorFoot(k.L),
     ...(k.LH ? { RH: mirrorFoot(k.LH) } : {}), ...(k.RH ? { LH: mirrorFoot(k.RH) } : {}),
-    skate: swapLR(k.skate) })) });
+    skate: swapLR(k.skate), ...(k.ph ? { ph: mirrorText(k.ph) } : {}) })) });
 
 export const MOVES = {
   waltz: {
@@ -2604,7 +2609,7 @@ const marchKeys = () => {
   };
 }
 
-/* BACKWARD CROSSOVERS — 04/10/2026, Session 35. The commonest entrance in the sport (the
+/* BACKWARD CROSSOVERS — 04/10/2026, Session 34. The commonest entrance in the sport (the
    Lutz, the loop, the Axel and waltz jump's step forward, the forward spins) and Learn to
    Skate USA's Basic 4, four to six in a row each way. Drawn clockwise, on the left back
    outside edge, for `lbo-crossover`; the right, anticlockwise, is its mirror.
@@ -3269,12 +3274,22 @@ export const withEntry = (entry, core, name, note, extra = {}, keep = 'core') =>
    `from: [move, join]` takes another move's entrance. Commonest first, from coaches' public
    teaching pages and the programmes held in sources/ (docs/model.md). */
 const FO_THREE = 'Forward outside three turn', FI_THREE = 'Forward inside three turn';
+/* BACKWARD CROSSOVERS INTO THE LOOP — 04/10/2026, Session 35, agreed with Martyn. "The jump
+   is usually approached directly from back crossovers" (Wikipedia, Loop jump). The whole of
+   rboCrossover but its held two-foot key: through its last 0.8 s on the right back outside
+   edge the left foot comes off its inside-edge push and round to the loop's first key,
+   crossed in front. Same foot, edge and circle sense; the circle tightens from 4 m to 1.3.
+   Each half keeps its own clock, so the skater slows from 2.6 m/s to the loop's 1.05 in that
+   last 0.8 s, which the drawn loop is written at. A choice, not the default: MOVES.loop is
+   the second jump of every combination. */
+const BACK_X = 'Backward crossovers';
 export const ENTRIES = {
   salchow:  { join: 2, list: [{ id: 'three', name: FO_THREE }] },
   flip:     { join: 2, list: [{ id: 'three', name: FO_THREE }] },
   toeLoop:  { join: 2, list: [{ id: 'three', name: FI_THREE }] },
   loop:     { join: 0, list: [{ id: 'edge',  name: 'Back outside edge' },
-                              { id: 'three', name: FI_THREE, from: ['toeLoop', 2] }] },
+                              { id: 'three', name: FI_THREE, from: ['toeLoop', 2] },
+                              { id: 'crossovers', name: BACK_X, from: ['rboCrossover', MOVES.rboCrossover.path.length] }] },
 };
 /* Variants: built, named and added to MOVES. */
 for (const [id, E] of Object.entries(ENTRIES)) {

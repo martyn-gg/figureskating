@@ -82,7 +82,7 @@
  * after twoFoot and toePick. `handover` below declares them, from both sides, the way
  * drawn.mjs holds its undrawable pages.
  */
-import { MOVES } from '../src/lib/moves.js';
+import { MOVES, ENTRIES, boundsOf } from '../src/lib/moves.js';
 import { onIceOf } from '../src/lib/rig-math.js';
 import { rigFor, findAll } from './_dom.mjs';
 
@@ -146,7 +146,7 @@ const handover = {
          + 'the boot glyph still on the line it has just come off' },
   ],
 };
-/* Session 35, the backward crossovers: the frame after the outside foot leaves the end of
+/* Session 34, the backward crossovers: the frame after the outside foot leaves the end of
    its push, three times, the boot glyph a millimetre through the line it has just come off.
    The departure case above, on a blade that was pushing with its heel turned out. */
 const DEPART = 'the frame after the pushing blade lifts, still on the line it has just left';
@@ -155,10 +155,15 @@ handover.lboCrossover = [
     { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
     { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
 ];
+/* `entered`: the depth the same frame reaches in the loop's crossover entrance, which plays at
+   the loop's 59 frames a second against the crossovers' 73 (Session 35). */
 handover.rboCrossover = [
-    { foot: 'L', from: 0.054, to: 0.058, cm: 0.1, why: DEPART },
-    { foot: 'L', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
-    { foot: 'L', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
+    { foot: 'L', from: 0.054, to: 0.058, cm: 0.1, entered: 0.2, why: DEPART },
+    { foot: 'L', from: 0.327, to: 0.331, cm: 0.1, entered: 0.2, why: DEPART },
+    { foot: 'L', from: 0.600, to: 0.604, cm: 0.1, entered: 0.2, why: DEPART },
+    /* Met only through loop@crossovers, whose frames fall differently: the inside foot's
+       under-push lifting in the second crossover, the glyph on the line it has just left. */
+    { foot: 'R', from: 0.466, to: 0.474, cm: 0, why: 'the frame after the under-push lifts, on the line it has just left' },
 ];
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();
@@ -285,9 +290,17 @@ for (const id of Object.keys(MOVES)) {
     /* Windows are written on the element's own clock. A move given an entrance since
        (moves.js ENTRIES, 04/10/2026) has its element later on its clock: map them. */
     const at = MOVES[id]?.entrance?.at ?? 0, on = x => at + x * (1 - at);
-    const ex = (handover[id] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002);
+    /* And an entrance borrowed from another move (loop@crossovers, Session 35) brings that
+       move's declarations with it, onto [0, at] of this clock: the same lift, drawn again. */
+    const [base, vid] = id.split('@'), from = vid && ENTRIES[base]?.list.find(v => v.id === vid)?.from;
+    const fromEnd = from ? boundsOf(MOVES[from[0]])[from[1]] : 1, inE = x => x / fromEnd * at;
+    /* Replayed at the element's frame rate, the frame after a lift falls at a different
+       instant of it, so a borrowed declaration carries the depth it reaches there (`entered`). */
+    const own = (handover[id] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002);
+    const lent = !own && from ? (handover[from[0]] || []).find(e => r.w === e.foot && r.from >= inE(e.from) - 0.002 && r.to <= inE(e.to) + 0.002) : undefined;
+    const ex = own || (lent && { ...lent, cm: lent.entered ?? lent.cm, src: lent });
     if (ex) {
-      declared.add(ex);
+      declared.add(ex.src || ex);
       if (r.cm > ex.cm + JITTER) {
         bad++;
         console.log(`  DEEPER ${id.padEnd(16)} ${r.view.padEnd(4)} ${r.w}  ${where}`);

@@ -2450,7 +2450,7 @@ the buttons and nowhere else.
   entrance or is declared waiting (a declared one that gains an entrance fails); and every one
   ends on an exit. Mutations: edge 7, facing 7, splice 102, stale 1.
 
-## Backward crossovers — built 04/10/2026, Session 35
+## Backward crossovers — built 04/10/2026, Session 34 (after its handoff)
 
 The rig had no crossover, and every entrance the sources list first starts with back
 crossovers. `lboCrossover` (clockwise, the left foot inside on its back outside edge) is built
@@ -2478,6 +2478,25 @@ had.
 - Not yet: as an entrance (the Lutz, loop, Axel, waltz jump, spins), which needs each
   crossover to end on the edge the element starts on; and the forward crossovers.
   Verified against a coach: NO.
+
+## Crossovers as entrances — 04/10/2026, Session 35
+
+Each join agreed with Martyn before it was built.
+
+- **The loop** (`loop@crossovers`, and its double): "the jump is usually approached directly
+  from back crossovers" (Wikipedia, *Loop jump*). The whole of `rboCrossover` but its held
+  two-foot key; through its last 0.8 s on RBO the left foot comes off its inside-edge push and
+  round to the loop's first key, crossed in front. Same foot, edge and circle sense; the circle
+  tightens from 4 m to 1.3. Each half keeps its own clock (agreed: two clocks, measured), so
+  the skater slows from 2.6 m/s to the loop's 1.05 in that last 0.8 s; `continuity.mjs` is
+  clean. A choice beside the edge and the three, not the default, because `MOVES.loop` is the
+  second jump of every combination.
+- `underice.mjs` lends a source move's declarations to an entrance built from it, mapped onto
+  the entrance's part of the clock, with the depth the same frame reaches at the element's
+  frame rate (`entered`).
+- Mirrored moves now mirror their captions (left for right, clockwise for anticlockwise).
+  Until now the right three turns, the right brackets, the second T stroke and the
+  anticlockwise crossovers told the reader about the wrong foot. No frame moved.
 
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
