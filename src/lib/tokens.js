@@ -98,7 +98,7 @@ export const SCHEMES = { light: LIGHT, dark: DARK };
    and every neighbouring pair is 13 or more apart. Two pairs that are not
    neighbours meet under deuteranomaly (Edges and Spins, Turns and Grades); seven
    pale colours cannot all stay apart for every eye, and the names carry it.
-   Off ice (04/10/2026) sits between Dance and Grades in a pale aqua, apart from the
+   Off-ice (04/10/2026) sits between Dance and Grades in a pale aqua, apart from the
    coral and the stone either side of it and from the Turns green and Edges blue. */
 const NB_SHARED = {
   'tab-basic': '#f6c76b', 'tab-edge': '#a9d1e8', 'tab-turn': '#b9dcb4',
