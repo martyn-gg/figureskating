@@ -42,7 +42,7 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { D2R, anterior, lateral, UPPER, FORE, shoulderJoint, elbowFace, twoBone,
-         buildPath, poseAt } from '../src/lib/rig-math.js';
+         buildPath, poseAt, profilePoseAt } from '../src/lib/rig-math.js';
 import { rigFor, walk, armsAuthored, ARM_END_ON } from './_dom.mjs';
 
 const fails = { order: 0, casing: 0, ink: 0, elbow: 0, hands: 0, authored: 0 };
@@ -73,7 +73,8 @@ for (const [key, m] of Object.entries(MOVES)) {
     for (let i = 0; i < rig.frames; i++) {
       rig.seek(i);
       frames++;
-      const pose = poseAt(m, i / (path.length - 1));
+      /* The profile views' own camera (rig-math.js, profilePoseAt): turned after a step. */
+      const pose = profilePoseAt(m, i / (path.length - 1));
       const where = `${key} ${mode} f=${i}`;
 
       /* Walk once, in document order — which IS draw order. */

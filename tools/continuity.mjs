@@ -56,9 +56,10 @@
    jump's free leg was fixed the top-down heading moved 155 degrees between two
    adjacent frames; the loosest bound here is 30.
 
-   Mutation counts: corner 8 (Session 36: every turning step moved onto the new blade's
-   own line, one per move that has a step: the four spins from crossovers, the Salchow and
-   flip from a mohawk and their doubles); uncentre 6. It fires in spin.mjs too, which reads the segment's own
+   Mutation counts: corner 12 (Session 36: every turning step moved onto the new blade's
+   own line, one per step: the four spins from crossovers, the Salchow and flip from a
+   mohawk and their doubles, and the Lutz and its double with two each, the step forward
+   and the mohawk); uncentre 6. It fires in spin.mjs too, which reads the segment's own
    radius and holds the blade's lateral offset within CENTRED_CM of it — 98 cm adrift
    on the mutated segment — so the same mis-author is caught from two directions.
 
@@ -68,7 +69,7 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, onIceOf,
-         pinRuns, pinnedAt, PIN_AGREE, stepAt } from '../src/lib/rig-math.js';
+         pinRuns, pinnedAt, PIN_AGREE, stepAt, profilePoseAt } from '../src/lib/rig-math.js';
 
 const unit = v => { const l = Math.hypot(...v) || 1; return v.map(c => c / l); };
 const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
@@ -144,7 +145,7 @@ for (const [key, m] of Object.entries(MOVES)) {
 
     for (let i = 0; i < rig.frames; i++) {
       rig.seek(i);
-      const pose = poseAt(m, i / (rig.frames - 1));
+      const pose = view === 'top' ? poseAt(m, i / (rig.frames - 1)) : profilePoseAt(m, i / (rig.frames - 1));
       for (const g of findAll(svg, n => n.attrs['data-boot'])) {
         const foot = g.attrs['data-foot'];
         const t = g.attrs.transform || '';

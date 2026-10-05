@@ -3517,6 +3517,86 @@ const STEP_ANGLE = -72;
     ENTRIES[id].list.push({ id: 'crossovers', name: BACK_X, from: ['rboCrossoverThree', run.path.length] });
   }
 }
+/* KORI ADE'S LUTZ ENTRANCE — 06/10/2026, Session 36, as Martyn chose on 05/10: back
+   crossovers, a step forward, a right forward mohawk, then diagonally into the corner on the
+   long back outside edge (icoachskating, the traditional Lutz entry). Built unattended; the
+   pieces in between are this session's reading of that sentence (docs/model.md):
+
+   1. The crossovers and the step forward onto LFO, as the spins have them, the whole of
+      ENTRANCES.rboCrossoverLfo.
+   2. A forward stroke onto the right forward outside edge. LFO and RFO curve opposite ways,
+      so this is T stroking's change of circle, forwards: the right blade down beside the
+      left on the left's circle (its edge derived), the weight crossing on one key with both
+      blades flat under the hip, then the right on its outside edge with the left pushing away.
+   3. The mohawk, RFO to LBO, on the turning step. RFO and LBO curve the same way. The angle
+      is the inside mohawk's, forced the same way: right blade forward, left backward, both
+      turned out, the hips half way between at 54. The left blade goes down ahead of the
+      right's toe, where its heel clears the right blade; anywhere beside it the two blades
+      cross on the ice.
+   4. The long back outside edge, into the Lutz's own first key.
+
+   The crossovers run at their own 2.6 m/s, the stroke at 1.5 and the edge into the corner at
+   the Lutz's 1.05; not stretched into slow motion. Verified against a coach: NO. */
+{
+  const S = ENTRANCES.rboCrossoverLfo, s0 = S.duration;
+  const A = 0.4, B = 0.3, C = 1.0, E = 0.6, D = s0 + A + B + C + E;
+  const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
+  const base = { hipZ: 93, sh: P(-3, 0, 145), arm: [58, 8, 20] };
+  const lz = copyKey(MOVES.lutz.keys[0]);
+  const t1 = s0 + A, t2 = t1 + B, t3 = t2 + C;
+  const mohawk = reframe({ ...base, t: at(t3), hipZ: 92, hipYaw: 54, shYaw: 62, skate: 'L', edge: 'O', dir: 'B',
+    ph: 'The mohawk: the left blade down backwards ahead of the right toe, on its own line',
+    R: { ...ON(0, -10, 0, -0.5, 'F'), yaw: 0 }, L: { ...ON(18, -16, 0, -0.5, 'B'), yaw: MOHAWK_ANGLE } }, -MOHAWK_ANGLE);
+  ENTRANCES.rboCrossoverLutz = {
+    name: 'Backward crossovers, a step forward, a right forward outside mohawk and the long back outside edge',
+    path: [...S.path,
+      { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, A, 130), span: A, radius: 130 },
+      { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, B, 130), span: B, radius: 130 },
+      { kind: 'arc', foot: 'R', edge: 'O', dir: 'F', sweep: deg(140, C, 220), span: C, radius: 220 },
+      { kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(105, E, 280), span: E, radius: 280, step: MOHAWK_ANGLE }],
+    radius: S.radius, duration: D,
+    borrows: { ...S.borrows, to: S.borrows.to * s0 / D },
+    keys: [
+      ...S.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
+      { ...base, t: at(t1), hipYaw: -2, shYaw: -6, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'The right foot coming through beside the left',
+        L: P(3, 12, 0, -0.5), R: P(-2, 20, 6, 0, NEUTRAL) },
+      { ...base, t: at(t1 + 0.15), hipYaw: 0, shYaw: -2, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'The right blade down beside the left',
+        L: P(2, 8, 0, -0.5), R: ON(0, 14, 0, -0.5) },
+      { ...base, t: at(t2), hipZ: 92, hipYaw: 0, shYaw: 0, skate: 'R', edge: null, dir: 'F',
+        ph: 'The weight crossing onto the right foot, both blades flat under the hip',
+        R: ON(0, 7, 0, -0.5), L: ON(-2, 0.5, 0, -0.5) },
+      { ...base, t: at(t2 + 0.07), hipZ: 92, hipYaw: 0, shYaw: 2, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'Onto the right forward outside edge, the left foot turning out',
+        R: P(0.5, -1, 0, -0.5), L: PUSH(-3, -9, 0, 20) },
+      { ...base, t: at(t2 + 0.22), hipZ: 92, hipYaw: 4, shYaw: 10, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The left foot pushing away',
+        R: P(1, -7, 0, -0.5), L: PUSH(-9, -24, 0, 35) },
+      { ...base, t: at(t2 + 0.4), hipYaw: 10, shYaw: 18, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The left foot lifting from the push',
+        R: P(1, -10, 0, -0.5), L: P(-16, -16, 10, 0, NEUTRAL) },
+      { ...base, t: at(t3 - 0.25), hipYaw: 40, shYaw: 50, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The hips opening, the left foot reaching forward turned out',
+        R: P(1, -10, 0, -0.5), L: { ...P(14, -16, 7, 0, NEUTRAL), yaw: MOHAWK_ANGLE } },
+      mohawk,
+      { ...base, t: at(t3 + 0.12), hipZ: 92, hipYaw: 145, shYaw: 150, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'The right foot lifting, the hips coming round',
+        L: P(-6, -18, 0, -0.5), R: { ...P(-6, -6, 6, 0, NEUTRAL), yaw: 40 } },
+      { ...base, t: at(t3 + 0.35), hipYaw: 172, shYaw: 186, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'Diagonally into the corner on the back outside edge, the free leg reaching back',
+        L: P(-3, -16, 0, -0.5), R: P(20, -8, 18, 0, NEUTRAL) },
+      { ...lz, t: 1 },
+    ] };
+  const run = ENTRANCES.rboCrossoverLutz, name = 'Backward crossovers and a mohawk';
+  ENTRIES.lutz = { join: 0, list: [{ id: 'edge', name: 'Long back outside edge' },
+    { id: 'crossovers', name, from: ['rboCrossoverLutz', run.path.length] }] };
+  MOVES['lutz@crossovers'] = withEntry(run, MOVES.lutz, `${MOVES.lutz.name}, from backward crossovers and a mohawk`,
+    `${name} · ${MOVES.lutz.note}`);
+  ENTRIES.doubleLutz = { join: 0, list: ENTRIES.lutz.list.map(v => ({ ...v })) };
+  MOVES['doubleLutz@crossovers'] = doubleOf(MOVES['lutz@crossovers'],
+    `${MOVES.doubleLutz.name}, from backward crossovers and a mohawk`, `${name} · ${MOVES.doubleLutz.note}`);
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;

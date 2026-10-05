@@ -48,7 +48,7 @@
        node tools/boot.mjs
 */
 import { MOVES } from '../src/lib/moves.js';
-import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, edgeOf } from '../src/lib/rig-math.js';
+import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, profilePoseAt, edgeOf } from '../src/lib/rig-math.js';
 import { rigFor, walk } from './_dom.mjs';
 
 /* A stiff boot allows about 28 deg of lean (tools/shin.mjs), and seen end-on the
@@ -72,7 +72,8 @@ for (const [key, m] of Object.entries(MOVES)) {
 
     for (let i = 0; i < rig.frames; i++) {
       rig.seek(i);
-      const pose = poseAt(m, i / (path.length - 1));
+      /* The profile views' own camera (rig-math.js, profilePoseAt): turned after a step. */
+      const pose = profilePoseAt(m, i / (path.length - 1));
 
       walk(svg, holder => {
         const role = holder.attrs['data-boot'];

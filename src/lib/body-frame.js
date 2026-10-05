@@ -5,7 +5,7 @@
 import { MOVES } from './moves.js';
 import {
   D2R, anterior, THIGH, SHIN, UPPER, FORE,
-  ankleOf, twoBone, kneeFace, shoulderJoint, elbowFace, bootDir, buildPath, poseAt,
+  ankleOf, twoBone, kneeFace, shoulderJoint, elbowFace, bootDir, buildPath, poseAt, profilePoseAt,
   contactAlongOf, PICK_ALONG, bladeZone, onIceOf, edgeOf, BLADE_FRONT, BLADE_BACK,
 } from './rig-math.js';
 
@@ -668,7 +668,7 @@ function viewProfile(svg, mode, SHOW, maxZ = 190, ASYM = false){   // mode 'side
   const S = Math.min(mode==='side' ? 1.45 : 1.65, (GROUND - 22) / Math.max(60, maxZ));
   svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`);
   return frame => {
-    const {pose, p, dist} = frame;
+    const {p, dist} = frame, pose = frame.cam ?? frame.pose;
     svg.textContent='';
     const g=el('g'); svg.appendChild(g);
 
@@ -1122,7 +1122,11 @@ export function mount(host, {
   if (!m) throw new Error(`unknown move: ${move}`);
 
   const path = buildPath(m);
-  const frames = path.map((p, i) => ({ p, idx: i, dist: p.d, pose: poseAt(m, i / (path.length - 1)) }));
+  /* `cam` is the pose as the side and rear views see it: the same pose, turned into a
+     camera that comes round after a turning step rather than with it (rig-math.js,
+     cameraLag, profilePoseAt). On every move without a step it is the pose itself. */
+  const frames = path.map((p, i) => { const t = i / (path.length - 1);
+    return { p, idx: i, dist: p.d, pose: poseAt(m, t), cam: profilePoseAt(m, t) }; });
 
   /* Tallest thing the renderer will draw, across the whole move. */
   const maxZ = frames.reduce((hi, f) => {

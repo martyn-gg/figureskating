@@ -48,11 +48,9 @@ for (const f of await readdir('src/data/elements')) {
 }
 /* move → what its entrance waits on. Remove a line when the entrance is drawn. */
 const waiting = {
-  waltz:       'a step forward onto LFO from a back edge, or back crossovers: the rig has neither',
-  axel:        'a step forward onto LFO from a back edge, or back crossovers: the rig has neither',
+  waltz:       'back crossovers and the step forward exist since Session 36; the join to the waltz jump\'s take-off is not built',
+  axel:        'back crossovers and the step forward exist since Session 36; the join to the Axel\'s take-off is not built',
   doubleAxel:  'the Axel\'s',
-  lutz:        'Kori Ade\'s entrance, back crossovers, a step forward and a right forward mohawk: the rig has no turning step yet',
-  doubleLutz:  'the Lutz\'s',
   backSpin:    'a standing pivot wound up, or a step and a three turn onto RBO',
   twoFootSpin: 'a standstill wind-up: the spin starts gliding and has nowhere to wind from',
   camelSpin:   'the free leg rising straight from low behind to above the hip: this rig bends the knee on the way (moves.js)',

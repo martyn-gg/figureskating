@@ -933,6 +933,31 @@ export const stepAt = (move, t) => {
 };
 /** The steps of a move, each with the time it is taken at. */
 export const stepsOf = move => stepTimes(move).map(s => ({ ...s }));
+/** THE PROFILE CAMERA TURNS AFTER THE STEP, NOT WITH IT. The side and rear views are drawn
+    in the path's own frame (t along the travel, n across), so at a turning step their
+    camera would swing through the whole angle between two frames and every foot away from
+    the hip would jump across the view: 8% of the side view on the Lutz's mohawk, against
+    continuity.mjs's 6. So those two views lag the frame: at the step the camera still looks
+    along the old line, and it comes round onto the new one over STEP_CAMERA seconds on a
+    smoothstep. Degrees the camera is still behind the frame at time t; nought on any move
+    with no step, and everywhere outside the window. The top view is in the world and
+    has no camera to turn. */
+export const STEP_CAMERA = 0.3;
+export const cameraLag = (move, t) => {
+  let lag = 0;
+  for (const s of stepTimes(move)) {
+    const w = STEP_CAMERA / (move.duration || 1), u = (t - s.t) / w;
+    if (u >= -1e-9 && u < 1) lag += s.step * (1 - S3(Math.max(0, u)));
+  }
+  return lag;
+};
+/** The pose as the side and rear views draw it: poseAt, turned into the lagging camera.
+    The renderer and every checker that reads a profile view's markup against the model
+    call this, so the two cannot disagree about which way the camera looks. */
+export const profilePoseAt = (move, t) => {
+  const p = poseAt(move, t), lag = cameraLag(move, t);
+  return lag ? reframe(p, lag) : p;
+};
 /** A key written in a frame turned D degrees (anticlockwise) from the one it is to be
     read in: every hip-relative point turned with it, every yaw D more. */
 export const reframe = (k, D) => {

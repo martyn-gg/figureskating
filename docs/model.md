@@ -2593,8 +2593,7 @@ in the Session 36 handoff for him to judge.
 - **What holds it.** `continuity.mjs` section 4 reads the body's rate of turn as the path's
   less the step, and holds the exemption from the other side: the frame may turn only in the
   frame pair where the tracing changes blade. `--break=corner` (every step moved onto the new
-  blade's own line, one segment later) fails one per move with a step (4, then 8 with the
-  mohawks below). One segment earlier
+  blade's own line, one segment later) fails 12 now (4 with the spins alone, 8 with the mohawks, 12 with the Lutz). One segment earlier
   bites on nothing, rightly: in crossovers every segment starts with a change of blade.
   `turnout.mjs` holds the step key (54 a side) and its LEAK half holds the reference blade
   true on every frame either side.
@@ -2620,6 +2619,50 @@ instep), and crosses it heading out, which is the shape a mohawk leaves. The fir
 (the left blade beside the right's middle) put the new blade 5 cm along its own travel from the
 hip, and the shin leaned 33° over the toe (`shin.mjs`, 32); 5 cm back and the right 3 cm forward
 cleared it. Verified against a coach: NO.
+
+### Kori Ade's Lutz entrance — the same session
+
+`lutz@crossovers` and `doubleLutz@crossovers`, offered beside the long edge as "Backward
+crossovers and a mohawk"; the Lutz and its double are no longer declared waiting in
+`entries.mjs`. Martyn chose the entrance on 05/10 (icoachskating: back crossovers, a step
+forward, a right forward mohawk, then diagonally into the corner on the long LBO edge). How
+each piece was drawn was decided here, unattended:
+
+1. **The crossovers and the step forward onto LFO**, the whole of `ENTRANCES.rboCrossoverLfo`
+   as the spins have it, then 0.4 s more on LFO.
+2. **A forward stroke onto RFO.** "A right forward mohawk" was read as RFO to LBO: RFO and LBO
+   curve the same way and LBO is the Lutz's edge. LFO and RFO curve opposite ways, so the stroke
+   is T stroking's change of circle, forwards: the right blade down outside the left on the
+   left's circle (its edge derived, RFI), the weight crossing on one key with both blades flat
+   under the hip and 7 cm apart (`twofoot.mjs` wants at least 5), then the right on its outside
+   edge with the left pushing away. The first draft put the left blade at the hip's own line at
+   that key, and `lean.mjs` caught the hip crossing it a frame early, while it still bit on its
+   outside edge.
+3. **The mohawk, RFO to LBO**, on the turning step at the same 72° and for the same reason as
+   the inside mohawk. Here the left blade goes down AHEAD of the right toe: with the new line
+   turned clockwise, the left blade points back and to the skater's left with its heel toward
+   the right foot, and placed beside the right blade or behind it the two blades cross on the
+   ice. Ahead of the toe the heel clears it. The left blade starts 22 cm across from the hip on
+   the new line, a deep edge at once.
+4. **The long back outside edge** for 0.6 s, the hips coming round from 126 to the Lutz's 182,
+   into the Lutz's own first key.
+
+The crossovers keep their 2.6 m/s, the stroke 1.5 and the edge into the corner the Lutz's 1.05;
+it is not in slow motion, and the whole move is 12.4 s. Verified against a coach: NO.
+
+### The side and rear views turn after a step, not with it
+
+Both profile views are drawn in the path's frame, t along the travel and n across. At a turning
+step that frame turns through the whole angle between two frames, and the camera with it, so
+every foot away from the hip jumped across the view: 8% of the side view at the Lutz's mohawk
+against `continuity.mjs`'s 6, and 4.5% at the spins' step forward. So the two views lag:
+at the step the camera still looks along the old line and comes round onto the new one over
+`STEP_CAMERA` (0.3 s) on a smoothstep (`cameraLag`, `profilePoseAt` in `rig-math.js`). The
+renderer and the three checkers that read a profile view's markup against the model
+(`arms.mjs`, `boot.mjs`, `continuity.mjs`'s near-tie report) all take the pose from
+`profilePoseAt`, so they cannot disagree about where the camera looks; with the renderer
+changed and the checkers not, `boot.mjs` read 498 rolls and `arms.mjs` 62 elbows against a
+camera that was not the one drawn. A move with no step is drawn exactly as before.
 
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
