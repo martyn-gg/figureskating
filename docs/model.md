@@ -2513,8 +2513,15 @@ Each join agreed with Martyn before it was built.
   asked for a trained allowance on the transfer key. The figure found for trained dancers
   is up to 60° at the hip and 69 to 87° a side with the lower leg's compensations (Negus et
   al., summarised in *The Dancer's Hip*, Musculoskeletal Key), which still sums to less
-  than the 180 two opposed blades need. So `STEP_FORWARD_DRAWN` is false and the decision
-  is open. The same wall stands in front of every mohawk. One circle, no inflection: RBO on the anticlockwise crossovers
+  than the 180 two opposed blades need. So `STEP_FORWARD_DRAWN` is false. The same wall
+  stands in front of every mohawk, so the mohawk entrances (Salchow, flip) were not built.
+- **Martyn, who skates, on the 180:** "I've never seen a skater manage a full 180. If they
+  aren't fudging the first blade as the second one takes over, they skate a curve." So the
+  rig is right that the opposed two-blade key cannot exist, and the step forward and the
+  mohawks have to be drawn one of those two ways: the old blade giving (turning or rolling
+  as it releases, so it is never fully opposed under load), or the new blade put down on a
+  curve of its own at an angle to the old line, the swizzle's own-circle blade (Session 33)
+  being the nearest thing the rig has. One circle, no inflection: RBO on the anticlockwise crossovers
   and LFO curve the same way. The hips open anticlockwise with the circle; the left blade
   goes down forwards beside the right (opposed blades, both outside edges, the spread
   eagle's rule); the weight crosses; and the right lifts at once, with the hips still most
