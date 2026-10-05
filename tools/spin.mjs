@@ -54,13 +54,15 @@
  *
  * Broken on purpose before it was trusted. Counts are moves reported:
  *
- *   --break=flat      every segment's radius set to the move's ............ 5
- *   --break=nocentre  the centred blade offset moved 4 cm off the radius ... 5
+ *   --break=flat      every segment's radius set to the move's ............ 7
+ *   --break=nocentre  the centred blade offset moved 4 cm off the radius ... 7
  *   --break=short     the change of foot's second side cut to 2 revs ....... 1
- *   --break=onepos    the combination's sit and upright relabelled camel .... 7
+ *   --break=onepos    the combination's sit and upright relabelled camel .... 9
  *   --break=windup    the final wind-up relabelled as a position ........... 4
- *   --break=foot      the pose's skate held on the left through the change .. 1
- *   --break=entered   the entrance's first segment centred .................. 5
+ *   --break=foot      the pose's skate held on the left through the change .. 2
+ *   --break=entered   the entrance's first segment centred .................. 7
+ *   (Recounted 05/10/2026, Session 35: the counts had read 5, 5, 1, 7, 4, 1 and 5 since
+ *   before Session 34 gave the spins their entrances.)
  *
  * The camel/sit/upright position mutations from the first version of this file
  * still apply and still report; they are listed in git history rather than here,
@@ -206,7 +208,10 @@ for (const [id, m] of Object.entries(MOVES)) {
 
   /* ── a change of foot: three revolutions either side of it ──────────────── */
   const feet = segs.map(s => s.seg.foot);
-  const changes = feet.reduce((a, f, i) => (i && f !== feet[i - 1] ? [...a, i] : a), []);
+  /* In the spin, not its entrance: backward crossovers change the reference foot six
+     times before the first position (Session 35, the spins' crossover entrance). */
+  const spun = segs.findIndex(s => s.seg.position);
+  const changes = feet.reduce((a, f, i) => (i > spun && f !== feet[i - 1] ? [...a, i] : a), []);
   for (const at of changes) {
     const before = segs.slice(0, at).filter(s => s.seg.position).reduce((a, s) => a + s.revs, 0);
     const after  = segs.slice(at).filter(s => s.seg.position).reduce((a, s) => a + s.revs, 0);

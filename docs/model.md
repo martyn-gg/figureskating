@@ -2505,6 +2505,36 @@ Each join agreed with Martyn before it was built.
   at a radius of 18.5 m and stepping in angle moved the tracing 16.9 cm in one frame against
   its own 3 (`continuity.mjs`, 12.4 cm change of speed). The arc-length branch now takes any
   arc whose neighbour curves the other way. No existing move's frames changed.
+- **The forward spins: drawn, not registered.** The crossovers, a step forward from RBO
+  onto LFO, then the Salchow's three and the spin as the default entrance has them. Every
+  checker passed but `turnout.mjs`: at the transfer the two blades are opposed, 180° apart,
+  and the pelvis between them needs about 90° of turnout a side against the rig's 58 (40 at
+  the hip, Kadlec et al., untrained adults weight-bearing, plus 18 from a bent knee). Martyn
+  asked for a trained allowance on the transfer key. The figure found for trained dancers
+  is up to 60° at the hip and 69 to 87° a side with the lower leg's compensations (Negus et
+  al., summarised in *The Dancer's Hip*, Musculoskeletal Key), which still sums to less
+  than the 180 two opposed blades need. So `STEP_FORWARD_DRAWN` is false and the decision
+  is open. The same wall stands in front of every mohawk. One circle, no inflection: RBO on the anticlockwise crossovers
+  and LFO curve the same way. The hips open anticlockwise with the circle; the left blade
+  goes down forwards beside the right (opposed blades, both outside edges, the spread
+  eagle's rule); the weight crosses; and the right lifts at once, with the hips still most
+  of the way round toward it, so the free boot it becomes points nearly where the blade did.
+  Lifted later, with the hips square, the boot turned 46° a frame (`continuity.mjs`). The
+  step is in `ENTRANCES.rboCrossoverLfo`, waiting for the Axel and the waltz jump.
+- **`lean.mjs` measures the lean across the blade, not the hips** (agreed with Martyn). Its
+  BODY route projected blade-to-hip onto the hips' right; through the step the hips are 105
+  to 120° round from the blade they stand on and the lean read as the wrong way. Across the
+  blade's own direction every move passed as before, and both mutations bite the same
+  (waltz 2, lean 20). Every mohawk turns the hips off one blade onto the other, so this was
+  needed for them too.
+- **The backward crossovers' outgoing blade turned across its own line** while it still
+  carried the weight: it was keyed turned out for its push at the handover itself, so its
+  yaw ran up to the push's through the span before, 70 frames each way, up to 20°.
+  `turnout.mjs` read reference yaw only on moves with a turn in them; it now reads it on
+  every move with a yaw keyed. The foot comes off the weight flat and turns out at the next
+  key. Only the crossovers and their entrances' frames moved.
+- `spin.mjs` counts a change of foot only inside the spin: the crossovers change the
+  reference foot six times before the first position.
 - `underice.mjs` lends a source move's declarations to an entrance built from it, mapped onto
   the entrance's part of the clock, with the depth the same frame reaches at the element's
   frame rate (`entered`).

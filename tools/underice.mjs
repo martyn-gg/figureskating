@@ -43,6 +43,8 @@
  *   --break=blind   the on-ice exemption removed ......... 67 over 26,952 glyphs
  *   --break=deeper  both arrivals declared at nought ..... 2
  *   --break=stale   a move declared that does not dip .... 1
+ *   (deeper read 9 on 05/10/2026, Session 35: the crossovers' declarations, lent to the
+ *   loop's and Lutz's crossover entrances, are reached there too.)
  *
  * Against 0 problems and 2 declared arrivals over 6,490 glyphs clean, on 20/09/2026.
  * RE-MEASURED after the waltz jump's free feet were set to NEUTRAL that afternoon:
@@ -150,6 +152,7 @@ const handover = {
    its push, three times, the boot glyph a millimetre through the line it has just come off.
    The departure case above, on a blade that was pushing with its heel turned out. */
 const DEPART = 'the frame after the pushing blade lifts, still on the line it has just left';
+const UNDER_PUSH = 'the frame after the under-push lifts, on the line it has just left';
 handover.lboCrossover = [
     { foot: 'R', from: 0.054, to: 0.058, cm: 0.1, why: DEPART },
     { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
@@ -161,9 +164,11 @@ handover.rboCrossover = [
     { foot: 'L', from: 0.054, to: 0.058, cm: 0.1, entered: 0.2, why: DEPART },
     { foot: 'L', from: 0.327, to: 0.331, cm: 0.1, entered: 0.2, why: DEPART },
     { foot: 'L', from: 0.600, to: 0.604, cm: 0.1, entered: 0.2, why: DEPART },
-    /* Met only through loop@crossovers, whose frames fall differently: the inside foot's
-       under-push lifting in the second crossover, the glyph on the line it has just left. */
-    { foot: 'R', from: 0.466, to: 0.474, cm: 0, why: 'the frame after the under-push lifts, on the line it has just left' },
+    /* Met only through the entrances built from it (the loop's, the spins'), whose frames
+       fall differently: the inside foot's under-push lifting, once a crossover. */
+    /* The first and third crossovers' (0.190-0.202, 0.736-0.748) are met through the spins'
+       crossover entrance, which is drawn and not yet registered (moves.js). */
+    { foot: 'R', from: 0.463, to: 0.475, cm: 0, why: UNDER_PUSH },
 ];
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();
@@ -302,8 +307,12 @@ for (const id of Object.keys(MOVES)) {
        move borrows that move's declarations onto its own clock (lutz@crossovers). */
     const B = from && ENTRANCES[from[0]]?.borrows, inB = x => inE(x / B.upto * B.to);
     const lent2 = !own && !lent && B ? (handover[B.move] || []).find(e => r.w === e.foot && r.from >= inB(e.from) - 0.002 && r.to <= inB(e.to) + 0.002) : undefined;
+    /* And a variant keeps its element's own declarations: they are written on the element's
+       clock, which `on` already places after whichever entrance this move has. */
+    const kept = !own && !lent && !lent2 && vid ? (handover[base] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002) : undefined;
     const ex = own || (lent && { ...lent, cm: lent.entered ?? lent.cm, src: lent })
-                   || (lent2 && { ...lent2, cm: lent2.entered ?? lent2.cm, src: lent2 });
+                   || (lent2 && { ...lent2, cm: lent2.entered ?? lent2.cm, src: lent2 })
+                   || (kept && { ...kept, src: kept });
     if (ex) {
       declared.add(ex.src || ex);
       if (r.cm > ex.cm + JITTER) {

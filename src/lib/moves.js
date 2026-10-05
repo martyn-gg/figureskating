@@ -2653,8 +2653,15 @@ const crossoverMove = () => {
     path.push({ kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(HAND * CYC), span: HAND * CYC });
     path.push({ kind: 'arc', foot: 'R', edge: 'I', dir: 'B', sweep: deg((1 - HAND) * CYC), span: (1 - HAND) * CYC });
     const onL = { skate: 'L', edge: 'O' }, onR = { skate: 'R', edge: 'I' };
+    /* A BLADE THAT HAS JUST GIVEN UP THE WEIGHT IS STILL ON ITS LINE (Session 35). The
+       pushing foot was keyed turned out at the handover itself, so through the span before
+       it, while it was still the reference, its yaw ran up to the push's: the gliding blade
+       turning across its own tracing with the weight on it, 70 frames each way, up to 20°.
+       turnout.mjs only read reference yaw on moves with a turn in them until the spins'
+       crossover entrance put one there. The foot comes off the weight flat and turns out
+       as it pushes, at the next key. */
     keys.push({ ...base, ...onL, t: at(0), ph: i ? 'The weight onto the left foot, the right outside it' : 'Gliding on the left back outside edge, the right foot beside it',
-      L: P(0, -6, 0, -0.5), R: PUSH(-6, -18, 0, 20) });
+      L: P(0, -6, 0, -0.5), R: i ? ON(-6, -18, 0, -0.5) : PUSH(-6, -18, 0, 20) });
     keys.push({ ...base, ...onL, t: at(0.2), ph: 'The right foot pushing out on its inside edge',
       L: P(-1, -6, 0, -0.5), R: PUSH(-14, -34, 0, 20) });
     keys.push({ ...base, ...onL, t: at(0.3), ph: 'The right foot lifting at the end of the push',
@@ -2664,7 +2671,7 @@ const crossoverMove = () => {
     keys.push({ ...base, ...onL, t: at(0.5), ph: 'The right blade down inside, crossed in front',
       L: P(-2, -10, 0, -0.5), R: ON(-11, -2, 0, -0.5) });
     keys.push({ ...base, ...onR, t: at(HAND), ph: 'The weight onto the right back inside edge',
-      L: PUSH(-1, -14, 0, 8), R: P(-9, -6, 0, -0.5) });
+      L: ON(-1, -14, 0, -0.5), R: P(-9, -6, 0, -0.5) });
     keys.push({ ...base, ...onR, t: at(0.72), ph: 'The under-push: the left blade pressing out under the body',
       L: PUSH(5, -28, 0, 8), R: P(-7, -5, 0, -0.5) });
     keys.push({ ...base, ...onR, t: at(0.77), ph: 'The left foot lifting from the under-push',
@@ -2676,7 +2683,7 @@ const crossoverMove = () => {
   }
   path.push({ kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(END), span: END });
   keys.push({ ...base, skate: 'L', edge: 'O', t: T(N * CYC), ph: 'The weight onto the left foot, the right outside it',
-    L: P(0, -6, 0, -0.5), R: PUSH(-6, -18, 0, 20) });
+    L: P(0, -6, 0, -0.5), R: ON(-6, -18, 0, -0.5) });
   keys.push({ ...base, skate: 'L', edge: 'O', t: 1, ph: 'Held: gliding on the left back outside edge',
     L: P(0, -6, 0, -0.5), R: ON(-6, -16, 0, -0.5) });
   return { path, radius: R, duration: total, keys };
@@ -3415,6 +3422,71 @@ export const CORES = {};
     MOVES[id] = withEntry(entry, m, m.name, `forward outside edge and three turn · ${m.note}`, {}, 'entry');
     MOVES[id].frames = Math.max(MOVES[id].frames, Math.round(ENTRY_FPS * MOVES[id].duration));
     ENTRIES[id] = { join: 2, list: [{ id: 'three', name: FO_THREE, from: ['salchow', 2] }] };
+  }
+}
+const STEP_FORWARD_DRAWN = false;
+/* A STEP FORWARD FROM BACKWARD CROSSOVERS — 04/10/2026, Session 35, agreed with Martyn: the
+   forward spins entered from back crossovers. After the last crossover the skater steps
+   forward onto the left forward outside edge and turns the spin's three from it; the step
+   is the piece the waltz jump and Axel are also waiting for.
+
+   ONE CIRCLE, NO INFLECTION. The anticlockwise crossovers are on RBO and LFO curves the same
+   way, so the step changes the foot and the direction of travel of the blade, not the lobe.
+   The left foot comes off its push, the hips open anticlockwise with the circle, the left
+   blade goes down forwards beside the right (the two blades opposing, so both are outside
+   edges, the spread eagle's rule), the weight crosses, and the right lifts behind into the
+   Salchow's first key. The crossovers' 2.6 m/s, the step at 2, into the Salchow's 0.8.
+   Verified against a coach: NO. */
+{
+  const X = sliceMove(MOVES.rboCrossover, 0, MOVES.rboCrossover.path.length - 1);
+  const STEP = 0.5, SETTLE = 0.6, D = X.duration + STEP + SETTLE, s0 = X.duration;
+  const deg = (v, s, r) => v * s / r * 180 / Math.PI;
+  const base = { hipZ: 94, sh: P(-5, 0, 145), arm: [58, 10, 20] };
+  const at = s => +(s / D).toFixed(5);
+  const sk = copyKey(MOVES.salchow.keys[0]);
+  const step = {
+    name: 'Backward crossovers, then a step forward onto the left forward outside edge',
+    path: [...X.path,
+      { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(240, STEP, 400), span: STEP, radius: 400 },
+      { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, SETTLE, 130), span: SETTLE, radius: 130 }],
+    radius: X.radius, duration: D,
+    borrows: { move: 'rboCrossover', upto: boundsOf(MOVES.rboCrossover)[MOVES.rboCrossover.path.length - 1], to: s0 / D },
+    keys: [
+      ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
+      { ...base, t: at(s0 + 0.2), hipYaw: -160, shYaw: -156, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left foot lifting from its push, the hips starting to open',
+        R: P(0, 6, 0, -0.5), L: P(-2, 13, 8, 0, NEUTRAL) },
+      { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: -120, shYaw: -110, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left blade down forwards beside the right, the hips open to the circle',
+        R: P(0, 6, 0, -0.5), L: ON(4, 13, 0, -0.5, 'F') },
+      /* The right foot leaves as soon as the weight is across, with the hips still most of
+         the way round toward it, so the free boot it becomes points nearly where the blade
+         did; the hips finish turning with it in the air. */
+      { ...base, t: at(s0 + STEP), hipZ: 93, hipYaw: -105, shYaw: -96, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'Stepping forward: the weight onto the left forward outside edge',
+        L: ON(4, 14, 0, -0.5), R: ON(-4, 7, 0, -0.5, 'B') },
+      { ...base, t: at(s0 + STEP + 0.12), hipZ: 94, hipYaw: -80, shYaw: -70, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'The right foot lifting, the hips coming round',
+        L: P(4, 15, 0, -0.5), R: P(-10, 8, 6, 0, NEUTRAL) },
+      { ...base, t: at(s0 + STEP + 0.35), hipZ: 94, hipYaw: -25, shYaw: -22, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'Square to the edge, the right foot behind',
+        L: P(4, 15, 0, -0.5), R: P(-22, 8, 10, 0, NEUTRAL) },
+      { ...sk, t: 1 },
+    ] };
+  ENTRANCES.rboCrossoverLfo = step;
+  /* And the Salchow's three after it: the whole run a spin is joined to. */
+  const run = withEntry(step, sliceMove(MOVES.salchow, 0, 2), step.name + ' and a three turn', '');
+  run.borrows = { ...step.borrows, to: step.borrows.to * step.duration / run.duration };
+  ENTRANCES.rboCrossoverThree = run;
+  /* NOT YET REGISTERED: at the transfer the two blades are opposed, 180° apart, and the
+     pelvis between them needs about 90° of turnout on each side against the rig's 58
+     (turnout.mjs). Waiting on Martyn's decision about a trained allowance (Session 35). */
+  if (STEP_FORWARD_DRAWN) for (const id of ['uprightSpin', 'sitSpin', 'changeFootSpin', 'combinationSpin']) {
+    const m = CORES[id];
+    MOVES[`${id}@crossovers`] = withEntry(sliceMove(run, 0, run.path.length), m,
+      `${m.name}, from backward crossovers`, `${BACK_X} and a step forward, forward outside three turn · ${m.note}`, {}, 'entry');
+    MOVES[`${id}@crossovers`].frames = Math.max(MOVES[`${id}@crossovers`].frames, Math.round(ENTRY_FPS * MOVES[`${id}@crossovers`].duration));
+    ENTRIES[id].list.push({ id: 'crossovers', name: BACK_X, from: ['rboCrossoverThree', run.path.length] });
   }
 }
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */

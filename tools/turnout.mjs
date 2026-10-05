@@ -200,7 +200,13 @@ for (const [key, m] of Object.entries(MOVES))
 const ALONG = 4;
 let cuspFrames = 0, still = 0, unresolved = 0, worstAlong = 0;
 for (const [key, m] of Object.entries(MOVES)) {
-  if (!m.path.some(g => g.turn)) continue;
+  /* EVERY MOVE, NOT ONLY THOSE WITH A TURN — 05/10/2026, Session 35. The leak half of this
+     holds anywhere a reference blade grips, and reading it only where a turn was found 70
+     frames a side of the backward crossovers' outgoing blade turned up to 20° across its
+     own line while it still carried the weight, until the spins' crossover entrance brought
+     a three turn into the same move. The ALONG half still needs a cusp. */
+  const turns = m.path.some(g => g.turn);
+  if (!turns && !m.keys.some(k => k.L?.yaw || k.R?.yaw)) continue;
   const path = buildPath(m), n = path.length;
   if (BREAK === 'cusp') {
     /* The same move with every turn segment stripped of its turn: the tracing is the

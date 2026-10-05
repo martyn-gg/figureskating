@@ -122,10 +122,17 @@ for (const [id, move] of Object.entries(MOVES)) {
         worstTrack = worstTrack && Math.abs(worstTrack.n) > Math.abs(q.n) ? worstTrack
           : { t: i / (FRAMES - 1), n: q.n, want, w, ph: pose.ph };
 
-      /* BODY. The vector from blade to hip, projected onto the skater's right —
-         which is where hipYaw earns its place. Leaning right is positive, and the
+      /* BODY. The vector from blade to hip, projected onto the blade's right (it was the
+         skater's, read off hipYaw, until Session 35: see below). Leaning right is positive, and the
          skater leans over whichever edge is biting. */
-      const R = lateral(pose.hipYaw);
+      /* ACROSS THE BLADE, NOT THE HIPS — 05/10/2026, Session 35, agreed with Martyn. A
+         lean is the line from the blade to the body, and its side is the blade's: which
+         way the hips face does not move the edge. Measured across hipYaw, a step forward
+         from a back edge (the spins' crossover entrance), where the hips are 105-120°
+         round from the blade they stand on, read as leaning off it. Measured across the
+         blade's own direction (forward or backward, plus its yaw) every move in the guide
+         passed as before and the mutations bit the same (waltz 2, lean 20). */
+      const R = lateral((dir === 'F' ? 0 : 180) + (q.yaw || 0));
       const toHip = [-q.t, -q.n];
       const rightward = toHip[0] * R[0] + toHip[1] * R[1];
       const side = bitingSide(w, edge);

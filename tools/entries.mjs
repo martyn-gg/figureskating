@@ -28,7 +28,7 @@
        --break=facing   the core's first key turned 90 degrees ................... 10 entrances
        --break=splice   withEntry's rebuilt keys shifted one frame ............... 102 keys, 6 moves
        --break=stale    the Salchow declared as waiting .......................... 1
-   (Session 35: the counts read 7 against 6 built until the loop's crossovers made them 8, and the Lutz's 10.)
+   (Session 35: the counts read 7 against 6 built until the loop's crossovers made them 8 and the Lutz's 10.)
 
        node tools/entries.mjs [--break=edge|facing|splice|stale] */
 import { MOVES, ENTRIES, ENTRANCES, CORES, sliceMove, withEntry, boundsOf } from '../src/lib/moves.js';
