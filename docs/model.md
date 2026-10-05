@@ -2593,7 +2593,8 @@ in the Session 36 handoff for him to judge.
 - **What holds it.** `continuity.mjs` section 4 reads the body's rate of turn as the path's
   less the step, and holds the exemption from the other side: the frame may turn only in the
   frame pair where the tracing changes blade. `--break=corner` (every step moved onto the new
-  blade's own line, one segment later) fails 12 now (4 with the spins alone, 8 with the mohawks, 12 with the Lutz). One segment earlier
+  blade's own line, one segment later) fails 15 now (4 with the spins alone, 8 with the mohawks, 12 with the Lutz's two, 15
+  with the waltz jump and the Axels). One segment earlier
   bites on nothing, rightly: in crossovers every segment starts with a change of blade.
   `turnout.mjs` holds the step key (54 a side) and its LEAK half holds the reference blade
   true on every frame either side.
@@ -2649,6 +2650,16 @@ each piece was drawn was decided here, unattended:
 
 The crossovers keep their 2.6 m/s, the stroke 1.5 and the edge into the corner the Lutz's 1.05;
 it is not in slow motion, and the whole move is 12.4 s. Verified against a coach: NO.
+
+### The waltz jump and the Axel from backward crossovers — the same session
+
+`waltz@crossovers`, `axel@crossovers` and `doubleAxel@crossovers`, beside the default "Forward
+outside edge": the spins' crossovers and step forward, held half a second longer on the left
+forward outside edge while the free leg goes back to the set-up's (40 cm behind, 21 up), into
+the jumps' first key, which the two share (`ENTRANCES.rboCrossoverSetup`). The second entrance
+in the sources, from the other direction's crossovers with an edge change, is not built. The
+three are no longer declared waiting; what is left waiting is the back spin, the two-foot spin
+and the camel. Verified against a coach: NO.
 
 ### The side and rear views turn after a step, not with it
 

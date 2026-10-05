@@ -3597,6 +3597,38 @@ const STEP_ANGLE = -72;
   MOVES['doubleLutz@crossovers'] = doubleOf(MOVES['lutz@crossovers'],
     `${MOVES.doubleLutz.name}, from backward crossovers and a mohawk`, `${name} · ${MOVES.doubleLutz.note}`);
 }
+/* THE WALTZ JUMP AND THE AXEL FROM BACKWARD CROSSOVERS — 06/10/2026, Session 36: "back
+   crossovers, step forward onto LFO" is the commonest entrance to both (docs/model.md,
+   *Entrances and exits*). The step forward the spins use, held on the forward outside edge for
+   half a second longer while the free leg goes back to the set-up's, into each jump's first
+   key; the two jumps share that key, so they share the run. Verified against a coach: NO. */
+{
+  const S = ENTRANCES.rboCrossoverLfo, s0 = S.duration, H = 0.5, D = s0 + H;
+  const at = s => +(s / D).toFixed(5);
+  const set = copyKey(MOVES.waltz.keys[0]);
+  ENTRANCES.rboCrossoverSetup = {
+    name: 'Backward crossovers, a step forward and the set-up on the left forward outside edge',
+    path: [...S.path, { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: 125 * H / 130 * 180 / Math.PI, span: H, radius: 130 }],
+    radius: S.radius, duration: D,
+    borrows: { ...S.borrows, to: S.borrows.to * s0 / D },
+    keys: [
+      ...S.keys.slice(0, -1).map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
+      { ...copyKey(S.keys[S.keys.length - 1]), t: at(s0) },
+      { ...copyKey(S.keys[S.keys.length - 1]), t: at(s0 + 0.25), hipZ: 95, hipYaw: -6, shYaw: -18,
+        ph: 'The free leg reaching back for the set-up', R: P(-40, -2, 21, 0, NEUTRAL) },
+      { ...set, t: 1 },
+    ] };
+  const run = ENTRANCES.rboCrossoverSetup;
+  for (const id of ['waltz', 'axel']) {
+    ENTRIES[id] = { join: 0, list: [{ id: 'edge', name: 'Forward outside edge' },
+      { id: 'crossovers', name: BACK_X, from: ['rboCrossoverSetup', run.path.length] }] };
+    MOVES[`${id}@crossovers`] = withEntry(run, MOVES[id], `${MOVES[id].name}, from backward crossovers`,
+      `${BACK_X} and a step forward · ${MOVES[id].note}`);
+  }
+  ENTRIES.doubleAxel = { join: 0, list: ENTRIES.axel.list.map(v => ({ ...v })) };
+  MOVES['doubleAxel@crossovers'] = doubleOf(MOVES['axel@crossovers'],
+    `${MOVES.doubleAxel.name}, from backward crossovers`, `${BACK_X} and a step forward · ${MOVES.doubleAxel.note}`);
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;
