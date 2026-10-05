@@ -2521,7 +2521,13 @@ Each join agreed with Martyn before it was built.
   mohawks have to be drawn one of those two ways: the old blade giving (turning or rolling
   as it releases, so it is never fully opposed under load), or the new blade put down on a
   curve of its own at an angle to the old line, the swizzle's own-circle blade (Session 33)
-  being the nearest thing the rig has. One circle, no inflection: RBO on the anticlockwise crossovers
+  being the nearest thing the rig has.
+- **Decided 05/10/2026: on a curve.** The new blade goes down on a curve of its own at an
+  angle to the old line, so the two are never 180° apart under load.
+- **Decided 05/10/2026: the Lutz takes Kori Ade's entrance**, back crossovers, a step forward,
+  a right forward mohawk, then diagonally into the corner. The direct backward step onto LBO
+  had no source and is taken down (built in `9452c05`); the Lutz is declared waiting in
+  `entries.mjs` until the turning step exists. One circle, no inflection: RBO on the anticlockwise crossovers
   and LFO curve the same way. The hips open anticlockwise with the circle; the left blade
   goes down forwards beside the right (opposed blades, both outside edges, the spread
   eagle's rule); the weight crosses; and the right lifts at once, with the hips still most

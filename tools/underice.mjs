@@ -44,7 +44,7 @@
  *   --break=deeper  both arrivals declared at nought ..... 2
  *   --break=stale   a move declared that does not dip .... 1
  *   (deeper read 9 on 05/10/2026, Session 35: the crossovers' declarations, lent to the
- *   loop's and Lutz's crossover entrances, are reached there too.)
+ *   loop's crossover entrance, are reached there too.)
  *
  * Against 0 problems and 2 declared arrivals over 6,490 glyphs clean, on 20/09/2026.
  * RE-MEASURED after the waltz jump's free feet were set to NEUTRAL that afternoon:

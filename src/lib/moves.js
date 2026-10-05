@@ -3296,60 +3296,11 @@ const BACK_X = 'Backward crossovers';
    with no page and no place on /rig. `from: [name, j]` reads MOVES first, then here. */
 export const ENTRANCES = {};
 
-/* BACKWARD CROSSOVERS INTO THE LUTZ — 04/10/2026, Session 35, agreed with Martyn: three
-   anticlockwise crossovers (rboCrossover, ending on RBO with the left foot pushing outside),
-   then a backward step onto the left back outside edge, which curves the other way, and the
-   Lutz's long edge. The public teaching found (Kori Ade, icoachskating) has a step forward
-   and a right forward mohawk between the crossovers and the edge; this direct step back is
-   the cheaper join and NO public source for it was found. Agreed on that basis.
-
-   THE STEP IS T STROKING'S, BACKWARDS. The two circles curve opposite ways, so the hip has to
-   cross from inside the one to inside the other; a blade on an edge has the hip inside it
-   (lean.mjs). So the left blade comes down beside the right on the old circle (its edge
-   derived, LBI), the weight crosses on one key with both blades flat under the hip at the
-   change of reference, and then the left takes its outside edge with the right pushing away,
-   as the backward push (backStroke) does. The step runs at the crossovers' 2.6 m/s and the
-   short settle on the new edge at 1.8, into the Lutz's 1.05. Verified against a coach: NO. */
-{
-  const X = sliceMove(MOVES.rboCrossover, 0, MOVES.rboCrossover.path.length - 1);
-  const STEP = 0.8, SETTLE = 0.5, D = X.duration + STEP + SETTLE, s0 = X.duration;
-  const deg = (v, s, r) => v * s / r * 180 / Math.PI;
-  const base = { hipZ: 94, hipYaw: -180, sh: P(-6, 0, 145), arm: [58, 10, 20], dir: 'B' };
-  const at = s => +(s / D).toFixed(5);
-  const lz = copyKey(MOVES.lutz.keys[0]);
-  ENTRANCES.rboCrossoverLbo = {
-    name: 'Backward crossovers, then a step onto the left back outside edge',
-    path: [...X.path,
-      { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(260, STEP, 400), span: STEP, radius: 400 },
-      { kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(180, SETTLE, 280), span: SETTLE, radius: 280 }],
-    radius: X.radius, duration: D,
-    /* Its first `to` of the clock is rboCrossover's first `upto`: underice.mjs lends that
-       move's declarations through. */
-    borrows: { move: 'rboCrossover', upto: boundsOf(MOVES.rboCrossover)[MOVES.rboCrossover.path.length - 1], to: s0 / D },
-    keys: [
-      ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
-      { ...base, t: at(s0 + 0.25), shYaw: -186, skate: 'R', edge: 'O', ph: 'The left foot lifting from its push',
-        R: P(0, 6, 0, -0.5), L: P(-4, 15, 7, 0, NEUTRAL) },
-      { ...base, t: at(s0 + 0.55), hipZ: 93, shYaw: -184, skate: 'R', edge: 'O', ph: 'The left blade set down beside the right',
-        R: P(0, 3, 0, -0.5), L: ON(0, 11, 0, -0.5) },
-      /* The weight crosses on T stroking's shape: both blades on the old circle's outside of
-         the hip and within the sole's 8 cm of it, the old one nearer, for one key at the change
-         of reference; a fourteenth of a second later the new one is on its own edge. */
-      { ...base, t: at(s0 + STEP), hipZ: 92, hipYaw: -179, shYaw: -180, skate: 'L', edge: null,
-        ph: 'The weight crossing onto the left foot, both blades flat under the hip',
-        L: ON(0, 6, 0, -0.5), R: ON(-3, 1, 0, -0.5) },
-      { ...base, t: at(s0 + STEP + 0.07), hipZ: 92, hipYaw: -179, shYaw: -178, skate: 'L', edge: 'O',
-        ph: 'Onto the left back outside edge, the right foot turning out',
-        L: P(-0.5, -1, 0, -0.5), R: PUSH(-2, -7, 0, -20) },
-      { ...base, t: at(s0 + STEP + 0.2), hipZ: 92, hipYaw: -178, shYaw: -172, sh: P(-4, 0, 143), skate: 'L', edge: 'O',
-        ph: 'The right foot pushing away',
-        L: P(-1, -8, 0, -0.5), R: PUSH(-8, -24, 0, -35) },
-      { ...base, t: at(s0 + STEP + 0.35), hipZ: 92, hipYaw: -178, shYaw: -168, sh: P(-3, 0, 144), skate: 'L', edge: 'O',
-        ph: 'The right foot lifting from the push, reaching back',
-        L: P(-1.3, -12, 0, -0.5), R: P(14, -14, 10, 0, NEUTRAL) },
-      { ...lz, t: 1, hipYaw: lz.hipYaw - 360, shYaw: lz.shYaw - 360 },
-    ] };
-}
+/* The Lutz from backward crossovers by a direct backward step onto LBO was built and drawn
+   on 04/10/2026 (Session 35) and taken down on 05/10: no source has that step, and Martyn
+   asked for Kori Ade's entrance (icoachskating: back crossovers, a step forward, a right
+   forward mohawk, then diagonally into the corner), which waits on the turning step. It is
+   in git at 9452c05 if its T-stroking step is wanted for anything else. */
 
 export const ENTRIES = {
   salchow:  { join: 2, list: [{ id: 'three', name: FO_THREE }] },
@@ -3358,8 +3309,6 @@ export const ENTRIES = {
   loop:     { join: 0, list: [{ id: 'edge',  name: 'Back outside edge' },
                               { id: 'three', name: FI_THREE, from: ['toeLoop', 2] },
                               { id: 'crossovers', name: BACK_X, from: ['rboCrossover', MOVES.rboCrossover.path.length] }] },
-  lutz:     { join: 0, list: [{ id: 'edge',  name: 'Long back outside edge' },
-                              { id: 'crossovers', name: BACK_X, from: ['rboCrossoverLbo', ENTRANCES.rboCrossoverLbo.path.length] }] },
 };
 /* Variants: built, named and added to MOVES. */
 for (const [id, E] of Object.entries(ENTRIES)) {
