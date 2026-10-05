@@ -56,8 +56,9 @@
    jump's free leg was fixed the top-down heading moved 155 degrees between two
    adjacent frames; the loosest bound here is 30.
 
-   Mutation counts: corner 4 (Session 36: every turning step moved onto the new blade's
-   own line, one per move that has a step); uncentre 6. It fires in spin.mjs too, which reads the segment's own
+   Mutation counts: corner 8 (Session 36: every turning step moved onto the new blade's
+   own line, one per move that has a step: the four spins from crossovers, the Salchow and
+   flip from a mohawk and their doubles); uncentre 6. It fires in spin.mjs too, which reads the segment's own
    radius and holds the blade's lateral offset within CENTRED_CM of it — 98 cm adrift
    on the mutated segment — so the same mis-author is caught from two directions.
 

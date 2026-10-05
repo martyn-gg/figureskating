@@ -3292,10 +3292,65 @@ const FO_THREE = 'Forward outside three turn', FI_THREE = 'Forward inside three 
    they run at 1.6 m/s into the loop's 1.05 instead of braking from 2.6 in their last 0.8 s.
    Not stretched to the loop's own pace (11 s): the page's speed control slows it further.
    A choice, not the default: MOVES.loop is the second jump of every combination. */
-const BACK_X = 'Backward crossovers';
+const BACK_X = 'Backward crossovers', FI_MOHAWK = 'Forward inside mohawk';
+const MOHAWK_ANGLE = -72;
 /* ENTRANCES THAT ARE NOT MOVES OF THEIR OWN: a run written only to be joined to an element,
    with no page and no place on /rig. `from: [name, j]` reads MOVES first, then here. */
 export const ENTRANCES = {};
+
+/* A FORWARD INSIDE MOHAWK INTO THE SALCHOW AND THE FLIP — 06/10/2026, Session 36, on the
+   turning step (rig-math.js), Martyn's decision of 05/10 that a step between opposed blades
+   is skated on a curve. Coaches' public teaching pages give it as the second entrance to
+   both jumps after the three turn: a right forward inside edge, the hips opening, and the
+   left foot put down backwards at the right's instep onto the take-off edge, the back
+   inside edge both jumps leave from.
+
+   ONE CIRCLE. RFI and LBI curve the same way as the three turn's LFO and LBI, so the
+   mohawk changes the foot and the direction of the blade, not the lobe.
+
+   THE ANGLE IS FORCED, AND IT IS THE STEP FORWARD'S. With the right blade forward and the
+   left backward and both turned out, the hips sit half way between them: 90° less half the
+   step. At 58 a side the step must be at least 64 clockwise; the other way round both feet
+   would be turned in. 72, so the hips' 54 a side match the step forward's. The new line
+   is turned toward the outside of the circle, the side the open hips face away from.
+
+   The glide on the right forward inside edge is the toe loop's first key (the same edge,
+   the same pace, 1.05 m/s on the 1.3 m circle); the last key is the jump's own, out of its
+   three turn. Verified against a coach: NO. */
+{
+  const G = 1.4, SET = 0.6, D = G + SET, v = 105, r = 130;
+  const deg = s => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
+  const base = { hipZ: 93, sh: P(-3, 0, 145), arm: [58, 8, 20] };
+  for (const id of ['salchow', 'flip']) {
+    /* The jump's key where its three-turn entrance ends (ENTRIES' join, segment 2). */
+    const tj = boundsOf(MOVES[id])[2], end = copyKey(MOVES[id].keys.find(k => Math.abs(k.t - tj) < 1e-6));
+    const step = reframe({ ...base, t: at(G), hipZ: 92, hipYaw: 54, shYaw: 62, skate: 'L', edge: 'I', dir: 'B',
+      ph: 'The mohawk: the left blade down backwards at the right instep, on its own line',
+      R: { ...ON(3, 8, 0, -0.5, 'F'), yaw: 0 }, L: { ...ON(-5, 0, 0, -0.5, 'B'), yaw: MOHAWK_ANGLE } }, -MOHAWK_ANGLE);
+    ENTRANCES[`rfiMohawk_${id}`] = {
+      name: 'A right forward inside edge and a mohawk onto the left back inside edge',
+      path: [{ kind: 'arc', foot: 'R', edge: 'I', dir: 'F', sweep: deg(G), span: G, radius: r },
+             { kind: 'arc', foot: 'L', edge: 'I', dir: 'B', sweep: deg(SET), span: SET, radius: r, step: MOHAWK_ANGLE }],
+      radius: r, duration: D,
+      keys: [
+        { ...copyKey(MOVES.toeLoop.keys[0]), t: 0 },
+        { ...base, t: at(0.8), hipYaw: 15, shYaw: 26, skate: 'R', edge: 'I', dir: 'F',
+          ph: 'The hips opening, the free foot coming forward to the right heel',
+          R: P(-1, 14, 0, -0.5), L: P(-16, 2, 10, 0, NEUTRAL) },
+        { ...base, t: at(1.2), hipZ: 92, hipYaw: 44, shYaw: 54, skate: 'R', edge: 'I', dir: 'F',
+          ph: 'Open: the left foot turned out, heel to the right instep',
+          R: P(0, 9, 0, -0.5), L: { ...P(-7, 1, 6, 0, NEUTRAL), yaw: MOHAWK_ANGLE } },
+        step,
+        { ...base, t: at(G + 0.12), hipZ: 93, hipYaw: 140, shYaw: 138, skate: 'L', edge: 'I', dir: 'B',
+          ph: 'The right foot lifting in front, the hips coming round',
+          L: P(-2, 9, 0, -0.5), R: { ...P(9, 6, 6, 0, NEUTRAL), yaw: 50 } },
+        { ...base, t: at(G + 0.35), hipYaw: 168, shYaw: 156, skate: 'L', edge: 'I', dir: 'B',
+          ph: 'Settling on the back inside edge',
+          L: P(-4, 12, 0, -0.5), R: P(7, 8, 13, 0, NEUTRAL) },
+        { ...end, t: 1 },
+      ] };
+  }
+}
 
 /* The Lutz from backward crossovers by a direct backward step onto LBO was built and drawn
    on 04/10/2026 (Session 35) and taken down on 05/10: no source has that step, and Martyn
@@ -3304,8 +3359,10 @@ export const ENTRANCES = {};
    in git at 9452c05 if its T-stroking step is wanted for anything else. */
 
 export const ENTRIES = {
-  salchow:  { join: 2, list: [{ id: 'three', name: FO_THREE }] },
-  flip:     { join: 2, list: [{ id: 'three', name: FO_THREE }] },
+  salchow:  { join: 2, list: [{ id: 'three', name: FO_THREE },
+                              { id: 'mohawk', name: FI_MOHAWK, from: ['rfiMohawk_salchow', 2] }] },
+  flip:     { join: 2, list: [{ id: 'three', name: FO_THREE },
+                              { id: 'mohawk', name: FI_MOHAWK, from: ['rfiMohawk_flip', 2] }] },
   toeLoop:  { join: 2, list: [{ id: 'three', name: FI_THREE }] },
   loop:     { join: 0, list: [{ id: 'edge',  name: 'Back outside edge' },
                               { id: 'three', name: FI_THREE, from: ['toeLoop', 2] },

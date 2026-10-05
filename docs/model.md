@@ -2593,13 +2593,33 @@ in the Session 36 handoff for him to judge.
 - **What holds it.** `continuity.mjs` section 4 reads the body's rate of turn as the path's
   less the step, and holds the exemption from the other side: the frame may turn only in the
   frame pair where the tracing changes blade. `--break=corner` (every step moved onto the new
-  blade's own line, one segment later) fails 4, one per move with a step. One segment earlier
+  blade's own line, one segment later) fails one per move with a step (4, then 8 with the
+  mohawks below). One segment earlier
   bites on nothing, rightly: in crossovers every segment starts with a change of blade.
   `turnout.mjs` holds the step key (54 a side) and its LEAK half holds the reference blade
   true on every frame either side.
 - **Registered**: the upright, sit, change-of-foot and combination spins from backward
   crossovers (`STEP_FORWARD_DRAWN = true`). The corner measured off the drawn path is 72.0°
   (−151.0° to −79.3° between frames 491 and 492 of the upright spin's entrance).
+
+### The forward inside mohawk into the Salchow and flip — the same session
+
+`salchow@mohawk`, `flip@mohawk` and their doubles, offered beside the three turn as "Forward
+inside mohawk". A right forward inside glide at the toe loop's pace (its first key, 1.05 m/s
+on the 1.3 m circle), the hips opening, the left foot brought turned out to the right instep,
+then put down backwards on the left back inside edge as the right lifts in front, into the
+jump's own key out of its three turn. RFI, LBI and the three turn's edges are all on one
+circle, so the mohawk changes the blade and not the lobe.
+
+**The angle is forced and it is the step forward's.** With the right blade forward and the
+left backward, both turned out, the hips sit half way between them, at 90° less half the
+step. At 58 a side the step must be at least 64° and must turn clockwise, toward the outside
+of the circle; the other way both feet are turned in. 72, so the hips' 54 a side match the step
+forward's. The new line starts inside the old one's end, 8 cm behind it and 8 cm in (heel to
+instep), and crosses it heading out, which is the shape a mohawk leaves. The first placement
+(the left blade beside the right's middle) put the new blade 5 cm along its own travel from the
+hip, and the shin leaned 33° over the toe (`shin.mjs`, 32); 5 cm back and the right 3 cm forward
+cleared it. Verified against a coach: NO.
 
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
