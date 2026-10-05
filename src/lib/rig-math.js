@@ -878,6 +878,74 @@ const cuspFor = (move, t, pose) => {
   return cu && pose.skate === cu.entry.foot && onIceOf(pose, pose.skate) === 'blade' ? cu : null;
 };
 
+/* ═══ a turning step ══════════════════════════════════════════
+   06/10/2026, Session 36. docs/model.md, *A turning step, on a curve*.
+
+   When one blade hands the weight to a blade facing the other way (a step forward out
+   of backward crossovers, a mohawk), the new blade goes down on a line of its own at an
+   angle to the old one, so the two are never opposed under load: two opposed blades need
+   90° of turnout a side and the rig's hips give 58 (turnout.mjs). Martyn, 05/10/2026:
+   "If they aren't fudging the first blade as the second one takes over, they skate a
+   curve."
+
+   A path segment may carry `step`, degrees, + anticlockwise seen from above (the yaw
+   convention, as `pivot`'s sweep): the segment sets off with the path's heading turned
+   that far from where the segment before it ended. The tracing has a corner there: one
+   line ends and the next starts at an angle, which is what a step leaves on the ice. The
+   position does not jump; the reference handover's displacement (below) puts the new
+   line where the new blade is.
+
+   THE KEYS ARE AUTHORED IN THE FRAME OF THE PATH WHERE THEY SIT, as every key always has
+   been: t along the travel of the segment the key is on, yaw off its heading. A key on
+   the far side of a step from the instant being drawn is turned into that instant's
+   frame before poseFree interpolates (reframe), so the body is continuous in the world
+   while the frame it is written in turns under it. A key exactly at the step is in the
+   new frame, as it is on the new segment and poseFree takes it as the key being left.
+
+   THE FRAME CHANGES AT A TIME AND THE TRACING TURNS AT A SAMPLE, and the two can be a
+   sample apart because buildPath rounds each segment's sample count. So buildPath gives
+   every sample the heading of the frame at that sample's time (the corner itself is one
+   point, and whichever side of the step the clock puts it on, it carries that side's
+   heading), and stepAt is the one place the time is read. A step on a move's first
+   segment means nothing and is ignored. */
+const stepCache = new WeakMap();
+const stepTimes = move => {
+  if (stepCache.has(move)) return stepCache.get(move);
+  let out = [];
+  if (move.path && move.path.some((g, i) => i > 0 && g.step)) {
+    const spans = move.path.map(s => s.span ?? 1 / move.path.length);
+    const sum = spans.reduce((a, b) => a + b, 0);
+    let c = spans[0];
+    for (let i = 1; i < move.path.length; i++) {
+      if (move.path[i].step) out.push({ t: c / sum, step: move.path[i].step, seg: i });
+      c += spans[i];
+    }
+  }
+  stepCache.set(move, out);
+  return out;
+};
+const hasStep = move => stepTimes(move).length > 0;
+/** The frame at time t, degrees: the sum of every step at or before it. */
+export const stepAt = (move, t) => {
+  let f = 0;
+  for (const s of stepTimes(move)) if (t >= s.t - 1e-9) f += s.step;
+  return f;
+};
+/** The steps of a move, each with the time it is taken at. */
+export const stepsOf = move => stepTimes(move).map(s => ({ ...s }));
+/** A key written in a frame turned D degrees (anticlockwise) from the one it is to be
+    read in: every hip-relative point turned with it, every yaw D more. */
+export const reframe = (k, D) => {
+  const c = Math.cos(D * D2R), s = Math.sin(D * D2R), o = { ...k };
+  /* t forward, n to the skater's right: the frame's forward axis turned anticlockwise
+     by D is (cos D, -sin D) in the frame read, its right (sin D, cos D). */
+  const turn = q => q && ({ ...q, t: q.t * c + q.n * s, n: -q.t * s + q.n * c });
+  for (const f of ['sh', 'LH', 'RH']) if (o[f]) o[f] = turn(o[f]);
+  for (const f of ['L', 'R']) if (o[f]) o[f] = { ...turn(o[f]), yaw: (o[f].yaw ?? 0) + D };
+  o.hipYaw += D; o.shYaw += D;
+  return o;
+};
+
 /* ═══ path ════════════════════════════════════════════════════ */
 export function buildPath(move){
   /* `frames` is optional and defaults to 320, so every move without one draws as it
@@ -892,10 +960,14 @@ export function buildPath(move){
   pts.push({x,y,th});
   const spans = move.path.map(s => s.span ?? 1/move.path.length);
   const sum = spans.reduce((a,b)=>a+b, 0);
+  const stepIdx = [];
   move.path.forEach((seg, si) => {
     // samples proportional to the segment's share of the clock, so time
     // maps linearly to index and phase boundaries land where they're authored
     const N = Math.max(2, Math.round(TOTAL * spans[si] / sum));
+    /* A TURNING STEP (above): the segment sets off turned. Every sample from here on is
+       on the new line; the corner, the sample before, is on both. */
+    if (si > 0 && seg.step) { th -= seg.step*D2R; stepIdx.push({ i: pts.length, step: seg.step }); }
     /* RADIUS IS PER SEGMENT, falling back to the move's — 19/09/2026, for the
        spins. A spin arrives on a wide edge and tightens onto a point, and until
        now every arc of a move shared one radius, so an entrance could only have
@@ -1122,9 +1194,27 @@ export function buildPath(move){
      MOVES is not where the second caller lives. */
   if(!move.keys) return pts;
   const n = pts.length;
-  let held = {t:0, n:0}, src = null, dx = 0, dy = 0;
+  /* Each sample carries the heading of the frame at its own time (a turning step,
+     above): where rounding put a sample on one side of the corner and the clock on the
+     other, its heading is turned to the clock's. Its position stays where it was built. */
+  if (stepIdx.length) for (let i = 0; i < n; i++) {
+    const geo = stepIdx.reduce((f, s) => f + (i >= s.i ? s.step : 0), 0);
+    const tim = stepAt(move, i/(n-1));
+    if (geo !== tim) pts[i].th -= (tim - geo)*D2R;
+  }
+  let held = {t:0, n:0}, src = null, dx = 0, dy = 0, fr = 0;
   for(let i=0;i<n;i++){
     const po = poseFree(move, i/(n-1));
+    /* The held offset is a point in the frame it was read in; across a step it is read
+       again in the new one, as reframe turns a key. */
+    if (stepIdx.length) {
+      const f = stepAt(move, i/(n-1));
+      if (f !== fr) {
+        const D = (fr - f)*D2R, c = Math.cos(D), s = Math.sin(D);
+        held = { t: held.t*c + held.n*s, n: -held.t*s + held.n*c };
+        fr = f;
+      }
+    }
     const down = po.skate && onIceOf(po, po.skate) ? po.skate : null;
     /* A BLADE TAKING THE ICE, not a DIFFERENT blade — 03/10/2026, Session 26. This
        read `down !== src`, and `src` was never cleared while nothing was on the ice, so
@@ -1254,7 +1344,14 @@ const pickReach = (on, foot, dtSeconds, near, spanSeconds) => on !== 'pick' ? {}
 function poseFree(move, t){
   const K = move.keys;
   let i = 0; while(i < K.length-2 && K[i+1].t <= t) i++;
-  const a = K[i], b = K[Math.min(i+1,K.length-1)];
+  let a = K[i], b = K[Math.min(i+1,K.length-1)];
+  /* ACROSS A STEP, both keys are read in the frame of the time being drawn (stepAt,
+     below). A move with no step returns before doing anything, so it is untouched. */
+  if (hasStep(move)) {
+    const ft = stepAt(move, t), fa = stepAt(move, a.t), fb = stepAt(move, b.t);
+    if (fa !== ft) a = reframe(a, fa - ft);
+    if (fb !== ft) b = reframe(b, fb - ft);
+  }
   const span = Math.max(1e-6, b.t-a.t);
   const raw = Math.min(1, Math.max(0, (t-a.t)/span));
   const u = raw*raw*(3-2*raw);

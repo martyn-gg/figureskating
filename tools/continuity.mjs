@@ -56,7 +56,8 @@
    jump's free leg was fixed the top-down heading moved 155 degrees between two
    adjacent frames; the loosest bound here is 30.
 
-   Mutation count: uncentre 6. It fires in spin.mjs too, which reads the segment's own
+   Mutation counts: corner 4 (Session 36: every turning step moved onto the new blade's
+   own line, one per move that has a step); uncentre 6. It fires in spin.mjs too, which reads the segment's own
    radius and holds the blade's lateral offset within CENTRED_CM of it — 98 cm adrift
    on the mutated segment — so the same mis-author is caught from two directions.
 
@@ -66,7 +67,7 @@
 */
 import { MOVES } from '../src/lib/moves.js';
 import { THIGH, SHIN, anterior, twoBone, kneeFace, bootDir, ankleOf, buildPath, poseAt, onIceOf,
-         pinRuns, pinnedAt, PIN_AGREE } from '../src/lib/rig-math.js';
+         pinRuns, pinnedAt, PIN_AGREE, stepAt } from '../src/lib/rig-math.js';
 
 const unit = v => { const l = Math.hypot(...v) || 1; return v.map(c => c / l); };
 const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
@@ -80,6 +81,14 @@ const BREAK = (/--break=(\w+)/.exec(process.argv.join(' ')) || [])[1];
    moves the radius of one segment that claims a position — the one kind of step the
    ramp does not smooth, because a held segment holds its radius. */
 const brkMove = m => {
+  /* `corner`: every turning step moved one segment later, onto the new blade's own line
+     where nothing changes hands (out of the step forward that is the LFO edge into the
+     three turn): the corner of a skid, or of a blade turning on the spot. One segment
+     EARLIER bites on nothing, and rightly: in crossovers every segment starts with a
+     change of blade. */
+  if (BREAK === 'corner') return { ...m, path: m.path.map((g, i, P) => {
+    const { step, ...h } = g;
+    return i > 0 && P[i - 1].step ? { ...h, step: P[i - 1].step } : h; }) };
   if (BREAK !== 'uncentre') return m;
   /* ONE held segment, not all of them. Moving every held radius together leaves them
      agreeing with each other and the free neighbours ramping to the new value, so
@@ -110,7 +119,7 @@ const SLIDE = 0.06;
    the staircase these replaced reached 10.46 cm and 8.51°. */
 const LURCH = 5;              // cm, change in the skater's speed across the ice
 const WRENCH = 2;             // degrees, change in the turn taken per frame
-let bodyChecked = 0, worstLurch = 0, worstWrench = 0;
+let bodyChecked = 0, worstLurch = 0, worstWrench = 0, steps = 0;
 /* Below these, a projection is not carrying a direction — it is carrying noise. */
 const FLAT_HORIZ = 0.15;      // top view: horizontal part of the boot direction
 const TIE = 0.08;             // profile: |in-plane − toward-camera|
@@ -288,9 +297,27 @@ for (const [key, m] of Object.entries(MOVES)) {
     return { x: p.x - T.x * (p.ot || 0) - N.x * (p.on || 0), y: p.y - T.y * (p.ot || 0) - N.y * (p.on || 0) };
   });
   const speed = [], turn = [];
+  /* A TURNING STEP — 06/10/2026, Session 36, rig-math.js. Where a path segment sets off at
+     an angle the frame the body is written in turns under it at one instant and the body
+     does not, so the turn the body takes is the path's less the step. That is an
+     exemption, so it is held from the other side as well: the frame may turn only in the
+     frame pair where the tracing changes blade (the anchor changes from one blade on the
+     ice to the other), because a step is one line ending and the next starting, and a
+     corner in one blade's own line is a blade turning on the spot. */
+  const mv = BREAK ? brkMove(m) : m;
+  const anchorOf = i => { const po = poseAt(mv, i / (path.length - 1));
+    return po.skate && onIceOf(po, po.skate) ? po.skate : null; };
   for (let i = 1; i < path.length; i++) {
     speed.push(Math.hypot(hip[i].x - hip[i-1].x, hip[i].y - hip[i-1].y));
-    turn.push(Math.abs(path[i].th - path[i-1].th) * 180 / Math.PI);
+    const df = stepAt(mv, i / (path.length - 1)) - stepAt(mv, (i - 1) / (path.length - 1));
+    if (df) {
+      steps++;
+      const a = anchorOf(i - 1), b = anchorOf(i);
+      if (!a || !b || a === b)
+        fail(`${key}: the path steps ${df}° between frames ${i - 1} and ${i} and the tracing does not ` +
+          `change blade there (${a || 'none'} to ${b || 'none'}) — only a new blade can start a new line`);
+    }
+    turn.push(Math.abs(path[i].th - path[i-1].th + df * Math.PI / 180) * 180 / Math.PI);
   }
   for (let i = 1; i < speed.length; i++) {
     bodyChecked += 2;
@@ -385,7 +412,8 @@ for (const key of Object.keys(MOVES)) {
 
 console.log(`\n${checked} adjacent-frame comparisons across ${Object.keys(MOVES).length} moves, three views`);
 console.log(`  ${bodyChecked} on the body's own motion: worst speed change ${worstLurch.toFixed(2)} cm ` +
-  `(bound ${LURCH}), worst change of turn ${worstWrench.toFixed(2)}° (bound ${WRENCH})`);
+  `(bound ${LURCH}), worst change of turn ${worstWrench.toFixed(2)}° (bound ${WRENCH}), ` +
+  `${steps} turning step${steps === 1 ? '' : 's'}, each where the tracing changes blade`);
 if (flips.length) console.log(`  glyph switched between two of the three views: ${flips.join(', ')}`);
 if (seams.length) {
   /* Every seam, not the worst per move: the waltz has two and they are different

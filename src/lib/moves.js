@@ -15,7 +15,7 @@
    touching, which is most of what distinguishes one edge from another. A foot that
    really is on the picks says so with PICK() below, not with a pitch nobody flagged. */
 
-import { anterior, lateral, ANKLE_POINT, buildPath, pinRuns, pinnedAt } from './rig-math.js';
+import { anterior, lateral, ANKLE_POINT, buildPath, pinRuns, pinnedAt, reframe } from './rig-math.js';
 
 /* `point` is how hard the free foot is pointed, in degrees from the right angle
    you stand at, and it is clamped to the boot's allowance in bootDir. It is
@@ -3378,19 +3378,34 @@ export const CORES = {};
     ENTRIES[id] = { join: 2, list: [{ id: 'three', name: FO_THREE, from: ['salchow', 2] }] };
   }
 }
-const STEP_FORWARD_DRAWN = false;
+const STEP_FORWARD_DRAWN = true;
 /* A STEP FORWARD FROM BACKWARD CROSSOVERS — 04/10/2026, Session 35, agreed with Martyn: the
    forward spins entered from back crossovers. After the last crossover the skater steps
    forward onto the left forward outside edge and turns the spin's three from it; the step
    is the piece the waltz jump and Axel are also waiting for.
 
-   ONE CIRCLE, NO INFLECTION. The anticlockwise crossovers are on RBO and LFO curves the same
-   way, so the step changes the foot and the direction of travel of the blade, not the lobe.
-   The left foot comes off its push, the hips open anticlockwise with the circle, the left
-   blade goes down forwards beside the right (the two blades opposing, so both are outside
-   edges, the spread eagle's rule), the weight crosses, and the right lifts behind into the
-   Salchow's first key. The crossovers' 2.6 m/s, the step at 2, into the Salchow's 0.8.
+   ON A CURVE, AT AN ANGLE — rebuilt 06/10/2026, Session 36, as Martyn decided on 05/10:
+   the left blade goes down on a line of its own, turned STEP_ANGLE off the right blade's,
+   so the two are never opposed under load (rig-math.js, *a turning step*). Drawn first in
+   Session 35 with the blades opposed, 180° apart, which needs 90° of turnout a side
+   against the rig's 58. Turned by 72 they are 108° apart, 54 a side with the knees bent.
+   The least that meets the hips is 64; 72 leaves a margin for the hips not being exactly
+   between the feet.
+
+   WHICH WAY IT TURNS, chosen 06/10/2026 with Martyn away (docs/model.md): CLOCKWISE, toward
+   the outside of the anticlockwise circle. In backward crossovers the skater faces out of
+   the circle, looking in over the left shoulder; the hips open anticlockwise into the
+   step, and the left foot goes down where the body faces. Turned the other way, into the
+   circle, the hips would have to sit between a toe pointing in and a heel pointing in, and
+   both feet would be turned in past the 45° a bent knee gives (turnout.mjs, IN). The
+   forward outside edge curves back round anticlockwise from there.
+
+   THE WEIGHT CHANGES FEET AT THE INSTANT THE NEW BLADE TOUCHES: the left blade comes down
+   at the key where it becomes the reference and the right leaves the ice from it. A new
+   blade put down at an angle and carried along the old line before it takes the weight
+   would be skidding, and the rig has no track that ends by becoming the path.
    Verified against a coach: NO. */
+const STEP_ANGLE = -72;
 {
   const X = sliceMove(MOVES.rboCrossover, 0, MOVES.rboCrossover.path.length - 1);
   const STEP = 0.5, SETTLE = 0.6, D = X.duration + STEP + SETTLE, s0 = X.duration;
@@ -3398,11 +3413,19 @@ const STEP_FORWARD_DRAWN = false;
   const base = { hipZ: 94, sh: P(-5, 0, 145), arm: [58, 10, 20] };
   const at = s => +(s / D).toFixed(5);
   const sk = copyKey(MOVES.salchow.keys[0]);
+  /* The step key written in the old line's frame, where it is easiest to read (the left
+     blade turned STEP_ANGLE, the right running true), and turned into the new line's,
+     where it sits: the left blade then runs true and the right is turned the other way. */
+  const stepKey = reframe({ ...base, t: at(s0 + STEP), hipZ: 92, hipYaw: -126, shYaw: -118,
+    skate: 'L', edge: 'O', dir: 'F',
+    ph: 'Stepping forward: the left blade down on its own line, the weight onto it',
+    L: { ...ON(0, 14, 0, -0.5, 'F'), yaw: STEP_ANGLE }, R: { ...ON(-1, 6, 0, -0.5, 'B'), yaw: 0 } }, -STEP_ANGLE);
   const step = {
     name: 'Backward crossovers, then a step forward onto the left forward outside edge',
     path: [...X.path,
       { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(240, STEP, 400), span: STEP, radius: 400 },
-      { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, SETTLE, 130), span: SETTLE, radius: 130 }],
+      { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, SETTLE, 130), span: SETTLE, radius: 130,
+        step: STEP_ANGLE }],
     radius: X.radius, duration: D,
     borrows: { move: 'rboCrossover', upto: boundsOf(MOVES.rboCrossover)[MOVES.rboCrossover.path.length - 1], to: s0 / D },
     keys: [
@@ -3410,21 +3433,16 @@ const STEP_FORWARD_DRAWN = false;
       { ...base, t: at(s0 + 0.2), hipYaw: -160, shYaw: -156, skate: 'R', edge: 'O', dir: 'B',
         ph: 'The left foot lifting from its push, the hips starting to open',
         R: P(0, 6, 0, -0.5), L: P(-2, 13, 8, 0, NEUTRAL) },
-      { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: -120, shYaw: -110, skate: 'R', edge: 'O', dir: 'B',
-        ph: 'The left blade down forwards beside the right, the hips open to the circle',
-        R: P(0, 6, 0, -0.5), L: ON(4, 13, 0, -0.5, 'F') },
-      /* The right foot leaves as soon as the weight is across, with the hips still most of
-         the way round toward it, so the free boot it becomes points nearly where the blade
-         did; the hips finish turning with it in the air. */
-      { ...base, t: at(s0 + STEP), hipZ: 93, hipYaw: -105, shYaw: -96, skate: 'L', edge: 'O', dir: 'F',
-        ph: 'Stepping forward: the weight onto the left forward outside edge',
-        L: ON(4, 14, 0, -0.5), R: ON(-4, 7, 0, -0.5, 'B') },
-      { ...base, t: at(s0 + STEP + 0.12), hipZ: 94, hipYaw: -80, shYaw: -70, skate: 'L', edge: 'O', dir: 'F',
+      { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: -140, shYaw: -132, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The hips opening, the left foot turned out and coming down beside the right',
+        R: P(-1, 6, 0, -0.5), L: { ...P(0, 14, 6, 0, NEUTRAL), yaw: STEP_ANGLE } },
+      stepKey,
+      { ...base, t: at(s0 + STEP + 0.12), hipZ: 93, hipYaw: -40, shYaw: -34, skate: 'L', edge: 'O', dir: 'F',
         ph: 'The right foot lifting, the hips coming round',
-        L: P(4, 15, 0, -0.5), R: P(-10, 8, 6, 0, NEUTRAL) },
-      { ...base, t: at(s0 + STEP + 0.35), hipZ: 94, hipYaw: -25, shYaw: -22, skate: 'L', edge: 'O', dir: 'F',
+        L: P(10, 9, 0, -0.5), R: { ...P(-2, 8, 5, 0, NEUTRAL), yaw: 60 } },
+      { ...base, t: at(s0 + STEP + 0.35), hipYaw: -15, shYaw: -14, skate: 'L', edge: 'O', dir: 'F',
         ph: 'Square to the edge, the right foot behind',
-        L: P(4, 15, 0, -0.5), R: P(-22, 8, 10, 0, NEUTRAL) },
+        L: P(6, 14, 0, -0.5), R: P(-20, 8, 10, 0, NEUTRAL) },
       { ...sk, t: 1 },
     ] };
   ENTRANCES.rboCrossoverLfo = step;
@@ -3432,9 +3450,8 @@ const STEP_FORWARD_DRAWN = false;
   const run = withEntry(step, sliceMove(MOVES.salchow, 0, 2), step.name + ' and a three turn', '');
   run.borrows = { ...step.borrows, to: step.borrows.to * step.duration / run.duration };
   ENTRANCES.rboCrossoverThree = run;
-  /* NOT YET REGISTERED: at the transfer the two blades are opposed, 180° apart, and the
-     pelvis between them needs about 90° of turnout on each side against the rig's 58
-     (turnout.mjs). Waiting on Martyn's decision about a trained allowance (Session 35). */
+  /* Registered since 06/10/2026 (Session 36): drawn in Session 35 with the blades opposed,
+     which turnout.mjs refused, and now on the turning step. */
   if (STEP_FORWARD_DRAWN) for (const id of ['uprightSpin', 'sitSpin', 'changeFootSpin', 'combinationSpin']) {
     const m = CORES[id];
     MOVES[`${id}@crossovers`] = withEntry(sliceMove(run, 0, run.path.length), m,

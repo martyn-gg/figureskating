@@ -2556,6 +2556,51 @@ Each join agreed with Martyn before it was built.
   Until now the right three turns, the right brackets, the second T stroke and the
   anticlockwise crossovers told the reader about the wrong foot. No frame moved.
 
+## A turning step, on a curve — 06/10/2026, Session 36
+
+Martyn decided on 05/10: when one blade hands the weight to a blade facing the other way, the
+new blade goes down on a curve of its own at an angle to the old line, so the two are never
+opposed under load. Built unattended; the choices below were made without him and are listed
+in the Session 36 handoff for him to judge.
+
+- **The angle.** Two blades `a` degrees apart need `a/2` of turnout a side with the hips
+  between them. The rig gives 58 (40 at the hip, 18 more with the knee bent), so the new line
+  must be at least 180 − 116 = 64° off the old. The step forward uses 72, 54 a side, which
+  leaves a margin for hips that are not exactly between the feet. `turnout.mjs` is unchanged.
+- **The tracing has a corner** (`step` on a path segment, degrees, + anticlockwise, the
+  pivot's convention): the segment sets off turned that far from where the one before it
+  ended. Drawn, the reference line breaks at the handover as it always has and the new line
+  starts beside it at the angle, which is what a skater's tracing shows. The position does not
+  jump; the existing handover displacement puts the new line where the new blade is.
+- **Keys are written in the frame of the path where they sit**, as every key always was. A key
+  on the far side of a step from the instant being drawn is turned into that instant's frame
+  before `poseFree` interpolates (`reframe` in `rig-math.js`), so the body is continuous in the
+  world while its frame turns under it. A key exactly at the step is in the new frame. Each path
+  sample carries the heading of the frame at its own time (`stepAt`), because the sample count
+  per segment is rounded and the corner can fall a sample either side of the clock's instant.
+  A move with no step goes through none of this; the frame hash shows every existing move
+  byte-identical.
+- **The weight changes feet at the instant the new blade touches.** The new blade comes down at
+  the key where it becomes the reference and the old blade leaves the ice from it. A blade put
+  down at an angle and carried along the old line before it takes the weight would be skidding,
+  and the rig has no track that ends by becoming the path. In the step forward the left foot is
+  6 cm up, turned out to its new line, at the key before.
+- **Which way the step forward turns: clockwise, toward the outside of the anticlockwise
+  circle.** In backward crossovers the skater faces out of the circle; the hips open
+  anticlockwise into the step and the left foot goes down where the body faces. Turned into the
+  circle, the hips would sit between two feet both turned in past what a bent knee allows. The
+  forward outside edge curves back round from there.
+- **What holds it.** `continuity.mjs` section 4 reads the body's rate of turn as the path's
+  less the step, and holds the exemption from the other side: the frame may turn only in the
+  frame pair where the tracing changes blade. `--break=corner` (every step moved onto the new
+  blade's own line, one segment later) fails 4, one per move with a step. One segment earlier
+  bites on nothing, rightly: in crossovers every segment starts with a change of blade.
+  `turnout.mjs` holds the step key (54 a side) and its LEAK half holds the reference blade
+  true on every frame either side.
+- **Registered**: the upright, sit, change-of-foot and combination spins from backward
+  crossovers (`STEP_FORWARD_DRAWN = true`). The corner measured off the drawn path is 72.0°
+  (−151.0° to −79.3° between frames 491 and 492 of the upright spin's entrance).
+
 ## Forward is not across, and a snowplough balances — 04/10/2026, Session 32
 
 `shin.mjs` held every shin to one 28° cone round the boot's up-axis, so a shin over the
