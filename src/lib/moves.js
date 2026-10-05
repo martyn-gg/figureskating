@@ -3288,9 +3288,10 @@ const FO_THREE = 'Forward outside three turn', FI_THREE = 'Forward inside three 
    rboCrossover but its held two-foot key: through its last 0.8 s on the right back outside
    edge the left foot comes off its inside-edge push and round to the loop's first key,
    crossed in front. Same foot, edge and circle sense; the circle tightens from 4 m to 1.3.
-   Each half keeps its own clock, so the skater slows from 2.6 m/s to the loop's 1.05 in that
-   last 0.8 s, which the drawn loop is written at. A choice, not the default: MOVES.loop is
-   the second jump of every combination. */
+   IN SLOW MOTION, as Martyn asked on 05/10/2026: the crossovers' 4.4 s are played over 7, so
+   they run at 1.6 m/s into the loop's 1.05 instead of braking from 2.6 in their last 0.8 s.
+   Not stretched to the loop's own pace (11 s): the page's speed control slows it further.
+   A choice, not the default: MOVES.loop is the second jump of every combination. */
 const BACK_X = 'Backward crossovers';
 /* ENTRANCES THAT ARE NOT MOVES OF THEIR OWN: a run written only to be joined to an element,
    with no page and no place on /rig. `from: [name, j]` reads MOVES first, then here. */
@@ -3308,13 +3309,17 @@ export const ENTRIES = {
   toeLoop:  { join: 2, list: [{ id: 'three', name: FI_THREE }] },
   loop:     { join: 0, list: [{ id: 'edge',  name: 'Back outside edge' },
                               { id: 'three', name: FI_THREE, from: ['toeLoop', 2] },
-                              { id: 'crossovers', name: BACK_X, from: ['rboCrossover', MOVES.rboCrossover.path.length] }] },
+                              { id: 'crossovers', name: BACK_X, from: ['rboCrossover', MOVES.rboCrossover.path.length], secs: 7 }] },
 };
 /* Variants: built, named and added to MOVES. */
 for (const [id, E] of Object.entries(ENTRIES)) {
   const core = sliceMove(MOVES[id], E.join);
   for (const v of E.list.slice(1)) {
-    const [src, j] = v.from, entry = sliceMove(MOVES[src] ?? ENTRANCES[src], 0, j);
+    const [src, j] = v.from, cut = sliceMove(MOVES[src] ?? ENTRANCES[src], 0, j);
+    /* `secs`: the entrance played over that many seconds instead of its own, the keys where
+       they were on its clock and every segment's span scaled with it. */
+    const k = v.secs ? v.secs / cut.duration : 1;
+    const entry = k === 1 ? cut : { ...cut, duration: v.secs, path: cut.path.map(g => ({ ...g, span: g.span * k })) };
     MOVES[`${id}@${v.id}`] = withEntry(entry, E.join ? core : MOVES[id],
       `${MOVES[id].name}, from a ${v.name.toLowerCase()}`, `${v.name} · ${MOVES[id].note}`);
   }

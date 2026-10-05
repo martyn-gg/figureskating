@@ -2487,9 +2487,10 @@ Each join agreed with Martyn before it was built.
   from back crossovers" (Wikipedia, *Loop jump*). The whole of `rboCrossover` but its held
   two-foot key; through its last 0.8 s on RBO the left foot comes off its inside-edge push and
   round to the loop's first key, crossed in front. Same foot, edge and circle sense; the circle
-  tightens from 4 m to 1.3. Each half keeps its own clock (agreed: two clocks, measured), so
-  the skater slows from 2.6 m/s to the loop's 1.05 in that last 0.8 s; `continuity.mjs` is
-  clean. A choice beside the edge and the three, not the default, because `MOVES.loop` is the
+  tightens from 4 m to 1.3. Built first with each half on its own clock, the skater braking
+  from 2.6 m/s to the loop's 1.05 in that last 0.8 s; on 05/10 Martyn asked for slow motion
+  without stretching it to the loop's own pace, so the crossovers' 4.4 s now play over 7
+  (`secs` on the entrance) and run at 1.6 m/s, the page's speed control slowing it further. A choice beside the edge and the three, not the default, because `MOVES.loop` is the
   second jump of every combination.
 - **The Lutz** (`lutz@crossovers`, and its double): three anticlockwise crossovers, then a
   backward step from RBO onto LBO, which curves the other way, into the Lutz's long edge.

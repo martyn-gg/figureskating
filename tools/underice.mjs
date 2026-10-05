@@ -43,7 +43,7 @@
  *   --break=blind   the on-ice exemption removed ......... 67 over 26,952 glyphs
  *   --break=deeper  both arrivals declared at nought ..... 2
  *   --break=stale   a move declared that does not dip .... 1
- *   (deeper read 9 on 05/10/2026, Session 35: the crossovers' declarations, lent to the
+ *   (deeper read 11 on 05/10/2026, Session 35: the crossovers' declarations, lent to the
  *   loop's crossover entrance, are reached there too.)
  *
  * Against 0 problems and 2 declared arrivals over 6,490 glyphs clean, on 20/09/2026.
@@ -158,17 +158,17 @@ handover.lboCrossover = [
     { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
     { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
 ];
-/* `entered`: the depth the same frame reaches in the loop's crossover entrance, which plays at
-   the loop's 59 frames a second against the crossovers' 73 (Session 35). */
+/* `entered`: the depth the same frame reaches in the loop's crossover entrance, which plays its
+   4.4 s over 7 at the loop's 59 frames a second (Session 35). */
 handover.rboCrossover = [
     { foot: 'L', from: 0.054, to: 0.058, cm: 0.1, entered: 0.2, why: DEPART },
     { foot: 'L', from: 0.327, to: 0.331, cm: 0.1, entered: 0.2, why: DEPART },
     { foot: 'L', from: 0.600, to: 0.604, cm: 0.1, entered: 0.2, why: DEPART },
-    /* Met only through the entrances built from it (the loop's, the spins'), whose frames
-       fall differently: the inside foot's under-push lifting, once a crossover. */
-    /* The first and third crossovers' (0.190-0.202, 0.736-0.748) are met through the spins'
-       crossover entrance, which is drawn and not yet registered (moves.js). */
+    /* Met only through the loop's crossover entrance, played slower and so sampled
+       differently: the inside foot's under-push lifting, once a crossover. */
+    { foot: 'R', from: 0.190, to: 0.202, cm: 0, why: UNDER_PUSH },
     { foot: 'R', from: 0.463, to: 0.475, cm: 0, why: UNDER_PUSH },
+    { foot: 'R', from: 0.736, to: 0.748, cm: 0, why: UNDER_PUSH },
 ];
 const JITTER = 0.1;                                  // cm, one tenth, for interpolation
 const declared = new Set();
