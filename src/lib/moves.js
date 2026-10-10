@@ -2138,6 +2138,13 @@ export const MOVES = {
      land on the right toe pick and step straight through onto the left again (Ice
      Skating Australia's description; Learn to Skate USA level 6). Nothing turns.
 
+     THE TAKE-OFF IS FROM THE LEFT TOE PICK — 10/10/2026, Session 37, Martyn: the gliding
+     foot's heel lifts and the skater rises onto its toe pick before the hop. Until then
+     the left blade left the ice from the front of its runner (pitch 3), with no moment on
+     the pick. The pick goes in at 0.37, pinned and pointing forward like the landing's,
+     and the spring leaves from it at 0.40; 0.03 of clock is 9.9 cm of travel, so its
+     hip-relative t falls from 10 to 0.1.
+
      ITS PICK LANDS FORWARD, which no pick did before: the toe points the way the
      skater is going, heel up, and the hip passes over it while it is in. A pick that
      names a `dir` takes its direction from the tracing (alongDir in rig-math.js);
@@ -2153,7 +2160,7 @@ export const MOVES = {
      Verified against a coach: NO. */
   bunnyHop: {
     name:'Bunny hop',
-    note:'LF glide · spring off the left · land on the right toe pick · step through onto the left',
+    note:'LF glide · up onto the left toe pick · spring off it · land on the right toe pick · step through onto the left',
     path:[{kind:'line', len:330}],
     radius:300, duration:4.4,
     keys:[
@@ -2163,8 +2170,10 @@ export const MOVES = {
        sh:P(14,0,135), L:P(8,-2,0,-1), R:P(-38,9,14,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
       {arm:[52,14,16], t:0.35, ph:'The right leg swings through low', hipZ:87, hipYaw:0, shYaw:0,
        sh:P(6,0,138), L:P(12,-2,0,-1), R:P(8,9,10,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
-      {arm:[44,22,4], t:0.40, ph:'Springing forward off the left', hipZ:97, hipYaw:0, shYaw:0,
-       sh:P(2,0,149), L:P(0,-2,1,3), R:P(36,8,36,0,NEUTRAL), skate:'L', edge:null, dir:'F'},
+      {arm:[48,18,10], t:0.37, ph:'The left heel lifting, the blade rolling up onto its toe pick', hipZ:89, hipYaw:0, shYaw:0,
+       sh:P(4,0,141), L:{...PIN(10,-2,0,22), dir:'F'}, R:P(22,9,22,0,NEUTRAL), skate:null},
+      {arm:[44,22,4], t:0.40, ph:'Springing forward off the left toe pick', hipZ:96, hipYaw:0, shYaw:0,
+       sh:P(2,0,149), L:{...PIN(0.1,-2,0,24), dir:'F'}, R:P(36,8,36,0,NEUTRAL), skate:null},
       {arm:[40,22,6], t:0.44, ph:'In the air, the right leg reaching forward', hipZ:108, hipYaw:0, shYaw:0,
        sh:P(2,0,160), L:P(-28,-4,26,0,NEUTRAL), R:P(30,8,28,0,NEUTRAL), skate:null},
       {arm:[46,18,10], t:0.48, ph:'Coming down onto the right toe', hipZ:100, hipYaw:0, shYaw:0,
