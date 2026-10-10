@@ -35,6 +35,11 @@ const { cc, rest } = splitPath(Astro.url.pathname);
 const here = countryOf(cc);
 const hasCopies = localised(rest);
 const nav = p => curl(cc, p);
+/* The section links under the top bar. The one this page is in is marked: the
+   page itself as 'page', anything below it as 'true'. */
+const SECTIONS = [['Elements', 'elements/'], ['Tests', 'tests/'], ['Grades', 'grades/'],
+  ['Kit', 'kit/'], ['Body frame', 'rig/'], ['Search', 'search/']];
+const isHere = p => (rest.replace(/^\//, '') === p ? 'page' : rest.replace(/^\//, '').startsWith(p) ? 'true' : undefined);
 /* Where each choice in the selector goes: this page's own copy in that country
    where it has one, that country's front page where it does not. */
 const choices = [
@@ -167,31 +172,48 @@ const alternates = hasCopies ? [
       margin:2.5rem 0 .75rem;font-weight:600}
     a{color:var(--accent)}
     a:hover{color:var(--accent);text-decoration-thickness:2px}
-    /* Nav is a row of links used one-handed in gloves, so the row is laid out with
-       a gap and each link is given a 44 px height rather than a text baseline. */
-    nav{font-size:.85rem;margin-bottom:2rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule);
-      display:flex;flex-wrap:wrap;gap:0 1.1rem}
-    nav a{text-decoration:none;padding:.6rem 0;min-height:44px;display:flex;align-items:center}
-    /* The scheme switch is the one control in the nav rather than a link, so it is
-       pushed to the end of the row and given the same 44 px as everything else
-       that gets operated in gloves. It states the scheme it will switch TO. */
-    nav .scheme{margin-left:auto;min-height:44px;padding:.6rem .8rem;border:1px solid var(--rule);
-      border-radius:999px;background:none;color:var(--accent);cursor:pointer;font:inherit;
+    /* THE TOP OF THE PAGE — 10/10/2026, Martyn: the country and scheme selectors
+       wandered. They sat at the end of the nav row, so wherever the links wrapped
+       took them with it: beside the links on a desktop, on a line of their own on a
+       phone, split across two lines on a small one. They now have a bar of their
+       own above the nav, with the site name on the left, and that bar never wraps,
+       so they are in the same place on every page at every width.
+       Everything here is used one-handed in gloves, so every target is 44 px. */
+    .top{margin-bottom:2rem;border-bottom:1px solid var(--rule)}
+    .topbar{display:flex;align-items:center;gap:.5rem;min-height:44px;margin-bottom:.4rem}
+    .topbar .home{margin-right:auto;min-width:0;display:block;padding:.6rem 0;
+      text-decoration:none;font-weight:700;font-size:1.1rem;line-height:1.2;color:var(--ink)}
+    .topbar .home:hover{color:var(--accent)}
+    /* The scheme switch states the scheme it will switch TO. */
+    .topbar .scheme{flex:none;min-height:44px;padding:.55rem .95rem;border:1px solid var(--rule);
+      border-radius:999px;background:none;color:var(--accent);cursor:pointer;font:inherit;font-size:.95rem;
       display:flex;align-items:center;gap:.4rem}
-    nav .scheme:hover{border-color:var(--accent)}
-    /* The country selector sits just before the scheme switch and pushes both to
-       the end of the row; the scheme switch then no longer needs its own margin. */
-    nav .country{margin-left:auto;position:relative}
-    nav .country+.scheme{margin-left:.5rem}
-    nav .country summary{list-style:none;min-height:44px;padding:.6rem .8rem;border:1px solid var(--rule);
-      border-radius:999px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:.35rem}
-    nav .country summary::-webkit-details-marker{display:none}
-    nav .country summary::after{content:"";width:.4rem;height:.4rem;border:solid currentColor;
+    .topbar .scheme:hover,.topbar .country summary:hover{border-color:var(--accent)}
+    .topbar .country{flex:none;position:relative}
+    .topbar .country summary{list-style:none;min-height:44px;padding:.55rem .95rem;border:1px solid var(--rule);
+      border-radius:999px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:.4rem;font-size:.95rem}
+    .topbar .country summary::-webkit-details-marker{display:none}
+    .topbar .country summary::after{content:"";width:.4rem;height:.4rem;border:solid currentColor;
       border-width:0 1.5px 1.5px 0;transform:rotate(45deg) translateY(-2px)}
-    nav .country ul{position:absolute;right:0;top:calc(100% + .3rem);z-index:5;list-style:none;margin:0;
+    .topbar .country ul{position:absolute;right:0;top:calc(100% + .3rem);z-index:6;list-style:none;margin:0;
       padding:.3rem .9rem;background:var(--paper);border:1px solid var(--ice-line);border-radius:10px;
       box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:11rem}
-    nav .country a[aria-current]{font-weight:700;color:var(--ink)}
+    .topbar .country a{text-decoration:none;min-height:44px;display:flex;align-items:center;font-size:1rem}
+    .topbar .country a[aria-current]{font-weight:700;color:var(--ink)}
+    /* The section links: one row on a desktop, larger than they were (.85rem).
+       On a phone a wrapped row leaves one or two links dangling on a line of their
+       own, so there they are a three-by-two grid instead. */
+    nav{font-size:1.05rem;display:flex;flex-wrap:wrap;gap:0 1.5rem;padding-bottom:.25rem}
+    nav a{text-decoration:none;padding:.55rem 0;min-height:44px;display:flex;align-items:center;white-space:nowrap}
+    nav a[aria-current]{color:var(--ink);font-weight:700}
+    /* On a phone the site name is cut to "Field Guide" so the bar stays one line. */
+    @media (max-width:34rem){
+      .topbar .home .long{display:none}
+      nav{display:grid;grid-template-columns:repeat(3,1fr);gap:0 .5rem}
+      nav a{justify-content:center;text-align:center}
+    }
+    /* Below about 350 px three columns cannot hold "Body frame", so two. */
+    @media (max-width:22rem){ nav{grid-template-columns:repeat(2,1fr)} }
     .lede{color:var(--ink-soft);margin:0 0 1.5rem;font-size:1.05rem}
     /* Other names for the same movement. Sits under the lede rather than in the
        meta row, because it is prose a reader needs to see, not a chip. */
@@ -325,26 +347,25 @@ const alternates = hasCopies ? [
         paragraph sat outside any region. A skip link, a labelled nav, and the
         page's own content in <main>. */}
     <a class="skip" href="#main">Skip to content</a>
-    <nav aria-label="Site">
-      <a href={nav('')}>Field Guide</a>
-      <a href={nav('elements/')}>Elements</a>
-      <a href={nav('tests/')}>Tests</a>
-      <a href={nav('grades/')}>Grades</a>
-      <a href={nav('kit/')}>Kit</a>
-      <a href={nav('rig/')}>Body frame</a>
-      <a href={nav('search/')}>Search</a>
-      {/* The country selector. Plain links in a disclosure, so it works with no
-          script; the script only remembers the choice. */}
-      <details class="country">
-        <summary aria-label={`Country: ${here ? here.short : 'all countries'}. Change`}>{here ? here.code : 'World'}</summary>
-        <ul>
-          {choices.map(c => (
-            <li><a href={c.href} data-cc={c.id} aria-current={(c.id === (cc ?? 'all')) ? 'true' : undefined}>{c.label}</a></li>
-          ))}
-        </ul>
-      </details>
-      <button class="scheme" type="button" aria-live="polite">Dark</button>
-    </nav>
+    <header class="top">
+      <div class="topbar">
+        <a class="home" href={nav('')}>Field Guide<span class="long"> to Figure Skating</span></a>
+        {/* The country selector. Plain links in a disclosure, so it works with no
+            script; the script only remembers the choice. */}
+        <details class="country">
+          <summary aria-label={`Country: ${here ? here.short : 'all countries'}. Change`}>{here ? here.code : 'World'}</summary>
+          <ul>
+            {choices.map(c => (
+              <li><a href={c.href} data-cc={c.id} aria-current={(c.id === (cc ?? 'all')) ? 'true' : undefined}>{c.label}</a></li>
+            ))}
+          </ul>
+        </details>
+        <button class="scheme" type="button" aria-live="polite">Dark</button>
+      </div>
+      <nav aria-label="Site">
+        {SECTIONS.map(([label, p]) => <a href={nav(p)} aria-current={isHere(p)}>{label}</a>)}
+      </nav>
+    </header>
     <aside class="tabs" aria-label="Sections">
       {TABS.map(t => <a class={`t-${t.id}`} href={nav(t.href)} aria-current={t.id === tab ? 'true' : undefined}>{t.label}</a>)}
     </aside>
@@ -381,7 +402,7 @@ const alternates = hasCopies ? [
        load because the starting scheme may have come from the OS rather than from
        a stored choice. */
     (() => {
-      const root = document.documentElement, btn = document.querySelector('nav .scheme');
+      const root = document.documentElement, btn = document.querySelector('.topbar .scheme');
       if (!btn) return;
       const dark = () => root.dataset.scheme
         ? root.dataset.scheme === 'dark'

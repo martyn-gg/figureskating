@@ -108,11 +108,14 @@ export const notebookCSS = fontBase => {
     R('.aka', `font-family:${HAND};font-size:1.35rem;line-height:1.35;margin:-.9rem 0 1.4rem`),
     R('.aka b', 'font-weight:500'),
 
-    /* The nav row, in handwriting, with the scheme switch drawn in pencil. */
-    R('nav', `font-family:${HAND};font-size:1.22rem;border-bottom:1px dashed var(--ice-line);gap:0 .85rem`),
-    R('nav .scheme,nav .country summary', 'padding:.5rem .7rem'),
-    R('nav .scheme,.theme,nav .country summary', `border:1.5px solid var(--ink);color:var(--ink);font-family:${HEAD};font-size:.95rem`),
-    R('nav .country ul', 'border-radius:2px;border-color:var(--rule);box-shadow:2px 3px 8px rgba(0,0,0,.14)'),
+    /* The top bar: the site name in Kalam, the two selectors drawn in pencil. */
+    R('.top', 'border-bottom:1px dashed var(--ice-line)'),
+    R('.topbar .home', `font-family:${HEAD};font-size:1.3rem;line-height:1.15`),
+    R('nav', `font-family:${HAND};font-size:1.45rem`),
+    `@media (max-width:34rem){${NB} nav{font-size:1.35rem}}`,
+    R('.topbar .scheme,.theme,.topbar .country summary', `border:1.5px solid var(--ink);color:var(--ink);font-family:${HEAD};font-size:1rem`),
+    R('.topbar .country ul', 'border-radius:2px;border-color:var(--rule);box-shadow:2px 3px 8px rgba(0,0,0,.14)'),
+    R('.topbar .country a', `font-family:${HAND};font-size:1.3rem`),
 
     /* Chips as little paper labels, tilted a degree or two either way. */
     R('.chip', `font-family:${HEAD};font-size:.92rem;background:var(--ice);border:1px solid var(--rule);
