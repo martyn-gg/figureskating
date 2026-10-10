@@ -16,10 +16,27 @@
 
    COLOUR FOLLOWS THE EDGE, PER SEGMENT, because a slalom's whole content is that the
    edge changes. A straight segment has no edge to name and takes the neutral ink. */
-import { buildPath } from '../lib/rig-math.js';
+import { buildPath, cuspAt } from '../lib/rig-math.js';
 
 const { trace, box = 132, pad = 24 } = Astro.props;
-const { frames } = { frames: buildPath({ path: trace.path, radius: trace.radius }) };
+const { frames } = { frames: withCusps(trace, buildPath({ path: trace.path, radius: trace.radius })) };
+
+/* A ONE-FOOT TURN'S CUSP — 10/10/2026, Session 37, for the practice drills, the first
+   tracings here to hold a turn. buildPath lays the circle; the cusp is the contact
+   leaving it, and cuspAt is the one place that derives it (the rig reads the same
+   offsets). So each sample inside a turn's window is moved by cuspAt's dt along the
+   line and dn across it. A path with no `turn` returns its frames untouched, so no
+   basic's tracing changes. */
+function withCusps(tr, fr) {
+  if (!tr.path.some(g => g.turn)) return fr;
+  const mv = { path: tr.path, radius: tr.radius };
+  return fr.map((p, i) => {
+    const cu = cuspAt(mv, i / (fr.length - 1));
+    if (!cu) return p;
+    return { ...p, x: p.x + Math.cos(p.th) * cu.dt + Math.cos(p.th + Math.PI / 2) * cu.dn,
+                    y: p.y + Math.sin(p.th) * cu.dt + Math.sin(p.th + Math.PI / 2) * cu.dn };
+  });
+}
 
 /* Which segment each sample came from, so the stroke can change colour where the
    edge does. buildPath spends samples in proportion to a segment's span, so the

@@ -29,8 +29,8 @@ import { KIT } from '../lib/kit.js';
 import { GLOSSARY } from '../lib/glossary.js';
 
 export async function GET() {
-  const [elements, exercises, tests, grades, conditioning] = await Promise.all(
-    ['elements', 'exercises', 'tests', 'grades', 'conditioning'].map(c => getCollection(c)));
+  const [elements, exercises, tests, grades, conditioning, drills] = await Promise.all(
+    ['elements', 'exercises', 'tests', 'grades', 'conditioning', 'drills'].map(c => getCollection(c)));
 
   const testName = id => tests.find(t => t.id === id)?.data.name ?? id;
 
@@ -84,6 +84,9 @@ export async function GET() {
     { u: 'off-ice/', t: 'Off the ice', s: 'What the body needs for the elements, and which elements need it',
       k: 'off-ice', a: ['off-ice training', 'conditioning', 'fitness'], e: '' },
     ...conditioning.map(c => ({ u: `off-ice/${c.id}/`, t: c.data.name, s: c.data.summary, k: 'off-ice', a: [], e: '' })),
+    { u: 'drills/', t: 'Practice drills', s: 'The patterns coaches set to train an element, and what each one is for',
+      k: 'drill', a: ['drills', 'practice', 'exercises to practise'], e: '' },
+    ...drills.map(c => ({ u: `drills/${c.id}/`, t: c.data.name, s: c.data.summary, k: 'drill', a: c.data.aliases, e: '' })),
     ...tests.map(t => ({
       u: `tests/${t.id}/`, t: t.data.name,
       s: `${t.data.governingBody} · ${t.data.discipline}, level ${t.data.level}`,

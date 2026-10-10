@@ -99,10 +99,12 @@ export const SCHEMES = { light: LIGHT, dark: DARK };
    neighbours meet under deuteranomaly (Edges and Spins, Turns and Grades); seven
    pale colours cannot all stay apart for every eye, and the names carry it.
    Off-ice (04/10/2026) sits between Dance and Grades in a pale aqua, apart from the
-   coral and the stone either side of it and from the Turns green and Edges blue. */
+   coral and the stone either side of it and from the Turns green and Edges blue.
+   Drills (10/10/2026) sits between Dance and Off-ice in a pale lime: yellower than the
+   Turns green, greener than the Basics amber, and apart from the coral and aqua beside it. */
 const NB_SHARED = {
   'tab-basic': '#f6c76b', 'tab-edge': '#a9d1e8', 'tab-turn': '#b9dcb4',
-  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-dance': '#f0a091', 'tab-office': '#9fd8cf', 'tab-grade': '#e6e0cf',
+  'tab-jump': '#e9b6c8', 'tab-spin': '#cfc4ea', 'tab-dance': '#f0a091', 'tab-drill': '#d6e29a', 'tab-office': '#9fd8cf', 'tab-grade': '#e6e0cf',
   'tab-ink': '#2b2b2e',
 };
 

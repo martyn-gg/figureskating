@@ -1,0 +1,65 @@
+---
+/* One practice drill: what it trains, the run in notation, the pattern on the ice and,
+   where the rig can draw it, the body frame. The elements it trains list it back
+   (their "Drills" line), and tools/drills.mjs holds the two directions together. */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Unverified from '../../components/Unverified.astro';
+import PathThumb from '../../components/PathThumb.astro';
+import BodyFrame from '../../components/BodyFrame.astro';
+import { url } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('drills');
+  return entries.map(e => ({ params: { slug: e.id }, props: { entry: e } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const elements = await getCollection('elements');
+const find = rs => rs.map(r => elements.find(e => e.id === r.id)).filter(Boolean);
+const trains = find(d.trains);
+const uses = find(d.uses).filter(e => !d.trains.some(r => r.id === e.id));
+const PATTERN = { axis: 'Down the long axis', circle: 'On a circle', 'figure-eight': 'On a figure eight',
+  perimeter: 'Round the rink', diagonal: 'On the diagonals', lap: 'A lap of the rink' };
+const crumbs = [{ name: 'Practice drills', href: url('drills/') }, { name: d.name }];
+---
+<Base title={d.name} subtitle={d.summary} crumbs={crumbs}>
+  <div class="crumbs" role="navigation" aria-label="Breadcrumb"><p class="lede"><a href={url('drills/')}>Practice drills</a></p></div>
+  <h1>{d.name}</h1>
+  {d.aliases.length > 0 && <p class="aka">Also called <b>{d.aliases.join(', ')}</b></p>}
+  <p class="lede">{d.summary}</p>
+  <div class="meta"><span class="chip">{PATTERN[d.pattern]}</span></div>
+  <Unverified verified={d.verified} what="drill details" title={d.name} />
+  <p class="sequence"><span>The run</span> <b>{d.sequence}</b></p>
+  {d.trace && (
+    <figure class="drill-trace">
+      <PathThumb trace={d.trace} box={300} />
+      <figcaption>The pattern on the ice, one {d.trace.feet === 2 ? 'line for each blade' : 'line for the blade on the ice'}, coloured by edge.</figcaption>
+    </figure>
+  )}
+  {d.rig && <BodyFrame move={d.rig} />}
+  {d.notDrawn && <p class="drill-aside">Not drawn in the body frame yet: {d.notDrawn}</p>}
+  <Content />
+  {d.variants && <p class="drill-aside">{d.variants}</p>}
+  <h2>This drill trains</h2>
+  <ul class="plain">
+    {trains.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}
+  </ul>
+  {uses.length > 0 && (
+    <>
+      <h2>Built from</h2>
+      <ul class="plain">
+        {uses.map(e => <li><a href={url(`elements/${e.id}/`)}>{e.data.name}</a><span>{e.data.summary}</span></li>)}
+      </ul>
+    </>
+  )}
+  <p class="drill-aside">Found in {d.sources === 1 ? 'one source' : `${d.sources} independent sources`}: coaches' public teaching and published skating-skills tests, taken as base guidance and written for the guide.</p>
+</Base>
+<style>
+  .sequence{font-size:1rem;margin:1rem 0}
+  .sequence span{display:block;font-size:.8rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+  .drill-trace{margin:1.25rem auto;max-width:20rem;text-align:center}
+  .drill-aside{font-size:.9rem;color:var(--ink-soft)}
+  .drill-trace figcaption{font-size:.85rem;color:var(--ink-soft)}
+</style>

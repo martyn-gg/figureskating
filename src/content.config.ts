@@ -247,6 +247,54 @@ const exercises = defineCollection({
   }),
 });
 
+/* PRACTICE DRILLS — 10/10/2026, Session 37, Martyn: "find and add practice techniques
+   like continuous three turns". A drill is not an element: it is a repeatable pattern a
+   coach sets to train one, so it gets its own collection rather than a kind. Each names
+   the elements it TRAINS (the skill the drill is for) and the elements it is BUILT FROM
+   (what the skater actually does), and the element pages list the drills that train
+   them; tools/drills.mjs holds the two directions together, as office.mjs does.
+
+   The tracing is the pattern on the ice, in exactly a rig move's `path` vocabulary and
+   drawn by the same `buildPath`, so a turn's cusp (`turn`) and a turning step (`step`,
+   degrees) are both allowed on a segment. `rig` names a body-frame move where one is
+   drawn; `notDrawn` says in plain words why one is not, as an element's notCovered does.
+   Taken from coaches' and governing bodies' public material as base guidance only, in
+   the guide's own words (docs/roadmap.md, standing rule). */
+const drillSeg = z.union([
+  z.object({ kind: z.literal('line'), len: z.number().positive(), span: z.number().optional(),
+             step: z.number().optional() }),
+  z.object({ kind: z.literal('arc'), foot, edge, dir, sweep: z.number(), span: z.number().optional(),
+             radius: z.number().positive().optional(),
+             turn: z.enum(['three', 'bracket', 'rocker', 'counter']).optional(),
+             step: z.number().optional(), newLobe: z.boolean().optional() }),
+]);
+const drills = defineCollection({
+  loader: md('./src/data/drills'),
+  schema: z.object({
+    name: z.string(),
+    aliases: z.array(z.string()).default([]),
+    summary: z.string(),
+    /* Where the drill sits, in the order a skater meets them; the browse page groups on it. */
+    stage: z.enum(['stroking', 'edges', 'turns', 'jumps-and-spins']),
+    pattern: z.enum(['axis', 'circle', 'figure-eight', 'perimeter', 'diagonal', 'lap']),
+    /* The run in the guide's notation, e.g. "LFO three LBI · step forward · RFO three RBI". */
+    sequence: z.string(),
+    trains: z.array(reference('elements')).min(1),
+    uses: z.array(reference('elements')).default([]),
+    trace: z.object({
+      radius: z.number().positive().default(200),
+      feet: z.union([z.literal(1), z.literal(2)]).default(1),
+      path: z.array(drillSeg).min(1),
+    }).optional(),
+    rig: z.string().optional(),
+    notDrawn: z.string().optional(),
+    /* How the drill's sources differ, said plainly, where they do. */
+    variants: z.string().optional(),
+    sources: z.number().int().positive(),
+    verified,
+  }).refine(d => !(d.rig && d.notDrawn), 'a drill is drawn or says why not, not both'),
+});
+
 /* Deliberately names the capacity rather than prescribing a movement — that tells a
    skater what to ask a coach or physio for, and keeps a website out of the business
    of instructing exercise. Empty for now; the schema exists so elements can link to
@@ -310,4 +358,4 @@ const grades = defineCollection({
   }),
 });
 
-export const collections = { elements, tests, exercises, conditioning, grades };
+export const collections = { elements, tests, exercises, conditioning, grades, drills };

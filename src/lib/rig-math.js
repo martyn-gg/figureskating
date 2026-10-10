@@ -1077,8 +1077,15 @@ export function buildPath(move){
     const heldOf = j => !!(move.path[j].position || move.path[j].windup);
     const held = isArc && heldOf(si);
     const target = (j) => held ? k : heldOf(j) ? kOf(j) : mean(k, kOf(j));
-    const kIn  = isArc && si > 0             && arcs[si-1] ? target(si-1) : k;
-    const kOut = isArc && si < arcs.length-1 && arcs[si+1] ? target(si+1) : k;
+    /* A NEW LOBE IS NOT RAMPED INTO — 10/10/2026, Session 37, for the practice drills.
+       A segment marked `newLobe` starts a lobe on the other foot: the new blade goes
+       down on its own curve, so the curvature changes at that boundary rather than
+       easing over half a turn, which is what let a figure eight's two circles cross
+       (the ramp keeps each segment's sweep but moves where the lobe sits). Opt-in, so
+       no move that does not carry it changes; frame-hash confirms it. */
+    const fresh = j => !!move.path[j]?.newLobe;
+    const kIn  = isArc && si > 0             && arcs[si-1] && !fresh(si)   ? target(si-1) : k;
+    const kOut = isArc && si < arcs.length-1 && arcs[si+1] && !fresh(si+1) ? target(si+1) : k;
     const r0   = isArc ? (seg.rate ?? null) : null;
     const rIn  = r0 != null && si > 0             && arcs[si-1] && move.path[si-1].rate != null
                  ? mean(move.path[si-1].rate, r0) : r0;
@@ -1095,8 +1102,8 @@ export function buildPath(move){
         pts.push({x:px,y:py,th:th+k*t});
       }
     } else if(r0 == null && (kIn*k <= 0 || kOut*k <= 0
-              || (isArc && si > 0 && arcs[si-1] && kOf(si-1)*k < 0)
-              || (isArc && si < arcs.length-1 && arcs[si+1] && kOf(si+1)*k < 0))){
+              || (isArc && si > 0 && arcs[si-1] && !fresh(si) && kOf(si-1)*k < 0)
+              || (isArc && si < arcs.length-1 && arcs[si+1] && !fresh(si+1) && kOf(si+1)*k < 0))){
       /* ...and where the NEIGHBOUR curves the other way, though the mean stays this side
          of straight — 04/10/2026, Session 35. Two arcs of unequal radius curving opposite
          ways (the crossovers' 4 m circle into the Lutz's 2.8 m edge) meet at a mean that

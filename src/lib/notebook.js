@@ -41,6 +41,10 @@ export const TABS = [
   /* DANCE — 03/10/2026, Martyn: a section for dance, to hold the pattern dances. */
   { id: 'dance', label: 'Dance', href: 'elements/in/dance/',
     kinds: ['hold', 'dance'], sections: ['hold', 'dance'] },
+  /* DRILLS — 10/10/2026, Session 37, Martyn: practice drills like continuous three turns.
+     After the dances and before Off-ice: the drills train what the tabs above name.
+     Found by path, like the grades. */
+  { id: 'drill', label: 'Drills', href: 'drills/', kinds: [], sections: [] },
   /* OFF THE ICE — 04/10/2026, Martyn: off the ice is not kit, so it gets its own tab,
      hyphenated so it cannot be misread as "Office".
      Its pages are found by path, like the grades. */
@@ -56,6 +60,7 @@ export const tabFor = (pathname, kind) => {
   if (sec) return TABS.find(t => t.sections.includes(sec))?.id ?? null;
   if (/\/(grades|tests)\//.test(pathname)) return 'grade';
   if (/\/off-ice\//.test(pathname)) return 'office';
+  if (/\/drills\//.test(pathname)) return 'drill';
   /* The first session is the floor below the basics, so it lights the Basics tab. */
   if (/\/first-session\//.test(pathname)) return 'basic';
   return null;

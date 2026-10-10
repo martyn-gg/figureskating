@@ -1,0 +1,47 @@
+---
+/* PRACTICE DRILLS — 10/10/2026, Session 37 (src/content.config.ts, `drills`). The
+   repeatable patterns coaches set to train an element, grouped in the order a skater
+   meets them. Each drill links to the elements it trains and they link back. */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url.js';
+
+const STAGES = [
+  ['stroking', 'Stroking and power', 'Laps, circles and pulls that build speed from the knees and the edges.'],
+  ['edges', 'Edges', 'Lobes and circles that teach the lean and the push.'],
+  ['turns', 'Turns', 'Turns repeated until the check is automatic.'],
+  ['jumps-and-spins', 'Jumps and spins', 'The patterns a jump or a spin is practised from.'],
+];
+const all = await getCollection('drills');
+const orphan = all.filter(d => !STAGES.some(([k]) => k === d.data.stage));
+if (orphan.length) throw new Error(`drills: ${orphan.map(d => d.id).join(', ')} has no stage`);
+/* Within a stage: drawn drills first, then by name. */
+const byStage = k => all.filter(d => d.data.stage === k)
+  .sort((a, b) => (!!b.data.rig - !!a.data.rig) || a.data.name.localeCompare(b.data.name));
+---
+<Base title="Practice drills" subtitle="The patterns coaches set to train an element, and what each one is for.">
+  <h1>Practice drills</h1>
+  <p class="lede">
+    A drill is a pattern you skate again and again until an element stops needing thought.
+    Each page says what the drill trains, what it is built from, and how it looks on the ice.
+  </p>
+  <p>
+    These are the drills that come up most often in coaches' public teaching and in the
+    skating-skills tests of several countries. Coaches vary them, so take a drill's shape
+    from here and its details from your own coach.
+  </p>
+  {STAGES.map(([k, title, blurb]) => (
+    <>
+      <h2>{title}</h2>
+      <p class="lede">{blurb}</p>
+      <ul class="plain drills">
+        {byStage(k).map(d => (
+          <li>
+            <a href={url(`drills/${d.id}/`)}>{d.data.name}</a>
+            <span>{d.data.summary}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  ))}
+</Base>
