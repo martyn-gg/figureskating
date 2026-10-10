@@ -114,17 +114,32 @@ export const NOTEBOOK_LIGHT = {
   ruling: '#dfe7f0', margin: '#e8a7a1', tape: 'rgba(214,226,236,.8)',
   sticky: '#fff3a6', 'sticky-ink': '#3d3410', highlight: 'rgba(246,199,107,.55)',
   hole: '#e9e3d3',
+  dust: 'linear-gradient(transparent,transparent)', 'chalk-glow': 'none',
   ...NB_SHARED,
 };
 
+/* THE CHALKBOARD — 10/10/2026, Martyn: "Could I see the dark mode as a chalk
+   board?" The notebook's dark scheme as a slate-green board: chalk-white writing,
+   chalk lines faint enough to ignore, a pink chalk margin, a yellow chalk
+   highlighter and soft dust where it has been wiped. A board has no punched
+   holes and next to no ruling, so the holes go and the lines are barely there.
+   The drawing cards move from navy to a near-black green at the same luminance,
+   so they read as slate panels on the board; every rig, edge and limb colour is
+   untouched, for the reason given above the notebook. */
 export const NOTEBOOK_DARK = {
   ...DARK,
-  ice: '#0d1620', paper: '#1c1b18', ink: '#ece6da', 'ink-soft': '#aaa397',
-  rule: '#34312b', 'ice-line': '#4a473f', 'grid-line': '#6e685c',
-  accent: '#8cc4e8', warn: '#fbbf24',
-  ruling: '#26282b', margin: '#5a2f2b', tape: 'rgba(120,135,150,.45)',
-  sticky: '#3b3517', 'sticky-ink': '#f1e7b4', highlight: 'rgba(246,199,107,.28)',
-  hole: '#0f0f0d',
+  ice: '#0b1510', paper: '#2b4436', ink: '#f4f3ec', 'ink-soft': '#c9d3c9',
+  rule: '#41594b', 'ice-line': '#738a7c', 'grid-line': '#93a69a',
+  accent: '#a6d8f2', warn: '#fbd34d',
+  ruling: 'rgba(244,243,236,.035)', margin: 'rgba(246,170,180,.7)', tape: 'rgba(200,210,200,.35)',
+  sticky: '#3b3517', 'sticky-ink': '#f1e7b4', highlight: 'rgba(250,230,130,.30)',
+  hole: 'transparent',
+  /* Chalk dust: three wiped patches, tiled. And the faintest bloom on handwriting,
+     which is what makes white text on green read as chalk rather than paint. */
+  dust: 'radial-gradient(ellipse 340px 120px at 22% 30%,rgba(255,255,255,.045),transparent 70%),' +
+    'radial-gradient(ellipse 260px 160px at 78% 64%,rgba(255,255,255,.035),transparent 70%),' +
+    'radial-gradient(ellipse 420px 90px at 40% 88%,rgba(255,255,255,.03),transparent 70%)',
+  'chalk-glow': '0 0 1px rgba(241,240,232,.55),0 0 6px rgba(241,240,232,.12)',
   ...NB_SHARED,
 };
 

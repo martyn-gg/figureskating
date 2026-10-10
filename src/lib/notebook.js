@@ -89,8 +89,9 @@ export const notebookCSS = fontBase => {
   return faces + [
     /* The page: ruled paper, a margin line and three punched holes. The rules are
        28 px apart and the body runs at 28 px, so a paragraph sits on them. */
-    R('body', `background-color:var(--paper);background-image:linear-gradient(var(--ruling) 1px,transparent 1px);
-      background-size:100% 28px;background-position:0 27px;font:17px/28px ${BOOK}`),
+    R('body', `background-color:var(--paper);background-image:linear-gradient(var(--ruling) 1px,transparent 1px),var(--dust);
+      background-size:100% 28px,1100px 900px,1100px 900px,1100px 900px;background-position:0 27px,0 0,0 0,0 0;font:17px/28px ${BOOK}`),
+    R('h1,h2,nav,.topbar .home,.aka,.unverified,.bf-phase,figcaption', 'text-shadow:var(--chalk-glow)'),
     R('.wrap', 'position:relative;padding-left:2.9rem;padding-right:2.8rem'),
     R('.wrap::before', `content:"";position:absolute;left:2rem;top:0;bottom:0;width:2px;background:var(--margin)`),
     R('.wrap::after', `content:"";position:absolute;left:.45rem;top:5rem;bottom:2rem;width:14px;pointer-events:none;
