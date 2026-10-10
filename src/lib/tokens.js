@@ -134,7 +134,11 @@ export const NOTEBOOK_DARK = {
   ice: '#0b1510', paper: '#2b4436', ink: '#f4f3ec', 'ink-soft': '#c9d3c9',
   rule: '#41594b', 'ice-line': '#738a7c', 'grid-line': '#93a69a',
   accent: '#a6d8f2', warn: '#fbd34d',
-  ruling: 'rgba(244,243,236,.035)', margin: 'rgba(246,170,180,.7)', tape: 'rgba(200,210,200,.35)',
+  /* NO RULING AND NO MARGIN — 10/10/2026, Martyn asked whether the red margin and the page
+     lines still belonged once the dark scheme became a board. They do not: both are paper,
+     and a board has neither. Transparent rather than removed, so the light notebook's rules
+     that draw them are untouched. */
+  ruling: 'transparent', margin: 'transparent', tape: 'rgba(200,210,200,.35)',
   sticky: '#3b3517', 'sticky-ink': '#f1e7b4', highlight: 'rgba(250,230,130,.30)',
   hole: 'transparent',
   /* Chalk dust: three wiped patches, tiled. And the faintest bloom on handwriting,
