@@ -19,7 +19,7 @@ trace:
   - {kind: arc, foot: L, edge: O, dir: F, sweep: 80, newLobe: true}
   - {kind: arc, foot: L, edge: O, dir: F, sweep: 10, turn: three}
   - {kind: arc, foot: L, edge: I, dir: B, sweep: 80}
-notDrawn: the change of foot onto a new lobe, which the body frame is gaining next.
+rig: alternatingThrees
 variants: Some tests alternate forward outside and forward inside three turns in one pattern; others set them as separate exercises. The inside version is the same run from forward inside edges.
 sources: 6
 verified: {checked: false}

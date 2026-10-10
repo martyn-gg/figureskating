@@ -3660,6 +3660,72 @@ const STEP_ANGLE = -72;
   MOVES['doubleAxel@crossovers'] = doubleOf(MOVES['axel@crossovers'],
     `${MOVES.doubleAxel.name}, from backward crossovers`, `${BACK_X} and a step forward · ${MOVES.doubleAxel.note}`);
 }
+/* ALTERNATING THREE TURNS — 10/10/2026, Session 37, Martyn: practice drills, and the
+   change-of-foot step they need. The first drill drawn: a left forward outside three, a
+   step forward onto the right forward outside edge, the right three, a step forward onto
+   the left, and the left three again (src/data/drills/alternating-three-turns.md).
+
+   THE STEP is the step forward out of backward crossovers (STEP_ANGLE, above) seen in a
+   mirror, and the reasoning carries over piece by piece:
+   - Out of the three the skater is on the left back inside edge, facing backwards with
+     the circle's centre on their right, exactly as on the right back outside edge of the
+     crossovers. But the free foot is the RIGHT, on the centre side, so the body turns
+     CLOCKWISE toward it, where the crossovers' step turns anticlockwise toward the left.
+   - The right blade goes down on a line of its own turned THREE_STEP = +72 off the old
+     one, the crossovers' angle mirrored, so the hips sit half way between the feet, 54 a
+     side, inside the rig's 58. Turned the other way the right foot would point in.
+   - THE LOBE REVERSES, which the crossovers' step does not: the right forward outside
+     edge curves the other way. The new segment is `newLobe` (buildPath), so it is not
+     ramped into; a new blade goes down on its own curve.
+   - The weight changes feet on the key where the new blade touches, as there.
+   The second half is the first in a mirror. mirrorMove does not know about `step`, so
+   the mirrored step's angle is negated here. Verified against a coach: NO. */
+const THREE_STEP = 72;
+{
+  const X = MOVES.threeTurn, s0 = X.duration;
+  const STEP = 0.5, SETTLE = 0.6, D = s0 + STEP + SETTLE, r = X.radius, v = 95;
+  const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
+  const base = { hipZ: 94, sh: P(-2, 0, 146), arm: [60, 6, 18] };
+  const core0 = copyKey(MOVES.rfoThree.keys[0]);
+  /* Written in the old line's frame (the right blade turned THREE_STEP, the left running
+     true backwards) and turned into the new line's, where it sits. */
+  const stepKey = reframe({ ...base, t: at(s0 + STEP), hipZ: 92, hipYaw: 126, shYaw: 118,
+    skate: 'R', edge: 'O', dir: 'F',
+    ph: 'Stepping forward: the right blade down on its own line, the weight onto it',
+    R: { ...ON(0, -4, 0, -0.5, 'F'), yaw: THREE_STEP }, L: { ...ON(-5, 8, 0, -0.5, 'B'), yaw: 0 } }, -THREE_STEP);
+  const E = {
+    name: 'Left forward outside three turn, then a step forward onto the right forward outside edge',
+    path: [...secsPath(X),
+      { kind: 'arc', foot: 'L', edge: 'I', dir: 'B', sweep: deg(v, STEP, r), span: STEP, radius: r },
+      { kind: 'arc', foot: 'R', edge: 'O', dir: 'F', sweep: deg(v, SETTLE, r), span: SETTLE, radius: r,
+        step: THREE_STEP, newLobe: true }],
+    radius: r, duration: D,
+    keys: [
+      ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
+      { ...base, t: at(s0 + 0.2), hipYaw: 160, shYaw: 156, skate: 'L', edge: 'I', dir: 'B',
+        ph: 'The right foot coming through from behind, the hips starting to open',
+        L: P(1, 14, 0, -0.5), R: P(14, -5, 10, 0, NEUTRAL) },
+      { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: 140, shYaw: 132, skate: 'L', edge: 'I', dir: 'B',
+        ph: 'The hips opening, the right foot turned out and coming down beside the left',
+        L: P(1, 11, 0, -0.5), R: { ...P(2, -4, 6, 0, NEUTRAL), yaw: THREE_STEP } },
+      stepKey,
+      { ...base, t: at(s0 + STEP + 0.12), hipZ: 93, hipYaw: 40, shYaw: 34, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The left foot lifting, the hips coming round',
+        R: P(10, -9, 0, -0.5), L: { ...P(-2, -8, 5, 0, NEUTRAL), yaw: -60 } },
+      { ...base, t: at(s0 + STEP + 0.35), hipYaw: 15, shYaw: 14, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'Square to the new edge, the left foot behind',
+        R: P(6, -14, 0, -0.5), L: P(-20, -8, 10, 0, NEUTRAL) },
+      { ...core0, t: 1 },
+    ] };
+  ENTRANCES.lfoThreeStep = E;
+  const Em = mirrorMove(E, 'Right forward outside three turn, then a step forward onto the left forward outside edge', '');
+  Em.path = Em.path.map(g => g.step ? { ...g, step: -g.step } : g);
+  ENTRANCES.rfoThreeStep = Em;
+  const second = withEntry(Em, MOVES.threeTurn, 'Right three, step, left three', '');
+  MOVES.alternatingThrees = withEntry(E, second, 'Alternating three turns',
+    'LFO three LBI · step forward · RFO three RBI · step forward · LFO three LBI');
+  delete MOVES.alternatingThrees.entrance;
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;

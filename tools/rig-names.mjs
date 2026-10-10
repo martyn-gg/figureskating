@@ -81,11 +81,17 @@ const front = p => {
   return m ? m[1] : '';
 };
 const claims = [];
-for (const f of readdirSync(ELEMENTS).filter(n => n.endsWith('.md')).sort()) {
-  const slug = f.replace(/\.md$/, '');
+/* PRACTICE DRILLS MOUNT MOVES TOO — 10/10/2026, Session 37. A drill page's `rig:` is a
+   claim exactly as an element's is, and the drills' moves (alternatingThrees, first) are
+   named by nothing else. Read both, and say which a claim came from. */
+const DRILLS = join(ROOT, 'src/data/drills');
+const pages = [...readdirSync(ELEMENTS).filter(n => n.endsWith('.md')).sort().map(f => [ELEMENTS, f, '']),
+               ...readdirSync(DRILLS).filter(n => n.endsWith('.md')).sort().map(f => [DRILLS, f, 'drills/'])];
+for (const [DIR, f, pre] of pages) {
+  const slug = pre + f.replace(/\.md$/, '');
   /* `alsoRig` is a second figure on the same page (Session 30, forward stroking's T),
      and it is a claim exactly as `rig` is. */
-  for (const [, field, val] of front(join(ELEMENTS, f)).matchAll(/^(rig|alsoRig):\s*(.+)$/gm)) {
+  for (const [, field, val] of front(join(DIR, f)).matchAll(/^(rig|alsoRig):\s*(.+)$/gm)) {
     const rig = val.trim().replace(/^["']|["']$/g, '');
     claims.push({ slug, rig: BREAK === 'ghost' && slug === 'slip-step' && field === 'rig' ? 'slipStepp' : rig });
   }
