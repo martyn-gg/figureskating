@@ -3,7 +3,7 @@ name: Backward power three turns
 summary: A back outside three, a forward inside mohawk and a back crossover, repeated round each circle of a figure eight.
 stage: turns
 pattern: figure-eight
-sequence: LBO three LFI · mohawk to RBI · back crossover to LBO · repeat
+sequence: LBO three LFI · mohawk to RBI · back crossover to LBO · repeat; then the other circle, RBO three RFI · mohawk to LBI · back crossover to RBO
 trains: [lbo-three, lfi-mohawk]
 uses: [lbo, lfi, rbi]
 trace:
@@ -14,12 +14,12 @@ trace:
   - {kind: arc, foot: L, edge: I, dir: F, sweep: 60}
   - {kind: arc, foot: R, edge: I, dir: B, sweep: 60}
   - {kind: arc, foot: L, edge: O, dir: B, sweep: 40}
-  - {kind: arc, foot: L, edge: O, dir: B, sweep: 60}
-  - {kind: arc, foot: L, edge: O, dir: B, sweep: 10, turn: three}
-  - {kind: arc, foot: L, edge: I, dir: F, sweep: 60}
-  - {kind: arc, foot: R, edge: I, dir: B, sweep: 60}
-  - {kind: arc, foot: L, edge: O, dir: B, sweep: 40}
-notDrawn: the change of foot onto a new lobe, which the body frame is gaining next.
+  - {kind: arc, foot: R, edge: O, dir: B, sweep: 60, newLobe: true}
+  - {kind: arc, foot: R, edge: O, dir: B, sweep: 10, turn: three}
+  - {kind: arc, foot: R, edge: I, dir: F, sweep: 60}
+  - {kind: arc, foot: L, edge: I, dir: B, sweep: 60}
+  - {kind: arc, foot: R, edge: O, dir: B, sweep: 40}
+rig: backwardPowerThrees
 sources: 3
 verified: {checked: false}
 ---

@@ -160,6 +160,12 @@ handover.lboCrossover = [
     { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, entered: 0.2, why: DEPART },
     { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, entered: 0.2, why: DEPART },
 ];
+/* Session 37, backward power threes: the under-push after each mohawk is lboCrossover's last
+   crossover, and lifts the way rboCrossover's under-push does when the loop's entrance replays it. */
+handover.backwardPowerThrees = [
+    { foot: 'L', from: 0.316, to: 0.320, cm: 0, why: UNDER_PUSH },
+    { foot: 'R', from: 0.917, to: 0.921, cm: 0, why: UNDER_PUSH },
+];
 /* `entered`: the depth the same frame reaches in the loop's crossover entrance, which plays its
    4.4 s over 7 at the loop's 59 frames a second (Session 35). */
 handover.rboCrossover = [

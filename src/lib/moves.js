@@ -3868,6 +3868,45 @@ const THREE_STEP = 72;
                { move: 'lboCrossover', upto: 1, from: yAt, to: yAt + Y.duration / m.duration }];
   m.frames = Math.max(m.frames, Math.round(ENTRY_FPS * m.duration));
 }
+/* BACKWARD POWER THREES — 10/10/2026, Session 37 (src/data/drills/backward-power-threes.md).
+   LBO three to LFI, a forward inside mohawk to RBI, and the left foot's under-push and step
+   back onto LBO for the next three, all on one circle. Every piece is drawn already:
+   lboThree to its cusp, the flip's mohawk entrance mirrored (LFI to RBI; its step turned with
+   it, as rfoThreeStep's is), and the last crossover of lboCrossover from the weight going onto
+   the right back inside edge.
+
+   The mohawk's opening glide is replaced by the three's check: the cusp key and the free leg
+   extending, so the mohawk is turned out of the edge the three left rather than out of a
+   fresh stroke. The crossover is joined at the mohawk's last key, the free left foot coming
+   down from in front into the under-push (keep 'entry'), not at the crossover's own first
+   key, where the left blade is still down from the push before it. Played twice round.
+   Verified against a coach: NO. */
+{
+  const A = sliceMove(MOVES.lboThree, 0, 2);
+  const three = MOVES.lboThree, cusp = three.keys.find(k => Math.abs(k.t - boundsOf(three)[2]) < 1e-4);
+  const check = three.keys.find(k => k.t > boundsOf(three)[2] + 1e-4 && k.t < 1);
+  const Mm = mirrorMove(ENTRANCES.rfiMohawk_flip, 'A forward inside mohawk, left to right', '');
+  Mm.path = Mm.path.map(g => g.step ? { ...g, step: -g.step } : g);
+  const M2 = { ...Mm, keys: [{ ...copyKey(cusp), t: 0 }, { ...copyKey(check), t: 0.22 }, ...Mm.keys.slice(1)] };
+  /* The flip's entrance ends on the flip's own first pose, captioned for its three. */
+  M2.keys[M2.keys.length - 1] = { ...M2.keys[M2.keys.length - 1], ph: 'Checked on the right back inside edge, the left foot in front' };
+  const C = sliceMove(MOVES.lboCrossover, 5, 7);
+  const once = withEntry(A, withEntry(M2, C, '', '', {}, 'entry'), '', '');
+  /* The figure eight's second circle is the first mirrored, reached by the back stroke onto
+     a new lobe (ENTRANCES.rboBackStrokeLbo, mirrored: LBO held, stroke onto RBO). That run
+     ends on the right foot with the left blade beside it; the three's first key has the left
+     foot already lifted in front, so the stroke's last key is kept and the foot lifts over
+     the three's approach (keep 'entry'). Going twice round one circle would read as a spin
+     (spin.mjs), and it is not the drill. */
+  const onceM = mirrorMove(once, 'The same, the other way', '');
+  onceM.path = onceM.path.map(g => g.step ? { ...g, step: -g.step } : g);
+  const strokeM = mirrorMove(ENTRANCES.rboBackStrokeLbo, 'A held left back outside edge and a back stroke onto the right', '');
+  const m = withEntry(once, withEntry(strokeM, onceM, '', '', {}, 'entry'), 'Backward power three turns',
+    'LBO three LFI · mohawk to RBI · under-push · stroke onto the other circle · RBO three RFI · mohawk to LBI · under-push');
+  delete m.entrance;
+  m.frames = Math.max(m.frames, Math.round(ENTRY_FPS * m.duration));
+  MOVES.backwardPowerThrees = m;
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;
