@@ -14,7 +14,7 @@ trace:
   - {kind: arc, foot: R, edge: O, dir: F, sweep: 170, newLobe: true}
   - {kind: arc, foot: L, edge: O, dir: F, sweep: 170, newLobe: true}
   - {kind: arc, foot: R, edge: O, dir: F, sweep: 170, newLobe: true}
-notDrawn: the change of foot onto a new lobe, which the body frame is gaining next.
+rig: consecutiveEdges
 sources: 5
 verified: {checked: false}
 ---

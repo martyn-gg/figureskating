@@ -305,7 +305,10 @@ for (const id of Object.keys(MOVES)) {
     const lent = !own && from ? (handover[from[0]] || []).find(e => r.w === e.foot && r.from >= inE(e.from) - 0.002 && r.to <= inE(e.to) + 0.002) : undefined;
     /* One step further: an entrance written for joining (ENTRANCES) that begins with another
        move borrows that move's declarations onto its own clock (lutz@crossovers). */
-    const B = from && ENTRANCES[from[0]]?.borrows, inB = x => inE(x / B.upto * B.to);
+    /* A move registered from such an entrance carries its `borrows` itself (boToFo,
+       Session 37, the drills): its own clock, no entrance offset. */
+    const B = (from && ENTRANCES[from[0]]?.borrows) || (!from && MOVES[id]?.borrows) || null;
+    const inB = x => (from ? inE(x / B.upto * B.to) : x / B.upto * B.to);
     const lent2 = !own && !lent && B ? (handover[B.move] || []).find(e => r.w === e.foot && r.from >= inB(e.from) - 0.002 && r.to <= inB(e.to) + 0.002) : undefined;
     /* And a variant keeps its element's own declarations: they are written on the element's
        clock, which `on` already places after whichever entrance this move has. */

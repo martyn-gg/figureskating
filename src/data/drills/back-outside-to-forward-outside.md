@@ -15,7 +15,7 @@ trace:
   - {kind: arc, foot: L, edge: I, dir: B, sweep: 40}
   - {kind: arc, foot: R, edge: O, dir: B, sweep: 90}
   - {kind: arc, foot: L, edge: O, dir: F, sweep: 90}
-notDrawn: the change of foot onto a new lobe, which the body frame is gaining next.
+rig: boToFo
 sources: 2
 verified: {checked: false}
 ---

@@ -3726,6 +3726,78 @@ const THREE_STEP = 72;
     'LFO three LBI · step forward · RFO three RBI · step forward · LFO three LBI');
   delete MOVES.alternatingThrees.entrance;
 }
+/* CONSECUTIVE EDGES — 10/10/2026, Session 37. Forward outside lobes on alternate feet
+   (src/data/drills/consecutive-edges.md). The stroke between lobes is the forward
+   stroke the Lutz entrance already draws (ENTRANCES.rboCrossoverLutz, its pieces 2):
+   the right blade down beside the left, the weight crossing with both blades flat under
+   the hip, then onto the right forward outside edge with the left pushing away. Its keys
+   are copied here at the same offsets, not re-derived. What is new is only that the new
+   lobe is `newLobe` and that the stroke repeats, mirrored, so the lean crosses from one
+   side of the body to the other at every stroke. The glide holds 2 s on each lobe at
+   1.5 m/s on a 2.2 m radius. Verified against a coach: NO. */
+{
+  const G = 2.0, B = 0.3, C = 1.0, D = G + B + C, r = 220, v = 150;
+  const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
+  const base = { hipZ: 93, sh: P(-3, 0, 145), arm: [58, 8, 20] };
+  const glideL = { ...base, hipZ: 94, hipYaw: 0, shYaw: 6, skate: 'L', edge: 'O', dir: 'F',
+    L: P(0, 14, 0, -0.5), R: P(-28, 8, 12, 0, NEUTRAL) };
+  const t1 = G, t2 = G + B;
+  const LtoR = {
+    name: 'A left forward outside lobe and a stroke onto the right',
+    path: [{ kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(v, G, r), span: G, radius: r },
+           { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(v, B, r), span: B, radius: r },
+           { kind: 'arc', foot: 'R', edge: 'O', dir: 'F', sweep: deg(v, C, r), span: C, radius: r, newLobe: true }],
+    radius: r, duration: D,
+    keys: [
+      { ...glideL, t: 0, ph: 'Gliding on the left forward outside edge, the right foot behind' },
+      { ...glideL, t: at(G * 0.6), hipZ: 95, ph: 'The lobe carried round, the knee easing up' },
+      { ...base, t: at(t1), hipYaw: -2, shYaw: -6, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'The right foot coming through beside the left',
+        L: P(3, 12, 0, -0.5), R: P(-2, 20, 6, 0, NEUTRAL) },
+      { ...base, t: at(t1 + 0.15), hipYaw: 0, shYaw: -2, skate: 'L', edge: 'O', dir: 'F',
+        ph: 'The right blade down beside the left',
+        L: P(2, 8, 0, -0.5), R: ON(0, 14, 0, -0.5) },
+      { ...base, t: at(t2), hipZ: 92, hipYaw: 0, shYaw: 0, skate: 'R', edge: null, dir: 'F',
+        ph: 'The weight crossing onto the right foot, both blades flat under the hip',
+        R: ON(0, 7, 0, -0.5), L: ON(-2, 0.5, 0, -0.5) },
+      { ...base, t: at(t2 + 0.07), hipZ: 92, hipYaw: 0, shYaw: 2, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'Onto the right forward outside edge, the left foot turning out',
+        R: P(0.5, -1, 0, -0.5), L: PUSH(-3, -9, 0, 20) },
+      { ...base, t: at(t2 + 0.22), hipZ: 92, hipYaw: 2, shYaw: 0, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The left foot pushing away',
+        R: P(1, -7, 0, -0.5), L: PUSH(-9, -24, 0, 35) },
+      { ...base, t: at(t2 + 0.4), hipYaw: 2, shYaw: -2, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'The left foot lifting from the push',
+        R: P(1, -10, 0, -0.5), L: P(-16, -16, 10, 0, NEUTRAL) },
+      /* The other side's glide: glideL in a mirror. */
+      { ...base, hipZ: 94, t: 1, hipYaw: 0, shYaw: -6, skate: 'R', edge: 'O', dir: 'F',
+        ph: 'Gliding on the right forward outside edge, the left foot behind',
+        R: P(0, -14, 0, -0.5), L: P(-28, -8, 12, 0, NEUTRAL) },
+    ] };
+  const RtoL = mirrorMove(LtoR, 'A right forward outside lobe and a stroke onto the left', '');
+  MOVES.consecutiveEdges = withEntry(LtoR, withEntry(RtoL, LtoR, '', ''), 'Consecutive edges',
+    'LFO · stroke · RFO · stroke · LFO · stroke · RFO, on alternate lobes');
+  delete MOVES.consecutiveEdges.entrance;
+}
+/* BACK OUTSIDE TO FORWARD OUTSIDE — 10/10/2026, Session 37. The drill is exactly the
+   step forward out of backward crossovers that the spins, the waltz jump and the Axel are
+   entered from (ENTRANCES.rboCrossoverLfo, Session 36), so it is that run registered as a
+   move of its own, not written again (src/data/drills/back-outside-to-forward-outside.md). */
+{
+  /* Built the way the moves entered from it are: withEntry onto the forward outside edge
+     that follows (the Salchow's first segment, the edge the spins' three is turned from),
+     which snaps keys onto segment boundaries as the joined moves have them. Registered
+     bare, the step key sat a hair before the path turned (turnout.mjs, lean.mjs). Its
+     `borrows` is kept, rescaled to the longer clock, so underice.mjs hands it the
+     crossovers' declared lifts. */
+  const E = ENTRANCES.rboCrossoverLfo;
+  const m = withEntry(E, sliceMove(MOVES.salchow, 0, 1), 'Back outside to forward outside',
+    'Backward crossovers · RBO · step forward to LFO, on one circle');
+  delete m.entrance;
+  m.borrows = { ...E.borrows, to: E.borrows.to * E.duration / m.duration };
+  m.frames = Math.max(m.frames, Math.round(ENTRY_FPS * m.duration));
+  MOVES.boToFo = m;
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;
