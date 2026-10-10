@@ -115,6 +115,7 @@ export const NOTEBOOK_LIGHT = {
   sticky: '#fff3a6', 'sticky-ink': '#3d3410', highlight: 'rgba(246,199,107,.55)',
   hole: '#e9e3d3',
   dust: 'linear-gradient(transparent,transparent)', 'chalk-glow': 'none',
+  'head-font': "Kalam,'Bradley Hand','Segoe Print',cursive",
   ...NB_SHARED,
 };
 
@@ -140,6 +141,7 @@ export const NOTEBOOK_DARK = {
     'radial-gradient(ellipse 260px 160px at 78% 64%,rgba(255,255,255,.035),transparent 70%),' +
     'radial-gradient(ellipse 420px 90px at 40% 88%,rgba(255,255,255,.03),transparent 70%)',
   'chalk-glow': '0 0 1px rgba(241,240,232,.55),0 0 6px rgba(241,240,232,.12)',
+  'head-font': "'Cabin Sketch',Kalam,'Bradley Hand','Segoe Print',cursive",
   ...NB_SHARED,
 };
 

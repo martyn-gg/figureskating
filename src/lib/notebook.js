@@ -65,6 +65,8 @@ const FONTS = [
   ['Kalam', 400, 'normal', 'kalam-latin-400-normal'],
   ['Kalam', 700, 'normal', 'kalam-latin-700-normal'],
   ['Caveat', 500, 'normal', 'caveat-latin-500-normal'],
+  /* The chalkboard's headings only (dark scheme). Bold alone: every heading it sets is bold. */
+  ['Cabin Sketch', 700, 'normal', 'cabin-sketch-latin-700-normal'],
   ['Literata', 400, 'normal', 'literata-latin-400-normal'],
   ['Literata', 600, 'normal', 'literata-latin-600-normal'],
   ['Literata', 400, 'italic', 'literata-latin-400-italic'],
@@ -180,5 +182,10 @@ export const notebookCSS = fontBase => {
     R('.tabs a:hover,.tabs a:focus-visible', 'width:54px;font-weight:700;box-shadow:-2px 2px 6px rgba(0,0,0,.22)'),
     R('.tabs a:focus-visible', 'outline:2px solid var(--tab-ink);outline-offset:-4px'),
     tab,
+    /* The chalkboard's headings in a chalk letter — 10/10/2026, Martyn chose Cabin
+       Sketch from four. Last, so it follows the heading rules above. `--head-font` is Kalam in the light scheme, so this rule
+       changes nothing there. Headings and the site name only: the texture is too
+       heavy for the small handwriting. */
+    R('h1,h2,.topbar .home', 'font-family:var(--head-font)'),
   ].join('') + `@media (prefers-reduced-motion:reduce){${NB} .tabs a{transition:none}}`;
 };
