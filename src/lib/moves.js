@@ -292,6 +292,28 @@ const turnFrom = (turn, foot, edge, dir, name, note) => {
      lobe for a three and against it for a bracket (TURNS.rotatesInto). For a three
      the two are the same number, so every three drawn before brackets is unchanged. */
   const n = lobe, s = turn === 'three' ? lobe : -lobe, base = dir === 'F' ? 0 : 180;
+  /* THE BRACKETS' SHOULDERS — 10/10/2026, Session 37. Until today every shoulder yaw
+     here was written against `s`, the way the hips turn. For a bracket that wound the
+     shoulders 40° out of the circle before a forward bracket, under a key captioned
+     "the shoulders turning into the circle", and held them out of it in the check.
+     Coaches' public bracket lessons keep the upper body facing into the circle on the
+     way into the turn and through it, forward and backward (one shows it on the backward
+     bracket, nose toward the centre; another has the shoulders hug the circle on the back
+     inside bracket), and name pulling it out as a fault (coach check, 10/10/2026).
+
+     `w` is which way the shoulders wind against the hips before the cusp. A three winds
+     them the way it turns (`s`): into the circle going forwards, outside it going
+     backwards, which is how a back three is taught. A bracket winds them into the circle
+     whichever way it faces, `n·f`. That is against the turn on a forward bracket and with
+     it on a backward one, and the back brackets already had it; only their first key moved.
+
+     After the cusp nothing changed: the shoulders check the rotation (hip − k·s), as on a
+     three. The one lesson that describes a bracket's exit calls for a strong check straight
+     after the edge change, and nothing read says otherwise. For a three w = s, so every
+     three turn draws exactly as before; frame-hash confirms it. The hips still turn with
+     `s`, against the lobe on a bracket, which is what makes it one. */
+  const w = turn === 'three' ? s : n * f;
+  const into = w === n * f;
   const exit = { edge: edge === 'O' ? 'I' : 'O', dir: dir === 'F' ? 'B' : 'F' };
   const g = exit.dir === 'F' ? 1 : -1;
   const R = (t, n, z) => P(t, n, z, 0, NEUTRAL);
@@ -305,11 +327,11 @@ const turnFrom = (turn, foot, edge, dir, name, note) => {
     radius:160, duration:4.4,
     keys:[
       {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
-       hipZ:94, hipYaw:base - 4*s, shYaw:base - 10*s,
+       hipZ:94, hipYaw:base - 4*s, shYaw:base + (turn === 'three' ? -10*s : 10*w),
        sh:P(-2*f,0,147), L:P(-1*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:89, hipYaw:base + 0*s, shYaw:base + 32*s,
+      {arm:[56,6,18], t:0.30, ph:`Knee bends, the shoulders turning ${into ? 'into' : 'out of'} the circle`, hipZ:89, hipYaw:base + 0*s, shYaw:base + 32*w,
        sh:P(2*f,0,140), L:P(5*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
-      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:base + 2*s, shYaw:base + 40*s,
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:base + 2*s, shYaw:base + 40*w,
        sh:P(0,0,146), L:P(2*f,15*n,0,TURN_PITCH), R:R(-6*f,8*f,16), ...on(inn)},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 178*s, shYaw:base + 150*s,
        sh:P(0,0,144), L:P(2.4*g,15*n,0,TURN_PITCH), R:R(-6*g,8*f,16), ...on(exit)},
