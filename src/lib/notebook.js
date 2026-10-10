@@ -91,7 +91,7 @@ export const notebookCSS = fontBase => {
        28 px apart and the body runs at 28 px, so a paragraph sits on them. */
     R('body', `background-color:var(--paper);background-image:linear-gradient(var(--ruling) 1px,transparent 1px);
       background-size:100% 28px;background-position:0 27px;font:17px/28px ${BOOK}`),
-    R('.wrap', 'position:relative;padding-left:2.9rem;padding-right:2.6rem'),
+    R('.wrap', 'position:relative;padding-left:2.9rem;padding-right:2.8rem'),
     R('.wrap::before', `content:"";position:absolute;left:2rem;top:0;bottom:0;width:2px;background:var(--margin)`),
     R('.wrap::after', `content:"";position:absolute;left:.45rem;top:5rem;bottom:2rem;width:14px;pointer-events:none;
       background:radial-gradient(circle at 7px 7px,var(--hole) 6px,transparent 7px) 0 0/14px 18rem repeat-y`),
@@ -160,12 +160,21 @@ export const notebookCSS = fontBase => {
 
     /* The index tabs down the right edge. Shown only in the notebook. */
     R('.tabs', 'display:flex'),
-    R('.tabs a', `position:relative;display:flex;align-items:center;justify-content:center;width:26px;min-height:64px;
-      writing-mode:vertical-rl;color:var(--tab-ink);text-decoration:none;font-family:${HEAD};font-size:.85rem;
-      line-height:1.2;
-      border-radius:6px 0 0 6px`),
-    R('.tabs a::before', 'content:"";position:absolute;inset:0 0 0 -18px'),
-    R('.tabs a[aria-current]', 'width:32px;font-weight:700;box-shadow:-1px 1px 3px rgba(0,0,0,.18)'),
+    /* BIGGER, AND THEY PULL OUT — 10/10/2026, Martyn: the tabs were too small to
+       read (26 px wide, .85rem). Now 34 px at 1.05rem. The page's own tab sits out
+       at 42 px, inside the wrap's right padding (2.8rem, up from 2.6rem); a tab under the
+       pointer or the keyboard pulls out further, to 54 px, over the edge of the
+       text for as long as it is in use, and goes back when it is not. */
+    R('.tabs', 'z-index:4;align-items:flex-end'),
+    R('.tabs a', `position:relative;display:flex;align-items:center;justify-content:center;width:34px;min-height:84px;
+      padding:.55rem 0;box-sizing:border-box;
+      writing-mode:vertical-rl;color:var(--tab-ink);text-decoration:none;font-family:${HEAD};font-size:1.05rem;
+      line-height:1.2;letter-spacing:.02em;
+      border-radius:7px 0 0 7px;transition:width .15s ease-out,box-shadow .15s ease-out`),
+    R('.tabs a::before', 'content:"";position:absolute;inset:0 0 0 -14px'),
+    R('.tabs a[aria-current]', 'width:42px;font-weight:700;box-shadow:-1px 1px 3px rgba(0,0,0,.18)'),
+    R('.tabs a:hover,.tabs a:focus-visible', 'width:54px;font-weight:700;box-shadow:-2px 2px 6px rgba(0,0,0,.22)'),
+    R('.tabs a:focus-visible', 'outline:2px solid var(--tab-ink);outline-offset:-4px'),
     tab,
-  ].join('');
+  ].join('') + `@media (prefers-reduced-motion:reduce){${NB} .tabs a{transition:none}}`;
 };
