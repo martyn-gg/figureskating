@@ -153,10 +153,12 @@ const handover = {
    The departure case above, on a blade that was pushing with its heel turned out. */
 const DEPART = 'the frame after the pushing blade lifts, still on the line it has just left';
 const UNDER_PUSH = 'the frame after the under-push lifts, on the line it has just left';
+/* `entered` here: the depth the same frame reaches in backCrossoversToBackEdges (Session 37),
+   which samples the crossovers at its own 120 frames a second. */
 handover.lboCrossover = [
-    { foot: 'R', from: 0.054, to: 0.058, cm: 0.1, why: DEPART },
-    { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, why: DEPART },
-    { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, why: DEPART },
+    { foot: 'R', from: 0.054, to: 0.058, cm: 0.1, entered: 0.2, why: DEPART },
+    { foot: 'R', from: 0.327, to: 0.331, cm: 0.1, entered: 0.2, why: DEPART },
+    { foot: 'R', from: 0.600, to: 0.604, cm: 0.1, entered: 0.2, why: DEPART },
 ];
 /* `entered`: the depth the same frame reaches in the loop's crossover entrance, which plays its
    4.4 s over 7 at the loop's 59 frames a second (Session 35). */
@@ -307,9 +309,15 @@ for (const id of Object.keys(MOVES)) {
        move borrows that move's declarations onto its own clock (lutz@crossovers). */
     /* A move registered from such an entrance carries its `borrows` itself (boToFo,
        Session 37, the drills): its own clock, no entrance offset. */
-    const B = (from && ENTRANCES[from[0]]?.borrows) || (!from && MOVES[id]?.borrows) || null;
-    const inB = x => (from ? inE(x / B.upto * B.to) : x / B.upto * B.to);
-    const lent2 = !own && !lent && B ? (handover[B.move] || []).find(e => r.w === e.foot && r.from >= inB(e.from) - 0.002 && r.to <= inB(e.to) + 0.002) : undefined;
+    /* A drill that strings two moves together borrows from each (backCrossoversToBackEdges):
+       `borrows` may be a list, and an entry's window may start later than 0 (`from`). */
+    const Bs = [].concat((from && ENTRANCES[from[0]]?.borrows) || (!from && MOVES[id]?.borrows) || []);
+    const inB = (B, x) => { const a = B.from ?? 0, y = a + x / B.upto * (B.to - a); return from ? inE(y) : y; };
+    let lent2;
+    for (const B of (!own && !lent ? Bs : [])) {
+      lent2 = (handover[B.move] || []).find(e => r.w === e.foot && r.from >= inB(B, e.from) - 0.002 && r.to <= inB(B, e.to) + 0.002);
+      if (lent2) break;
+    }
     /* And a variant keeps its element's own declarations: they are written on the element's
        clock, which `on` already places after whichever entrance this move has. */
     const kept = !own && !lent && !lent2 && vid ? (handover[base] || []).find(e => r.w === e.foot && r.from >= on(e.from) - 0.002 && r.to <= on(e.to) + 0.002) : undefined;

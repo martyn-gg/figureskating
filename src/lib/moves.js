@@ -3798,6 +3798,76 @@ const THREE_STEP = 72;
   m.frames = Math.max(m.frames, Math.round(ENTRY_FPS * m.duration));
   MOVES.boToFo = m;
 }
+/* A BACK STROKE ONTO A NEW LOBE — 10/10/2026, Session 37. Back to back on the other foot,
+   the lobe reversing: the change in the middle of "back crossovers to back outside edges"
+   and of the backward crossover figure eight. Nothing in the rig did it: backStroke holds
+   one push at its widest and never hands the weight over.
+
+   IT IS THE FORWARD STROKE (consecutiveEdges, from the Lutz entrance) READ BACKWARDS, with
+   one thing changed on purpose. The lean pattern carries over number for number: RBO and
+   LFO are both lobes of sense +1 with the blade outside the hip, LBO and RFO both -1. So do
+   the sides of the body, because facing backwards swaps which side of the track is the
+   skater's left and the feet swap too. What does not carry over is where the push goes: a
+   back push is pressed out IN FRONT of the skater (backStroke, t negative), not behind, so
+   the pushing foot's t keeps its sign rather than flipping. A right toe turned out is a
+   negative yaw facing either way (backStroke's comment).
+
+   It begins on rboCrossover's last key and ends on lboCrossover's first, so it joins both
+   exactly. Verified against a coach: NO. */
+{
+  const L0 = 0.25, G = 1.6, B = 0.3, C = 0.9, D = G + B + C, r = 400, v = 260;
+  const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
+  const base = { hipZ: 93, sh: P(-4, 0, 146), arm: [58, 8, 20] };
+  const X = MOVES.rboCrossover, Y = MOVES.lboCrossover;
+  const k0 = copyKey(X.keys[X.keys.length - 1]), kN = copyKey(Y.keys[0]);
+  /* lboCrossover is written at +180; this run is at -180, the same heading. */
+  kN.hipYaw -= 360; kN.shYaw -= 360;
+  const t2 = G + B;
+  const P_ = {
+    name: 'A held right back outside edge and a back stroke onto the left',
+    path: [{ kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(v, G, r), span: G, radius: r },
+           { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(v, B, r), span: B, radius: r },
+           { kind: 'arc', foot: 'L', edge: 'O', dir: 'B', sweep: deg(v, C, r), span: C, radius: r, newLobe: true }],
+    radius: r, duration: D,
+    keys: [
+      { ...k0, t: 0 },
+      { ...base, t: at(L0), hipYaw: -180, shYaw: -188, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left foot lifting in front', R: P(0, 6, 0, -0.5), L: P(-12, 14, 6, 0, NEUTRAL) },
+      { ...base, t: at(G * 0.75), hipZ: 94, hipYaw: -180, shYaw: -186, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'Holding the right back outside edge, the left foot in front', R: P(0, 8, 0, -0.5), L: P(-24, 10, 10, 0, NEUTRAL) },
+      { ...base, t: at(G), hipYaw: -182, shYaw: -184, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left foot coming in beside the right', R: P(-3, 12, 0, -0.5), L: P(-4, 20, 6, 0, NEUTRAL) },
+      { ...base, t: at(G + 0.15), hipYaw: -180, shYaw: -182, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left blade down beside the right', R: P(-2, 8, 0, -0.5), L: ON(0, 14, 0, -0.5) },
+      { ...base, t: at(t2), hipZ: 92, hipYaw: -180, shYaw: -180, skate: 'L', edge: null, dir: 'B',
+        ph: 'The weight crossing onto the left foot, both blades flat under the hip', L: ON(0, 7, 0, -0.5), R: ON(0, 0.5, 0, -0.5) },
+      { ...base, t: at(t2 + 0.07), hipZ: 92, hipYaw: -180, shYaw: -178, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'Onto the left back outside edge, the right foot turning out in front', L: P(-0.5, -1, 0, -0.5), R: PUSH(-3, -9, 0, -20) },
+      { ...base, t: at(t2 + 0.22), hipZ: 92, hipYaw: -178, shYaw: -176, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'The right foot pushing away in front', L: P(-1, -7, 0, -0.5), R: PUSH(-9, -24, 0, -35) },
+      { ...base, t: at(t2 + 0.45), hipYaw: -178, shYaw: -174, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'The right foot lifting from the push', L: P(-1, -10, 0, -0.5), R: P(-16, -16, 10, 0, NEUTRAL) },
+      { ...base, t: at(t2 + 0.72), hipYaw: -180, shYaw: -173, skate: 'L', edge: 'O', dir: 'B',
+        ph: 'The right foot coming down beside the left for the crossovers', L: P(0, -7, 0, -0.5), R: P(-7, -17, 6, 0, NEUTRAL) },
+      /* The foot is down a beat before the end, so the run closes on a held two-foot pose:
+         a blade landing on the last key reads as still arriving (twofoot.mjs). */
+      { ...copyKey(kN), t: at(D - 0.1), ph: 'The right blade down beside the left' },
+      { ...kN, t: 1 },
+    ] };
+  ENTRANCES.rboBackStrokeLbo = P_;
+  const Pm = mirrorMove(P_, 'A held left back outside edge and a back stroke onto the right', '');
+  MOVES.backCrossoversToBackEdges = withEntry(X, withEntry(P_, withEntry(Y, Pm, '', ''), '', ''),
+    'Back crossovers to back outside edges',
+    'Back crossovers anticlockwise · RBO held · back stroke · back crossovers clockwise · LBO held · back stroke');
+  const m = MOVES.backCrossoversToBackEdges;
+  delete m.entrance;
+  /* Both sets of crossovers bring their declared lifts (underice.mjs), each on its own
+     stretch of this clock. */
+  const yAt = (X.duration + P_.duration) / m.duration;
+  m.borrows = [{ move: 'rboCrossover', upto: 1, to: X.duration / m.duration },
+               { move: 'lboCrossover', upto: 1, from: yAt, to: yAt + Y.duration / m.duration }];
+  m.frames = Math.max(m.frames, Math.round(ENTRY_FPS * m.duration));
+}
 /* Where a move's entrance ends and its exit begins, as fractions of its clock. */
 export const phasesOf = (id) => {
   const m = MOVES[id]; if (!m) return null;

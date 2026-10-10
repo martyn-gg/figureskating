@@ -14,7 +14,7 @@ trace:
   - {kind: arc, foot: L, edge: O, dir: B, sweep: 40, newLobe: true}
   - {kind: arc, foot: R, edge: I, dir: B, sweep: 40}
   - {kind: arc, foot: L, edge: O, dir: B, sweep: 100}
-notDrawn: the change of direction from one set of crossovers to the next, which the body frame is gaining next.
+rig: backCrossoversToBackEdges
 sources: 3
 verified: {checked: false}
 ---
