@@ -329,9 +329,15 @@ const turnFrom = (turn, foot, edge, dir, name, note) => {
       {arm:[60,4,18], t:0.00, ph:`Gliding on the ${dir === 'F' ? 'forward' : 'back'} ${edge === 'O' ? 'outside' : 'inside'} edge`,
        hipZ:94, hipYaw:base - 4*s, shYaw:base + (turn === 'three' ? -10*s : 10*w),
        sh:P(-2*f,0,147), L:P(-1*f,15*n,0,-0.5), R:R(-30*f,8*f,14), ...on(inn)},
-      {arm:[56,6,18], t:0.30, ph:`Knee bends, the shoulders turning ${into ? 'into' : 'out of'} the circle`, hipZ:89, hipYaw:base + 0*s, shYaw:base + 32*w,
+      {arm:[56,6,18], t:0.30, ph:`Knee bends, the shoulders turning ${into ? 'into' : 'out of'} the circle`, hipZ:89, hipYaw:base - 3*s, shYaw:base + 32*w,
        sh:P(2*f,0,140), L:P(5*f,15*n,0,-1), R:R(-14*f,8*f,12), ...on(inn)},
-      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:base + 2*s, shYaw:base + 40*w,
+      /* THE HIPS ARE HELD AGAINST THE TURN TO THE CUSP — 18/10/2026. Until today they had
+         drifted 2° with it by this key, under a caption saying the free hip was held back.
+         Coaches put it the same way facing either way: forwards the free hip is "held
+         behind, where it stays throughout the turn" (Hubbell); backwards "the free hip is
+         forward (following)" (Olson), the trailing side for a skater going backwards. Both
+         are the hips held against the rotation; the shoulders' wind does the turning. */
+      {arm:[50,8,18], t:0.467, ph:`Rising onto the turn, the free hip held ${dir === 'F' ? 'back' : 'forward, following'}`, hipZ:94, hipYaw:base - 2*s, shYaw:base + 40*w,
        sh:P(0,0,146), L:P(2*f,15*n,0,TURN_PITCH), R:R(-6*f,8*f,16), ...on(inn)},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, the check holding', hipZ:92, hipYaw:base + 178*s, shYaw:base + 150*s,
        sh:P(0,0,144), L:P(2.4*g,15*n,0,TURN_PITCH), R:R(-6*g,8*f,16), ...on(exit)},
@@ -365,6 +371,7 @@ const mirrorMove = (m, name, note) => ({ ...m, name, note,
   keys: m.keys.map(k => ({ ...k, hipYaw: -k.hipYaw, shYaw: -k.shYaw, sh: mirrorFoot(k.sh),
     L: mirrorFoot(k.R), R: mirrorFoot(k.L),
     ...(k.LH ? { RH: mirrorFoot(k.LH) } : {}), ...(k.RH ? { LH: mirrorFoot(k.RH) } : {}),
+    armL: k.armR, armR: k.armL,
     skate: swapLR(k.skate), ...(k.ph ? { ph: mirrorText(k.ph) } : {}) })) });
 
 export const MOVES = {
@@ -518,9 +525,10 @@ export const MOVES = {
     keys:[
       {arm:[60,4,18], t:0.00, ph:'Gliding on the forward outside edge', hipZ:94, hipYaw:-4, shYaw:-10,
        sh:P(-2,0,147), L:P(-1,15,0,-0.5), R:P(-30,8,14,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:89, hipYaw:0, shYaw:32,
+      {arm:[56,6,18], t:0.30, ph:'Knee bends, the shoulders turning into the circle', hipZ:89, hipYaw:-3, shYaw:32,
        sh:P(2,0,140), L:P(5,15,0,-1), R:P(-14,8,12,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
-      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:2, shYaw:40,
+      /* Held against the turn to the cusp, as turnFrom's threes are (18/10/2026). */
+      {arm:[50,8,18], t:0.467, ph:'Rising onto the turn, the free hip held back', hipZ:94, hipYaw:-2, shYaw:40,
        sh:P(0,0,146), L:P(2,15,0,TURN_PITCH), R:P(-6,8,16,0,NEUTRAL), skate:'L', edge:'O', dir:'F'},
       {arm:[52,8,18], t:0.533, ph:'Out of the cusp, checked on the back inside edge', hipZ:92, hipYaw:178, shYaw:150,
        sh:P(0,0,144), L:P(-2.4,15,0,TURN_PITCH), R:P(6,8,16,0,NEUTRAL), skate:'L', edge:'I', dir:'B'},
@@ -3463,6 +3471,9 @@ export const CORES = {};
     const m = CORES[id] = MOVES[id];
     MOVES[id] = withEntry(entry, m, m.name, `forward outside edge and three turn · ${m.note}`, {}, 'entry');
     MOVES[id].frames = Math.max(MOVES[id].frames, Math.round(ENTRY_FPS * MOVES[id].duration));
+    /* The skating-side arm in front on the entry edge, as on the crossover entrance below. */
+    for (const k of MOVES[id].keys)
+      if (k.skate === 'L' && k.edge === 'O' && k.dir === 'F') { k.armL = [34, 40, 22]; k.armR = [64, 2, 18]; }
     ENTRIES[id] = { join: 2, list: [{ id: 'three', name: FO_THREE, from: ['salchow', 2] }] };
   }
 }
@@ -3496,7 +3507,13 @@ const STEP_FORWARD_DRAWN = true;
 const STEP_ANGLE = -72;
 {
   const X = sliceMove(MOVES.rboCrossover, 0, MOVES.rboCrossover.path.length - 1);
-  const STEP = 0.5, SETTLE = 0.6, D = X.duration + STEP + SETTLE, s0 = X.duration;
+  /* HOLD: the held right back outside edge the step is taken from, the left foot close
+     behind the right — added 18/10/2026 after the coach check of 10/10, which found every
+     source stepping from a held back edge rather than straight out of the last crossover
+     (Tickner, "the back outside edge preparation"; Conte, "the free toe is close and
+     directly behind the skating foot"; Tebby). The shoulders begin to open on it while the
+     hips stay closed (Tickner). */
+  const HOLD = 0.6, STEP = 0.5, SETTLE = 0.6, X0 = X.duration, D = X0 + HOLD + STEP + SETTLE, s0 = X0 + HOLD;
   const deg = (v, s, r) => v * s / r * 180 / Math.PI;
   const base = { hipZ: 94, sh: P(-5, 0, 145), arm: [58, 10, 20] };
   const at = s => +(s / D).toFixed(5);
@@ -3511,16 +3528,26 @@ const STEP_ANGLE = -72;
   const step = {
     name: 'Backward crossovers, then a step forward onto the left forward outside edge',
     path: [...X.path,
+      { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(240, HOLD, 400), span: HOLD, radius: 400 },
       { kind: 'arc', foot: 'R', edge: 'O', dir: 'B', sweep: deg(240, STEP, 400), span: STEP, radius: 400 },
       { kind: 'arc', foot: 'L', edge: 'O', dir: 'F', sweep: deg(150, SETTLE, 130), span: SETTLE, radius: 130,
         step: STEP_ANGLE }],
     radius: X.radius, duration: D,
-    borrows: { move: 'rboCrossover', upto: boundsOf(MOVES.rboCrossover)[MOVES.rboCrossover.path.length - 1], to: s0 / D },
+    borrows: { move: 'rboCrossover', upto: boundsOf(MOVES.rboCrossover)[MOVES.rboCrossover.path.length - 1], to: X0 / D },
     keys: [
-      ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
-      { ...base, t: at(s0 + 0.2), hipYaw: -160, shYaw: -156, skate: 'R', edge: 'O', dir: 'B',
-        ph: 'The left foot lifting from its push, the hips starting to open',
-        R: P(0, 6, 0, -0.5), L: P(-2, 13, 8, 0, NEUTRAL) },
+      ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * X0 / D).toFixed(5) })),
+      { ...base, t: at(X0 + 0.18), hipYaw: -180, shYaw: -184, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The left foot lifting from its push',
+        R: P(0, 6, 0, -0.5), L: P(4, 14, 7, 0, NEUTRAL) },
+      { ...base, t: at(X0 + 0.45), hipZ: 92, hipYaw: -180, shYaw: -172, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'Held on the right back outside edge, the knee bent, the left foot close behind',
+        R: P(0, 6, 0, -0.5), L: P(10, 9, 8, 0, NEUTRAL) },
+      { ...base, t: at(s0), hipZ: 92, hipYaw: -178, shYaw: -164, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The shoulders opening, the hips still closed',
+        R: P(0, 6, 0, -0.5), L: P(8, 10, 8, 0, NEUTRAL) },
+      { ...base, t: at(s0 + 0.2), hipYaw: -160, shYaw: -150, skate: 'R', edge: 'O', dir: 'B',
+        ph: 'The hips starting to open, the left foot coming forward',
+        R: P(0, 6, 0, -0.5), L: P(2, 12, 8, 0, NEUTRAL) },
       { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: -140, shYaw: -132, skate: 'R', edge: 'O', dir: 'B',
         ph: 'The hips opening, the left foot turned out and coming down beside the right',
         R: P(-1, 6, 0, -0.5), L: { ...P(0, 14, 6, 0, NEUTRAL), yaw: STEP_ANGLE } },
@@ -3545,6 +3572,12 @@ const STEP_ANGLE = -72;
     MOVES[`${id}@crossovers`] = withEntry(sliceMove(run, 0, run.path.length), m,
       `${m.name}, from backward crossovers`, `${BACK_X} and a step forward, forward outside three turn · ${m.note}`, {}, 'entry');
     MOVES[`${id}@crossovers`].frames = Math.max(MOVES[`${id}@crossovers`].frames, Math.round(ENTRY_FPS * MOVES[`${id}@crossovers`].duration));
+    /* THE ARMS ON THE ENTRY EDGE — 18/10/2026, coach check of 10/10: the skating-side arm
+       in front and the other out to the side, "left arm forward for counterclockwise
+       spinners" (ISI), "The skating side arm should stay in front throughout the entrance"
+       (Brusch). Set on every key of the left forward outside edge, step to cusp. */
+    for (const k of MOVES[`${id}@crossovers`].keys)
+      if (k.skate === 'L' && k.edge === 'O' && k.dir === 'F') { k.armL = [34, 40, 22]; k.armR = [64, 2, 18]; }
     ENTRIES[id].list.push({ id: 'crossovers', name: BACK_X, from: ['rboCrossoverThree', run.path.length] });
   }
 }
@@ -3683,15 +3716,20 @@ const STEP_ANGLE = -72;
 const THREE_STEP = 72;
 {
   const X = MOVES.threeTurn, s0 = X.duration;
-  const STEP = 0.5, SETTLE = 0.6, D = s0 + STEP + SETTLE, r = X.radius, v = 95;
+  /* THE GATHER — 18/10/2026, after the coach check of 10/10: Charbonneau has the skater
+     "gather the feet, bend the knees and ankles, and push with power" between the lobes,
+     and Hubbell re-bends after the turn. The first version rose out of the check and placed
+     the new foot with the knee straight. Now the free foot is drawn in beside the skating
+     foot as both knees bend, and the step is pushed from that bend; 0.2 s longer. */
+  const STEP = 0.7, SETTLE = 0.6, D = s0 + STEP + SETTLE, r = X.radius, v = 95;
   const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
   const base = { hipZ: 94, sh: P(-2, 0, 146), arm: [60, 6, 18] };
   const core0 = copyKey(MOVES.rfoThree.keys[0]);
   /* Written in the old line's frame (the right blade turned THREE_STEP, the left running
      true backwards) and turned into the new line's, where it sits. */
-  const stepKey = reframe({ ...base, t: at(s0 + STEP), hipZ: 92, hipYaw: 126, shYaw: 118,
+  const stepKey = reframe({ ...base, t: at(s0 + STEP), hipZ: 90, hipYaw: 126, shYaw: 118,
     skate: 'R', edge: 'O', dir: 'F',
-    ph: 'Stepping forward: the right blade down on its own line, the weight onto it',
+    ph: 'Pushing forward: the right blade down on its own line, the weight onto it',
     R: { ...ON(0, -4, 0, -0.5, 'F'), yaw: THREE_STEP }, L: { ...ON(-5, 8, 0, -0.5, 'B'), yaw: 0 } }, -THREE_STEP);
   const E = {
     name: 'Left forward outside three turn, then a step forward onto the right forward outside edge',
@@ -3702,14 +3740,19 @@ const THREE_STEP = 72;
     radius: r, duration: D,
     keys: [
       ...X.keys.map(k => ({ ...copyKey(k), t: +(k.t * s0 / D).toFixed(5) })),
-      { ...base, t: at(s0 + 0.2), hipYaw: 160, shYaw: 156, skate: 'L', edge: 'I', dir: 'B',
-        ph: 'The right foot coming through from behind, the hips starting to open',
-        L: P(1, 14, 0, -0.5), R: P(14, -5, 10, 0, NEUTRAL) },
-      { ...base, t: at(s0 + 0.4), hipZ: 93, hipYaw: 140, shYaw: 132, skate: 'L', edge: 'I', dir: 'B',
+      /* The skating blade a little in front of the hip as the knee bends (t negative,
+         facing backwards), so the shin stays inside the boot (shin.mjs). */
+      { ...base, t: at(s0 + 0.25), hipZ: 90, hipYaw: 172, shYaw: 166, skate: 'L', edge: 'I', dir: 'B',
+        ph: 'Gathering: the right foot drawn in beside the left, both knees bending',
+        L: P(-3, 13, 0, -0.5), R: P(2, -3, 6, 0, NEUTRAL) },
+      { ...base, t: at(s0 + 0.45), hipZ: 90, hipYaw: 158, shYaw: 152, skate: 'L', edge: 'I', dir: 'B',
+        ph: 'The hips starting to open, the knees still bent',
+        L: P(-2, 12, 0, -0.5), R: P(1, -4, 6, 0, NEUTRAL) },
+      { ...base, t: at(s0 + 0.6), hipZ: 91, hipYaw: 140, shYaw: 132, skate: 'L', edge: 'I', dir: 'B',
         ph: 'The hips opening, the right foot turned out and coming down beside the left',
-        L: P(1, 11, 0, -0.5), R: { ...P(2, -4, 6, 0, NEUTRAL), yaw: THREE_STEP } },
+        L: P(-1, 11, 0, -0.5), R: { ...P(2, -4, 6, 0, NEUTRAL), yaw: THREE_STEP } },
       stepKey,
-      { ...base, t: at(s0 + STEP + 0.12), hipZ: 93, hipYaw: 40, shYaw: 34, skate: 'R', edge: 'O', dir: 'F',
+      { ...base, t: at(s0 + STEP + 0.12), hipZ: 92, hipYaw: 40, shYaw: 34, skate: 'R', edge: 'O', dir: 'F',
         ph: 'The left foot lifting, the hips coming round',
         R: P(10, -9, 0, -0.5), L: { ...P(-2, -8, 5, 0, NEUTRAL), yaw: -60 } },
       { ...base, t: at(s0 + STEP + 0.35), hipYaw: 15, shYaw: 14, skate: 'R', edge: 'O', dir: 'F',
@@ -3733,10 +3776,13 @@ const THREE_STEP = 72;
    the hip, then onto the right forward outside edge with the left pushing away. Its keys
    are copied here at the same offsets, not re-derived. What is new is only that the new
    lobe is `newLobe` and that the stroke repeats, mirrored, so the lean crosses from one
-   side of the body to the other at every stroke. The glide holds 2 s on each lobe at
-   1.5 m/s on a 2.2 m radius. Verified against a coach: NO. */
+   side of the body to the other at every stroke. The lobe is a half circle, 2.2 m in
+   radius at 1.5 m/s, so it leaves and meets the axis square: "the lobes start perpendicular
+   to the axis … finishing perpendicular to the axis". Measured on 18/10/2026, the first
+   version's 2 s glide made lobes of 127°, each leaving the axis 26° off square; the glide is
+   now 3.35 s. Verified against a coach: NO. */
 {
-  const G = 2.0, B = 0.3, C = 1.0, D = G + B + C, r = 220, v = 150;
+  const G = 3.35, B = 0.3, C = 1.0, D = G + B + C, r = 220, v = 150;
   const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
   const base = { hipZ: 93, sh: P(-3, 0, 145), arm: [58, 8, 20] };
   const glideL = { ...base, hipZ: 94, hipYaw: 0, shYaw: 6, skate: 'L', edge: 'O', dir: 'F',
@@ -3813,7 +3859,13 @@ const THREE_STEP = 72;
    negative yaw facing either way (backStroke's comment).
 
    It begins on rboCrossover's last key and ends on lboCrossover's first, so it joins both
-   exactly. Verified against a coach: NO. */
+   exactly.
+
+   THE HELD EDGE IS THE LANDING POSITION, free leg extended behind (t positive, the side the
+   skater travels towards), as the jumps' run-outs hold it. It was first written with the free
+   foot in front, trailing; the coach check of 10/10/2026 found every source against that
+   (Learn to Skate USA: "Backward crossovers to a backward outside edge glide (landing
+   position)"; Weisiger, Thelen). Fixed 18/10/2026. */
 {
   const L0 = 0.25, G = 1.6, B = 0.3, C = 0.9, D = G + B + C, r = 400, v = 260;
   const deg = (v, s, r) => v * s / r * 180 / Math.PI, at = s => +(s / D).toFixed(5);
@@ -3832,11 +3884,11 @@ const THREE_STEP = 72;
     keys: [
       { ...k0, t: 0 },
       { ...base, t: at(L0), hipYaw: -180, shYaw: -188, skate: 'R', edge: 'O', dir: 'B',
-        ph: 'The left foot lifting in front', R: P(0, 6, 0, -0.5), L: P(-12, 14, 6, 0, NEUTRAL) },
-      { ...base, t: at(G * 0.75), hipZ: 94, hipYaw: -180, shYaw: -186, skate: 'R', edge: 'O', dir: 'B',
-        ph: 'Holding the right back outside edge, the left foot in front', R: P(0, 8, 0, -0.5), L: P(-24, 10, 10, 0, NEUTRAL) },
+        ph: 'The left foot lifting and reaching back', R: P(0, 6, 0, -0.5), L: P(14, 14, 8, 0, NEUTRAL) },
+      { ...base, t: at(G * 0.75), hipZ: 95, hipYaw: -180, shYaw: -186, skate: 'R', edge: 'O', dir: 'B', arm: [62, 8, 18],
+        ph: 'Holding the right back outside edge in the landing position, the left leg extended behind', R: P(0, 8, 0, -0.5), L: P(48, 12, 22, 0, NEUTRAL) },
       { ...base, t: at(G), hipYaw: -182, shYaw: -184, skate: 'R', edge: 'O', dir: 'B',
-        ph: 'The left foot coming in beside the right', R: P(-3, 12, 0, -0.5), L: P(-4, 20, 6, 0, NEUTRAL) },
+        ph: 'The left foot drawing in beside the right', R: P(-3, 12, 0, -0.5), L: P(8, 18, 8, 0, NEUTRAL) },
       { ...base, t: at(G + 0.15), hipYaw: -180, shYaw: -182, skate: 'R', edge: 'O', dir: 'B',
         ph: 'The left blade down beside the right', R: P(-2, 8, 0, -0.5), L: ON(0, 14, 0, -0.5) },
       { ...base, t: at(t2), hipZ: 92, hipYaw: -180, shYaw: -180, skate: 'L', edge: null, dir: 'B',
@@ -3928,9 +3980,12 @@ for(const m of Object.values(MOVES)) for(const k of m.keys){
   // Wide arms carried through a 180° body rotation sweep a 67 cm arc, which a
   // fixed side camera shows as a violent fore-and-aft swing, so a jump has to
   // gather them in before it turns. That is choreography, not geometry.
-  const [out, fwd, drop] = k.arm || [67, 8, 20];
+  const both = k.arm || [67, 8, 20];
   for(const [side, w] of [[-1,'L'],[1,'R']]){
     if(k[w+'H'] && k[w+'H'].authored) continue;              // <- the fix
+    /* One arm carried differently from the other (`armL` / `armR`, the same three
+       numbers): the spin entry's skating-side arm in front, 18/10/2026. */
+    const [out, fwd, drop] = k['arm'+w] || both;
     k[w+'H'] = P(k.sh.t + R[0]*out*side + F[0]*fwd, k.sh.n + R[1]*out*side + F[1]*fwd, k.sh.z - drop);
   }
 }

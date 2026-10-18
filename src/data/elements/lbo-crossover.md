@@ -16,3 +16,7 @@ they deserve more attention than their difficulty suggests.
 The common fault is turning the shoulders into the circle to help. It does help, briefly,
 and then there is no rotation left to check with when the crossovers stop and the element
 starts. Keep the shoulders square to the circle and let the feet do it.
+
+Beginners slide the crossing foot across without lifting it: Learn to Skate USA's practice
+lists say the foot crossing over backwards "will not leave the ice". The drawing shows the
+crossover as it is skated with speed, the outside foot pushing, lifting and going down inside.

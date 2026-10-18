@@ -15,6 +15,7 @@ trace:
   - {kind: arc, foot: L, edge: O, dir: F, sweep: 170, newLobe: true}
   - {kind: arc, foot: R, edge: O, dir: F, sweep: 170, newLobe: true}
 rig: consecutiveEdges
+variants: Further on, the free leg passes forward over the tracing in the second half of the lobe and the arms and shoulders change with it. The drawing keeps the simpler form, the free leg behind throughout.
 sources: 5
 verified: {checked: false}
 ---
